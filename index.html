@@ -432,55 +432,46 @@
         const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80";
         const imageSource = place.photo || fallbackImg;
 
+        const photoTag = `
+          <img 
+            src="${imageSource}" 
+            alt="${place.title}" 
+            loading="lazy" 
+            onerror="this.onerror=null; this.src='${fallbackImg}';"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+        `;
+
+        const photoElement = place.mapLink 
+          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="block relative w-full h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden cursor-pointer" title="Open on Google Maps">${photoTag}</a>`
+          : `<div class="relative w-full h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden">${photoTag}</div>`;
+
+        const titleElement = place.mapLink
+          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-baseline gap-1.5 text-lg font-bold text-slate-900 dark:text-white tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" title="Open on Google Maps">
+              <span>${place.title}</span>
+              <span class="text-xs opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
+             </a>`
+          : `<span class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">${place.title}</span>`;
+
         card.innerHTML = `
-          <div class="relative w-full h-48 bg-slate-100 dark:bg-slate-900 overflow-hidden">
-            <img 
-              src="${imageSource}" 
-              alt="${place.title}" 
-              loading="lazy" 
-              onerror="this.onerror=null; this.src='${fallbackImg}';"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
-          </div>
+          ${photoElement}
 
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <!-- Bold Rounded Category Tags with perfect centering -->
-              <div class="flex flex-wrap gap-1.5 mb-3">
-                ${tagsHtml}
-              </div>
-
-              <!-- Title -->
-              <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                ${place.title}
-              </h2>
-
-              <!-- Description -->
-              <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mb-5">
-                ${place.description || "No description provided."}
-              </p>
+          <div class="p-5 flex-1 flex flex-col justify-start">
+            <!-- Bold Rounded Category Tags with perfect centering -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              ${tagsHtml}
             </div>
 
-            <!-- Google Maps Button -->
-            ${
-              place.mapLink 
-                ? `
-                  <a 
-                    href="${place.mapLink}" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-cyan-500 hover:text-black dark:bg-surface-tag dark:hover:bg-cyan-500 dark:hover:text-black border border-slate-200 dark:border-surface-border text-cyan-700 dark:text-cyan-400 text-xs font-bold tracking-wide transition-colors"
-                  >
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
-                    </svg>
-                    <span>View on Google Maps</span>
-                    <span class="text-[10px] opacity-75">↗</span>
-                  </a>
-                ` 
-                : ''
-            }
+            <!-- Clickable Title -->
+            <h2 class="mb-2">
+              ${titleElement}
+            </h2>
+
+            <!-- Description -->
+            <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              ${place.description || "No description provided."}
+            </p>
           </div>
         `;
 
