@@ -11,10 +11,10 @@
   <!-- PapaParse for fast CSV parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-  <!-- Google Fonts: JetBrains Mono -->
+  <!-- Google Fonts: Google Sans Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -22,7 +22,7 @@
       theme: {
         extend: {
           fontFamily: {
-            mono: ['"JetBrains Mono"', 'monospace'],
+            mono: ['"Google Sans Code"', 'monospace'],
           },
           colors: {
             surface: {
@@ -41,7 +41,7 @@
 
   <style>
     body {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Google Sans Code', monospace;
       -webkit-font-smoothing: antialiased;
     }
     
@@ -82,6 +82,19 @@
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
+    }
+
+    body {
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+      background-attachment: fixed;
+    }
+
+    .dark body,
+    html.dark body {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+      background-attachment: fixed;
     }
   </style>
 </head>
@@ -196,10 +209,18 @@
 
   </main>
 
-  <footer class="border-t border-surface-border bg-surface py-6 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p>Continuous sync via Google Sheets</p>
-      <p class="text-slate-600">Built with JetBrains Mono • HTML + CSS + JS</p>
+  <footer class="border-t border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-sm py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="inline-flex items-center gap-2">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <span class="font-medium tracking-wide">Updated: Q4/2026</span>
+      </div>
+      <p class="text-slate-500 dark:text-slate-400">
+        Built by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
+      </p>
     </div>
   </footer>
 
