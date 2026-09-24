@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Top of Taiwan</title>
+  <title>TAIWAN TOP</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -106,7 +106,7 @@
         <div class="flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse"></span>
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase flex items-center gap-2">
-            Top of Taiwan
+            TAIWAN TOP
           </h1>
         </div>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
@@ -120,12 +120,28 @@
             type="text" 
             id="search-input" 
             placeholder="Search titles, tags..." 
-            class="w-full bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition"
+            class="w-full bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition"
           />
           <span id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
         </div>
 
-        <div class="px-3 py-2 bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
+        <!-- City Filter Dropdown -->
+        <div class="relative">
+          <select 
+            id="city-filter" 
+            aria-label="Filter by City"
+            class="appearance-none bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md pl-3 pr-8 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition cursor-pointer"
+          >
+            <option value="ALL">All Cities</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400 dark:text-slate-500">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="px-3 py-2 bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
           <span id="places-count" class="text-cyan-600 dark:text-cyan-400 font-bold">0</span> places
         </div>
 
@@ -172,20 +188,20 @@
     
     <!-- Loading skeleton state -->
     <div id="loading-state" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="rounded-2xl border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-xl shimmer"></div>
+      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
+        <div class="w-full h-48 rounded-md shimmer"></div>
         <div class="h-5 w-2/3 rounded-md shimmer"></div>
         <div class="h-4 w-full rounded-md shimmer"></div>
         <div class="h-4 w-4/5 rounded-md shimmer"></div>
       </div>
-      <div class="rounded-2xl border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-xl shimmer"></div>
+      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
+        <div class="w-full h-48 rounded-md shimmer"></div>
         <div class="h-5 w-2/3 rounded-md shimmer"></div>
         <div class="h-4 w-full rounded-md shimmer"></div>
         <div class="h-4 w-4/5 rounded-md shimmer"></div>
       </div>
-      <div class="rounded-2xl border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-xl shimmer"></div>
+      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
+        <div class="w-full h-48 rounded-md shimmer"></div>
         <div class="h-5 w-2/3 rounded-md shimmer"></div>
         <div class="h-4 w-full rounded-md shimmer"></div>
         <div class="h-4 w-4/5 rounded-md shimmer"></div>
@@ -193,7 +209,7 @@
     </div>
 
     <!-- Empty state notification -->
-    <div id="empty-state" class="hidden text-center py-20 border border-dashed border-surface-border rounded-2xl bg-surface-card/40">
+    <div id="empty-state" class="hidden text-center py-20 border border-dashed border-surface-border rounded-lg bg-surface-card/40">
       <p class="text-base text-slate-300 font-semibold mb-2">No matching spots found</p>
       <p class="text-xs text-slate-500 mb-6">Try picking another category or clear your search term</p>
       <button 
@@ -253,6 +269,7 @@
 
     // Application state
     let allPlaces = [];
+    let activeCity = "ALL";
     let activeCategory = "ALL";
     let searchQuery = "";
     let rotationDeg = 0;
@@ -263,6 +280,7 @@
     const emptyEl = document.getElementById("empty-state");
     const counterEl = document.getElementById("places-count");
     const categoryContainer = document.getElementById("category-filters");
+    const cityFilterSelect = document.getElementById("city-filter");
     const searchInput = document.getElementById("search-input");
     const clearSearchBtn = document.getElementById("clear-search-btn");
     const resetFilterBtn = document.getElementById("reset-filter-btn");
@@ -298,6 +316,7 @@
           transformHeader: (header) => header.trim().toLowerCase(),
           complete: function(results) {
             allPlaces = normalizeData(results.data);
+            initCityFilter(allPlaces);
             initCategoryFilters(allPlaces);
             renderPlaces();
             loadingEl.style.display = "none";
@@ -321,6 +340,7 @@
           const description = row['description'] || row['desc'] || row['details'] || '';
           const photo = row['photo'] || row['image'] || row['img'] || row['picture'] || '';
           const mapLink = row['map_link'] || row['map'] || row['google_map'] || row['link'] || row['url'] || '';
+          const city = row['city'] || row['town'] || row['location'] || '';
           
           const rawCategories = row['categories'] || row['category'] || row['tags'] || '';
           const categories = rawCategories
@@ -332,10 +352,34 @@
             description: description.trim(),
             photo: photo.trim(),
             mapLink: mapLink.trim(),
+            city: city.trim(),
             categories: categories
           };
         })
         .filter(item => item.title.length > 0);
+    }
+
+    function initCityFilter(places) {
+      const citySet = new Set();
+      places.forEach(place => {
+        if (place.city) citySet.add(place.city);
+      });
+
+      const sortedCities = Array.from(citySet).sort((a, b) => a.localeCompare(b));
+      
+      // Preserve "All Cities" and append unique detected cities
+      cityFilterSelect.innerHTML = `<option value="ALL">All Cities</option>`;
+      sortedCities.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        cityFilterSelect.appendChild(option);
+      });
+
+      cityFilterSelect.addEventListener("change", (e) => {
+        activeCity = e.target.value;
+        renderPlaces();
+      });
     }
 
     function initCategoryFilters(places) {
@@ -389,16 +433,22 @@
     function renderPlaces() {
       gridEl.innerHTML = "";
 
+      const q = searchQuery.toLowerCase().trim();
+      // Tokenize search query and strip trivial stop-words to support queries like "burger in taipei"
+      const stopWords = new Set(["in", "at", "the", "on", "of", "and", "&", "a", "an"]);
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+      const searchTokens = rawTokens.filter(word => !stopWords.has(word));
+      const tokensToMatch = searchTokens.length > 0 ? searchTokens : rawTokens;
+
       const filtered = allPlaces.filter(place => {
+        const matchesCity = (activeCity === "ALL") || (place.city.toLowerCase() === activeCity.toLowerCase());
         const matchesCategory = (activeCategory === "ALL") || place.categories.includes(activeCategory);
         
-        const q = searchQuery.toLowerCase().trim();
-        const matchesSearch = !q || 
-          place.title.toLowerCase().includes(q) ||
-          place.description.toLowerCase().includes(q) ||
-          place.categories.some(c => c.toLowerCase().includes(q));
+        // Multi-term search checking title, description, categories, and city
+        const searchableContent = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = tokensToMatch.length === 0 || tokensToMatch.every(token => searchableContent.includes(token));
 
-        return matchesCategory && matchesSearch;
+        return matchesCity && matchesCategory && matchesSearch;
       });
 
       counterEl.textContent = filtered.length;
@@ -412,7 +462,7 @@
 
       filtered.forEach(place => {
         const card = document.createElement("article");
-        card.className = "group bg-white dark:bg-surface-card hover:bg-slate-50 dark:hover:bg-surface-cardHover border border-slate-200 dark:border-surface-border rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-cyan-950/20";
+        card.className = "group bg-white dark:bg-surface-card hover:bg-slate-50 dark:hover:bg-surface-cardHover border border-slate-200 dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-cyan-950/20";
 
         // Category Tags HTML with precise horizontal & vertical centering
         const tagsHtml = place.categories.map((cat, idx) => {
@@ -427,6 +477,16 @@
           </button>
         `;
         }).join("");
+
+        // Optional city badge with pin icon
+        const cityBadgeHtml = place.city 
+          ? `<span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 px-2 py-0.5 rounded-md border border-cyan-200 dark:border-cyan-800/50">
+              <svg class="w-3 h-3 text-cyan-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+              </svg>
+              ${place.city}
+             </span>`
+          : '';
 
         // Fallback image url if none is given
         const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80";
@@ -458,8 +518,9 @@
           ${photoElement}
 
           <div class="p-5 flex-1 flex flex-col justify-start">
-            <!-- Bold Rounded Category Tags with perfect centering -->
-            <div class="flex flex-wrap gap-1.5 mb-3">
+            <!-- City Tag & Category Tags -->
+            <div class="flex flex-wrap items-center gap-1.5 mb-3">
+              ${cityBadgeHtml}
               ${tagsHtml}
             </div>
 
@@ -496,6 +557,8 @@
       searchInput.value = "";
       searchQuery = "";
       clearSearchBtn.classList.add("hidden");
+      activeCity = "ALL";
+      cityFilterSelect.value = "ALL";
       setCategory("ALL");
     });
 
