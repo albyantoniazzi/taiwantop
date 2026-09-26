@@ -253,26 +253,26 @@
     <!-- Modal Wrapper with Outside Navigation Controls -->
     <div id="modal-container" class="relative w-full max-w-2xl flex items-center justify-center">
 
-      <!-- Previous Arrow (Outside card, left of photo) -->
+      <!-- Previous Arrow (Outside card, centered vertically) -->
       <button 
         id="modal-prev-btn" 
         type="button" 
         title="Previous spot (←)"
         aria-label="Previous spot"
-        class="absolute -left-2 sm:-left-12 md:-left-14 top-28 sm:top-36 md:top-40 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <!-- Next Arrow (Outside card, right of photo) -->
+      <!-- Next Arrow (Outside card, centered vertically) -->
       <button 
         id="modal-next-btn" 
         type="button" 
         title="Next spot (→)"
         aria-label="Next spot"
-        class="absolute -right-2 sm:-right-12 md:-right-14 top-28 sm:top-36 md:top-40 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
@@ -284,21 +284,6 @@
         id="modal-card" 
         class="relative w-full max-h-[92vh] flex flex-col bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
-        <!-- Modal Top Action Controls -->
-        <div class="absolute top-3.5 right-3.5 z-20 flex items-center gap-2">
-          <button 
-            id="modal-close-btn" 
-            type="button" 
-            title="Close dialog (Esc)" 
-            aria-label="Close dialog"
-            class="w-8 h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-md focus:outline-none"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
         <!-- Scrollable Modal Content -->
         <div class="overflow-y-auto flex-1 scrollbar-none">
           <!-- Hero Image -->
@@ -470,7 +455,6 @@
     // Modal & Toast Elements
     const modalEl = document.getElementById("detail-modal");
     const modalCardEl = document.getElementById("modal-card");
-    const modalCloseBtn = document.getElementById("modal-close-btn");
     const modalShareBtn = document.getElementById("modal-share-btn");
     const modalImageEl = document.getElementById("modal-image");
     const modalTitleEl = document.getElementById("modal-title");
@@ -558,28 +542,42 @@
 
     // Two-Way URL Sync: Read State from URL Query
     function parseUrlState() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.has("city")) activeCity = params.get("city");
-      if (params.has("cat")) activeCategory = params.get("cat");
-      if (params.has("q")) {
-        searchQuery = params.get("q");
-        searchInput.value = searchQuery;
-        clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("city")) activeCity = params.get("city");
+        if (params.has("cat")) activeCategory = params.get("cat");
+        if (params.has("q")) {
+          searchQuery = params.get("q");
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
       }
-      return params.get("spot");
     }
 
     // Two-Way URL Sync: Update URL Query without full page reload
     function updateUrlState(targetSpotSlug = null) {
-      const params = new URLSearchParams();
-      if (activeCity !== "ALL") params.set("city", activeCity);
-      if (activeCategory !== "ALL") params.set("cat", activeCategory);
-      if (searchQuery.trim()) params.set("q", searchQuery.trim());
-      if (targetSpotSlug) params.set("spot", targetSpotSlug);
+      // In sandboxed environments or blob: preview URLs, replaceState throws a SecurityError
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
 
-      const queryString = params.toString();
-      const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
-      window.history.replaceState({}, "", newUrl);
+      try {
+        const params = new URLSearchParams();
+        if (activeCity !== "ALL") params.set("city", activeCity);
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, "", newUrl);
+      } catch (err) {
+        // Silently capture any iframe sandbox permission restrictions
+        console.warn("Could not sync URL history state in current context:", err);
+      }
     }
 
     // Initialize Theme (Default to Dark Mode)
@@ -868,7 +866,11 @@
         e.stopPropagation();
         e.preventDefault();
       }
-      const shareUrl = `${window.location.origin}${window.location.pathname}?spot=${slug}`;
+      let base = `${window.location.origin}${window.location.pathname}`;
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        base = window.location.href.split('?')[0];
+      }
+      const shareUrl = `${base}?spot=${slug}`;
       copyTextToClipboard(shareUrl);
       showToast("Direct spot link copied!");
     };
@@ -1099,7 +1101,6 @@
     }
 
     // Modal Event Handlers
-    modalCloseBtn.addEventListener("click", closeModal);
     modalEl.addEventListener("click", (e) => {
       // Close modal if user clicks outside the modal card and outside navigation buttons
       if (!modalCardEl.contains(e.target) && !modalPrevBtn.contains(e.target) && !modalNextBtn.contains(e.target)) {
