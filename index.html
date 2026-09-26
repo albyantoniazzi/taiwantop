@@ -47,7 +47,7 @@
   <style>
     /* Dotted background pattern */
     body {
-      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-image: radial-gradient(#b9ae9b 1.2px, transparent 1.2px);
       background-size: 24px 24px;
       background-attachment: fixed;
     }
@@ -66,7 +66,7 @@
     }
     .shimmer {
       animation: shimmer 1.5s infinite ease-in-out;
-      background-color: rgba(148, 163, 184, 0.15);
+      background-color: rgba(160, 147, 128, 0.28);
     }
 
     /* Category bar edge fade/mask effect */
@@ -104,27 +104,27 @@
   </style>
 </head>
 
-<body class="min-h-screen font-mono flex flex-col bg-slate-50 dark:bg-[#0c0e14] text-slate-800 dark:text-slate-100 transition-colors duration-200 selection:bg-cyan-500 selection:text-black overflow-x-hidden">
+<body class="min-h-screen font-mono flex flex-col bg-[#e4dccf] dark:bg-[#0c0e14] text-stone-800 dark:text-slate-100 transition-colors duration-200 selection:bg-cyan-500 selection:text-black overflow-x-hidden">
 
-  <header class="border-b border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
+  <header class="border-b border-[#cfc5b3] dark:border-surface-border bg-[#e4dccf]/85 dark:bg-surface/80 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
       <div>
         <div class="flex items-center gap-2">
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse"></span>
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-stone-800 dark:bg-cyan-400 animate-pulse"></span>
           <h1 class="text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
             <a 
               href="index.html" 
-              class="text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+              class="text-stone-900 dark:text-white hover:text-stone-600 dark:hover:text-cyan-400 transition-colors"
               title="Return to home"
             >
               TAIWAN TOP
             </a>
-            <span class="text-slate-500 dark:text-slate-400 font-normal text-xs sm:text-sm lowercase">by</span>
+            <span class="text-stone-500 dark:text-slate-400 font-normal text-xs sm:text-sm lowercase">by</span>
             <a 
               href="https://albyantoniazzi.github.io/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors text-xs sm:text-sm font-medium lowercase"
+              class="text-stone-500 dark:text-slate-400 underline hover:text-stone-800 dark:hover:text-slate-200 transition-colors text-xs sm:text-sm font-medium lowercase"
             >
               @albyantoniazzi
             </a>
@@ -138,9 +138,9 @@
             type="text" 
             id="search-input" 
             placeholder="Search..." 
-            class="w-full bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md px-4 py-2 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition"
+            class="w-full bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md px-4 py-2 text-xs text-stone-800 dark:text-slate-100 placeholder-stone-500 dark:placeholder-slate-500 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition"
           />
-          <span id="clear-search-btn" class="hidden absolute right-3 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
+          <span id="clear-search-btn" class="hidden absolute right-3 top-2 text-stone-400 hover:text-stone-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
         </div>
 
         <!-- City Filter Dropdown -->
@@ -148,11 +148,11 @@
           <select 
             id="city-filter" 
             aria-label="Filter by City"
-            class="appearance-none bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md pl-3 pr-8 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition cursor-pointer"
+            class="appearance-none bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md pl-3 pr-8 py-2 text-xs font-semibold text-stone-800 dark:text-slate-200 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition cursor-pointer"
           >
             <option value="ALL">All Cities</option>
           </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400 dark:text-slate-500">
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-stone-600 dark:text-slate-500">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
             </svg>
@@ -160,8 +160,8 @@
         </div>
 
         <!-- Live Place Counter -->
-        <div class="px-3 py-1.5 bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-          <span id="places-count" class="text-cyan-600 dark:text-cyan-400 font-bold">0</span> places
+        <div class="px-3 py-1.5 bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md text-xs font-semibold text-stone-700 dark:text-slate-300 whitespace-nowrap">
+          <span id="places-count" class="text-stone-900 dark:text-cyan-400 font-bold">0</span> places
         </div>
 
         <!-- Taoist Yin Yang Theme Toggle Button -->
@@ -177,10 +177,10 @@
             class="w-7 h-7 transition-transform duration-500 ease-in-out cursor-pointer group-hover:scale-110 drop-shadow-sm" 
             viewBox="0 0 100 100"
           >
-            <circle cx="50" cy="50" r="46" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.5"/>
-            <path d="M 50 4 A 46 46 0 0 1 50 96 A 23 23 0 0 1 50 50 A 23 23 0 0 0 50 4 Z" fill="#0f172a"/>
-            <circle cx="50" cy="27" r="6.5" fill="#0f172a"/>
-            <circle cx="50" cy="73" r="6.5" fill="#f8fafc"/>
+            <circle cx="50" cy="50" r="46" fill="#e4dccf" stroke="#b8ab96" stroke-width="2.5"/>
+            <path d="M 50 4 A 46 46 0 0 1 50 96 A 23 23 0 0 1 50 50 A 23 23 0 0 0 50 4 Z" fill="#1c1917"/>
+            <circle cx="50" cy="27" r="6.5" fill="#1c1917"/>
+            <circle cx="50" cy="73" r="6.5" fill="#e4dccf"/>
           </svg>
         </button>
       </div>
@@ -192,7 +192,7 @@
         <div id="category-filters" class="scroll-mask-edges flex items-center gap-2 overflow-x-auto py-1 px-4 scrollbar-none text-xs">
           <button 
             data-category="ALL"
-            class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-cyan-500 text-black border border-cyan-400 shadow-sm whitespace-nowrap"
+            class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0 whitespace-nowrap"
           >
             All
           </button>
@@ -205,19 +205,19 @@
     
     <!-- Loading skeleton state -->
     <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4">
+      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4">
         <div class="w-full h-52 rounded shimmer"></div>
         <div class="h-5 w-2/3 rounded shimmer"></div>
         <div class="h-4 w-full rounded shimmer"></div>
         <div class="h-6 w-1/3 rounded-full shimmer"></div>
       </div>
-      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4 hidden sm:block">
+      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4 hidden sm:block">
         <div class="w-full h-52 rounded shimmer"></div>
         <div class="h-5 w-2/3 rounded shimmer"></div>
         <div class="h-4 w-full rounded shimmer"></div>
         <div class="h-6 w-1/3 rounded-full shimmer"></div>
       </div>
-      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4 hidden lg:block">
+      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4 hidden lg:block">
         <div class="w-full h-52 rounded shimmer"></div>
         <div class="h-5 w-2/3 rounded shimmer"></div>
         <div class="h-4 w-full rounded shimmer"></div>
@@ -226,12 +226,12 @@
     </div>
 
     <!-- Empty state notification -->
-    <div id="empty-state" class="hidden text-center py-20 mx-auto max-w-lg border border-dashed border-slate-300 dark:border-surface-border rounded-lg bg-white/40 dark:bg-surface-card/40 px-6">
-      <p class="text-base text-slate-800 dark:text-slate-300 font-semibold mb-2">No matching spots found</p>
-      <p class="text-xs text-slate-500 mb-6">Try picking another category or clear your search term</p>
+    <div id="empty-state" class="hidden text-center py-20 mx-auto max-w-lg border border-dashed border-[#cfc5b3] dark:border-surface-border rounded-lg bg-[#eae4d8]/60 dark:bg-surface-card/40 px-6">
+      <p class="text-base text-stone-800 dark:text-slate-300 font-semibold mb-2">No matching spots found</p>
+      <p class="text-xs text-stone-500 mb-6">Try picking another category or clear your search term</p>
       <button 
         id="reset-filter-btn" 
-        class="px-4 py-2 text-xs font-bold uppercase rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black transition"
+        class="px-4 py-2 text-xs font-bold uppercase rounded-lg bg-stone-900 text-stone-50 dark:bg-cyan-500 dark:text-black hover:opacity-90 transition"
       >
         Reset Filters
       </button>
@@ -259,7 +259,7 @@
         type="button" 
         title="Previous spot (←)"
         aria-label="Previous spot"
-        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
@@ -272,7 +272,7 @@
         type="button" 
         title="Next spot (→)"
         aria-label="Next spot"
-        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
@@ -282,12 +282,12 @@
       <!-- Modal Card Box -->
       <div 
         id="modal-card" 
-        class="relative w-full max-h-[92vh] flex flex-col bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+        class="relative w-full max-h-[92vh] flex flex-col bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
         <!-- Scrollable Modal Content -->
         <div class="overflow-y-auto flex-1 scrollbar-none">
           <!-- Hero Image -->
-          <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-slate-900 overflow-hidden border-b border-slate-200 dark:border-surface-border">
+          <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-stone-900 overflow-hidden border-b border-[#cfc5b3] dark:border-surface-border">
             <img 
               id="modal-image" 
               src="" 
@@ -304,10 +304,10 @@
                 <span id="modal-city-badge"></span>
                 <div id="modal-tags" class="flex flex-wrap items-center gap-1.5"></div>
               </div>
-              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white pt-1"></h2>
+              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-white pt-1"></h2>
             </div>
 
-            <p id="modal-description" class="text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300 font-normal italic whitespace-pre-line"></p>
+            <p id="modal-description" class="text-xs sm:text-sm leading-relaxed text-stone-600 dark:text-slate-300 font-normal italic whitespace-pre-line"></p>
 
             <!-- External Action Button Bar -->
             <div class="pt-2 flex flex-wrap items-center gap-2.5">
@@ -316,7 +316,7 @@
                 type="button" 
                 title="Copy direct link to this spot" 
                 aria-label="Copy direct link"
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-surface dark:hover:bg-surface-border border border-slate-200 dark:border-surface-border text-slate-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -329,7 +329,7 @@
                 href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-surface dark:hover:bg-surface-border border border-slate-200 dark:border-surface-border text-slate-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm"
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm"
               >
                 <span>View on Google Maps</span>
                 <span class="text-xs">↗</span>
@@ -345,7 +345,7 @@
   <!-- Toast Notification for Link Copying -->
   <div 
     id="toast-notification" 
-    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-slate-900/90 dark:bg-white/90 text-white dark:text-slate-900 text-xs font-semibold rounded-lg shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
+    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-stone-900/90 dark:bg-white/90 text-stone-50 dark:text-stone-900 text-xs font-semibold rounded-lg shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
   >
     <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
@@ -353,15 +353,15 @@
     <span id="toast-message">Link copied to clipboard!</span>
   </div>
 
-  <footer class="border-t border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-sm py-8 text-xs text-slate-500 dark:text-slate-400">
+  <footer class="border-t border-[#cfc5b3] dark:border-surface-border bg-[#e4dccf]/85 dark:bg-surface/80 backdrop-blur-sm py-8 text-xs text-stone-500 dark:text-slate-400">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
       
       <!-- Top 10 Tags Infographic Section -->
       <div id="top-tags-infographic" class="pt-1 pb-2">
         <div class="flex items-center justify-between gap-3 mb-3.5">
           <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-cyan-500"></span>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+            <span class="inline-block w-2 h-2 rounded-full bg-stone-800 dark:bg-cyan-500"></span>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-800 dark:text-slate-200">
               TOP 10 CATEGORIES
             </span>
           </div>
@@ -377,14 +377,14 @@
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
         <div class="inline-flex items-center gap-2">
           <span class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#2d5937] dark:bg-emerald-500"></span>
           </span>
           <span class="font-medium tracking-wide">Update: 09/2026</span>
         </div>
 
-        <p class="text-slate-500 dark:text-slate-400">
-          Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
+        <p class="text-stone-500 dark:text-slate-400">
+          Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-stone-500 dark:text-slate-400 underline hover:text-stone-800 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
         </p>
       </div>
 
@@ -406,26 +406,26 @@
         .replace(/'/g, '&#39;');
     }
 
-    // Alternating badge color themes for cards: Blue, Red, Green
+    // Light-tinted badge themes with colored text for card list and modal; hovers into rich solid tones
     const BADGE_COLORS = [
-      "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-600 hover:text-white dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500 dark:hover:text-slate-950 dark:hover:border-blue-400",
-      "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-600 hover:text-white dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500 dark:hover:text-slate-950 dark:hover:border-rose-400",
-      "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
+      "bg-[#edf2f7] text-[#244b70] border-[#c9d8e6] hover:bg-[#244b70] hover:text-[#fbf9f5] hover:border-[#1c3c5a] dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500 dark:hover:text-slate-950 dark:hover:border-blue-400",
+      "bg-[#faf0ed] text-[#9c3826] border-[#f0cfc7] hover:bg-[#9c3826] hover:text-[#fbf9f5] hover:border-[#7d2c1e] dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500 dark:hover:text-slate-950 dark:hover:border-rose-400",
+      "bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] hover:bg-[#2d5937] hover:text-[#fbf9f5] hover:border-[#22442a] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
     ];
 
-    // Toolbar button themes for Blue, Red, and Green alternating states
+    // Solid colored background toolbar buttons with distinct active states
     const TOOLBAR_COLORS = [
       {
-        inactive: "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500/25",
-        active: "bg-blue-600 text-white border-blue-500 shadow-sm shadow-blue-500/25 dark:bg-blue-500 dark:text-slate-950 dark:border-blue-400 dark:shadow-blue-500/20"
+        inactive: "bg-[#244b70] text-[#fbf9f5] border-[#1c3c5a] hover:bg-[#356799] hover:border-[#477fb8] hover:text-white dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500/25",
+        active: "bg-[#16324d] text-white border-[#0f2336] shadow-sm ring-2 ring-[#244b70] ring-offset-2 ring-offset-[#e4dccf] dark:bg-blue-500 dark:text-slate-950 dark:border-blue-400 dark:ring-0 dark:shadow-blue-500/20"
       },
       {
-        inactive: "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500/25",
-        active: "bg-rose-600 text-white border-rose-500 shadow-sm shadow-rose-500/25 dark:bg-rose-500 dark:text-slate-950 dark:border-rose-400 dark:shadow-rose-500/20"
+        inactive: "bg-[#9c3826] text-[#fbf9f5] border-[#7d2c1e] hover:bg-[#ba4530] hover:border-[#d65740] hover:text-white dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500/25",
+        active: "bg-[#712719] text-white border-[#521b11] shadow-sm ring-2 ring-[#9c3826] ring-offset-2 ring-offset-[#e4dccf] dark:bg-rose-500 dark:text-slate-950 dark:border-rose-400 dark:ring-0 dark:shadow-rose-500/20"
       },
       {
-        inactive: "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500/25",
-        active: "bg-emerald-600 text-white border-emerald-500 shadow-sm shadow-emerald-500/25 dark:bg-emerald-500 dark:text-slate-950 dark:border-emerald-400 dark:shadow-emerald-500/20"
+        inactive: "bg-[#2d5937] text-[#fbf9f5] border-[#22442a] hover:bg-[#3b7348] hover:border-[#4b915c] hover:text-white dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500/25",
+        active: "bg-[#1e3c25] text-white border-[#152a1a] shadow-sm ring-2 ring-[#2d5937] ring-offset-2 ring-offset-[#e4dccf] dark:bg-emerald-500 dark:text-slate-950 dark:border-emerald-400 dark:ring-0 dark:shadow-emerald-500/20"
       }
     ];
 
@@ -737,8 +737,8 @@
       allBtn.dataset.category = "ALL";
       allBtn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
         (activeCategory === "ALL" 
-          ? "bg-cyan-500 text-black border border-cyan-400 shadow-sm" 
-          : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+          ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
+          : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
       allBtn.textContent = "All";
       allBtn.addEventListener("click", () => setCategory("ALL"));
       categoryContainer.appendChild(allBtn);
@@ -777,15 +777,15 @@
         .slice(0, 10);
 
       if (sortedEntries.length === 0) {
-        barsContainer.innerHTML = '<p class="text-slate-400 text-xs">No tags recorded yet.</p>';
+        barsContainer.innerHTML = '<p class="text-stone-400 text-xs">No tags recorded yet.</p>';
         return;
       }
 
       const maxCount = sortedEntries[0][1] || 1;
       const barThemeAccents = [
-        "bg-blue-500",
-        "bg-rose-500",
-        "bg-emerald-500"
+        "bg-[#244b70] dark:bg-blue-500",
+        "bg-[#9c3826] dark:bg-rose-500",
+        "bg-[#2d5937] dark:bg-emerald-500"
       ];
 
       barsContainer.innerHTML = sortedEntries.map(([cat, count], idx) => {
@@ -803,12 +803,12 @@
             class="group w-full flex items-center gap-2.5 text-left py-0.5 hover:opacity-85 focus:outline-none transition-opacity"
           >
             <!-- Tag Name & Badge -->
-            <span class="w-24 sm:w-28 truncate font-medium text-[11px] text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors">
+            <span class="w-24 sm:w-28 truncate font-medium text-[11px] text-stone-700 dark:text-slate-300 group-hover:text-stone-900 dark:group-hover:text-cyan-400 transition-colors">
               ${safeCat}
             </span>
 
             <!-- Progress Bar Rail (Ultra-thin line, squared edges) -->
-            <div class="flex-1 h-[2px] bg-slate-200 dark:bg-surface-border overflow-hidden relative">
+            <div class="flex-1 h-[2px] bg-[#cfc5b3] dark:bg-surface-border overflow-hidden relative">
               <div 
                 class="h-full ${barColor} transition-all duration-500 ease-out"
                 style="width: ${pct}%;"
@@ -816,7 +816,7 @@
             </div>
 
             <!-- Total Count -->
-            <span class="w-6 text-right font-mono font-bold text-[11px] text-slate-500 dark:text-slate-400 group-hover:text-cyan-500">
+            <span class="w-6 text-right font-mono font-bold text-[11px] text-stone-500 dark:text-slate-400 group-hover:text-stone-900 dark:group-hover:text-cyan-400">
               ${count}
             </span>
           </button>
@@ -833,8 +833,8 @@
         if (cat === "ALL") {
           btn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
             (activeCategory === "ALL" 
-              ? "bg-cyan-500 text-black border border-cyan-400 shadow-sm" 
-              : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+              ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
+              : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
         } else {
           const theme = TOOLBAR_COLORS[colorIdx];
           const isCurrentActive = activeCategory === cat;
@@ -889,7 +889,7 @@
 
       // City Pill in Modal
       if (place.city) {
-        modalCityBadge.className = "h-6 px-2.5 inline-flex items-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35";
+        modalCityBadge.className = "h-6 px-2.5 inline-flex items-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35";
         modalCityBadge.innerHTML = `
           <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -905,7 +905,7 @@
       modalTags.innerHTML = place.categories.map((cat, idx) => {
         const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
         return `
-          <span class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border ${colorClass}">
+          <span class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}">
             ${escapeHtml(cat)}
           </span>
         `;
@@ -987,9 +987,9 @@
 
       visiblePlaces.forEach((place, index) => {
         const card = document.createElement("article");
-        card.className = "gallery-item group relative bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition hover:border-slate-300 dark:hover:border-slate-600 shadow-sm cursor-pointer";
+        card.className = "gallery-item group relative bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition hover:border-[#b8ab96] dark:hover:border-slate-600 shadow-sm cursor-pointer";
 
-        // Category Tags HTML
+        // Category Tags HTML - light-tinted by default, solid luminous tone on hover
         const tagsHtml = place.categories.map((cat, idx) => {
           const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
           const safeCat = escapeHtml(cat);
@@ -1005,13 +1005,13 @@
           `;
         }).join("");
 
-        // Uniform pill city badge (green by default)
+        // Uniform pill city badge - light-tinted forest sage in light mode, solid on hover
         const cityBadgeHtml = place.city 
           ? `<button 
               type="button"
               onclick="event.stopPropagation(); setCity('${place.city.replace(/'/g, "\\'")}')"
               title="Filter by ${escapeHtml(place.city)}"
-              class="h-6 px-2.5 inline-flex items-center justify-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
+              class="h-6 px-2.5 inline-flex items-center justify-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] hover:bg-[#2d5937] hover:text-[#fbf9f5] hover:border-[#22442a] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
             >
               <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -1034,7 +1034,7 @@
               type="button" 
               title="Temporarily dismiss this spot" 
               aria-label="Dismiss spot" 
-              class="dismiss-card-btn w-7 h-7 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/25 hover:border-white backdrop-blur-md transition shadow-md focus:outline-none"
+              class="dismiss-card-btn w-7 h-7 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/25 hover:border-white backdrop-blur-md transition shadow-md focus:outline-none"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -1043,7 +1043,7 @@
           </div>
 
           <!-- Photo Container -->
-          <div class="img-wrapper relative w-full aspect-[16/10] overflow-hidden bg-slate-200 dark:bg-surface-card border-b border-slate-200/80 dark:border-surface-border">
+          <div class="img-wrapper relative w-full aspect-[16/10] overflow-hidden bg-stone-300 dark:bg-surface-card border-b border-[#cfc5b3] dark:border-surface-border">
             <img 
               src="${escapeHtml(imageSource)}" 
               alt="${safeTitle}" 
@@ -1058,14 +1058,14 @@
           <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
             <div>
               <div class="mb-2 flex items-baseline justify-between gap-2">
-                <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white tracking-tight group-hover:text-stone-700 dark:group-hover:text-cyan-400 transition-colors">
                   ${safeTitle}
                 </h2>
-                ${place.mapLink ? `<a href="${encodeURI(place.mapLink)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open on Google Maps" class="text-xs text-slate-400 hover:text-cyan-500 transition-colors">↗</a>` : ''}
+                ${place.mapLink ? `<a href="${encodeURI(place.mapLink)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open on Google Maps" class="text-xs text-stone-400 hover:text-stone-800 dark:hover:text-cyan-500 transition-colors">↗</a>` : ''}
               </div>
 
               <!-- Description -->
-              <p class="text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 font-normal italic">
+              <p class="text-xs sm:text-sm leading-relaxed text-stone-600 dark:text-slate-400 line-clamp-3 mb-4 font-normal italic">
                 ${safeDesc}
               </p>
             </div>
