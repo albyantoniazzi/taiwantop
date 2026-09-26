@@ -4,17 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TAIWAN TOP</title>
-  
+
+  <!-- Google Sans Code Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- PapaParse for fast CSV parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-  <!-- Google Fonts: Google Sans Code -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <!-- PapaParse for Google Sheets CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -22,102 +22,93 @@
       theme: {
         extend: {
           fontFamily: {
-            mono: ['"Google Sans Code"', 'monospace'],
+            mono: ['"Google Sans Code"', 'monospace']
           },
           colors: {
             surface: {
-              DEFAULT: '#0f1117',
-              card: '#161923',
-              cardHover: '#1c2130',
-              border: '#272d3f',
-              tag: '#1e2436',
-              tagHover: '#2a334d'
+              DEFAULT: '#0f131a',
+              card: '#161b24',
+              border: '#232b3b'
             }
           }
         }
       }
-    }
+    };
   </script>
 
   <style>
-    body {
-      font-family: 'Google Sans Code', monospace;
-      -webkit-font-smoothing: antialiased;
-    }
-    
-    /* Custom scrollbars */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: #252b3d;
-      border-radius: 4px;
-    }
-    .dark ::-webkit-scrollbar-thumb:hover {
-      background: #38425d;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-
-    .shimmer {
-      background: linear-gradient(90deg, #161923 0%, #202636 50%, #161923 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-    html:not(.dark) .shimmer {
-      background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
+    /* Dotted background pattern */
     body {
       background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
       background-size: 24px 24px;
       background-attachment: fixed;
     }
-
     .dark body,
     html.dark body {
       background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
       background-size: 24px 24px;
       background-attachment: fixed;
     }
+
+    /* Skeleton shimmer */
+    @keyframes shimmer {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    .shimmer {
+      animation: shimmer 1.5s infinite ease-in-out;
+      background-color: rgba(148, 163, 184, 0.15);
+    }
+
+    /* Card image zoom motion */
+    .gallery-item {
+      transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .gallery-item .img-wrapper img {
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .gallery-item:hover .img-wrapper img {
+      transform: scale(1.04);
+    }
+
+    /* Custom scrollbar hiding utility */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
-<body class="min-h-screen font-mono flex flex-col bg-slate-50 dark:bg-[#0c0e14] text-slate-800 dark:text-slate-100 transition-colors duration-200 selection:bg-cyan-500 selection:text-black">
+
+<body class="min-h-screen font-mono flex flex-col bg-slate-50 dark:bg-[#0c0e14] text-slate-800 dark:text-slate-100 transition-colors duration-200 selection:bg-cyan-500 selection:text-black overflow-x-hidden">
 
   <header class="border-b border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
       <div>
         <div class="flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse"></span>
-          <h1>
+          <h1 class="text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
             <a 
               href="index.html" 
-              class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 uppercase flex items-center gap-2 transition-colors"
+              class="text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
               title="Return to home"
             >
               TAIWAN TOP
             </a>
+            <span class="text-slate-500 dark:text-slate-400 font-normal text-xs sm:text-sm lowercase">by</span>
+            <a 
+              href="https://albyantoniazzi.github.io/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors text-xs sm:text-sm font-medium lowercase"
+            >
+              @albyantoniazzi
+            </a>
           </h1>
         </div>
-        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
-          Curated list by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 hover:underline transition-colors">@albyantoniazzi</a>
-        </p>
       </div>
 
       <div class="flex items-center gap-3 w-full md:w-auto">
@@ -125,10 +116,10 @@
           <input 
             type="text" 
             id="search-input" 
-            placeholder="Search titles, tags..." 
-            class="w-full bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition"
+            placeholder="Search..." 
+            class="w-full bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md px-4 py-2 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition"
           />
-          <span id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
+          <span id="clear-search-btn" class="hidden absolute right-3 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
         </div>
 
         <!-- City Filter Dropdown -->
@@ -136,7 +127,7 @@
           <select 
             id="city-filter" 
             aria-label="Filter by City"
-            class="appearance-none bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md pl-3 pr-8 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition cursor-pointer"
+            class="appearance-none bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md pl-3 pr-8 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition cursor-pointer"
           >
             <option value="ALL">All Cities</option>
           </select>
@@ -147,7 +138,8 @@
           </div>
         </div>
 
-        <div class="px-3 py-2 bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
+        <!-- Live Place Counter -->
+        <div class="px-3 py-1.5 bg-slate-100 dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-md text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
           <span id="places-count" class="text-cyan-600 dark:text-cyan-400 font-bold">0</span> places
         </div>
 
@@ -164,59 +156,54 @@
             class="w-7 h-7 transition-transform duration-500 ease-in-out cursor-pointer group-hover:scale-110 drop-shadow-sm" 
             viewBox="0 0 100 100"
           >
-            <!-- White base disc with smooth border -->
             <circle cx="50" cy="50" r="46" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.5"/>
-            <!-- Yin dark body (S-curve) -->
             <path d="M 50 4 A 46 46 0 0 1 50 96 A 23 23 0 0 1 50 50 A 23 23 0 0 0 50 4 Z" fill="#0f172a"/>
-            <!-- Yang dark eye in white realm -->
             <circle cx="50" cy="27" r="6.5" fill="#0f172a"/>
-            <!-- Yin white eye in dark realm -->
             <circle cx="50" cy="73" r="6.5" fill="#f8fafc"/>
           </svg>
         </button>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-2.5">
+      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto py-0.5 scrollbar-none text-xs">
         <button 
           data-category="ALL"
           class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-cyan-500 text-black border border-cyan-400 shadow-sm whitespace-nowrap"
         >
           All
         </button>
-        <!-- Dynamic tags injected here -->
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     
     <!-- Loading skeleton state -->
-    <div id="loading-state" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-md shimmer"></div>
-        <div class="h-5 w-2/3 rounded-md shimmer"></div>
-        <div class="h-4 w-full rounded-md shimmer"></div>
-        <div class="h-4 w-4/5 rounded-md shimmer"></div>
+    <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4">
+        <div class="w-full h-52 rounded shimmer"></div>
+        <div class="h-5 w-2/3 rounded shimmer"></div>
+        <div class="h-4 w-full rounded shimmer"></div>
+        <div class="h-6 w-1/3 rounded-full shimmer"></div>
       </div>
-      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-md shimmer"></div>
-        <div class="h-5 w-2/3 rounded-md shimmer"></div>
-        <div class="h-4 w-full rounded-md shimmer"></div>
-        <div class="h-4 w-4/5 rounded-md shimmer"></div>
+      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4 hidden sm:block">
+        <div class="w-full h-52 rounded shimmer"></div>
+        <div class="h-5 w-2/3 rounded shimmer"></div>
+        <div class="h-4 w-full rounded shimmer"></div>
+        <div class="h-6 w-1/3 rounded-full shimmer"></div>
       </div>
-      <div class="rounded-lg border border-surface-border bg-surface-card overflow-hidden p-4 space-y-4">
-        <div class="w-full h-48 rounded-md shimmer"></div>
-        <div class="h-5 w-2/3 rounded-md shimmer"></div>
-        <div class="h-4 w-full rounded-md shimmer"></div>
-        <div class="h-4 w-4/5 rounded-md shimmer"></div>
+      <div class="space-y-4 bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg p-4 hidden lg:block">
+        <div class="w-full h-52 rounded shimmer"></div>
+        <div class="h-5 w-2/3 rounded shimmer"></div>
+        <div class="h-4 w-full rounded shimmer"></div>
+        <div class="h-6 w-1/3 rounded-full shimmer"></div>
       </div>
     </div>
 
     <!-- Empty state notification -->
-    <div id="empty-state" class="hidden text-center py-20 border border-dashed border-surface-border rounded-lg bg-surface-card/40">
-      <p class="text-base text-slate-300 font-semibold mb-2">No matching spots found</p>
+    <div id="empty-state" class="hidden text-center py-20 mx-auto max-w-lg border border-dashed border-slate-300 dark:border-surface-border rounded-lg bg-white/40 dark:bg-surface-card/40 px-6">
+      <p class="text-base text-slate-800 dark:text-slate-300 font-semibold mb-2">No matching spots found</p>
       <p class="text-xs text-slate-500 mb-6">Try picking another category or clear your search term</p>
       <button 
         id="reset-filter-btn" 
@@ -226,13 +213,13 @@
       </button>
     </div>
 
-    <!-- Active Places Grid -->
-    <div id="places-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- Responsive Multi-Column Places Grid -->
+    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch w-full"></div>
 
   </main>
 
   <footer class="border-t border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-sm py-6 text-xs text-slate-500 dark:text-slate-400">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="inline-flex items-center gap-2">
         <span class="relative flex h-2.5 w-2.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -240,14 +227,15 @@
         </span>
         <span class="font-medium tracking-wide">Update: 09/2026</span>
       </div>
+
       <p class="text-slate-500 dark:text-slate-400">
-        Built by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
+        Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
       </p>
     </div>
   </footer>
 
   <script>
-    // Your published Google Sheets CSV URL
+    // Published Google Sheets CSV Feed URL
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
 
     // Alternating badge color themes for cards: Blue, Red, Green
@@ -273,7 +261,7 @@
       }
     ];
 
-    // Application state
+    // Reactive Application State
     let allPlaces = [];
     let dismissedPlaces = new Set();
     let activeCity = "ALL";
@@ -281,7 +269,7 @@
     let searchQuery = "";
     let rotationDeg = 0;
 
-    // DOM References
+    // DOM Elements
     const gridEl = document.getElementById("places-grid");
     const loadingEl = document.getElementById("loading-state");
     const emptyEl = document.getElementById("empty-state");
@@ -294,11 +282,10 @@
     const themeToggleBtn = document.getElementById("theme-toggle");
     const yinYangIcon = document.getElementById("yin-yang-icon");
 
+    // Initialize Theme (Default to Dark Mode)
     function initTheme() {
       const savedTheme = localStorage.getItem("tot-theme");
-      // Default directly to dark mode unless the user explicitly chose 'light'
       const isDark = savedTheme !== null ? savedTheme === "dark" : true;
-
       document.documentElement.classList.toggle("dark", isDark);
 
       themeToggleBtn.addEventListener("click", () => {
@@ -313,153 +300,174 @@
     async function fetchPlaces() {
       try {
         const response = await fetch(SHEET_CSV_URL);
-        if (!response.ok) throw new Error("Network response error while fetching CSV");
-        
-        const csvString = await response.text();
+        if (!response.ok) throw new Error("Network response was not ok");
+        const csvText = await response.text();
 
-        Papa.parse(csvString, {
+        Papa.parse(csvText, {
           header: true,
-          skipEmptyLines: 'greedy',
-          transformHeader: (header) => header.trim().toLowerCase(),
+          skipEmptyLines: true,
           complete: function(results) {
-            allPlaces = normalizeData(results.data);
-            initCityFilter(allPlaces);
-            initCategoryFilters(allPlaces);
-            renderPlaces();
-            loadingEl.style.display = "none";
+            processPlacesData(results.data);
           },
           error: function(err) {
-            showError("Error parsing Google Sheet data.");
-            console.error(err);
+            console.error("PapaParse error:", err);
+            handleFetchError();
           }
         });
-      } catch (error) {
-        showError("Unable to load Google Sheet. Please check your sheet permissions.");
-        console.error(error);
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        handleFetchError();
       }
     }
 
-    function normalizeData(rawRows) {
-      return rawRows
-        .map((row) => {
-          // Normalize possible header variations
-          const title = row['title'] || row['name'] || row['place'] || '';
-          const description = row['description'] || row['desc'] || row['details'] || '';
-          const photo = row['photo'] || row['image'] || row['img'] || row['picture'] || '';
-          const mapLink = row['map_link'] || row['map'] || row['google_map'] || row['link'] || row['url'] || '';
-          const city = row['city'] || row['town'] || row['location'] || '';
-          
-          const rawCategories = row['categories'] || row['category'] || row['tags'] || '';
-          const categories = rawCategories
-            ? rawCategories.split(',').map(c => c.trim()).filter(Boolean)
+    function handleFetchError() {
+      loadingEl.classList.add("hidden");
+      emptyEl.classList.remove("hidden");
+      emptyEl.querySelector("p").textContent = "Could not load data from Google Sheets.";
+    }
+
+    function getFieldValue(row, possibleKeys) {
+      const rowKeys = Object.keys(row);
+      for (const key of possibleKeys) {
+        const match = rowKeys.find(k => k.trim().toLowerCase() === key.toLowerCase());
+        if (match && row[match] !== undefined && row[match] !== null && String(row[match]).trim() !== '') {
+          return String(row[match]).trim();
+        }
+      }
+      return '';
+    }
+
+    function processPlacesData(rows) {
+      allPlaces = rows
+        .map(row => {
+          const title = getFieldValue(row, ['title', 'name', 'place']);
+          if (!title) return null;
+
+          const rawCategories = getFieldValue(row, ['categories', 'category', 'tags', 'tag']);
+          const categories = rawCategories 
+            ? rawCategories.split(',').map(s => s.trim()).filter(Boolean) 
             : [];
 
+          const city = getFieldValue(row, ['city', 'location', 'town']);
+          const description = getFieldValue(row, ['description', 'desc', 'notes', 'about']);
+          const photo = getFieldValue(row, ['photo', 'image', 'picture', 'url', 'photo_url']);
+          const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
+
           return {
-            title: title.trim(),
-            description: description.trim(),
-            photo: photo.trim(),
-            mapLink: mapLink.trim(),
-            city: city.trim(),
-            categories: categories
+            title,
+            city,
+            categories,
+            description,
+            photo,
+            mapLink
           };
         })
-        .filter(item => item.title.length > 0);
-    }
+        .filter(Boolean);
 
-    function initCityFilter(places) {
-      const citySet = new Set();
-      places.forEach(place => {
-        if (place.city) citySet.add(place.city);
-      });
-
-      const sortedCities = Array.from(citySet).sort((a, b) => a.localeCompare(b));
-      
-      // Preserve "All Cities" and append unique detected cities
-      cityFilterSelect.innerHTML = `<option value="ALL">All Cities</option>`;
-      sortedCities.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        option.textContent = city;
-        cityFilterSelect.appendChild(option);
-      });
-
-      cityFilterSelect.addEventListener("change", (e) => {
-        setCity(e.target.value);
-      });
-    }
-
-    function setCity(city) {
-      activeCity = city;
-      cityFilterSelect.value = city;
+      populateCityFilter();
+      populateCategoryFilters();
       renderPlaces();
+      loadingEl.classList.add("hidden");
     }
 
-    function initCategoryFilters(places) {
-      const categorySet = new Set();
-      places.forEach(place => {
-        place.categories.forEach(cat => categorySet.add(cat));
+    function populateCityFilter() {
+      const cities = Array.from(new Set(allPlaces.map(p => p.city).filter(Boolean))).sort();
+      cityFilterSelect.innerHTML = '<option value="ALL">All Cities</option>';
+      cities.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city;
+        opt.textContent = city;
+        cityFilterSelect.appendChild(opt);
+      });
+    }
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          catCount[c] = (catCount[c] || 0) + 1;
+        });
       });
 
-      const sortedCategories = Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+      const sortedCategories = Object.keys(catCount).sort();
+      categoryContainer.innerHTML = '';
 
-      sortedCategories.forEach((cat, idx) => {
-        const colorIdx = idx % TOOLBAR_COLORS.length;
+      // "All" Button
+      const allBtn = document.createElement("button");
+      allBtn.dataset.category = "ALL";
+      allBtn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
+        (activeCategory === "ALL" 
+          ? "bg-cyan-500 text-black border border-cyan-400 shadow-sm" 
+          : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+      allBtn.textContent = "All";
+      allBtn.addEventListener("click", () => setCategory("ALL"));
+      categoryContainer.appendChild(allBtn);
+
+      sortedCategories.forEach((cat, index) => {
+        const theme = TOOLBAR_COLORS[index % TOOLBAR_COLORS.length];
         const btn = document.createElement("button");
-        btn.setAttribute("data-category", cat);
-        btn.setAttribute("data-color-idx", colorIdx);
-        btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${TOOLBAR_COLORS[colorIdx].inactive}`;
+        btn.dataset.category = cat;
+        btn.dataset.colorIndex = index % TOOLBAR_COLORS.length;
+
+        const isCurrentActive = activeCategory === cat;
+        btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${
+          isCurrentActive ? theme.active : theme.inactive
+        }`;
         btn.textContent = cat;
-        btn.addEventListener("click", () => {
-          setCategory(cat);
-        });
+        btn.addEventListener("click", () => setCategory(cat));
         categoryContainer.appendChild(btn);
       });
     }
 
-    function setCategory(cat) {
-      activeCategory = cat;
-      
-      document.querySelectorAll(".cat-filter-btn").forEach(btn => {
-        const category = btn.getAttribute("data-category");
-        const isMatch = category === activeCategory;
-        const colorIdx = btn.getAttribute("data-color-idx");
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const cat = btn.dataset.category;
+        const colorIdx = parseInt(btn.dataset.colorIndex, 10);
 
-        if (category === "ALL") {
+        if (cat === "ALL") {
+          btn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
+            (activeCategory === "ALL" 
+              ? "bg-cyan-500 text-black border border-cyan-400 shadow-sm" 
+              : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+        } else {
+          const theme = TOOLBAR_COLORS[colorIdx];
+          const isCurrentActive = activeCategory === cat;
           btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${
-            isMatch 
-              ? "bg-cyan-500 text-black border-cyan-400 shadow-sm" 
-              : "bg-white dark:bg-surface-card hover:bg-slate-100 dark:hover:bg-surface-tagHover text-slate-600 dark:text-slate-400 border-slate-200 dark:border-surface-border"
+            isCurrentActive ? theme.active : theme.inactive
           }`;
-          return;
         }
-
-        const theme = TOOLBAR_COLORS[parseInt(colorIdx, 10) || 0];
-        btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${
-          isMatch ? theme.active : theme.inactive
-        }`;
       });
-
-      renderPlaces();
     }
+
+    // Filter Trigger Helpers
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory === cat && cat !== "ALL") ? "ALL" : cat;
+      updateToolbarStyles();
+      renderPlaces();
+    };
+
+    window.setCity = function(city) {
+      activeCity = (activeCity.toLowerCase() === city.toLowerCase()) ? "ALL" : city;
+      cityFilterSelect.value = activeCity;
+      renderPlaces();
+    };
 
     function renderPlaces() {
       gridEl.innerHTML = "";
 
       const q = searchQuery.toLowerCase().trim();
-      // Tokenize search query and strip trivial stop-words to support queries like "burger in taipei"
       const stopWords = new Set(["in", "at", "the", "on", "of", "and", "&", "a", "an"]);
       const rawTokens = q.split(/\s+/).filter(Boolean);
       const searchTokens = rawTokens.filter(word => !stopWords.has(word));
       const tokensToMatch = searchTokens.length > 0 ? searchTokens : rawTokens;
 
       const filtered = allPlaces.filter(place => {
-        // Skip places temporarily dismissed during this browsing session
         if (dismissedPlaces.has(place.title)) return false;
 
         const matchesCity = (activeCity === "ALL") || (place.city.toLowerCase() === activeCity.toLowerCase());
         const matchesCategory = (activeCategory === "ALL") || place.categories.includes(activeCategory);
         
-        // Multi-term search checking title, description, categories, and city
         const searchableContent = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
         const matchesSearch = tokensToMatch.length === 0 || tokensToMatch.every(token => searchableContent.includes(token));
 
@@ -470,30 +478,32 @@
 
       if (filtered.length === 0) {
         emptyEl.classList.remove("hidden");
+        gridEl.classList.add("hidden");
         return;
       } else {
         emptyEl.classList.add("hidden");
+        gridEl.classList.remove("hidden");
       }
 
-      filtered.forEach(place => {
+      filtered.forEach((place, index) => {
         const card = document.createElement("article");
-        card.className = "group relative bg-white dark:bg-surface-card hover:bg-slate-50 dark:hover:bg-surface-cardHover border border-slate-200 dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-cyan-950/20";
+        card.className = "gallery-item group relative bg-white dark:bg-surface-card border border-slate-200 dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition hover:border-slate-300 dark:hover:border-slate-600 shadow-sm";
 
-        // Category Tags HTML with precise horizontal & vertical centering
+        // Category Tags HTML
         const tagsHtml = place.categories.map((cat, idx) => {
           const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
           return `
-          <button 
-            type="button" 
-            onclick="setCategory('${cat.replace(/'/g, "\\'")}')" 
-            class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}"
-          >
-            ${cat}
-          </button>
-        `;
+            <button 
+              type="button" 
+              onclick="setCategory('${cat.replace(/'/g, "\\'")}')" 
+              class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}"
+            >
+              ${cat}
+            </button>
+          `;
         }).join("");
 
-        // Uniform pill city badge with pin icon, styled in green (emerald) by default and interactive
+        // Uniform pill city badge (green by default)
         const cityBadgeHtml = place.city 
           ? `<button 
               type="button"
@@ -508,73 +518,79 @@
              </button>`
           : '';
 
-        // Fallback image url if none is given
-        const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80";
+        const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1400&q=80";
         const imageSource = place.photo || fallbackImg;
 
         const photoTag = `
-          <img 
-            src="${imageSource}" 
-            alt="${place.title}" 
-            loading="lazy" 
-            onerror="this.onerror=null; this.src='${fallbackImg}';"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+          <div class="img-wrapper relative w-full h-52 overflow-hidden bg-slate-200 dark:bg-surface-card border-b border-slate-200/80 dark:border-surface-border">
+            <img 
+              src="${imageSource}" 
+              alt="${place.title}" 
+              loading="lazy" 
+              onerror="this.onerror=null; this.src='${fallbackImg}';"
+              class="w-full h-full object-cover object-center"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
         `;
 
         const photoElement = place.mapLink 
-          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="block relative w-full h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden cursor-pointer" title="Open on Google Maps">${photoTag}</a>`
-          : `<div class="relative w-full h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden">${photoTag}</div>`;
+          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="block relative w-full overflow-hidden cursor-pointer" title="Open ${place.title} on Google Maps">${photoTag}</a>`
+          : `<div class="relative w-full overflow-hidden">${photoTag}</div>`;
 
         const titleElement = place.mapLink
-          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-baseline gap-1.5 text-lg font-bold text-slate-900 dark:text-white tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" title="Open on Google Maps">
+          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-baseline gap-1.5 text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" title="Open on Google Maps">
               <span>${place.title}</span>
               <span class="text-xs opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
              </a>`
-          : `<span class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">${place.title}</span>`;
+          : `<span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">${place.title}</span>`;
 
         card.innerHTML = `
-          <!-- Dismiss "X" Button (hidden by default, reveals on hover with bright white/grey style) -->
+          <!-- Dismiss "X" Button (visible only on hover) -->
           <button 
             type="button" 
             title="Temporarily dismiss this spot" 
             aria-label="Dismiss spot" 
-            class="dismiss-card-btn absolute top-2.5 right-2.5 z-20 w-7 h-7 flex items-center justify-center rounded-full bg-black/50 hover:bg-white text-white hover:text-slate-900 border border-white/20 hover:border-white backdrop-blur-md transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 shadow-sm focus:outline-none"
+            class="dismiss-card-btn absolute top-3 right-3 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-black/60 hover:bg-white text-white hover:text-slate-900 border border-white/25 hover:border-white backdrop-blur-md transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 shadow-md focus:outline-none"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
 
+          <!-- Photo Container -->
           ${photoElement}
 
-          <div class="p-5 flex-1 flex flex-col justify-start">
-            <!-- City Tag & Category Tags -->
-            <div class="flex flex-wrap items-center gap-1.5 mb-3">
+          <!-- Information block -->
+          <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
+            <div>
+              <div class="flex items-baseline justify-between gap-3 mb-2">
+                <h2>${titleElement}</h2>
+                <span class="text-[11px] text-slate-400 dark:text-slate-600 font-mono font-medium select-none">
+                  #${String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
+
+              <!-- Description -->
+              <p class="text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 font-normal">
+                ${place.description || "No description provided."}
+              </p>
+            </div>
+
+            <!-- Badges -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-1">
               ${cityBadgeHtml}
               ${tagsHtml}
             </div>
-
-            <!-- Clickable Title -->
-            <h2 class="mb-2">
-              ${titleElement}
-            </h2>
-
-            <!-- Description -->
-            <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-              ${place.description || "No description provided."}
-            </p>
           </div>
         `;
 
-        // Add smooth dismiss interaction
+        // Smooth dismiss interaction
         const dismissBtn = card.querySelector(".dismiss-card-btn");
         dismissBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           e.preventDefault();
 
-          // Smooth disappearing animation
           card.classList.add("scale-95", "opacity-0", "pointer-events-none");
           setTimeout(() => {
             dismissedPlaces.add(place.title);
@@ -587,41 +603,37 @@
     }
 
     searchInput.addEventListener("input", (e) => {
-      // Restores dismissed places when user enters a new search term
-      dismissedPlaces.clear();
       searchQuery = e.target.value;
       clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      dismissedPlaces.clear();
       renderPlaces();
     });
 
     clearSearchBtn.addEventListener("click", () => {
-      dismissedPlaces.clear();
       searchInput.value = "";
       searchQuery = "";
       clearSearchBtn.classList.add("hidden");
       renderPlaces();
     });
 
-    resetFilterBtn.addEventListener("click", () => {
-      dismissedPlaces.clear();
-      searchInput.value = "";
-      searchQuery = "";
-      clearSearchBtn.classList.add("hidden");
-      activeCity = "ALL";
-      cityFilterSelect.value = "ALL";
-      setCategory("ALL");
+    cityFilterSelect.addEventListener("change", (e) => {
+      activeCity = e.target.value;
+      renderPlaces();
     });
 
-    function showError(message) {
-      loadingEl.style.display = "none";
-      emptyEl.classList.remove("hidden");
-      emptyEl.innerHTML = `
-        <p class="text-rose-400 font-bold text-sm mb-2">${message}</p>
-        <p class="text-xs text-slate-500">Make sure your sheet is set to File &gt; Share &gt; Publish to web as CSV.</p>
-      `;
-    }
+    resetFilterBtn.addEventListener("click", () => {
+      activeCategory = "ALL";
+      activeCity = "ALL";
+      searchQuery = "";
+      searchInput.value = "";
+      cityFilterSelect.value = "ALL";
+      clearSearchBtn.classList.add("hidden");
+      dismissedPlaces.clear();
+      updateToolbarStyles();
+      renderPlaces();
+    });
 
-    // Start fetching sheet data and init theme on page load
+    // Start fetching sheet data and theme on page load
     document.addEventListener("DOMContentLoaded", () => {
       initTheme();
       fetchPlaces();
