@@ -104,6 +104,22 @@
         opacity: 0.75 !important;
       }
     }
+
+    /* Subtle theme transition cross-fade */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.35s;
+      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Fallback smooth theme transition for non-supporting browsers */
+    .theme-transition,
+    .theme-transition *,
+    .theme-transition *::before,
+    .theme-transition *::after {
+      transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease !important;
+      transition-delay: 0s !important;
+    }
   </style>
 </head>
 
@@ -594,8 +610,24 @@
         rotationDeg += 180;
         yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
         
-        const currentlyDark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
+        const toggleThemeLogic = () => {
+          const currentlyDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
+        };
+
+        // Use native View Transitions for a seamless cross-fade if supported
+        if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.startViewTransition(() => {
+            toggleThemeLogic();
+          });
+        } else {
+          // Fallback smooth transition class for background, borders, and text
+          document.documentElement.classList.add("theme-transition");
+          toggleThemeLogic();
+          setTimeout(() => {
+            document.documentElement.classList.remove("theme-transition");
+          }, 350);
+        }
       });
     }
 
