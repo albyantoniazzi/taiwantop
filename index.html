@@ -6,12 +6,15 @@
   <title>TAIWAN TOP</title>
 
   <!-- Open Graph & SEO Metadata -->
-  <meta name="description" content="A curated directory of exceptional places in Taiwan by @albyantoniazzi." />
+  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
   <meta property="og:title" content="TAIWAN TOP" />
-  <meta property="og:description" content="A curated directory of exceptional places in Taiwan by @albyantoniazzi." />
+  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1200&q=80" />
+  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TAIWAN TOP" />
+  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
 
   <!-- Google Sans Code Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -394,6 +397,7 @@
   <script>
     // Published Google Sheets CSV Feed URL
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
 
     // Lightweight sanitization helper to prevent unescaped strings/XSS from breaking DOM
     function escapeHtml(str) {
@@ -881,8 +885,7 @@
       activeModalIndex = index;
       const place = visiblePlaces[index];
 
-      const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1400&q=80";
-      modalImageEl.src = place.photo || fallbackImg;
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
       modalImageEl.alt = place.title;
       modalTitleEl.textContent = place.title;
       modalDescEl.textContent = place.description || "No description provided for this curated spot.";
@@ -1020,8 +1023,7 @@
              </button>`
           : '';
 
-        const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1400&q=80";
-        const imageSource = place.photo || fallbackImg;
+        const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
         const safeTitle = escapeHtml(place.title);
         const safeDesc = escapeHtml(place.description || "No description provided.");
         const safeSlug = escapeHtml(place.slug);
@@ -1048,7 +1050,7 @@
               src="${escapeHtml(imageSource)}" 
               alt="${safeTitle}" 
               loading="lazy" 
-              onerror="this.onerror=null; this.src='${fallbackImg}';"
+              onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
               class="w-full h-full object-cover object-center"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
