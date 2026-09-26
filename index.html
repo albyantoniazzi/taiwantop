@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TAIWAN TOP</title>
 
+  <!-- Open Graph & SEO Metadata -->
+  <meta name="description" content="A curated directory of exceptional places in Taiwan by @albyantoniazzi." />
+  <meta property="og:title" content="TAIWAN TOP" />
+  <meta property="og:description" content="A curated directory of exceptional places in Taiwan by @albyantoniazzi." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1200&q=80" />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <!-- Google Sans Code Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -61,6 +69,12 @@
       background-color: rgba(148, 163, 184, 0.15);
     }
 
+    /* Category bar edge fade/mask effect */
+    .scroll-mask-edges {
+      mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
+    }
+
     /* Card image zoom motion */
     .gallery-item {
       transition: transform 0.25s ease, opacity 0.2s ease;
@@ -79,6 +93,13 @@
     .scrollbar-none {
       -ms-overflow-style: none;
       scrollbar-width: none;
+    }
+
+    /* Touchscreen accessibility: keep dismiss button subtly visible on devices without hover pointer */
+    @media (hover: none) and (pointer: coarse) {
+      .dismiss-card-btn {
+        opacity: 0.75 !important;
+      }
     }
   </style>
 </head>
@@ -165,14 +186,17 @@
       </div>
     </div>
 
+    <!-- Category Toolbar with subtle blurred edge fading -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-2.5">
-      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto py-0.5 scrollbar-none text-xs">
-        <button 
-          data-category="ALL"
-          class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-cyan-500 text-black border border-cyan-400 shadow-sm whitespace-nowrap"
-        >
-          All
-        </button>
+      <div class="relative w-full">
+        <div id="category-filters" class="scroll-mask-edges flex items-center gap-2 overflow-x-auto py-1 px-4 scrollbar-none text-xs">
+          <button 
+            data-category="ALL"
+            class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-cyan-500 text-black border border-cyan-400 shadow-sm whitespace-nowrap"
+          >
+            All
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -218,25 +242,58 @@
 
   </main>
 
-  <footer class="border-t border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-sm py-6 text-xs text-slate-500 dark:text-slate-400">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="inline-flex items-center gap-2">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-        </span>
-        <span class="font-medium tracking-wide">Update: 09/2026</span>
+  <footer class="border-t border-slate-200 dark:border-surface-border bg-white/80 dark:bg-surface/80 backdrop-blur-sm py-8 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <!-- Top 10 Tags Infographic Section -->
+      <div id="top-tags-infographic" class="pt-1 pb-2">
+        <div class="flex items-center justify-between gap-3 mb-3.5">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-cyan-500"></span>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              TOP 10 CATEGORIES
+            </span>
+          </div>
+        </div>
+
+        <!-- Horizontal Bar Chart Container -->
+        <div id="top-tags-bars" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+          <!-- Dynamically populated via JS -->
+        </div>
       </div>
 
-      <p class="text-slate-500 dark:text-slate-400">
-        Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
-      </p>
+      <!-- Footer Info Row -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
+        <div class="inline-flex items-center gap-2">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span class="font-medium tracking-wide">Update: 09/2026</span>
+        </div>
+
+        <p class="text-slate-500 dark:text-slate-400">
+          Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-slate-500 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
+        </p>
+      </div>
+
     </div>
   </footer>
 
   <script>
     // Published Google Sheets CSV Feed URL
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+
+    // Lightweight sanitization helper to prevent unescaped strings/XSS from breaking DOM
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     // Alternating badge color themes for cards: Blue, Red, Green
     const BADGE_COLORS = [
@@ -299,13 +356,18 @@
 
     async function fetchPlaces() {
       try {
-        const response = await fetch(SHEET_CSV_URL);
+        // Cache-busting timestamp bypasses Google's edge cache for immediate refresh on edits
+        const cacheBuster = `&_t=${Date.now()}`;
+        const response = await fetch(`${SHEET_CSV_URL}${cacheBuster}`);
         if (!response.ok) throw new Error("Network response was not ok");
         const csvText = await response.text();
 
         Papa.parse(csvText, {
           header: true,
           skipEmptyLines: true,
+          transformHeader: function(h) {
+            return h.trim().toLowerCase();
+          },
           complete: function(results) {
             processPlacesData(results.data);
           },
@@ -345,7 +407,10 @@
 
           const rawCategories = getFieldValue(row, ['categories', 'category', 'tags', 'tag']);
           const categories = rawCategories 
-            ? rawCategories.split(',').map(s => s.trim()).filter(Boolean) 
+            ? rawCategories.split(',').map(s => {
+                const trimmed = s.trim();
+                return trimmed ? (trimmed.charAt(0).toUpperCase() + trimmed.slice(1)) : '';
+              }).filter(Boolean) 
             : [];
 
           const city = getFieldValue(row, ['city', 'location', 'town']);
@@ -366,6 +431,7 @@
 
       populateCityFilter();
       populateCategoryFilters();
+      renderTopTagsChart();
       renderPlaces();
       loadingEl.classList.add("hidden");
     }
@@ -417,6 +483,71 @@
         btn.addEventListener("click", () => setCategory(cat));
         categoryContainer.appendChild(btn);
       });
+    }
+
+    // Render horizontal bar chart infographic for Top 10 categories
+    function renderTopTagsChart() {
+      const barsContainer = document.getElementById("top-tags-bars");
+      if (!barsContainer) return;
+
+      const catCount = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          catCount[c] = (catCount[c] || 0) + 1;
+        });
+      });
+
+      // Sort categories descending by count and take the top 10
+      const sortedEntries = Object.entries(catCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      if (sortedEntries.length === 0) {
+        barsContainer.innerHTML = '<p class="text-slate-400 text-xs">No tags recorded yet.</p>';
+        return;
+      }
+
+      const maxCount = sortedEntries[0][1] || 1;
+      const barThemeAccents = [
+        "bg-blue-500",
+        "bg-rose-500",
+        "bg-emerald-500"
+      ];
+
+      barsContainer.innerHTML = sortedEntries.map(([cat, count], idx) => {
+        const pct = Math.round((count / maxCount) * 100);
+        const barColor = barThemeAccents[idx % barThemeAccents.length];
+        const formattedCat = cat ? (cat.charAt(0).toUpperCase() + cat.slice(1)) : '';
+        const safeCat = escapeHtml(formattedCat);
+        const escapedJsCat = cat.replace(/'/g, "\\'");
+
+        return `
+          <button 
+            type="button"
+            onclick="setCategory('${escapedJsCat}')" 
+            title="Filter by ${safeCat} (${count} places)"
+            class="group w-full flex items-center gap-2.5 text-left py-0.5 hover:opacity-85 focus:outline-none transition-opacity"
+          >
+            <!-- Tag Name & Badge -->
+            <span class="w-24 sm:w-28 truncate font-medium text-[11px] text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors">
+              ${safeCat}
+            </span>
+
+            <!-- Progress Bar Rail (Ultra-thin line, squared edges) -->
+            <div class="flex-1 h-[2px] bg-slate-200 dark:bg-surface-border overflow-hidden relative">
+              <div 
+                class="h-full ${barColor} transition-all duration-500 ease-out"
+                style="width: ${pct}%;"
+              ></div>
+            </div>
+
+            <!-- Total Count -->
+            <span class="w-6 text-right font-mono font-bold text-[11px] text-slate-500 dark:text-slate-400 group-hover:text-cyan-500">
+              ${count}
+            </span>
+          </button>
+        `;
+      }).join('');
     }
 
     function updateToolbarStyles() {
@@ -492,13 +623,15 @@
         // Category Tags HTML
         const tagsHtml = place.categories.map((cat, idx) => {
           const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
+          const safeCat = escapeHtml(cat);
+          const escapedJsCat = cat.replace(/'/g, "\\'");
           return `
             <button 
               type="button" 
-              onclick="setCategory('${cat.replace(/'/g, "\\'")}')" 
+              onclick="setCategory('${escapedJsCat}')" 
               class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}"
             >
-              ${cat}
+              ${safeCat}
             </button>
           `;
         }).join("");
@@ -508,24 +641,26 @@
           ? `<button 
               type="button"
               onclick="setCity('${place.city.replace(/'/g, "\\'")}')"
-              title="Filter by ${place.city}"
+              title="Filter by ${escapeHtml(place.city)}"
               class="h-6 px-2.5 inline-flex items-center justify-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
             >
               <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
               </svg>
-              <span>${place.city}</span>
+              <span>${escapeHtml(place.city)}</span>
              </button>`
           : '';
 
         const fallbackImg = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1400&q=80";
         const imageSource = place.photo || fallbackImg;
+        const safeTitle = escapeHtml(place.title);
+        const safeDesc = escapeHtml(place.description || "No description provided.");
 
         const photoTag = `
-          <div class="img-wrapper relative w-full h-52 overflow-hidden bg-slate-200 dark:bg-surface-card border-b border-slate-200/80 dark:border-surface-border">
+          <div class="img-wrapper relative w-full aspect-[16/10] overflow-hidden bg-slate-200 dark:bg-surface-card border-b border-slate-200/80 dark:border-surface-border">
             <img 
-              src="${imageSource}" 
-              alt="${place.title}" 
+              src="${escapeHtml(imageSource)}" 
+              alt="${safeTitle}" 
               loading="lazy" 
               onerror="this.onerror=null; this.src='${fallbackImg}';"
               class="w-full h-full object-cover object-center"
@@ -535,18 +670,18 @@
         `;
 
         const photoElement = place.mapLink 
-          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="block relative w-full overflow-hidden cursor-pointer" title="Open ${place.title} on Google Maps">${photoTag}</a>`
+          ? `<a href="${encodeURI(place.mapLink)}" target="_blank" rel="noopener noreferrer" class="block relative w-full overflow-hidden cursor-pointer" title="Open ${safeTitle} on Google Maps">${photoTag}</a>`
           : `<div class="relative w-full overflow-hidden">${photoTag}</div>`;
 
         const titleElement = place.mapLink
-          ? `<a href="${place.mapLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-baseline gap-1.5 text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" title="Open on Google Maps">
-              <span>${place.title}</span>
+          ? `<a href="${encodeURI(place.mapLink)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-baseline gap-1.5 text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" title="Open on Google Maps">
+              <span>${safeTitle}</span>
               <span class="text-xs opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
              </a>`
-          : `<span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">${place.title}</span>`;
+          : `<span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">${safeTitle}</span>`;
 
         card.innerHTML = `
-          <!-- Dismiss "X" Button (visible only on hover) -->
+          <!-- Dismiss "X" Button (visible on hover, or touchscreens) -->
           <button 
             type="button" 
             title="Temporarily dismiss this spot" 
@@ -564,16 +699,13 @@
           <!-- Information block -->
           <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
             <div>
-              <div class="flex items-baseline justify-between gap-3 mb-2">
+              <div class="mb-2">
                 <h2>${titleElement}</h2>
-                <span class="text-[11px] text-slate-400 dark:text-slate-600 font-mono font-medium select-none">
-                  #${String(index + 1).padStart(2, '0')}
-                </span>
               </div>
 
               <!-- Description -->
               <p class="text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 font-normal">
-                ${place.description || "No description provided."}
+                ${safeDesc}
               </p>
             </div>
 
