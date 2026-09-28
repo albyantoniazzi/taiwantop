@@ -83,9 +83,8 @@
       transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
     }
 
-    /* Unified lowercase badge styling across all sections */
+    /* Unified badge styling across all sections */
     .badge-pill {
-      text-transform: lowercase;
       font-size: 11px;
       font-weight: 700;
       line-height: 1.1rem;
@@ -409,6 +408,14 @@
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    function formatCityName(str) {
+      if (!str) return '';
+      return str
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+
     // State Variables
     let allPlaces = [];
     let visiblePlaces = [];
@@ -451,28 +458,6 @@
     const modalNextBtn = document.getElementById("modal-next-btn");
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
-
-    // Dynamic toolbar scroll fade & blur updates
-    function updateToolbarFades() {
-      if (!categoryScrollContainer || !toolbarFadeLeft || !toolbarFadeRight) return;
-      const el = categoryScrollContainer;
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (maxScroll <= 4) {
-        toolbarFadeLeft.style.opacity = '0';
-        toolbarFadeRight.style.opacity = '0';
-        return;
-      }
-      const atStart = el.scrollLeft <= 6;
-      const atEnd = el.scrollLeft >= maxScroll - 6;
-
-      toolbarFadeLeft.style.opacity = atStart ? '0' : '1';
-      toolbarFadeRight.style.opacity = atEnd ? '0' : '1';
-    }
-
-    if (categoryScrollContainer) {
-      categoryScrollContainer.addEventListener("scroll", updateToolbarFades, { passive: true });
-      window.addEventListener("resize", updateToolbarFades);
-    }
 
     // Deterministic PRNG seeded by today's calendar date
     function seededRandom(seed) {
@@ -522,6 +507,19 @@
         const safeTitle = escapeHtml(place.title);
         const safeDesc = escapeHtml(place.description);
 
+        const cityHtml = place.city ? `
+          <button 
+            type="button"
+            data-city="${escapeHtml(place.city)}"
+            class="card-city-badge badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold capitalize border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+            </svg>
+            <span>${escapeHtml(formatCityName(place.city))}</span>
+          </button>
+        ` : '';
+
         const tagsHtml = place.categories.map(cat => `
           <button 
             type="button"
@@ -531,6 +529,19 @@
             ${escapeHtml(cat.toLowerCase())}
           </button>
         `).join('');
+
+        const mapArrowHtml = place.mapLink ? `
+          <a 
+            href="${encodeURI(place.mapLink)}" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            title="Open in Google Maps"
+            aria-label="Open ${safeTitle} in Google Maps"
+            class="card-map-arrow flex-shrink-0 text-base sm:text-lg font-bold text-[#292929] dark:text-white hover:opacity-70 transition p-0.5 leading-none focus:outline-none"
+          >
+            ↗
+          </a>
+        ` : '';
 
         card.innerHTML = `
           <!-- Image Box (Aspect ~16/10) -->
@@ -544,10 +555,13 @@
             />
           </div>
 
-          <!-- Title -->
-          <h2 class="text-base sm:text-lg font-bold text-[#292929] dark:text-white tracking-tight leading-snug">
-            ${safeTitle}
-          </h2>
+          <!-- Title Row with Right-Aligned Maps Arrow -->
+          <div class="flex items-baseline justify-between gap-2">
+            <h2 class="text-base sm:text-lg font-bold text-[#292929] dark:text-white tracking-tight leading-snug">
+              ${safeTitle}
+            </h2>
+            ${mapArrowHtml}
+          </div>
 
           <!-- Description (Semibold) -->
           ${safeDesc ? `
@@ -556,14 +570,39 @@
             </p>
           ` : ''}
 
-          <!-- Badges Row -->
+          <!-- Badges Row (City + Categories) -->
           <div class="mt-2.5 flex items-center gap-1 flex-wrap">
+            ${cityHtml}
             ${tagsHtml}
           </div>
         `;
 
         // Card click opens modal
         card.addEventListener('click', () => openModal(index));
+
+        // Maps arrow click stops card modal trigger
+        const arrowEl = card.querySelector('.card-map-arrow');
+        if (arrowEl) {
+          arrowEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
+
+        // City badge click filters by city without opening modal
+        const cityBtn = card.querySelector('.card-city-badge');
+        if (cityBtn) {
+          cityBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const city = cityBtn.getAttribute('data-city');
+            if (city) {
+              activeCity = city;
+              cityFilterSelect.value = city;
+              updateUrlState();
+              filterPlaces();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+        }
 
         // Badges click sets category without opening modal
         card.querySelectorAll('.card-cat-badge').forEach(badgeBtn => {
@@ -758,8 +797,13 @@
 
       // City Badge in Modal (clickable to filter by city)
       if (place.city) {
-        modalCityBadge.className = "badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
-        modalCityBadge.textContent = place.city.toLowerCase();
+        modalCityBadge.className = "badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold capitalize tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
+        modalCityBadge.innerHTML = `
+          <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+          <span>${escapeHtml(formatCityName(place.city))}</span>
+        `;
         modalCityBadge.onclick = (e) => {
           e.stopPropagation();
           activeCity = place.city;
