@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,6 +36,11 @@
             mono: ['"Google Sans Code"', 'monospace']
           },
           colors: {
+            brand: {
+              bg: '#EBF1E5',
+              black: '#292929',
+              badge: '#292929'
+            },
             surface: {
               DEFAULT: '#0f131a',
               card: '#161b24',
@@ -48,48 +53,15 @@
   </script>
 
   <style>
-    /* Dotted background pattern */
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      background-image: radial-gradient(#b9ae9b 1.2px, transparent 1.2px);
-      background-size: 24px 24px;
-      background-attachment: fixed;
-    }
-    .dark body,
-    html.dark body {
-      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
-      background-size: 24px 24px;
-      background-attachment: fixed;
+      min-height: 100vh;
     }
 
-    /* Skeleton shimmer */
-    @keyframes shimmer {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-    .shimmer {
-      animation: shimmer 1.5s infinite ease-in-out;
-      background-color: rgba(160, 147, 128, 0.28);
-    }
-
-    /* Category bar edge fade/mask effect */
-    .scroll-mask-edges {
-      mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
-    }
-
-    /* Card image zoom motion */
-    .gallery-item {
-      transition: transform 0.25s ease, opacity 0.2s ease;
-    }
-    .gallery-item .img-wrapper img {
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .gallery-item:hover .img-wrapper img {
-      transform: scale(1.04);
-    }
-
-    /* Custom scrollbar hiding utility */
+    /* Scrollbar utility */
     .scrollbar-none::-webkit-scrollbar {
       display: none;
     }
@@ -98,200 +70,242 @@
       scrollbar-width: none;
     }
 
-    /* Touchscreen accessibility: keep dismiss button subtly visible on devices without hover pointer */
-    @media (hover: none) and (pointer: coarse) {
-      .dismiss-card-btn {
-        opacity: 0.75 !important;
-      }
-    }
-
-    /* Subtle theme transition cross-fade */
+    /* Smooth theme transitions */
     ::view-transition-old(root),
     ::view-transition-new(root) {
-      animation-duration: 0.35s;
-      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out;
     }
-
-    /* Fallback smooth theme transition for non-supporting browsers */
     .theme-transition,
     .theme-transition *,
     .theme-transition *::before,
     .theme-transition *::after {
-      transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease !important;
-      transition-delay: 0s !important;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+    }
+
+    /* All Lowercase for badges - optically unified font sizes */
+    .badge-toolbar {
+      text-transform: lowercase;
+      font-size: 9px; /* 1pt smaller */
+      line-height: 1rem;
+    }
+    .badge-post {
+      text-transform: lowercase;
+      font-size: 10px; /* 1pt bigger, visually matching toolbar */
+      line-height: 1rem;
     }
   </style>
 </head>
 
-<body class="min-h-screen font-mono flex flex-col bg-[#e4dccf] dark:bg-[#0c0e14] text-stone-800 dark:text-slate-100 transition-colors duration-200 selection:bg-cyan-500 selection:text-black overflow-x-hidden">
+<body class="font-mono bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white selection:bg-[#292929] selection:text-[#EBF1E5] dark:selection:bg-white dark:selection:text-[#333333]">
 
-  <header class="border-b border-[#cfc5b3] dark:border-surface-border bg-[#e4dccf]/85 dark:bg-surface/80 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-stone-800 dark:bg-cyan-400 animate-pulse"></span>
-          <h1 class="text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
-            <a 
-              href="index.html" 
-              class="text-stone-900 dark:text-white hover:text-stone-600 dark:hover:text-cyan-400 transition-colors"
-              title="Return to home"
-            >
-              TAIWAN TOP
-            </a>
-            <span class="text-stone-500 dark:text-slate-400 font-normal text-xs sm:text-sm lowercase">by</span>
-            <a 
-              href="https://albyantoniazzi.github.io/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="text-stone-500 dark:text-slate-400 underline hover:text-stone-800 dark:hover:text-slate-200 transition-colors text-xs sm:text-sm font-medium lowercase"
-            >
-              @albyantoniazzi
-            </a>
-          </h1>
-        </div>
+  <header class="w-full max-w-[1920px] mx-auto pt-6 sm:pt-10 px-4 sm:px-8 pb-4">
+    
+    <!-- Top Row: Title + Search + City Filter + Theme Toggle in one streamlined line -->
+    <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 sm:gap-6">
+      
+      <!-- Brand Title & Creator Credit -->
+      <div class="flex items-baseline gap-2 flex-shrink-0">
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight uppercase">
+          <a href="index.html" class="text-[#292929] dark:text-white hover:opacity-80 transition-opacity">
+            TAIWAN TOP
+          </a>
+        </h1>
+        <span class="text-xs sm:text-sm text-[#292929] dark:text-white font-normal">by</span>
+        <a 
+          href="https://albyantoniazzi.github.io/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="text-xs sm:text-sm text-[#292929] dark:text-white underline font-semibold hover:opacity-75 transition-opacity"
+        >
+          @albyantoniazzi
+        </a>
       </div>
 
-      <div class="flex items-center gap-3 w-full md:w-auto">
-        <div class="relative flex-1 md:w-64">
+      <!-- Controls Group: Search, City Filter, and Yin-Yang Toggle inline -->
+      <div class="flex items-center gap-3 sm:gap-4 flex-1 justify-end">
+        
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-xs sm:max-w-sm">
           <input 
             type="text" 
             id="search-input" 
             placeholder="Search..." 
-            class="w-full bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md px-4 py-2 text-xs text-stone-800 dark:text-slate-100 placeholder-stone-500 dark:placeholder-slate-500 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition"
+            class="w-full bg-transparent dark:bg-[#333333] border border-[#292929] dark:border-white rounded-full px-4 py-1 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white placeholder-[#292929] dark:placeholder-white focus:outline-none transition"
           />
-          <span id="clear-search-btn" class="hidden absolute right-3 top-2 text-stone-400 hover:text-stone-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
+          <button 
+            id="clear-search-btn" 
+            type="button" 
+            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#292929] dark:text-white"
+          >
+            ×
+          </button>
         </div>
 
-        <!-- City Filter Dropdown -->
-        <div class="relative">
+        <!-- City Dropdown -->
+        <div class="relative flex-shrink-0">
           <select 
             id="city-filter" 
             aria-label="Filter by City"
-            class="appearance-none bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md pl-3 pr-8 py-2 text-xs font-semibold text-stone-800 dark:text-slate-200 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition cursor-pointer"
+            class="appearance-none bg-transparent dark:bg-[#333333] border border-[#292929] dark:border-white rounded-md pl-3 pr-8 py-1 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white focus:outline-none transition cursor-pointer"
           >
-            <option value="ALL">All Cities</option>
+            <option value="ALL" class="dark:bg-[#333333]">All Cities</option>
           </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-stone-600 dark:text-slate-500">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#292929] dark:text-white">
+            <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
             </svg>
           </div>
         </div>
 
-        <!-- Live Place Counter -->
-        <div class="px-3 py-1.5 bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-md text-xs font-semibold text-stone-700 dark:text-slate-300 whitespace-nowrap">
-          <span id="places-count" class="text-stone-900 dark:text-cyan-400 font-bold">0</span> places
-        </div>
-
-        <!-- Taoist Yin Yang Theme Toggle Button -->
+        <!-- Taoist Pure Black & White Yin-Yang Theme Toggle -->
         <button 
           id="theme-toggle" 
           type="button" 
-          title="Toggle Taoist Yin/Yang Mode"
+          title="Toggle Light / Dark Mode"
           aria-label="Toggle Light and Dark Mode" 
-          class="relative p-1 flex items-center justify-center group focus:outline-none"
+          class="p-0.5 flex-shrink-0 flex items-center justify-center focus:outline-none transition-transform hover:scale-105"
         >
           <svg 
             id="yin-yang-icon" 
-            class="w-7 h-7 transition-transform duration-500 ease-in-out cursor-pointer group-hover:scale-110 drop-shadow-sm select-none" 
+            class="w-6 h-6 transition-transform duration-500 ease-in-out cursor-pointer drop-shadow-sm select-none" 
             viewBox="0 0 100 100"
           >
-            <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-            <path d="M 50 3 A 47 47 0 0 1 50 97 A 23.5 23.5 0 0 1 50 50 A 23.5 23.5 0 0 0 50 3 Z" fill="#000000"/>
-            <circle cx="50" cy="26.5" r="7" fill="#000000"/>
+            <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#292929" stroke-width="2.5"/>
+            <path d="M 50 3 A 47 47 0 0 1 50 97 A 23.5 23.5 0 0 1 50 50 A 23.5 23.5 0 0 0 50 3 Z" fill="#292929"/>
+            <circle cx="50" cy="26.5" r="7" fill="#292929"/>
             <circle cx="50" cy="73.5" r="7" fill="#ffffff"/>
           </svg>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Category Pills Row: Horizontally scrollable on small/overflow screens -->
+    <div class="mt-4 overflow-x-auto scrollbar-none py-1 -mx-4 px-4 sm:-mx-8 sm:px-8">
+      <div class="flex items-center gap-1 flex-nowrap" id="category-filters">
+        <button 
+          data-category="ALL"
+          class="cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm"
+        >
+          all
         </button>
       </div>
     </div>
 
-    <!-- Category Toolbar with subtle blurred edge fading -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-2.5">
-      <div class="relative w-full">
-        <div id="category-filters" class="scroll-mask-edges flex items-center gap-2 overflow-x-auto py-1 px-4 scrollbar-none text-xs">
-          <button 
-            data-category="ALL"
-            class="cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0 whitespace-nowrap"
-          >
-            All
-          </button>
-        </div>
-      </div>
-    </div>
   </header>
 
-  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    
-    <!-- Loading skeleton state -->
-    <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4">
-        <div class="w-full h-52 rounded shimmer"></div>
-        <div class="h-5 w-2/3 rounded shimmer"></div>
-        <div class="h-4 w-full rounded shimmer"></div>
-        <div class="h-6 w-1/3 rounded-full shimmer"></div>
-      </div>
-      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4 hidden sm:block">
-        <div class="w-full h-52 rounded shimmer"></div>
-        <div class="h-5 w-2/3 rounded shimmer"></div>
-        <div class="h-4 w-full rounded shimmer"></div>
-        <div class="h-6 w-1/3 rounded-full shimmer"></div>
-      </div>
-      <div class="space-y-4 bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg p-4 hidden lg:block">
-        <div class="w-full h-52 rounded shimmer"></div>
-        <div class="h-5 w-2/3 rounded shimmer"></div>
-        <div class="h-4 w-full rounded shimmer"></div>
-        <div class="h-6 w-1/3 rounded-full shimmer"></div>
+  <!-- Full-page edge-to-edge dividing line between badges toolbar and posts (decreased thickness by 1pt) -->
+  <div class="w-full border-b border-[#292929] dark:border-white"></div>
+
+  <main class="w-full max-w-[1920px] mx-auto px-4 sm:px-8 py-6">
+
+    <!-- Loading State -->
+    <div id="loading-state" class="py-24 flex items-center justify-center">
+      <div class="flex items-center gap-3 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white">
+        <span class="w-3 h-3 rounded-full bg-[#292929] dark:bg-white animate-ping"></span>
+        <span>Loading places...</span>
       </div>
     </div>
 
-    <!-- Empty state notification -->
-    <div id="empty-state" class="hidden text-center py-20 mx-auto max-w-lg border border-dashed border-[#cfc5b3] dark:border-surface-border rounded-lg bg-[#eae4d8]/60 dark:bg-surface-card/40 px-6">
-      <p class="text-base text-stone-800 dark:text-slate-300 font-semibold mb-2">No matching spots found</p>
-      <p class="text-xs text-stone-500 mb-6">Try picking another category or clear your search term</p>
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden py-24 text-center">
+      <p class="text-base font-bold text-[#292929] dark:text-white mb-2">No places match your search</p>
+      <p class="text-xs text-[#292929] dark:text-white mb-4">Try clearing your filters or search terms.</p>
       <button 
-        id="reset-filter-btn" 
-        class="px-4 py-2 text-xs font-bold uppercase rounded-lg bg-stone-900 text-stone-50 dark:bg-cyan-500 dark:text-black hover:opacity-90 transition"
+        id="reset-filter-btn"
+        type="button" 
+        class="px-4 py-1.5 text-xs font-semibold uppercase rounded-full bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-90 transition"
       >
         Reset Filters
       </button>
     </div>
 
-    <!-- Responsive Multi-Column Places Grid -->
-    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch w-full"></div>
+    <!-- Responsive Adaptive Grid Container: 1 col on mobile, 2 sm, 3 md/lg, 4 xl, 5 2xl -->
+    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-8 gap-y-10"></div>
 
   </main>
 
-  <!-- Interactive Detail Modal -->
+  <!-- Reintroduced Directory Stats Footer without box outline around the chart -->
+  <footer id="stats-footer" class="w-full pt-10 pb-16">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
+      
+      <!-- Overview Numbers with Large Digits and Small Labels -->
+      <div class="flex-shrink-0 lg:w-80">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
+        <div class="flex items-baseline gap-6 sm:gap-8 mt-4 text-[#292929] dark:text-white">
+          <div class="flex flex-col">
+            <span id="footer-total-places" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
+            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">places</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="footer-total-cities" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
+            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">cities</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="footer-total-cats" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
+            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">categories</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 5 Categories Infographic -->
+      <div class="flex-1 max-w-3xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-[#292929] dark:text-white mb-4">TOP 5 CATEGORIES</h4>
+        <div id="stats-chart" class="space-y-3">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Full-width edge-to-edge dividing line above footer bottom credits (decreased thickness by 1pt) -->
+    <div class="w-full border-t border-[#292929] dark:border-white"></div>
+
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#292929] dark:text-white gap-2 font-semibold">
+      <button 
+        type="button" 
+        id="back-to-top-btn" 
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" 
+        class="inline-flex items-center gap-1 hover:underline cursor-pointer focus:outline-none"
+      >
+        <span>Back to top</span>
+        <span>↑</span>
+      </button>
+      <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="hover:underline">@albyantoniazzi</a>
+    </div>
+  </footer>
+
   <div 
     id="detail-modal" 
-    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 lg:p-12 bg-black/75 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 lg:p-12 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
     role="dialog"
     aria-modal="true"
     aria-hidden="true"
   >
-    <!-- Modal Wrapper with Outside Navigation Controls -->
+    <!-- Modal Wrapper with Centered Outside Navigation Arrows -->
     <div id="modal-container" class="relative w-full max-w-2xl flex items-center justify-center">
 
-      <!-- Previous Arrow (Outside card, centered vertically) -->
+      <!-- Previous Arrow (Outside card, vertically centered) -->
       <button 
         id="modal-prev-btn" 
         type="button" 
         title="Previous spot (←)"
         aria-label="Previous spot"
-        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#EBF1E5] dark:hover:bg-white text-white hover:text-[#292929] border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <!-- Next Arrow (Outside card, centered vertically) -->
+      <!-- Next Arrow (Outside card, vertically centered) -->
       <button 
         id="modal-next-btn" 
         type="button" 
         title="Next spot (→)"
         aria-label="Next spot"
-        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#EBF1E5] dark:hover:bg-white text-white hover:text-[#292929] border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
@@ -301,32 +315,30 @@
       <!-- Modal Card Box -->
       <div 
         id="modal-card" 
-        class="relative w-full max-h-[92vh] flex flex-col bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+        class="relative w-full max-h-[90vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
-        <!-- Scrollable Modal Content -->
         <div class="overflow-y-auto flex-1 scrollbar-none">
-          <!-- Hero Image -->
-          <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-stone-900 overflow-hidden border-b border-[#cfc5b3] dark:border-surface-border">
+          <!-- Hero Photo -->
+          <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
             <img 
               id="modal-image" 
               src="" 
               alt="" 
               class="w-full h-full object-cover object-center" 
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
           </div>
 
           <!-- Body Details -->
           <div class="p-5 sm:p-6 space-y-4">
             <div>
-              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+              <div class="flex items-center gap-1 mb-2 flex-wrap">
                 <span id="modal-city-badge"></span>
-                <div id="modal-tags" class="flex flex-wrap items-center gap-1.5"></div>
+                <div id="modal-tags" class="flex flex-wrap items-center gap-1"></div>
               </div>
-              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-white pt-1"></h2>
+              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white pt-1"></h2>
             </div>
 
-            <p id="modal-description" class="text-xs sm:text-sm leading-relaxed text-stone-600 dark:text-slate-300 font-normal italic whitespace-pre-line"></p>
+            <p id="modal-description" class="text-[11px] sm:text-xs leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
 
             <!-- External Action Button Bar -->
             <div class="pt-2 flex flex-wrap items-center gap-2.5">
@@ -335,7 +347,7 @@
                 type="button" 
                 title="Copy direct link to this spot" 
                 aria-label="Copy direct link"
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-md border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -348,7 +360,7 @@
                 href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm"
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-md border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm"
               >
                 <span>View on Google Maps</span>
                 <span class="text-xs">↗</span>
@@ -361,10 +373,10 @@
     </div>
   </div>
 
-  <!-- Toast Notification for Link Copying -->
+  <!-- Toast Notification -->
   <div 
     id="toast-notification" 
-    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-stone-900/90 dark:bg-white/90 text-stone-50 dark:text-stone-900 text-xs font-semibold rounded-lg shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] text-xs font-semibold rounded-full shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
   >
     <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
@@ -372,50 +384,11 @@
     <span id="toast-message">Link copied to clipboard!</span>
   </div>
 
-  <footer class="border-t border-[#cfc5b3] dark:border-surface-border bg-[#e4dccf]/85 dark:bg-surface/80 backdrop-blur-sm py-8 text-xs text-stone-500 dark:text-slate-400">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-      
-      <!-- Top 10 Tags Infographic Section -->
-      <div id="top-tags-infographic" class="pt-1 pb-2">
-        <div class="flex items-center justify-between gap-3 mb-3.5">
-          <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-stone-800 dark:bg-cyan-500"></span>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-800 dark:text-slate-200">
-              TOP 10 CATEGORIES
-            </span>
-          </div>
-        </div>
-
-        <!-- Horizontal Bar Chart Container -->
-        <div id="top-tags-bars" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
-          <!-- Dynamically populated via JS -->
-        </div>
-      </div>
-
-      <!-- Footer Info Row -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
-        <div class="inline-flex items-center gap-2">
-          <span class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#2d5937] dark:bg-emerald-500"></span>
-          </span>
-          <span class="font-medium tracking-wide">Update: 09/2026</span>
-        </div>
-
-        <p class="text-stone-500 dark:text-slate-400">
-          Curated by <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="text-stone-500 dark:text-slate-400 underline hover:text-stone-800 dark:hover:text-slate-200 transition-colors">@albyantoniazzi</a>
-        </p>
-      </div>
-
-    </div>
-  </footer>
-
   <script>
-    // Published Google Sheets CSV Feed URL
+    // CSV URL & Fallback Image
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
     const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
 
-    // Lightweight sanitization helper to prevent unescaped strings/XSS from breaking DOM
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -426,44 +399,24 @@
         .replace(/'/g, '&#39;');
     }
 
-    // Light-tinted badge themes with colored text for card list and modal; hovers into rich solid tones
-    const BADGE_COLORS = [
-      "bg-[#edf2f7] text-[#244b70] border-[#c9d8e6] hover:bg-[#244b70] hover:text-[#fbf9f5] hover:border-[#1c3c5a] dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500 dark:hover:text-slate-950 dark:hover:border-blue-400",
-      "bg-[#faf0ed] text-[#9c3826] border-[#f0cfc7] hover:bg-[#9c3826] hover:text-[#fbf9f5] hover:border-[#7d2c1e] dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500 dark:hover:text-slate-950 dark:hover:border-rose-400",
-      "bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] hover:bg-[#2d5937] hover:text-[#fbf9f5] hover:border-[#22442a] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
-    ];
+    function capitalizeFirstLetter(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
-    // Solid colored background toolbar buttons with distinct active states
-    const TOOLBAR_COLORS = [
-      {
-        inactive: "bg-[#244b70] text-[#fbf9f5] border-[#1c3c5a] hover:bg-[#356799] hover:border-[#477fb8] hover:text-white dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500/25",
-        active: "bg-[#16324d] text-white border-[#0f2336] shadow-sm ring-2 ring-[#244b70] ring-offset-2 ring-offset-[#e4dccf] dark:bg-blue-500 dark:text-slate-950 dark:border-blue-400 dark:ring-0 dark:shadow-blue-500/20"
-      },
-      {
-        inactive: "bg-[#9c3826] text-[#fbf9f5] border-[#7d2c1e] hover:bg-[#ba4530] hover:border-[#d65740] hover:text-white dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500/25",
-        active: "bg-[#712719] text-white border-[#521b11] shadow-sm ring-2 ring-[#9c3826] ring-offset-2 ring-offset-[#e4dccf] dark:bg-rose-500 dark:text-slate-950 dark:border-rose-400 dark:ring-0 dark:shadow-rose-500/20"
-      },
-      {
-        inactive: "bg-[#2d5937] text-[#fbf9f5] border-[#22442a] hover:bg-[#3b7348] hover:border-[#4b915c] hover:text-white dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500/25",
-        active: "bg-[#1e3c25] text-white border-[#152a1a] shadow-sm ring-2 ring-[#2d5937] ring-offset-2 ring-offset-[#e4dccf] dark:bg-emerald-500 dark:text-slate-950 dark:border-emerald-400 dark:ring-0 dark:shadow-emerald-500/20"
-      }
-    ];
-
-    // Reactive Application State
+    // State Variables
     let allPlaces = [];
-    let dismissedPlaces = new Set();
+    let visiblePlaces = [];
     let activeCity = "ALL";
     let activeCategory = "ALL";
     let searchQuery = "";
     let rotationDeg = 0;
     let activeModalIndex = -1;
-    let visiblePlaces = [];
 
     // DOM Elements
     const gridEl = document.getElementById("places-grid");
     const loadingEl = document.getElementById("loading-state");
     const emptyEl = document.getElementById("empty-state");
-    const counterEl = document.getElementById("places-count");
     const categoryContainer = document.getElementById("category-filters");
     const cityFilterSelect = document.getElementById("city-filter");
     const searchInput = document.getElementById("search-input");
@@ -471,6 +424,12 @@
     const resetFilterBtn = document.getElementById("reset-filter-btn");
     const themeToggleBtn = document.getElementById("theme-toggle");
     const yinYangIcon = document.getElementById("yin-yang-icon");
+
+    // Stats Footer Elements
+    const footerPlacesCount = document.getElementById("footer-total-places");
+    const footerCitiesCount = document.getElementById("footer-total-cities");
+    const footerCatsCount = document.getElementById("footer-total-cats");
+    const statsChartEl = document.getElementById("stats-chart");
 
     // Modal & Toast Elements
     const modalEl = document.getElementById("detail-modal");
@@ -484,11 +443,10 @@
     const modalTags = document.getElementById("modal-tags");
     const modalPrevBtn = document.getElementById("modal-prev-btn");
     const modalNextBtn = document.getElementById("modal-next-btn");
-    const modalIndexCounter = document.getElementById("modal-index-counter");
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
 
-    // Helper: Deterministic PRNG seeded by today's calendar date (YYYYMMDD)
+    // Deterministic PRNG seeded by today's calendar date
     function seededRandom(seed) {
       let state = seed % 2147483647;
       if (state <= 0) state += 2147483646;
@@ -498,10 +456,8 @@
       };
     }
 
-    // Helper: Daily Seeded Fisher-Yates Shuffle
     function dailyShuffle(array) {
       const now = new Date();
-      // Date seed: YYYYMMDD based on client local date
       const dateSeed = (now.getFullYear() * 10000) + ((now.getMonth() + 1) * 100) + now.getDate();
       const rng = seededRandom(dateSeed);
       const shuffled = [...array];
@@ -512,7 +468,6 @@
       return shuffled;
     }
 
-    // Helper: Create URL friendly slug from place title
     function createSlug(title) {
       return (title || '')
         .toLowerCase()
@@ -522,7 +477,307 @@
         .replace(/^-+|-+$/g, '');
     }
 
-    // Helper: Copy text with iFrame fallback support
+    function renderCards() {
+      gridEl.innerHTML = '';
+
+      if (visiblePlaces.length === 0) {
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+
+      visiblePlaces.forEach((place, index) => {
+        const card = document.createElement('article');
+        card.className = "flex flex-col group cursor-pointer pb-6 border-b border-[#292929] dark:border-white";
+
+        const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+        const safeTitle = escapeHtml(place.title);
+        const safeDesc = escapeHtml(place.description);
+
+        const tagsHtml = place.categories.map(cat => `
+          <span class="badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]">
+            ${escapeHtml(cat.toLowerCase())}
+          </span>
+        `).join('');
+
+        card.innerHTML = `
+          <!-- Image Box (Aspect ~16/10) -->
+          <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden mb-3">
+            <img 
+              src="${escapeHtml(imageSource)}" 
+              alt="${safeTitle}" 
+              loading="lazy"
+              onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
+              class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
+            />
+          </div>
+
+          <!-- Title -->
+          <h2 class="text-base sm:text-lg font-bold text-[#292929] dark:text-white tracking-tight leading-snug">
+            ${safeTitle}
+          </h2>
+
+          <!-- Description (Semibold) -->
+          ${safeDesc ? `
+            <p class="text-[11px] sm:text-xs text-[#292929] dark:text-white font-semibold mt-1 line-clamp-2 leading-relaxed">
+              ${safeDesc}
+            </p>
+          ` : ''}
+
+          <!-- Badges Row -->
+          <div class="mt-2.5 flex items-center gap-1 flex-wrap">
+            ${tagsHtml}
+          </div>
+        `;
+
+        card.addEventListener('click', () => openModal(index));
+        gridEl.appendChild(card);
+      });
+    }
+
+    function filterPlaces() {
+      const q = searchQuery.toLowerCase().trim();
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+
+      visiblePlaces = allPlaces.filter(place => {
+        const matchesCity = (activeCity === "ALL") || (place.city.toLowerCase() === activeCity.toLowerCase());
+        const matchesCategory = (activeCategory === "ALL") || place.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase());
+        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
+        return matchesCity && matchesCategory && matchesSearch;
+      });
+
+      renderCards();
+    }
+
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const cat = btn.dataset.category;
+        const isCurrentActive = activeCategory.toLowerCase() === cat.toLowerCase();
+
+        if (cat.toUpperCase() === "ALL") {
+          // "all" badge: not black by default, styled like the others on hover (light with border), inverts to black on hover
+          if (isCurrentActive) {
+            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40";
+          } else {
+            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929]";
+          }
+        } else {
+          if (isCurrentActive) {
+            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] dark:border-white dark:bg-white dark:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40";
+          } else {
+            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white";
+          }
+        }
+      });
+    }
+
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory.toLowerCase() === cat.toLowerCase() && cat.toLowerCase() !== "all") ? "ALL" : cat;
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    };
+
+    function populateCityFilter() {
+      const cities = Array.from(new Set(allPlaces.map(p => p.city).filter(Boolean))).sort();
+      cityFilterSelect.innerHTML = '<option value="ALL" class="dark:bg-[#333333]">All Cities</option>';
+      cities.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city;
+        opt.textContent = city;
+        opt.className = "dark:bg-[#333333]";
+        cityFilterSelect.appendChild(opt);
+      });
+    }
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          const formatted = c.trim().toLowerCase();
+          catCount[formatted] = (catCount[formatted] || 0) + 1;
+        });
+      });
+
+      const sortedCategories = Object.keys(catCount).sort();
+      categoryContainer.innerHTML = '';
+
+      // "all" Button (like the others when hover, not black by default)
+      const allBtn = document.createElement("button");
+      allBtn.dataset.category = "ALL";
+      allBtn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm";
+      allBtn.textContent = "all";
+      allBtn.addEventListener("click", () => setCategory("ALL"));
+      categoryContainer.appendChild(allBtn);
+
+      sortedCategories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.dataset.category = cat;
+        btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white";
+        btn.textContent = cat;
+        btn.addEventListener("click", () => setCategory(cat));
+        categoryContainer.appendChild(btn);
+      });
+    }
+
+    function renderStatsChart() {
+      const catCount = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          const lower = c.trim().toLowerCase();
+          catCount[lower] = (catCount[lower] || 0) + 1;
+        });
+      });
+
+      const sorted = Object.entries(catCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // Top 5 categories
+
+      const uniqueCities = new Set(allPlaces.map(p => p.city).filter(Boolean)).size;
+      const totalUniqueCats = Object.keys(catCount).length;
+
+      footerPlacesCount.textContent = allPlaces.length;
+      footerCitiesCount.textContent = uniqueCities;
+      footerCatsCount.textContent = totalUniqueCats;
+
+      const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+
+      statsChartEl.innerHTML = sorted.map(([category, count]) => {
+        const percent = Math.round((count / maxCount) * 100);
+        return `
+          <div class="flex items-center gap-3 text-xs group cursor-pointer" onclick="setCategory('${escapeHtml(category)}')">
+            <div class="w-28 sm:w-36 font-semibold text-[#292929] dark:text-white truncate lowercase group-hover:underline">
+              ${escapeHtml(category)}
+            </div>
+            <div class="flex-1 h-[1px] rounded-full bg-[#292929]/20 dark:bg-white/20 overflow-hidden">
+              <div 
+                class="h-full bg-[#292929] dark:bg-white rounded-full transition-all duration-500 ease-out" 
+                style="width: ${percent}%;"
+              ></div>
+            </div>
+            <div class="w-8 text-right font-bold text-[#292929] dark:text-white font-mono text-xs">
+              ${count}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function parseUrlState() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("city")) activeCity = params.get("city");
+        if (params.has("cat")) activeCategory = params.get("cat");
+        if (params.has("q")) {
+          searchQuery = params.get("q");
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateUrlState(targetSpotSlug = null) {
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
+      try {
+        const params = new URLSearchParams();
+        if (activeCity !== "ALL") params.set("city", activeCity);
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, "", newUrl);
+      } catch (err) {
+        console.warn("Could not sync URL history:", err);
+      }
+    }
+
+    // Modal Operations
+    window.openModal = function(index) {
+      if (!visiblePlaces[index]) return;
+      activeModalIndex = index;
+      const place = visiblePlaces[index];
+
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
+      modalImageEl.alt = place.title;
+      modalTitleEl.textContent = place.title;
+      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
+
+      // City Badge in Modal
+      if (place.city) {
+        modalCityBadge.className = "badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]";
+        modalCityBadge.textContent = place.city.toLowerCase();
+        modalCityBadge.classList.remove("hidden");
+      } else {
+        modalCityBadge.classList.add("hidden");
+      }
+
+      // Categories in Modal
+      modalTags.innerHTML = place.categories.map(cat => `
+        <span class="badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]">
+          ${escapeHtml(cat.toLowerCase())}
+        </span>
+      `).join('');
+
+      // Maps Link
+      if (place.mapLink) {
+        modalMapLink.href = encodeURI(place.mapLink);
+        modalMapLink.classList.remove("hidden");
+      } else {
+        modalMapLink.classList.add("hidden");
+      }
+
+      // Prev/Next Arrows
+      modalPrevBtn.disabled = index <= 0;
+      modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      // Reveal Modal
+      modalEl.classList.remove("opacity-0", "pointer-events-none");
+      modalEl.classList.add("opacity-100");
+      modalCardEl.classList.remove("scale-95");
+      modalCardEl.classList.add("scale-100");
+
+      updateUrlState(place.slug);
+    };
+
+    window.closeModal = function() {
+      modalEl.classList.remove("opacity-100");
+      modalEl.classList.add("opacity-0", "pointer-events-none");
+      modalCardEl.classList.remove("scale-100");
+      modalCardEl.classList.add("scale-95");
+      activeModalIndex = -1;
+      updateUrlState(null);
+    };
+
+    function navigateModal(direction) {
+      const targetIndex = activeModalIndex + direction;
+      if (targetIndex >= 0 && targetIndex < visiblePlaces.length) {
+        openModal(targetIndex);
+      }
+    }
+
+    modalEl.addEventListener("click", (e) => {
+      if (!modalCardEl.contains(e.target) && !modalPrevBtn.contains(e.target) && !modalNextBtn.contains(e.target)) {
+        closeModal();
+      }
+    });
+    modalPrevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigateModal(-1);
+    });
+    modalNextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigateModal(1);
+    });
+
     function copyTextToClipboard(text) {
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
@@ -546,7 +801,6 @@
       document.body.removeChild(tempInput);
     }
 
-    // Toast Feedback
     let toastTimeout = null;
     function showToast(message) {
       if (toastTimeout) clearTimeout(toastTimeout);
@@ -560,110 +814,25 @@
       }, 2500);
     }
 
-    // Two-Way URL Sync: Read State from URL Query
-    function parseUrlState() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has("city")) activeCity = params.get("city");
-        if (params.has("cat")) activeCategory = params.get("cat");
-        if (params.has("q")) {
-          searchQuery = params.get("q");
-          searchInput.value = searchQuery;
-          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+    modalShareBtn.addEventListener("click", () => {
+      if (activeModalIndex !== -1 && visiblePlaces[activeModalIndex]) {
+        let base = `${window.location.origin}${window.location.pathname}`;
+        if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+          base = window.location.href.split('?')[0];
         }
-        return params.get("spot");
-      } catch (err) {
-        return null;
+        const shareUrl = `${base}?spot=${visiblePlaces[activeModalIndex].slug}`;
+        copyTextToClipboard(shareUrl);
+        showToast("Direct spot link copied!");
       }
-    }
+    });
 
-    // Two-Way URL Sync: Update URL Query without full page reload
-    function updateUrlState(targetSpotSlug = null) {
-      // In sandboxed environments or blob: preview URLs, replaceState throws a SecurityError
-      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
-        return;
+    document.addEventListener("keydown", (e) => {
+      if (modalEl.classList.contains("opacity-100")) {
+        if (e.key === "Escape") closeModal();
+        else if (e.key === "ArrowLeft") navigateModal(-1);
+        else if (e.key === "ArrowRight") navigateModal(1);
       }
-
-      try {
-        const params = new URLSearchParams();
-        if (activeCity !== "ALL") params.set("city", activeCity);
-        if (activeCategory !== "ALL") params.set("cat", activeCategory);
-        if (searchQuery.trim()) params.set("q", searchQuery.trim());
-        if (targetSpotSlug) params.set("spot", targetSpotSlug);
-
-        const queryString = params.toString();
-        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
-        window.history.replaceState({}, "", newUrl);
-      } catch (err) {
-        // Silently capture any iframe sandbox permission restrictions
-        console.warn("Could not sync URL history state in current context:", err);
-      }
-    }
-
-    // Initialize Theme (Default to Dark Mode)
-    function initTheme() {
-      const savedTheme = localStorage.getItem("tot-theme");
-      const isDark = savedTheme !== null ? savedTheme === "dark" : true;
-      document.documentElement.classList.toggle("dark", isDark);
-
-      themeToggleBtn.addEventListener("click", () => {
-        rotationDeg += 180;
-        yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
-        
-        const toggleThemeLogic = () => {
-          const currentlyDark = document.documentElement.classList.toggle("dark");
-          localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
-        };
-
-        // Use native View Transitions for a seamless cross-fade if supported
-        if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          document.startViewTransition(() => {
-            toggleThemeLogic();
-          });
-        } else {
-          // Fallback smooth transition class for background, borders, and text
-          document.documentElement.classList.add("theme-transition");
-          toggleThemeLogic();
-          setTimeout(() => {
-            document.documentElement.classList.remove("theme-transition");
-          }, 350);
-        }
-      });
-    }
-
-    async function fetchPlaces() {
-      try {
-        // Cache-busting timestamp bypasses Google's edge cache for immediate refresh on edits
-        const cacheBuster = `&_t=${Date.now()}`;
-        const response = await fetch(`${SHEET_CSV_URL}${cacheBuster}`);
-        if (!response.ok) throw new Error("Network response was not ok");
-        const csvText = await response.text();
-
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          transformHeader: function(h) {
-            return h.trim().toLowerCase();
-          },
-          complete: function(results) {
-            processPlacesData(results.data);
-          },
-          error: function(err) {
-            console.error("PapaParse error:", err);
-            handleFetchError();
-          }
-        });
-      } catch (err) {
-        console.error("Fetch failed:", err);
-        handleFetchError();
-      }
-    }
-
-    function handleFetchError() {
-      loadingEl.classList.add("hidden");
-      emptyEl.classList.remove("hidden");
-      emptyEl.querySelector("p").textContent = "Could not load data from Google Sheets.";
-    }
+    });
 
     function getFieldValue(row, possibleKeys) {
       const rowKeys = Object.keys(row);
@@ -684,10 +853,7 @@
 
           const rawCategories = getFieldValue(row, ['categories', 'category', 'tags', 'tag']);
           const categories = rawCategories 
-            ? rawCategories.split(',').map(s => {
-                const trimmed = s.trim();
-                return trimmed ? (trimmed.charAt(0).toUpperCase() + trimmed.slice(1)) : '';
-              }).filter(Boolean) 
+            ? rawCategories.split(',').map(s => s.trim()).filter(Boolean)
             : [];
 
           const city = getFieldValue(row, ['city', 'location', 'town']);
@@ -696,485 +862,86 @@
           const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
           const slug = createSlug(title);
 
-          return {
-            title,
-            slug,
-            city,
-            categories,
-            description,
-            photo,
-            mapLink
-          };
+          return { title, slug, city, categories, description, photo, mapLink };
         })
         .filter(Boolean);
 
-      // Apply Daily Seeded Shuffle so the order feels fresh every day but stays consistent throughout the day
       allPlaces = dailyShuffle(parsedPlaces);
 
       populateCityFilter();
       populateCategoryFilters();
-      renderTopTagsChart();
+      renderStatsChart();
 
-      // Read URL deep links and restore query states
       const deepLinkedSpotSlug = parseUrlState();
       cityFilterSelect.value = activeCity;
       updateToolbarStyles();
-      renderPlaces();
+      filterPlaces();
 
       if (deepLinkedSpotSlug) {
         const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
-        if (targetIndex !== -1) {
-          openModal(targetIndex);
-        } else {
-          // If not in current filtered list, check allPlaces
-          const globalIndex = allPlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
-          if (globalIndex !== -1) {
-            // Reset filters to show the linked spot
-            activeCity = "ALL";
-            activeCategory = "ALL";
-            searchQuery = "";
-            cityFilterSelect.value = "ALL";
-            searchInput.value = "";
-            updateToolbarStyles();
-            renderPlaces();
-            const recheckIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
-            if (recheckIndex !== -1) openModal(recheckIndex);
-          }
-        }
+        if (targetIndex !== -1) openModal(targetIndex);
       }
 
       loadingEl.classList.add("hidden");
     }
 
-    function populateCityFilter() {
-      const cities = Array.from(new Set(allPlaces.map(p => p.city).filter(Boolean))).sort();
-      cityFilterSelect.innerHTML = '<option value="ALL">All Cities</option>';
-      cities.forEach(city => {
-        const opt = document.createElement("option");
-        opt.value = city;
-        opt.textContent = city;
-        cityFilterSelect.appendChild(opt);
-      });
-    }
+    async function fetchPlaces() {
+      try {
+        const cacheBuster = `&_t=${Date.now()}`;
+        const response = await fetch(`${SHEET_CSV_URL}${cacheBuster}`);
+        if (!response.ok) throw new Error("Network error fetching CSV");
+        const csvText = await response.text();
 
-    function populateCategoryFilters() {
-      const catCount = {};
-      allPlaces.forEach(p => {
-        p.categories.forEach(c => {
-          catCount[c] = (catCount[c] || 0) + 1;
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: h => h.trim().toLowerCase(),
+          complete: results => processPlacesData(results.data),
+          error: () => handleFetchError()
         });
-      });
-
-      const sortedCategories = Object.keys(catCount).sort();
-      categoryContainer.innerHTML = '';
-
-      // "All" Button
-      const allBtn = document.createElement("button");
-      allBtn.dataset.category = "ALL";
-      allBtn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
-        (activeCategory === "ALL" 
-          ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
-          : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
-      allBtn.textContent = "All";
-      allBtn.addEventListener("click", () => setCategory("ALL"));
-      categoryContainer.appendChild(allBtn);
-
-      sortedCategories.forEach((cat, index) => {
-        const theme = TOOLBAR_COLORS[index % TOOLBAR_COLORS.length];
-        const btn = document.createElement("button");
-        btn.dataset.category = cat;
-        btn.dataset.colorIndex = index % TOOLBAR_COLORS.length;
-
-        const isCurrentActive = activeCategory === cat;
-        btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${
-          isCurrentActive ? theme.active : theme.inactive
-        }`;
-        btn.textContent = cat;
-        btn.addEventListener("click", () => setCategory(cat));
-        categoryContainer.appendChild(btn);
-      });
-    }
-
-    // Render horizontal bar chart infographic for Top 10 categories
-    function renderTopTagsChart() {
-      const barsContainer = document.getElementById("top-tags-bars");
-      if (!barsContainer) return;
-
-      const catCount = {};
-      allPlaces.forEach(p => {
-        p.categories.forEach(c => {
-          catCount[c] = (catCount[c] || 0) + 1;
-        });
-      });
-
-      // Sort categories descending by count and take the top 10
-      const sortedEntries = Object.entries(catCount)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-
-      if (sortedEntries.length === 0) {
-        barsContainer.innerHTML = '<p class="text-stone-400 text-xs">No tags recorded yet.</p>';
-        return;
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        handleFetchError();
       }
-
-      const maxCount = sortedEntries[0][1] || 1;
-      const barThemeAccents = [
-        "bg-[#244b70] dark:bg-blue-500",
-        "bg-[#9c3826] dark:bg-rose-500",
-        "bg-[#2d5937] dark:bg-emerald-500"
-      ];
-
-      barsContainer.innerHTML = sortedEntries.map(([cat, count], idx) => {
-        const pct = Math.round((count / maxCount) * 100);
-        const barColor = barThemeAccents[idx % barThemeAccents.length];
-        const formattedCat = cat ? (cat.charAt(0).toUpperCase() + cat.slice(1)) : '';
-        const safeCat = escapeHtml(formattedCat);
-        const escapedJsCat = cat.replace(/'/g, "\\'");
-
-        return `
-          <button 
-            type="button"
-            onclick="setCategory('${escapedJsCat}')" 
-            title="Filter by ${safeCat} (${count} places)"
-            class="group w-full flex items-center gap-2.5 text-left py-0.5 hover:opacity-85 focus:outline-none transition-opacity"
-          >
-            <!-- Tag Name & Badge -->
-            <span class="w-24 sm:w-28 truncate font-medium text-[11px] text-stone-700 dark:text-slate-300 group-hover:text-stone-900 dark:group-hover:text-cyan-400 transition-colors">
-              ${safeCat}
-            </span>
-
-            <!-- Progress Bar Rail (Ultra-thin line, squared edges) -->
-            <div class="flex-1 h-[2px] bg-[#cfc5b3] dark:bg-surface-border overflow-hidden relative">
-              <div 
-                class="h-full ${barColor} transition-all duration-500 ease-out"
-                style="width: ${pct}%;"
-              ></div>
-            </div>
-
-            <!-- Total Count -->
-            <span class="w-6 text-right font-mono font-bold text-[11px] text-stone-500 dark:text-slate-400 group-hover:text-stone-900 dark:group-hover:text-cyan-400">
-              ${count}
-            </span>
-          </button>
-        `;
-      }).join('');
     }
 
-    function updateToolbarStyles() {
-      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
-      buttons.forEach(btn => {
-        const cat = btn.dataset.category;
-        const colorIdx = parseInt(btn.dataset.colorIndex, 10);
+    function handleFetchError() {
+      loadingEl.classList.add("hidden");
+      emptyEl.classList.remove("hidden");
+      emptyEl.querySelector("p").textContent = "Could not load data from Google Sheets.";
+    }
 
-        if (cat === "ALL") {
-          btn.className = "cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 whitespace-nowrap " +
-            (activeCategory === "ALL" 
-              ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
-              : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+    function initTheme() {
+      const savedTheme = localStorage.getItem("tot-theme");
+      const isDark = savedTheme !== null ? savedTheme === "dark" : false;
+      document.documentElement.classList.toggle("dark", isDark);
+
+      themeToggleBtn.addEventListener("click", () => {
+        rotationDeg += 180;
+        yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+
+        const toggleThemeLogic = () => {
+          const currentlyDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
+          updateToolbarStyles();
+        };
+
+        if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.startViewTransition(() => toggleThemeLogic());
         } else {
-          const theme = TOOLBAR_COLORS[colorIdx];
-          const isCurrentActive = activeCategory === cat;
-          btn.className = `cat-filter-btn h-7 px-3.5 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[11px] leading-none transition-all duration-150 border whitespace-nowrap ${
-            isCurrentActive ? theme.active : theme.inactive
-          }`;
+          document.documentElement.classList.add("theme-transition");
+          toggleThemeLogic();
+          setTimeout(() => document.documentElement.classList.remove("theme-transition"), 300);
         }
       });
     }
 
-    // Filter Trigger Helpers
-    window.setCategory = function(cat) {
-      activeCategory = (activeCategory === cat && cat !== "ALL") ? "ALL" : cat;
-      updateToolbarStyles();
-      updateUrlState();
-      renderPlaces();
-    };
-
-    window.setCity = function(city) {
-      activeCity = (activeCity.toLowerCase() === city.toLowerCase()) ? "ALL" : city;
-      cityFilterSelect.value = activeCity;
-      updateUrlState();
-      renderPlaces();
-    };
-
-    // Card & Modal Share Helper
-    window.copyPlaceLink = function(slug, e) {
-      if (e) {
-        e.stopPropagation();
-        e.preventDefault();
-      }
-      let base = `${window.location.origin}${window.location.pathname}`;
-      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
-        base = window.location.href.split('?')[0];
-      }
-      const shareUrl = `${base}?spot=${slug}`;
-      copyTextToClipboard(shareUrl);
-      showToast("Direct spot link copied!");
-    };
-
-    // Modal Manager
-    window.openModal = function(index) {
-      if (!visiblePlaces[index]) return;
-      activeModalIndex = index;
-      const place = visiblePlaces[index];
-
-      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
-      modalImageEl.alt = place.title;
-      modalTitleEl.textContent = place.title;
-      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
-
-      // City Pill in Modal
-      if (place.city) {
-        modalCityBadge.className = "h-6 px-2.5 inline-flex items-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35";
-        modalCityBadge.innerHTML = `
-          <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-          </svg>
-          <span>${escapeHtml(place.city)}</span>
-        `;
-        modalCityBadge.classList.remove("hidden");
-      } else {
-        modalCityBadge.classList.add("hidden");
-      }
-
-      // Tags in Modal
-      modalTags.innerHTML = place.categories.map((cat, idx) => {
-        const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
-        return `
-          <span class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}">
-            ${escapeHtml(cat)}
-          </span>
-        `;
-      }).join('');
-
-      // Map Link
-      if (place.mapLink) {
-        modalMapLink.href = encodeURI(place.mapLink);
-        modalMapLink.classList.remove("hidden");
-      } else {
-        modalMapLink.classList.add("hidden");
-      }
-
-      // Prev / Next State
-      modalPrevBtn.disabled = index <= 0;
-      modalNextBtn.disabled = index >= visiblePlaces.length - 1;
-      if (modalIndexCounter) {
-        modalIndexCounter.textContent = `${index + 1} / ${visiblePlaces.length}`;
-      }
-
-      // Open Modal Dialog
-      modalEl.classList.remove("opacity-0", "pointer-events-none");
-      modalEl.classList.add("opacity-100");
-      modalCardEl.classList.remove("scale-95");
-      modalCardEl.classList.add("scale-100");
-      document.body.classList.add("overflow-hidden");
-
-      updateUrlState(place.slug);
-    };
-
-    window.closeModal = function() {
-      modalEl.classList.remove("opacity-100");
-      modalEl.classList.add("opacity-0", "pointer-events-none");
-      modalCardEl.classList.remove("scale-100");
-      modalCardEl.classList.add("scale-95");
-      document.body.classList.remove("overflow-hidden");
-      activeModalIndex = -1;
-      updateUrlState(null);
-    };
-
-    function navigateModal(direction) {
-      const targetIndex = activeModalIndex + direction;
-      if (targetIndex >= 0 && targetIndex < visiblePlaces.length) {
-        openModal(targetIndex);
-      }
-    }
-
-    function renderPlaces() {
-      gridEl.innerHTML = "";
-
-      const q = searchQuery.toLowerCase().trim();
-      const stopWords = new Set(["in", "at", "the", "on", "of", "and", "&", "a", "an"]);
-      const rawTokens = q.split(/\s+/).filter(Boolean);
-      const searchTokens = rawTokens.filter(word => !stopWords.has(word));
-      const tokensToMatch = searchTokens.length > 0 ? searchTokens : rawTokens;
-
-      visiblePlaces = allPlaces.filter(place => {
-        if (dismissedPlaces.has(place.title)) return false;
-
-        const matchesCity = (activeCity === "ALL") || (place.city.toLowerCase() === activeCity.toLowerCase());
-        const matchesCategory = (activeCategory === "ALL") || place.categories.includes(activeCategory);
-        
-        const searchableContent = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
-        const matchesSearch = tokensToMatch.length === 0 || tokensToMatch.every(token => searchableContent.includes(token));
-
-        return matchesCity && matchesCategory && matchesSearch;
-      });
-
-      counterEl.textContent = visiblePlaces.length;
-
-      if (visiblePlaces.length === 0) {
-        emptyEl.classList.remove("hidden");
-        gridEl.classList.add("hidden");
-        return;
-      } else {
-        emptyEl.classList.add("hidden");
-        gridEl.classList.remove("hidden");
-      }
-
-      visiblePlaces.forEach((place, index) => {
-        const card = document.createElement("article");
-        card.className = "gallery-item group relative bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-lg overflow-hidden flex flex-col transition hover:border-[#b8ab96] dark:hover:border-slate-600 shadow-sm cursor-pointer";
-
-        // Category Tags HTML - light-tinted by default, solid luminous tone on hover
-        const tagsHtml = place.categories.map((cat, idx) => {
-          const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
-          const safeCat = escapeHtml(cat);
-          const escapedJsCat = cat.replace(/'/g, "\\'");
-          return `
-            <button 
-              type="button" 
-              onclick="event.stopPropagation(); setCategory('${escapedJsCat}')" 
-              class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}"
-            >
-              ${safeCat}
-            </button>
-          `;
-        }).join("");
-
-        // Uniform pill city badge - light-tinted forest sage in light mode, solid on hover
-        const cityBadgeHtml = place.city 
-          ? `<button 
-              type="button"
-              onclick="event.stopPropagation(); setCity('${place.city.replace(/'/g, "\\'")}')"
-              title="Filter by ${escapeHtml(place.city)}"
-              class="h-6 px-2.5 inline-flex items-center justify-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] hover:bg-[#2d5937] hover:text-[#fbf9f5] hover:border-[#22442a] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
-            >
-              <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-              </svg>
-              <span>${escapeHtml(place.city)}</span>
-             </button>`
-          : '';
-
-        const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
-        const safeTitle = escapeHtml(place.title);
-        const safeDesc = escapeHtml(place.description || "No description provided.");
-        const safeSlug = escapeHtml(place.slug);
-
-        card.innerHTML = `
-          <!-- Top Right Action: Dismiss Only -->
-          <div class="absolute top-3 right-3 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
-            <!-- Dismiss "X" Button -->
-            <button 
-              type="button" 
-              title="Temporarily dismiss this spot" 
-              aria-label="Dismiss spot" 
-              class="dismiss-card-btn w-7 h-7 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/25 hover:border-white backdrop-blur-md transition shadow-md focus:outline-none"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Photo Container -->
-          <div class="img-wrapper relative w-full aspect-[16/10] overflow-hidden bg-stone-300 dark:bg-surface-card border-b border-[#cfc5b3] dark:border-surface-border">
-            <img 
-              src="${escapeHtml(imageSource)}" 
-              alt="${safeTitle}" 
-              loading="lazy" 
-              onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
-              class="w-full h-full object-cover object-center"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <!-- Information block -->
-          <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
-            <div>
-              <div class="mb-2 flex items-baseline justify-between gap-2">
-                <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white tracking-tight group-hover:text-stone-700 dark:group-hover:text-cyan-400 transition-colors">
-                  ${safeTitle}
-                </h2>
-                ${place.mapLink ? `<a href="${encodeURI(place.mapLink)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open on Google Maps" class="text-xs text-stone-400 hover:text-stone-800 dark:hover:text-cyan-500 transition-colors">↗</a>` : ''}
-              </div>
-
-              <!-- Description -->
-              <p class="text-xs sm:text-sm leading-relaxed text-stone-600 dark:text-slate-400 line-clamp-3 mb-4 font-normal italic">
-                ${safeDesc}
-              </p>
-            </div>
-
-            <!-- Badges -->
-            <div class="flex flex-wrap items-center gap-1.5 pt-1">
-              ${cityBadgeHtml}
-              ${tagsHtml}
-            </div>
-          </div>
-        `;
-
-        // Card Click opens Modal
-        card.addEventListener("click", () => {
-          openModal(index);
-        });
-
-        // Smooth dismiss interaction
-        const dismissBtn = card.querySelector(".dismiss-card-btn");
-        dismissBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-
-          card.classList.add("scale-95", "opacity-0", "pointer-events-none");
-          setTimeout(() => {
-            dismissedPlaces.add(place.title);
-            renderPlaces();
-          }, 200);
-        });
-
-        gridEl.appendChild(card);
-      });
-    }
-
-    // Modal Event Handlers
-    modalEl.addEventListener("click", (e) => {
-      // Close modal if user clicks outside the modal card and outside navigation buttons
-      if (!modalCardEl.contains(e.target) && !modalPrevBtn.contains(e.target) && !modalNextBtn.contains(e.target)) {
-        closeModal();
-      }
-    });
-    modalPrevBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navigateModal(-1);
-    });
-    modalNextBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navigateModal(1);
-    });
-
-    modalShareBtn.addEventListener("click", () => {
-      if (activeModalIndex !== -1 && visiblePlaces[activeModalIndex]) {
-        copyPlaceLink(visiblePlaces[activeModalIndex].slug);
-      }
-    });
-
-    // Keyboard Shortcuts: Esc to close, Left/Right arrows to navigate
-    document.addEventListener("keydown", (e) => {
-      if (modalEl.classList.contains("opacity-100")) {
-        if (e.key === "Escape") {
-          closeModal();
-        } else if (e.key === "ArrowLeft") {
-          navigateModal(-1);
-        } else if (e.key === "ArrowRight") {
-          navigateModal(1);
-        }
-      }
-    });
-
+    // Input Events
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
       clearSearchBtn.classList.toggle("hidden", !searchQuery);
-      dismissedPlaces.clear();
       updateUrlState();
-      renderPlaces();
+      filterPlaces();
     });
 
     clearSearchBtn.addEventListener("click", () => {
@@ -1182,13 +949,13 @@
       searchQuery = "";
       clearSearchBtn.classList.add("hidden");
       updateUrlState();
-      renderPlaces();
+      filterPlaces();
     });
 
     cityFilterSelect.addEventListener("change", (e) => {
       activeCity = e.target.value;
       updateUrlState();
-      renderPlaces();
+      filterPlaces();
     });
 
     resetFilterBtn.addEventListener("click", () => {
@@ -1198,13 +965,11 @@
       searchInput.value = "";
       cityFilterSelect.value = "ALL";
       clearSearchBtn.classList.add("hidden");
-      dismissedPlaces.clear();
       updateToolbarStyles();
       updateUrlState();
-      renderPlaces();
+      filterPlaces();
     });
 
-    // Start fetching sheet data and theme on page load
     document.addEventListener("DOMContentLoaded", () => {
       initTheme();
       fetchPlaces();
