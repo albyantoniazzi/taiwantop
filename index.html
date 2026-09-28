@@ -212,17 +212,22 @@
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden py-24 text-center">
-      <p class="text-base font-bold text-[#292929] dark:text-white mb-2">No places match your search</p>
-      <p class="text-xs text-[#292929] dark:text-white mb-4">Try clearing your filters or search terms.</p>
-      <button 
-        id="reset-filter-btn"
-        type="button" 
-        class="px-4 py-1.5 text-xs font-semibold uppercase rounded-full bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-90 transition"
-      >
-        Reset Filters
-      </button>
+    <!-- Empty State with Dino Game -->
+    <div id="empty-state" class="hidden py-12 flex flex-col items-center justify-center text-center">
+      <p class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2">Sorry, nothing here...</p>
+      
+      <!-- Dino Game Container -->
+      <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
+        <canvas 
+          id="dino-canvas" 
+          width="600" 
+          height="160" 
+          class="w-full h-[160px] bg-transparent cursor-pointer border-b border-[#292929] dark:border-white select-none touch-none"
+        ></canvas>
+        <div class="mt-3 flex items-center justify-center w-full text-[11px] font-semibold text-[#292929] dark:text-white px-1">
+          <span>Press [SPACE] or Tap to Jump</span>
+        </div>
+      </div>
     </div>
 
     <!-- Responsive Adaptive Grid: 1 col mobile, 2 sm, 3 on most desktop sizes (~350-400px wide), 4 on ultra-wide 2xl -->
@@ -255,7 +260,7 @@
 
       <!-- Top 5 Categories Infographic (Starts under Column 2 when screen is larger) -->
       <div class="col-span-1 sm:col-start-2 lg:col-start-2 lg:col-span-2 2xl:col-start-2 2xl:col-span-3">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-[#292929] dark:text-white mb-4">TOP 5 CATEGORIES</h4>
+        <h4 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white mb-4">TOP 5 CATEGORIES</h4>
         <div id="stats-chart" class="space-y-3">
           <!-- Populated dynamically via JS -->
         </div>
@@ -434,7 +439,6 @@
     const cityFilterSelect = document.getElementById("city-filter");
     const searchInput = document.getElementById("search-input");
     const clearSearchBtn = document.getElementById("clear-search-btn");
-    const resetFilterBtn = document.getElementById("reset-filter-btn");
     const themeToggleBtn = document.getElementById("theme-toggle");
     const yinYangIcon = document.getElementById("yin-yang-icon");
 
@@ -443,6 +447,13 @@
     const footerCitiesCount = document.getElementById("footer-total-cities");
     const footerCatsCount = document.getElementById("footer-total-cats");
     const statsChartEl = document.getElementById("stats-chart");
+
+    // Dino Game Elements & State
+    const dinoCanvas = document.getElementById("dino-canvas");
+    const dinoCtx = dinoCanvas ? dinoCanvas.getContext("2d") : null;
+    let dinoAnimId = null;
+    let dinoGameActive = false;
+    let dinoState = null;
 
     // Modal & Toast Elements
     const modalEl = document.getElementById("detail-modal");
@@ -495,9 +506,11 @@
 
       if (visiblePlaces.length === 0) {
         emptyEl.classList.remove('hidden');
+        startDinoGame();
         return;
       }
       emptyEl.classList.add('hidden');
+      stopDinoGame();
 
       visiblePlaces.forEach((place, index) => {
         const card = document.createElement('article');
@@ -732,8 +745,10 @@
         const percent = Math.round((count / maxCount) * 100);
         return `
           <div class="flex items-center gap-3 text-xs group cursor-pointer" onclick="setCategory('${escapeHtml(category)}')">
-            <div class="w-28 sm:w-36 font-semibold text-[#292929] dark:text-white truncate lowercase group-hover:underline">
-              ${escapeHtml(category)}
+            <div class="w-28 sm:w-36 flex-shrink-0">
+              <span class="badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase border border-[#292929] bg-transparent text-[#292929] dark:border-white dark:bg-transparent dark:text-white group-hover:bg-[#292929] group-hover:text-[#EBF1E5] dark:group-hover:bg-white dark:group-hover:text-[#292929] transition-all duration-150">
+                ${escapeHtml(category)}
+              </span>
             </div>
             <div class="flex-1 h-[1px] rounded-full bg-[#292929]/20 dark:bg-white/20 overflow-hidden">
               <div 
@@ -1022,8 +1037,303 @@
     function handleFetchError() {
       loadingEl.classList.add("hidden");
       emptyEl.classList.remove("hidden");
-      emptyEl.querySelector("p").textContent = "Could not load data from Google Sheets.";
+      const titleP = emptyEl.querySelector("p");
+      if (titleP) titleP.textContent = "Sorry, nothing here...";
+      startDinoGame();
     }
+
+    // Duck Runner Game Engine (Slower Pace, Duck Sprite & Hot Pot Obstacles)
+    const DUCK_SPRITE = [
+      "          #####      ",
+      "         #######     ",
+      "         ## # ###    ",
+      "         ########    ",
+      "         ####        ",
+      "         ######      ",
+      "         #####       ",
+      "         #####       ",
+      "         #####       ",
+      "         #####       ",
+      "       ########      ",
+      "     ############    ",
+      "    ##############   ",
+      "   ################  ",
+      "  #################  ",
+      "  #################  ",
+      "   ###############   ",
+      "    #############    ",
+      "      ##########     ",
+      "        ######       ",
+      "        #    #       ",
+      "        #    #       ",
+      "        ##   ##      "
+    ];
+
+    // Cooking Hot Pot with handles and rim
+    const HOTPOT_SPRITE = [
+      "   ############   ",
+      "   #          #   ",
+      "##################",
+      "#                #",
+      "##  ##########  ##",
+      " #  ##########  # ",
+      " ###############  ",
+      "  #############   ",
+      "   ###########    ",
+      "    #########     ",
+      "    #########     ",
+      "   ###########    "
+    ];
+
+    function initDinoState() {
+      return {
+        dino: {
+          x: 40,
+          y: 112,
+          vy: 0,
+          width: 21,
+          height: 23,
+          isJumping: false,
+          legTimer: 0,
+          legToggle: false
+        },
+        obstacles: [],
+        clouds: [
+          { x: 120, y: 35, speed: 0.25 },
+          { x: 380, y: 25, speed: 0.3 }
+        ],
+        score: 0,
+        highScore: parseInt(localStorage.getItem('tot-dino-hi') || '0', 10),
+        speed: 2.2, // Significantly slowed down base speed
+        spawnTimer: 0,
+        isGameOver: false,
+        groundTicks: [],
+        flameTick: 0
+      };
+    }
+
+    function jumpDino() {
+      if (!dinoState) return;
+      if (dinoState.isGameOver) {
+        dinoState = initDinoState();
+        return;
+      }
+      if (!dinoState.dino.isJumping) {
+        dinoState.dino.vy = -6.8; // Tuned for gentle, slow-paced jump
+        dinoState.dino.isJumping = true;
+      }
+    }
+
+    function drawPixelMap(ctx, map, startX, startY, pixelSize, color) {
+      ctx.fillStyle = color;
+      for (let r = 0; r < map.length; r++) {
+        const row = map[r];
+        for (let c = 0; c < row.length; c++) {
+          if (row[c] === '#') {
+            ctx.fillRect(startX + c * pixelSize, startY + r * pixelSize, pixelSize, pixelSize);
+          }
+        }
+      }
+    }
+
+    function updateDinoGame() {
+      if (!dinoGameActive || !dinoCtx || !dinoState) return;
+
+      const canvasW = dinoCanvas.width;
+      const canvasH = dinoCanvas.height;
+      const groundY = 135;
+      const themeColor = document.documentElement.classList.contains('dark') ? '#ffffff' : '#292929';
+
+      dinoCtx.clearRect(0, 0, canvasW, canvasH);
+
+      // Clouds
+      dinoCtx.fillStyle = themeColor;
+      dinoState.clouds.forEach(cloud => {
+        if (!dinoState.isGameOver) cloud.x -= cloud.speed;
+        if (cloud.x < -50) cloud.x = canvasW + Math.random() * 80;
+
+        dinoCtx.globalAlpha = 0.35;
+        dinoCtx.fillRect(cloud.x, cloud.y, 28, 6);
+        dinoCtx.fillRect(cloud.x + 6, cloud.y - 4, 16, 4);
+        dinoCtx.globalAlpha = 1.0;
+      });
+
+      // Ground Line & Dotted Texture
+      dinoCtx.fillStyle = themeColor;
+      dinoCtx.fillRect(0, groundY, canvasW, 1);
+
+      if (!dinoState.isGameOver) {
+        if (Math.random() < 0.12) {
+          dinoState.groundTicks.push({ x: canvasW, y: groundY + 3 + Math.floor(Math.random() * 4), w: 2 + Math.floor(Math.random() * 4) });
+        }
+        for (let i = dinoState.groundTicks.length - 1; i >= 0; i--) {
+          dinoState.groundTicks[i].x -= dinoState.speed;
+          if (dinoState.groundTicks[i].x < -10) {
+            dinoState.groundTicks.splice(i, 1);
+          }
+        }
+      }
+      dinoState.groundTicks.forEach(tick => {
+        dinoCtx.fillRect(tick.x, tick.y, tick.w, 1);
+      });
+
+      // Duck Physics
+      const dino = dinoState.dino;
+      if (!dinoState.isGameOver) {
+        dino.y += dino.vy;
+        dino.vy += 0.35; // Gentle gravity for slower gameplay
+
+        if (dino.y >= groundY - dino.height) {
+          dino.y = groundY - dino.height;
+          dino.vy = 0;
+          dino.isJumping = false;
+        }
+
+        dino.legTimer++;
+        if (dino.legTimer > 8) {
+          dino.legToggle = !dino.legToggle;
+          dino.legTimer = 0;
+        }
+
+        // Score & Speed (gentle scaling)
+        dinoState.score += 0.08;
+        if (dinoState.score > dinoState.highScore) {
+          dinoState.highScore = Math.floor(dinoState.score);
+          localStorage.setItem('tot-dino-hi', String(dinoState.highScore));
+        }
+        dinoState.speed = Math.min(4.8, 2.2 + Math.floor(dinoState.score / 100) * 0.18);
+
+        // Hot Pot Obstacles Spawning (well-spaced)
+        dinoState.spawnTimer++;
+        const spawnThreshold = Math.max(90, 160 - Math.floor(dinoState.speed * 8));
+        if (dinoState.spawnTimer > spawnThreshold && Math.random() < 0.03) {
+          dinoState.obstacles.push({
+            x: canvasW + 15,
+            y: groundY - 14,
+            width: 18,
+            height: 14
+          });
+          dinoState.spawnTimer = 0;
+        }
+      }
+
+      // Draw Duck (with beak)
+      drawPixelMap(dinoCtx, DUCK_SPRITE, dino.x, dino.y, 1, themeColor);
+      // Flat duck bill / beak
+      dinoCtx.fillStyle = themeColor;
+      dinoCtx.fillRect(dino.x + 16, dino.y + 2, 5, 2);
+
+      // Running feet animation
+      if (!dino.isJumping && !dinoState.isGameOver) {
+        dinoCtx.fillStyle = themeColor;
+        if (dino.legToggle) {
+          dinoCtx.fillRect(dino.x + 8, dino.y + 21, 4, 2);
+        } else {
+          dinoCtx.fillRect(dino.x + 13, dino.y + 21, 4, 2);
+        }
+      }
+
+      // Tick flame animation
+      dinoState.flameTick++;
+
+      // Draw & Update Hot Pot Obstacles
+      for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
+        const obs = dinoState.obstacles[i];
+        if (!dinoState.isGameOver) {
+          obs.x -= dinoState.speed;
+        }
+
+        // Draw Hot Pot Body
+        drawPixelMap(dinoCtx, HOTPOT_SPRITE, obs.x, obs.y + 2, 1, themeColor);
+
+        // Animated Flame on top
+        const flamePhase = Math.floor((dinoState.flameTick + i * 5) / 6) % 3;
+        const flameCenterX = obs.x + 9;
+        const flameBaseY = obs.y + 1;
+
+        dinoCtx.fillStyle = themeColor;
+        if (flamePhase === 0) {
+          dinoCtx.fillRect(flameCenterX - 2, flameBaseY - 6, 4, 5);
+          dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 9, 2, 3);
+          dinoCtx.fillRect(flameCenterX + 3, flameBaseY - 4, 2, 3);
+        } else if (flamePhase === 1) {
+          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 5, 5, 4);
+          dinoCtx.fillRect(flameCenterX, flameBaseY - 8, 2, 4);
+          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 7, 2, 2);
+        } else {
+          dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 7, 3, 6);
+          dinoCtx.fillRect(flameCenterX + 1, flameBaseY - 10, 2, 3);
+          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 4, 2, 3);
+        }
+
+        // Collision Check (AABB with friendly hitbox)
+        const dBox = { x: dino.x + 3, y: dino.y + 2, w: dino.width - 6, h: dino.height - 3 };
+        const oBox = { x: obs.x + 2, y: obs.y - 4, w: obs.width - 4, h: obs.height + 4 };
+
+        if (
+          dBox.x < oBox.x + oBox.w &&
+          dBox.x + dBox.w > oBox.x &&
+          dBox.y < oBox.y + oBox.h &&
+          dBox.y + dBox.h > oBox.y
+        ) {
+          dinoState.isGameOver = true;
+        }
+
+        if (obs.x < -30) {
+          dinoState.obstacles.splice(i, 1);
+        }
+      }
+
+      // Draw HUD (Scores)
+      dinoCtx.fillStyle = themeColor;
+      dinoCtx.font = "bold 11px 'Google Sans Code', monospace";
+      dinoCtx.textAlign = "right";
+      const curScoreStr = String(Math.floor(dinoState.score)).padStart(5, '0');
+      const hiScoreStr = String(dinoState.highScore).padStart(5, '0');
+      dinoCtx.fillText(`HI ${hiScoreStr}  ${curScoreStr}`, canvasW - 8, 20);
+
+      // Game Over Message
+      if (dinoState.isGameOver) {
+        dinoCtx.textAlign = "center";
+        dinoCtx.font = "bold 14px 'Google Sans Code', monospace";
+        dinoCtx.fillText("G A M E   O V E R", canvasW / 2, 70);
+        dinoCtx.font = "11px 'Google Sans Code', monospace";
+        dinoCtx.fillText("TAP OR PRESS SPACE TO RESTART", canvasW / 2, 92);
+      }
+
+      dinoAnimId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function startDinoGame() {
+      if (dinoGameActive) return;
+      dinoGameActive = true;
+      dinoState = initDinoState();
+      dinoAnimId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function stopDinoGame() {
+      dinoGameActive = false;
+      if (dinoAnimId) {
+        cancelAnimationFrame(dinoAnimId);
+        dinoAnimId = null;
+      }
+    }
+
+    if (dinoCanvas) {
+      dinoCanvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        jumpDino();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (dinoGameActive && !emptyEl.classList.contains('hidden')) {
+        if (e.code === 'Space' || e.code === 'ArrowUp') {
+          e.preventDefault();
+          jumpDino();
+        }
+      }
+    });
 
     function initTheme() {
       const savedTheme = localStorage.getItem("tot-theme");
@@ -1068,18 +1378,6 @@
 
     cityFilterSelect.addEventListener("change", (e) => {
       activeCity = e.target.value;
-      updateUrlState();
-      filterPlaces();
-    });
-
-    resetFilterBtn.addEventListener("click", () => {
-      activeCategory = "ALL";
-      activeCity = "ALL";
-      searchQuery = "";
-      searchInput.value = "";
-      cityFilterSelect.value = "ALL";
-      clearSearchBtn.classList.add("hidden");
-      updateToolbarStyles();
       updateUrlState();
       filterPlaces();
     });
