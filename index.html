@@ -83,23 +83,20 @@
       transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
     }
 
-    /* All Lowercase for badges - optically unified font sizes */
-    .badge-toolbar {
+    /* Unified lowercase badge styling across all sections */
+    .badge-pill {
       text-transform: lowercase;
-      font-size: 9px; /* 1pt smaller */
+      font-size: 10px;
       line-height: 1rem;
-    }
-    .badge-post {
-      text-transform: lowercase;
-      font-size: 10px; /* 1pt bigger, visually matching toolbar */
-      line-height: 1rem;
+      letter-spacing: 0.01em;
     }
   </style>
 </head>
 
 <body class="font-mono bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white selection:bg-[#292929] selection:text-[#EBF1E5] dark:selection:bg-white dark:selection:text-[#333333]">
 
-  <header class="w-full max-w-[1920px] mx-auto pt-6 sm:pt-10 px-4 sm:px-8 pb-4">
+  <!-- Header with 10% browser margin on left and right -->
+  <header class="w-full max-w-[1920px] mx-auto pt-6 sm:pt-10 px-4 sm:px-[10vw] pb-4">
     
     <!-- Top Row: Title + Search + City Filter + Theme Toggle in one streamlined line -->
     <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 sm:gap-6">
@@ -182,11 +179,11 @@
     </div>
 
     <!-- Category Pills Row: Horizontally scrollable on small/overflow screens -->
-    <div class="mt-4 overflow-x-auto scrollbar-none py-1 -mx-4 px-4 sm:-mx-8 sm:px-8">
+    <div class="mt-4 overflow-x-auto scrollbar-none py-1 -mx-4 px-4 sm:-mx-[10vw] sm:px-[10vw]">
       <div class="flex items-center gap-1 flex-nowrap" id="category-filters">
         <button 
           data-category="ALL"
-          class="cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm"
+          class="cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer"
         >
           all
         </button>
@@ -198,7 +195,8 @@
   <!-- Full-page edge-to-edge dividing line between badges toolbar and posts (decreased thickness by 1pt) -->
   <div class="w-full border-b border-[#292929] dark:border-white"></div>
 
-  <main class="w-full max-w-[1920px] mx-auto px-4 sm:px-8 py-6">
+  <!-- Main Grid with 10% browser margin on left and right -->
+  <main class="w-full max-w-[1920px] mx-auto px-4 sm:px-[10vw] py-6">
 
     <!-- Loading State -->
     <div id="loading-state" class="py-24 flex items-center justify-center">
@@ -226,9 +224,9 @@
 
   </main>
 
-  <!-- Reintroduced Directory Stats Footer without box outline around the chart -->
+  <!-- Reintroduced Directory Stats Footer with 10% browser margins -->
   <footer id="stats-footer" class="w-full pt-10 pb-16">
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
       
       <!-- Overview Numbers with Large Digits and Small Labels -->
       <div class="flex-shrink-0 lg:w-80">
@@ -262,7 +260,7 @@
     <!-- Full-width edge-to-edge dividing line above footer bottom credits (decreased thickness by 1pt) -->
     <div class="w-full border-t border-[#292929] dark:border-white"></div>
 
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#292929] dark:text-white gap-2 font-semibold">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#292929] dark:text-white gap-2 font-semibold">
       <button 
         type="button" 
         id="back-to-top-btn" 
@@ -332,7 +330,7 @@
           <div class="p-5 sm:p-6 space-y-4">
             <div>
               <div class="flex items-center gap-1 mb-2 flex-wrap">
-                <span id="modal-city-badge"></span>
+                <button type="button" id="modal-city-badge" class="cursor-pointer"></button>
                 <div id="modal-tags" class="flex flex-wrap items-center gap-1"></div>
               </div>
               <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white pt-1"></h2>
@@ -340,14 +338,14 @@
 
             <p id="modal-description" class="text-[11px] sm:text-xs leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
 
-            <!-- External Action Button Bar -->
+            <!-- External Action Button Bar: full rounded badges with transparent outline -->
             <div class="pt-2 flex flex-wrap items-center gap-2.5">
               <button 
                 id="modal-share-btn" 
                 type="button" 
                 title="Copy direct link to this spot" 
                 aria-label="Copy direct link"
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-md border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
+                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none cursor-pointer"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -360,7 +358,7 @@
                 href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-md border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm"
+                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm cursor-pointer"
               >
                 <span>View on Google Maps</span>
                 <span class="text-xs">↗</span>
@@ -495,9 +493,13 @@
         const safeDesc = escapeHtml(place.description);
 
         const tagsHtml = place.categories.map(cat => `
-          <span class="badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]">
+          <button 
+            type="button"
+            data-category="${escapeHtml(cat.toLowerCase())}"
+            class="card-cat-badge badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+          >
             ${escapeHtml(cat.toLowerCase())}
-          </span>
+          </button>
         `).join('');
 
         card.innerHTML = `
@@ -530,7 +532,21 @@
           </div>
         `;
 
+        // Card click opens modal
         card.addEventListener('click', () => openModal(index));
+
+        // Badges click sets category without opening modal
+        card.querySelectorAll('.card-cat-badge').forEach(badgeBtn => {
+          badgeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cat = badgeBtn.getAttribute('data-category');
+            if (cat) {
+              setCategory(cat);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+        });
+
         gridEl.appendChild(card);
       });
     }
@@ -557,17 +573,16 @@
         const isCurrentActive = activeCategory.toLowerCase() === cat.toLowerCase();
 
         if (cat.toUpperCase() === "ALL") {
-          // "all" badge: not black by default, styled like the others on hover (light with border), inverts to black on hover
           if (isCurrentActive) {
-            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
           } else {
-            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929]";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer";
           }
         } else {
           if (isCurrentActive) {
-            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] dark:border-white dark:bg-white dark:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] dark:border-white dark:bg-white dark:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
           } else {
-            btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
           }
         }
       });
@@ -604,10 +619,10 @@
       const sortedCategories = Object.keys(catCount).sort();
       categoryContainer.innerHTML = '';
 
-      // "all" Button (like the others when hover, not black by default)
+      // "all" Button
       const allBtn = document.createElement("button");
       allBtn.dataset.category = "ALL";
-      allBtn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm";
+      allBtn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer";
       allBtn.textContent = "all";
       allBtn.addEventListener("click", () => setCategory("ALL"));
       categoryContainer.appendChild(allBtn);
@@ -615,7 +630,7 @@
       sortedCategories.forEach(cat => {
         const btn = document.createElement("button");
         btn.dataset.category = cat;
-        btn.className = "cat-filter-btn badge-toolbar flex-shrink-0 px-2.5 py-0.5 font-semibold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white";
+        btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
         btn.textContent = cat;
         btn.addEventListener("click", () => setCategory(cat));
         categoryContainer.appendChild(btn);
@@ -711,21 +726,46 @@
       modalTitleEl.textContent = place.title;
       modalDescEl.textContent = place.description || "No description provided for this curated spot.";
 
-      // City Badge in Modal
+      // City Badge in Modal (clickable to filter by city)
       if (place.city) {
-        modalCityBadge.className = "badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]";
+        modalCityBadge.className = "badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer";
         modalCityBadge.textContent = place.city.toLowerCase();
+        modalCityBadge.onclick = (e) => {
+          e.stopPropagation();
+          activeCity = place.city;
+          cityFilterSelect.value = place.city;
+          closeModal();
+          updateUrlState();
+          filterPlaces();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
         modalCityBadge.classList.remove("hidden");
       } else {
         modalCityBadge.classList.add("hidden");
       }
 
-      // Categories in Modal
+      // Categories in Modal (clickable to filter by category)
       modalTags.innerHTML = place.categories.map(cat => `
-        <span class="badge-post inline-flex items-center px-2 py-0.5 rounded-full font-semibold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929]">
+        <button 
+          type="button"
+          data-category="${escapeHtml(cat.toLowerCase())}"
+          class="modal-cat-badge badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+        >
           ${escapeHtml(cat.toLowerCase())}
-        </span>
+        </button>
       `).join('');
+
+      modalTags.querySelectorAll('.modal-cat-badge').forEach(badgeBtn => {
+        badgeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cat = badgeBtn.getAttribute('data-category');
+          if (cat) {
+            closeModal();
+            setCategory(cat);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
 
       // Maps Link
       if (place.mapLink) {
