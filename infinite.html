@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TAIWAN TOP</title>
+
+  <!-- Open Graph & SEO Metadata -->
+  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:title" content="TAIWAN TOP" />
+  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TAIWAN TOP" />
+  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+
+  <!-- Google Sans Code Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PapaParse for Google Sheets CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Google Sans Code"', 'monospace']
+          },
+          colors: {
+            surface: {
+              DEFAULT: '#0f131a',
+              card: '#161b24',
+              border: '#232b3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Full viewport canvas setup */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Infinite Canvas Dotted Pattern */
+    .canvas-bg {
+      background-image: radial-gradient(#b9ae9b 1.3px, transparent 1.3px);
+      background-size: 28px 28px;
+    }
+    .dark .canvas-bg {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1.3px, transparent 1.3px);
+      background-size: 28px 28px;
+    }
+
+    /* Grabbable canvas area */
+    #canvas-viewport {
+      cursor: grab;
+      touch-action: none;
+    }
+    #canvas-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    /* Square Canvas Cards with Elevation */
+    .infinite-card {
+      position: absolute;
+      will-change: transform;
+      transition: box-shadow 0.25s ease;
+      touch-action: none;
+    }
+    .infinite-card:hover {
+      z-index: 30 !important;
+    }
+    .infinite-card .card-inner {
+      transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.28s ease, border-color 0.2s ease;
+    }
+    .infinite-card:hover .card-inner {
+      transform: translateY(-4px) scale(1.035);
+    }
+
+    /* Horizontal scrollbar hiding */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Category bar edge fade/mask effect */
+    .scroll-mask-edges {
+      mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent 100%);
+    }
+
+    /* Shimmer Skeleton */
+    @keyframes shimmer {
+      0% { opacity: 0.4; }
+      50% { opacity: 0.9; }
+      100% { opacity: 0.4; }
+    }
+    .shimmer {
+      animation: shimmer 1.5s infinite ease-in-out;
+      background-color: rgba(160, 147, 128, 0.28);
+    }
+
+    /* Smooth theme transitions */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.35s;
+      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .theme-transition,
+    .theme-transition *,
+    .theme-transition *::before,
+    .theme-transition *::after {
+      transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease !important;
+    }
+  </style>
+</head>
+
+<body class="w-screen h-screen font-mono bg-[#e4dccf] dark:bg-[#0c0e14] text-stone-800 dark:text-slate-100 selection:bg-cyan-500 selection:text-black">
+
+  <!-- Floating Top Navigation & Filter Bar HUD -->
+  <header class="fixed top-0 left-0 right-0 z-40 pointer-events-none p-3 sm:p-4">
+    <div class="max-w-7xl mx-auto flex flex-col gap-2.5">
+      
+      <!-- Top Primary Row -->
+      <div class="pointer-events-auto flex items-center justify-between gap-3 bg-[#e4dccf]/85 dark:bg-surface/85 backdrop-blur-md px-3.5 sm:px-4 py-2.5 rounded-2xl border border-[#cfc5b3] dark:border-surface-border shadow-lg">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-stone-800 dark:bg-cyan-400 animate-pulse"></span>
+          <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-tight uppercase flex items-center gap-1.5">
+            <a 
+              href="index.html" 
+              class="text-stone-900 dark:text-white hover:text-stone-600 dark:hover:text-cyan-400 transition-colors"
+              title="Reset canvas"
+            >
+              TAIWAN TOP
+            </a>
+            <span class="text-stone-500 dark:text-slate-400 font-normal text-xs lowercase hidden sm:inline">by</span>
+            <a 
+              href="https://albyantoniazzi.github.io/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="text-stone-500 dark:text-slate-400 underline hover:text-stone-800 dark:hover:text-slate-200 transition-colors text-xs font-medium lowercase hidden sm:inline"
+            >
+              @albyantoniazzi
+            </a>
+          </h1>
+        </div>
+
+        <!-- Center Controls: Search + City Filter -->
+        <div class="flex items-center gap-2 flex-1 max-w-md justify-end">
+          <div class="relative flex-1 max-w-[190px] sm:max-w-xs">
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="Search spots..." 
+              class="w-full bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-xl px-3 sm:px-4 py-1.5 text-xs text-stone-800 dark:text-slate-100 placeholder-stone-500 dark:placeholder-slate-500 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition"
+            />
+            <span id="clear-search-btn" class="hidden absolute right-2.5 top-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-white cursor-pointer text-xs font-bold">×</span>
+          </div>
+
+          <!-- City Filter Select -->
+          <div class="relative">
+            <select 
+              id="city-filter" 
+              aria-label="Filter by City"
+              class="appearance-none bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-stone-800 dark:text-slate-200 focus:outline-none focus:border-stone-600 dark:focus:border-cyan-400 transition cursor-pointer"
+            >
+              <option value="ALL">All Cities</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-600 dark:text-slate-500">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Counter, Drift Toggle, and Theme Toggle -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          
+          <!-- Live Place Counter -->
+          <div class="px-2.5 py-1 bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border rounded-xl text-[11px] font-semibold text-stone-700 dark:text-slate-300 whitespace-nowrap hidden md:block">
+            <span id="places-count" class="text-stone-900 dark:text-cyan-400 font-bold">0</span> spots
+          </div>
+
+          <!-- Auto-Drift Toggle Button -->
+          <button 
+            id="drift-toggle-btn"
+            type="button"
+            title="Pause/Resume ambient drift animation"
+            class="p-1.5 rounded-xl bg-[#dcd3c2] dark:bg-surface-card border border-[#c4b9a3] dark:border-surface-border text-stone-700 dark:text-slate-300 hover:text-stone-950 dark:hover:text-white transition"
+          >
+            <svg id="drift-pause-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <svg id="drift-play-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+
+          <!-- Taoist Pure Black & White Yin-Yang Theme Toggle -->
+          <button 
+            id="theme-toggle" 
+            type="button" 
+            title="Toggle Light / Dark Mode"
+            aria-label="Toggle Light and Dark Mode" 
+            class="relative p-1 flex items-center justify-center group focus:outline-none"
+          >
+            <svg 
+              id="yin-yang-icon" 
+              class="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-500 ease-in-out cursor-pointer group-hover:scale-110 drop-shadow-sm select-none" 
+              viewBox="0 0 100 100"
+            >
+              <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+              <path d="M 50 3 A 47 47 0 0 1 50 97 A 23.5 23.5 0 0 1 50 50 A 23.5 23.5 0 0 0 50 3 Z" fill="#000000"/>
+              <circle cx="50" cy="26.5" r="7" fill="#000000"/>
+              <circle cx="50" cy="73.5" r="7" fill="#ffffff"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Category Filter Pills Bar -->
+      <div class="pointer-events-auto flex items-center justify-center">
+        <div class="relative w-full max-w-5xl bg-[#e4dccf]/80 dark:bg-surface/80 backdrop-blur-md py-1.5 px-2 rounded-2xl border border-[#cfc5b3] dark:border-surface-border shadow-md">
+          <div id="category-filters" class="scroll-mask-edges flex items-center gap-1.5 overflow-x-auto py-0.5 px-3 scrollbar-none text-xs">
+            <button 
+              data-category="ALL"
+              class="cat-filter-btn h-6 px-3 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[10px] leading-none transition-all duration-150 bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0 whitespace-nowrap"
+            >
+              All
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Infinite Canvas Viewport Container -->
+  <main id="canvas-viewport" class="relative w-full h-full overflow-hidden canvas-bg">
+    
+    <!-- Virtual Transformed World Layer -->
+    <div id="canvas-world" class="absolute inset-0 pointer-events-none origin-top-left"></div>
+
+    <!-- Initial Loading State -->
+    <div id="loading-state" class="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+      <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#eae4d8]/90 dark:bg-surface-card/90 border border-[#cfc5b3] dark:border-surface-border shadow-xl backdrop-blur-md">
+        <div class="w-3.5 h-3.5 rounded-full bg-stone-900 dark:bg-cyan-400 animate-ping"></div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-stone-800 dark:text-slate-200">
+          Loading Curated Canvas...
+        </span>
+      </div>
+    </div>
+
+    <!-- Empty State Overlay -->
+    <div id="empty-state" class="hidden absolute inset-0 items-center justify-center pointer-events-none z-20">
+      <div class="pointer-events-auto text-center p-6 mx-4 max-w-sm rounded-2xl bg-[#eae4d8]/90 dark:bg-surface-card/90 border border-[#cfc5b3] dark:border-surface-border shadow-2xl backdrop-blur-md">
+        <p class="text-sm font-bold text-stone-900 dark:text-white mb-1">No spots match your filter</p>
+        <p class="text-xs text-stone-500 mb-4">Try clearing your search or switching categories.</p>
+        <button 
+          id="reset-filter-btn"
+          type="button" 
+          class="px-3.5 py-1.5 text-xs font-bold uppercase rounded-xl bg-stone-900 text-stone-50 dark:bg-cyan-500 dark:text-black hover:opacity-90 transition"
+        >
+          Reset Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Canvas Controls & Hint (Bottom-Right) -->
+    <aside class="fixed bottom-4 right-4 z-40 pointer-events-none flex items-center gap-2">
+      <div class="pointer-events-auto px-3 py-1.5 rounded-xl bg-[#e4dccf]/85 dark:bg-surface/85 border border-[#cfc5b3] dark:border-surface-border shadow-md backdrop-blur-md text-[11px] text-stone-600 dark:text-slate-400 font-medium flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="hidden sm:inline">Drag to explore • Click for details</span>
+        <span class="sm:hidden">Drag to pan</span>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div 
+    id="detail-modal" 
+    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 lg:p-12 bg-black/75 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+  >
+    <!-- Modal Wrapper with Outside Centered Navigation Controls -->
+    <div id="modal-container" class="relative w-full max-w-2xl flex items-center justify-center">
+
+      <!-- Previous Arrow (Outside card, vertically centered) -->
+      <button 
+        id="modal-prev-btn" 
+        type="button" 
+        title="Previous spot (←)"
+        aria-label="Previous spot"
+        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+      >
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Next Arrow (Outside card, vertically centered) -->
+      <button 
+        id="modal-next-btn" 
+        type="button" 
+        title="Next spot (→)"
+        aria-label="Next spot"
+        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#e4dccf] text-white hover:text-stone-900 border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+      >
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <!-- Modal Card Box -->
+      <div 
+        id="modal-card" 
+        class="relative w-full max-h-[90vh] flex flex-col bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+      >
+        <div class="overflow-y-auto flex-1 scrollbar-none">
+          <!-- Hero Photo -->
+          <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-stone-900 overflow-hidden border-b border-[#cfc5b3] dark:border-surface-border">
+            <img 
+              id="modal-image" 
+              src="" 
+              alt="" 
+              class="w-full h-full object-cover object-center" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+          </div>
+
+          <!-- Body Details -->
+          <div class="p-5 sm:p-6 space-y-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span id="modal-city-badge"></span>
+                <div id="modal-tags" class="flex flex-wrap items-center gap-1.5"></div>
+              </div>
+              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-white pt-1"></h2>
+            </div>
+
+            <p id="modal-description" class="text-xs sm:text-sm leading-relaxed text-stone-600 dark:text-slate-300 font-normal italic whitespace-pre-line"></p>
+
+            <!-- External Action Button Bar -->
+            <div class="pt-2 flex flex-wrap items-center gap-2.5">
+              <button 
+                id="modal-share-btn" 
+                type="button" 
+                title="Copy direct link to this spot" 
+                aria-label="Copy direct link"
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Copy link</span>
+              </button>
+
+              <a 
+                id="modal-map-link" 
+                href="#" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#dcd3c2] hover:bg-[#d0c6b3] dark:bg-surface dark:hover:bg-surface-border border border-[#c4b9a3] dark:border-surface-border text-stone-800 dark:text-slate-200 font-medium text-xs normal-case tracking-normal transition shadow-sm"
+              >
+                <span>View on Google Maps</span>
+                <span class="text-xs">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div 
+    id="toast-notification" 
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-stone-900/90 dark:bg-white/90 text-stone-50 dark:text-stone-900 text-xs font-semibold rounded-xl shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
+  >
+    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-message">Link copied to clipboard!</span>
+  </div>
+
+  <script>
+    // CSV URL & Fallback Image
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Light-tinted badges for cards/modal
+    const BADGE_COLORS = [
+      "bg-[#edf2f7] text-[#244b70] border-[#c9d8e6] hover:bg-[#244b70] hover:text-[#fbf9f5] hover:border-[#1c3c5a] dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500 dark:hover:text-slate-950 dark:hover:border-blue-400",
+      "bg-[#faf0ed] text-[#9c3826] border-[#f0cfc7] hover:bg-[#9c3826] hover:text-[#fbf9f5] hover:border-[#7d2c1e] dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500 dark:hover:text-slate-950 dark:hover:border-rose-400",
+      "bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] hover:bg-[#2d5937] hover:text-[#fbf9f5] hover:border-[#22442a] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500 dark:hover:text-slate-950 dark:hover:border-emerald-400"
+    ];
+
+    // Solid colored toolbar buttons
+    const TOOLBAR_COLORS = [
+      {
+        inactive: "bg-[#244b70] text-[#fbf9f5] border-[#1c3c5a] hover:bg-[#356799] hover:border-[#477fb8] hover:text-white dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/35 dark:hover:bg-blue-500/25",
+        active: "bg-[#16324d] text-white border-[#0f2336] shadow-sm ring-2 ring-[#244b70] ring-offset-2 ring-offset-[#e4dccf] dark:bg-blue-500 dark:text-slate-950 dark:border-blue-400 dark:ring-0 dark:shadow-blue-500/20"
+      },
+      {
+        inactive: "bg-[#9c3826] text-[#fbf9f5] border-[#7d2c1e] hover:bg-[#ba4530] hover:border-[#d65740] hover:text-white dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/35 dark:hover:bg-rose-500/25",
+        active: "bg-[#712719] text-white border-[#521b11] shadow-sm ring-2 ring-[#9c3826] ring-offset-2 ring-offset-[#e4dccf] dark:bg-rose-500 dark:text-slate-950 dark:border-rose-400 dark:ring-0 dark:shadow-rose-500/20"
+      },
+      {
+        inactive: "bg-[#2d5937] text-[#fbf9f5] border-[#22442a] hover:bg-[#3b7348] hover:border-[#4b915c] hover:text-white dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35 dark:hover:bg-emerald-500/25",
+        active: "bg-[#1e3c25] text-white border-[#152a1a] shadow-sm ring-2 ring-[#2d5937] ring-offset-2 ring-offset-[#e4dccf] dark:bg-emerald-500 dark:text-slate-950 dark:border-emerald-400 dark:ring-0 dark:shadow-emerald-500/20"
+      }
+    ];
+
+    // Data State
+    let allPlaces = [];
+    let visiblePlaces = [];
+    let activeCity = "ALL";
+    let activeCategory = "ALL";
+    let searchQuery = "";
+    let rotationDeg = 0;
+    let activeModalIndex = -1;
+
+    // DOM Elements
+    const viewportEl = document.getElementById("canvas-viewport");
+    const worldEl = document.getElementById("canvas-world");
+    const loadingEl = document.getElementById("loading-state");
+    const emptyEl = document.getElementById("empty-state");
+    const counterEl = document.getElementById("places-count");
+    const categoryContainer = document.getElementById("category-filters");
+    const cityFilterSelect = document.getElementById("city-filter");
+    const searchInput = document.getElementById("search-input");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const resetFilterBtn = document.getElementById("reset-filter-btn");
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const yinYangIcon = document.getElementById("yin-yang-icon");
+    const driftToggleBtn = document.getElementById("drift-toggle-btn");
+    const driftPauseIcon = document.getElementById("drift-pause-icon");
+    const driftPlayIcon = document.getElementById("drift-play-icon");
+
+    // Modal & Toast Elements
+    const modalEl = document.getElementById("detail-modal");
+    const modalCardEl = document.getElementById("modal-card");
+    const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalImageEl = document.getElementById("modal-image");
+    const modalTitleEl = document.getElementById("modal-title");
+    const modalDescEl = document.getElementById("modal-description");
+    const modalMapLink = document.getElementById("modal-map-link");
+    const modalCityBadge = document.getElementById("modal-city-badge");
+    const modalTags = document.getElementById("modal-tags");
+    const modalPrevBtn = document.getElementById("modal-prev-btn");
+    const modalNextBtn = document.getElementById("modal-next-btn");
+    const toastEl = document.getElementById("toast-notification");
+    const toastMsg = document.getElementById("toast-message");
+
+    // Deterministic PRNG seeded by today's calendar date
+    function seededRandom(seed) {
+      let state = seed % 2147483647;
+      if (state <= 0) state += 2147483646;
+      return function() {
+        state = (state * 16807) % 2147483647;
+        return (state - 1) / 2147483646;
+      };
+    }
+
+    function dailyShuffle(array) {
+      const now = new Date();
+      const dateSeed = (now.getFullYear() * 10000) + ((now.getMonth() + 1) * 100) + now.getDate();
+      const rng = seededRandom(dateSeed);
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function createSlug(title) {
+      return (title || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    /**
+     * Infinite Toroidal Canvas Engine:
+     * Maintains a 2D coordinate system where cards wrap endlessly across columns and rows.
+     * Continuously moves with an ambient drift velocity, and blends with user drag / swipe gestures.
+     */
+    const CANVAS = {
+      camX: 0,
+      camY: 0,
+      targetCamX: 0,
+      targetCamY: 0,
+      driftVx: 0.35,  // Slow ambient drift velocity X
+      driftVy: 0.22,  // Slow ambient drift velocity Y
+      isDrifting: true,
+      userInteracting: false,
+      isDragging: false,
+      startX: 0,
+      startY: 0,
+      dragDist: 0,
+      lastDragX: 0,
+      lastDragY: 0,
+      vx: 0,
+      vy: 0,
+      friction: 0.94,
+
+      // Grid Layout geometry
+      cardWidth: 260,
+      cardHeight: 295,
+      gapX: 36,
+      gapY: 40,
+      cols: 6,
+      rows: 6,
+      worldWidth: 0,
+      worldHeight: 0,
+      tiles: []
+    };
+
+    function initCanvasDimensions() {
+      const count = Math.max(visiblePlaces.length, 1);
+      // Construct a spacious repeating matrix around the items
+      CANVAS.cols = Math.max(4, Math.ceil(Math.sqrt(count * 1.6)));
+      CANVAS.rows = Math.max(4, Math.ceil(count / CANVAS.cols) + 2);
+      CANVAS.worldWidth = CANVAS.cols * (CANVAS.cardWidth + CANVAS.gapX);
+      CANVAS.worldHeight = CANVAS.rows * (CANVAS.cardHeight + CANVAS.gapY);
+    }
+
+    function setupCanvasTiles() {
+      worldEl.innerHTML = '';
+      CANVAS.tiles = [];
+
+      if (visiblePlaces.length === 0) return;
+
+      initCanvasDimensions();
+
+      const totalSlots = CANVAS.cols * CANVAS.rows;
+      for (let i = 0; i < totalSlots; i++) {
+        const placeIndex = i % visiblePlaces.length;
+        const place = visiblePlaces[placeIndex];
+        const col = i % CANVAS.cols;
+        const row = Math.floor(i / CANVAS.cols);
+
+        const baseX = col * (CANVAS.cardWidth + CANVAS.gapX);
+        const baseY = row * (CANVAS.cardHeight + CANVAS.gapY);
+
+        const cardEl = document.createElement('div');
+        cardEl.className = 'infinite-card pointer-events-auto select-none';
+        cardEl.style.width = `${CANVAS.cardWidth}px`;
+        cardEl.style.height = `${CANVAS.cardHeight}px`;
+
+        const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+        const safeTitle = escapeHtml(place.title);
+        const safeCity = escapeHtml(place.city);
+        const categoryTag = place.categories[0] ? escapeHtml(place.categories[0]) : '';
+        const tagClass = BADGE_COLORS[0];
+
+        cardEl.innerHTML = `
+          <div class="card-inner w-full h-full flex flex-col bg-[#eae4d8] dark:bg-surface-card border border-[#cfc5b3] dark:border-surface-border rounded-2xl overflow-hidden shadow-md cursor-pointer">
+            <!-- Squared Photo Aspect -->
+            <div class="relative w-full aspect-square bg-stone-300 dark:bg-surface border-b border-[#cfc5b3] dark:border-surface-border overflow-hidden">
+              <img 
+                src="${escapeHtml(imageSource)}" 
+                alt="${safeTitle}" 
+                loading="lazy" 
+                onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
+                class="w-full h-full object-cover object-center pointer-events-none"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
+              
+              <!-- Subtle City Pill Overlay -->
+              ${safeCity ? `
+                <div class="absolute top-2.5 left-2.5">
+                  <span class="h-5 px-2 inline-flex items-center gap-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-black/65 text-white backdrop-blur-md border border-white/20">
+                    ${safeCity}
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Card Bottom Info -->
+            <div class="p-3 flex flex-col justify-between flex-1">
+              <h3 class="text-xs font-bold text-stone-900 dark:text-white truncate">
+                ${safeTitle}
+              </h3>
+              <div class="flex items-center justify-between gap-1 pt-1.5">
+                ${categoryTag ? `
+                  <span class="h-5 px-2 inline-flex items-center rounded-full text-[9px] font-bold tracking-wider uppercase border ${tagClass} truncate max-w-[120px]">
+                    ${categoryTag}
+                  </span>
+                ` : '<span></span>'}
+                ${place.mapLink ? `<span class="text-[11px] text-stone-400 hover:text-stone-800 dark:hover:text-cyan-400">↗</span>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Card Click opens Modal (guarded to avoid triggering after dragging)
+        cardEl.addEventListener('click', (e) => {
+          if (CANVAS.dragDist > 6) return;
+          openModal(placeIndex);
+        });
+
+        worldEl.appendChild(cardEl);
+
+        CANVAS.tiles.push({
+          el: cardEl,
+          baseX,
+          baseY,
+          placeIndex
+        });
+      }
+    }
+
+    // Smooth Infinite Position Update per Animation Frame
+    function updateCanvas() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Handle user gesture inertia
+      if (!CANVAS.isDragging) {
+        CANVAS.camX += CANVAS.vx;
+        CANVAS.camY += CANVAS.vy;
+        CANVAS.vx *= CANVAS.friction;
+        CANVAS.vy *= CANVAS.friction;
+
+        // Auto ambient drift when enabled and not actively dragging
+        if (CANVAS.isDrifting && !CANVAS.userInteracting && modalEl.classList.contains("pointer-events-none")) {
+          CANVAS.camX += CANVAS.driftVx;
+          CANVAS.camY += CANVAS.driftVy;
+        }
+      }
+
+      if (CANVAS.worldWidth > 0 && CANVAS.worldHeight > 0) {
+        const wrapW = CANVAS.worldWidth;
+        const wrapH = CANVAS.worldHeight;
+
+        // Reposition each tile using seamless modulo arithmetic
+        for (let i = 0; i < CANVAS.tiles.length; i++) {
+          const tile = CANVAS.tiles[i];
+
+          // Compute offset from camera
+          let renderX = ((tile.baseX - CANVAS.camX) % wrapW + wrapW) % wrapW;
+          let renderY = ((tile.baseY - CANVAS.camY) % wrapH + wrapH) % wrapH;
+
+          // Center wrapped tiles around current viewport view
+          if (renderX > vw + CANVAS.cardWidth) {
+            renderX -= wrapW;
+          }
+          if (renderY > vh + CANVAS.cardHeight) {
+            renderY -= wrapH;
+          }
+
+          tile.el.style.transform = `translate3d(${renderX}px, ${renderY}px, 0)`;
+        }
+      }
+
+      requestAnimationFrame(updateCanvas);
+    }
+
+    function setupCanvasInteractions() {
+      let isPointerDown = false;
+
+      function onPointerDown(e) {
+        // Do not drag if interacting with inputs, buttons or modal
+        if (e.target.closest('header') || e.target.closest('#detail-modal') || e.target.closest('button') || e.target.closest('select') || e.target.closest('input')) {
+          return;
+        }
+
+        isPointerDown = true;
+        CANVAS.isDragging = true;
+        CANVAS.userInteracting = true;
+        CANVAS.dragDist = 0;
+        CANVAS.startX = e.clientX || (e.touches && e.touches[0].clientX);
+        CANVAS.startY = e.clientY || (e.touches && e.touches[0].clientY);
+        CANVAS.lastDragX = CANVAS.startX;
+        CANVAS.lastDragY = CANVAS.startY;
+        CANVAS.vx = 0;
+        CANVAS.vy = 0;
+        viewportEl.classList.add('is-dragging');
+      }
+
+      function onPointerMove(e) {
+        if (!isPointerDown) return;
+        const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+        const currentY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        const dx = currentX - CANVAS.lastDragX;
+        const dy = currentY - CANVAS.lastDragY;
+
+        CANVAS.camX -= dx;
+        CANVAS.camY -= dy;
+        CANVAS.vx = -dx;
+        CANVAS.vy = -dy;
+
+        CANVAS.dragDist += Math.abs(dx) + Math.abs(dy);
+        CANVAS.lastDragX = currentX;
+        CANVAS.lastDragY = currentY;
+      }
+
+      function onPointerUp() {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        CANVAS.isDragging = false;
+        viewportEl.classList.remove('is-dragging');
+
+        // Resume ambient drift gently after brief pause
+        setTimeout(() => {
+          CANVAS.userInteracting = false;
+        }, 1200);
+      }
+
+      // Mouse & Touch events on canvas
+      window.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+
+      window.addEventListener('touchstart', onPointerDown, { passive: true });
+      window.addEventListener('touchmove', onPointerMove, { passive: true });
+      window.addEventListener('touchend', onPointerUp, { passive: true });
+
+      // Wheel scroll panning
+      window.addEventListener('wheel', (e) => {
+        if (!modalEl.classList.contains("pointer-events-none")) return;
+        CANVAS.camX += e.deltaX * 0.7;
+        CANVAS.camY += e.deltaY * 0.7;
+        CANVAS.userInteracting = true;
+        clearTimeout(CANVAS.wheelTimer);
+        CANVAS.wheelTimer = setTimeout(() => {
+          CANVAS.userInteracting = false;
+        }, 1000);
+      }, { passive: true });
+
+      // Drift Play/Pause Toggle
+      driftToggleBtn.addEventListener('click', () => {
+        CANVAS.isDrifting = !CANVAS.isDrifting;
+        driftPauseIcon.classList.toggle('hidden', !CANVAS.isDrifting);
+        driftPlayIcon.classList.toggle('hidden', CANVAS.isDrifting);
+        showToast(CANVAS.isDrifting ? "Ambient drift resumed" : "Ambient drift paused");
+      });
+    }
+
+    function copyTextToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const tempInput = document.createElement("input");
+      tempInput.style.position = "fixed";
+      tempInput.style.opacity = "0";
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Copy fallback failed', err);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    let toastTimeout = null;
+    function showToast(message) {
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastMsg.textContent = message;
+      toastEl.classList.remove("opacity-0", "translate-y-3", "pointer-events-none");
+      toastEl.classList.add("opacity-100", "translate-y-0");
+
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.remove("opacity-100", "translate-y-0");
+        toastEl.classList.add("opacity-0", "translate-y-3", "pointer-events-none");
+      }, 2500);
+    }
+
+    function parseUrlState() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("city")) activeCity = params.get("city");
+        if (params.has("cat")) activeCategory = params.get("cat");
+        if (params.has("q")) {
+          searchQuery = params.get("q");
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateUrlState(targetSpotSlug = null) {
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
+      try {
+        const params = new URLSearchParams();
+        if (activeCity !== "ALL") params.set("city", activeCity);
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, "", newUrl);
+      } catch (err) {
+        console.warn("Could not sync URL history:", err);
+      }
+    }
+
+    // Modal Operations
+    window.openModal = function(index) {
+      if (!visiblePlaces[index]) return;
+      activeModalIndex = index;
+      const place = visiblePlaces[index];
+
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
+      modalImageEl.alt = place.title;
+      modalTitleEl.textContent = place.title;
+      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
+
+      // City Badge in Modal
+      if (place.city) {
+        modalCityBadge.className = "h-6 px-2.5 inline-flex items-center gap-1 rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors bg-[#eff4ee] text-[#2d5937] border-[#ccdec9] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/35";
+        modalCityBadge.innerHTML = `
+          <svg class="w-2.5 h-2.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+          </svg>
+          <span>${escapeHtml(place.city)}</span>
+        `;
+        modalCityBadge.classList.remove("hidden");
+      } else {
+        modalCityBadge.classList.add("hidden");
+      }
+
+      // Categories in Modal
+      modalTags.innerHTML = place.categories.map((cat, idx) => {
+        const colorClass = BADGE_COLORS[idx % BADGE_COLORS.length];
+        return `
+          <span class="h-6 px-2.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold tracking-wider uppercase leading-none border transition-colors ${colorClass}">
+            ${escapeHtml(cat)}
+          </span>
+        `;
+      }).join('');
+
+      // Maps Link
+      if (place.mapLink) {
+        modalMapLink.href = encodeURI(place.mapLink);
+        modalMapLink.classList.remove("hidden");
+      } else {
+        modalMapLink.classList.add("hidden");
+      }
+
+      // Prev/Next Arrows
+      modalPrevBtn.disabled = index <= 0;
+      modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      // Reveal Modal
+      modalEl.classList.remove("opacity-0", "pointer-events-none");
+      modalEl.classList.add("opacity-100");
+      modalCardEl.classList.remove("scale-95");
+      modalCardEl.classList.add("scale-100");
+
+      updateUrlState(place.slug);
+    };
+
+    window.closeModal = function() {
+      modalEl.classList.remove("opacity-100");
+      modalEl.classList.add("opacity-0", "pointer-events-none");
+      modalCardEl.classList.remove("scale-100");
+      modalCardEl.classList.add("scale-95");
+      activeModalIndex = -1;
+      updateUrlState(null);
+    };
+
+    function navigateModal(direction) {
+      const targetIndex = activeModalIndex + direction;
+      if (targetIndex >= 0 && targetIndex < visiblePlaces.length) {
+        openModal(targetIndex);
+      }
+    }
+
+    modalEl.addEventListener("click", (e) => {
+      if (!modalCardEl.contains(e.target) && !modalPrevBtn.contains(e.target) && !modalNextBtn.contains(e.target)) {
+        closeModal();
+      }
+    });
+    modalPrevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigateModal(-1);
+    });
+    modalNextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigateModal(1);
+    });
+
+    modalShareBtn.addEventListener("click", () => {
+      if (activeModalIndex !== -1 && visiblePlaces[activeModalIndex]) {
+        let base = `${window.location.origin}${window.location.pathname}`;
+        if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+          base = window.location.href.split('?')[0];
+        }
+        const shareUrl = `${base}?spot=${visiblePlaces[activeModalIndex].slug}`;
+        copyTextToClipboard(shareUrl);
+        showToast("Direct spot link copied!");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (modalEl.classList.contains("opacity-100")) {
+        if (e.key === "Escape") closeModal();
+        else if (e.key === "ArrowLeft") navigateModal(-1);
+        else if (e.key === "ArrowRight") navigateModal(1);
+      }
+    });
+
+    function filterPlaces() {
+      const q = searchQuery.toLowerCase().trim();
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+
+      visiblePlaces = allPlaces.filter(place => {
+        const matchesCity = (activeCity === "ALL") || (place.city.toLowerCase() === activeCity.toLowerCase());
+        const matchesCategory = (activeCategory === "ALL") || place.categories.includes(activeCategory);
+        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
+        return matchesCity && matchesCategory && matchesSearch;
+      });
+
+      counterEl.textContent = visiblePlaces.length;
+
+      if (visiblePlaces.length === 0) {
+        emptyEl.classList.remove("hidden");
+        emptyEl.classList.add("flex");
+      } else {
+        emptyEl.classList.add("hidden");
+        emptyEl.classList.remove("flex");
+      }
+
+      setupCanvasTiles();
+    }
+
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const cat = btn.dataset.category;
+        const colorIdx = parseInt(btn.dataset.colorIndex, 10);
+
+        if (cat === "ALL") {
+          btn.className = "cat-filter-btn h-6 px-3 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[10px] leading-none transition-all duration-150 whitespace-nowrap " +
+            (activeCategory === "ALL" 
+              ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
+              : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+        } else {
+          const theme = TOOLBAR_COLORS[colorIdx];
+          const isCurrentActive = activeCategory === cat;
+          btn.className = `cat-filter-btn h-6 px-3 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[10px] leading-none transition-all duration-150 border whitespace-nowrap ${
+            isCurrentActive ? theme.active : theme.inactive
+          }`;
+        }
+      });
+    }
+
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory === cat && cat !== "ALL") ? "ALL" : cat;
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    };
+
+    function populateCityFilter() {
+      const cities = Array.from(new Set(allPlaces.map(p => p.city).filter(Boolean))).sort();
+      cityFilterSelect.innerHTML = '<option value="ALL">All Cities</option>';
+      cities.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city;
+        opt.textContent = city;
+        cityFilterSelect.appendChild(opt);
+      });
+    }
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          catCount[c] = (catCount[c] || 0) + 1;
+        });
+      });
+
+      const sortedCategories = Object.keys(catCount).sort();
+      categoryContainer.innerHTML = '';
+
+      // "All" Button
+      const allBtn = document.createElement("button");
+      allBtn.dataset.category = "ALL";
+      allBtn.className = "cat-filter-btn h-6 px-3 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[10px] leading-none transition-all duration-150 whitespace-nowrap " +
+        (activeCategory === "ALL" 
+          ? "bg-stone-900 text-stone-50 border border-stone-800 shadow-sm ring-2 ring-stone-900 ring-offset-2 ring-offset-[#e4dccf] dark:bg-cyan-500 dark:text-black dark:border-cyan-400 dark:ring-0" 
+          : "bg-[#4a443b] text-[#fbf9f5] border-[#38332c] hover:bg-[#38332c] hover:text-white dark:bg-surface-card dark:text-slate-300 dark:border-surface-border dark:hover:bg-surface-border");
+      allBtn.textContent = "All";
+      allBtn.addEventListener("click", () => setCategory("ALL"));
+      categoryContainer.appendChild(allBtn);
+
+      sortedCategories.forEach((cat, index) => {
+        const theme = TOOLBAR_COLORS[index % TOOLBAR_COLORS.length];
+        const btn = document.createElement("button");
+        btn.dataset.category = cat;
+        btn.dataset.colorIndex = index % TOOLBAR_COLORS.length;
+        const isCurrentActive = activeCategory === cat;
+        btn.className = `cat-filter-btn h-6 px-3 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wider text-[10px] leading-none transition-all duration-150 border whitespace-nowrap ${
+          isCurrentActive ? theme.active : theme.inactive
+        }`;
+        btn.textContent = cat;
+        btn.addEventListener("click", () => setCategory(cat));
+        categoryContainer.appendChild(btn);
+      });
+    }
+
+    function getFieldValue(row, possibleKeys) {
+      const rowKeys = Object.keys(row);
+      for (const key of possibleKeys) {
+        const match = rowKeys.find(k => k.trim().toLowerCase() === key.toLowerCase());
+        if (match && row[match] !== undefined && row[match] !== null && String(row[match]).trim() !== '') {
+          return String(row[match]).trim();
+        }
+      }
+      return '';
+    }
+
+    function processPlacesData(rows) {
+      const parsedPlaces = rows
+        .map(row => {
+          const title = getFieldValue(row, ['title', 'name', 'place']);
+          if (!title) return null;
+
+          const rawCategories = getFieldValue(row, ['categories', 'category', 'tags', 'tag']);
+          const categories = rawCategories 
+            ? rawCategories.split(',').map(s => {
+                const trimmed = s.trim();
+                return trimmed ? (trimmed.charAt(0).toUpperCase() + trimmed.slice(1)) : '';
+              }).filter(Boolean) 
+            : [];
+
+          const city = getFieldValue(row, ['city', 'location', 'town']);
+          const description = getFieldValue(row, ['description', 'desc', 'notes', 'about']);
+          const photo = getFieldValue(row, ['photo', 'image', 'picture', 'url', 'photo_url']);
+          const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
+          const slug = createSlug(title);
+
+          return { title, slug, city, categories, description, photo, mapLink };
+        })
+        .filter(Boolean);
+
+      allPlaces = dailyShuffle(parsedPlaces);
+
+      populateCityFilter();
+      populateCategoryFilters();
+
+      const deepLinkedSpotSlug = parseUrlState();
+      cityFilterSelect.value = activeCity;
+      updateToolbarStyles();
+      filterPlaces();
+
+      if (deepLinkedSpotSlug) {
+        const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
+        if (targetIndex !== -1) openModal(targetIndex);
+      }
+
+      loadingEl.classList.add("hidden");
+    }
+
+    async function fetchPlaces() {
+      try {
+        const cacheBuster = `&_t=${Date.now()}`;
+        const response = await fetch(`${SHEET_CSV_URL}${cacheBuster}`);
+        if (!response.ok) throw new Error("Network error fetching CSV");
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: h => h.trim().toLowerCase(),
+          complete: results => processPlacesData(results.data),
+          error: () => handleFetchError()
+        });
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        handleFetchError();
+      }
+    }
+
+    function handleFetchError() {
+      loadingEl.classList.add("hidden");
+      emptyEl.classList.remove("hidden");
+      emptyEl.classList.add("flex");
+      emptyEl.querySelector("p").textContent = "Could not load data from Google Sheets.";
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem("tot-theme");
+      const isDark = savedTheme !== null ? savedTheme === "dark" : true;
+      document.documentElement.classList.toggle("dark", isDark);
+
+      themeToggleBtn.addEventListener("click", () => {
+        rotationDeg += 180;
+        yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+
+        const toggleThemeLogic = () => {
+          const currentlyDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
+        };
+
+        if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.startViewTransition(() => toggleThemeLogic());
+        } else {
+          document.documentElement.classList.add("theme-transition");
+          toggleThemeLogic();
+          setTimeout(() => document.documentElement.classList.remove("theme-transition"), 350);
+        }
+      });
+    }
+
+    // Input Events
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      updateUrlState();
+      filterPlaces();
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      updateUrlState();
+      filterPlaces();
+    });
+
+    cityFilterSelect.addEventListener("change", (e) => {
+      activeCity = e.target.value;
+      updateUrlState();
+      filterPlaces();
+    });
+
+    resetFilterBtn.addEventListener("click", () => {
+      activeCategory = "ALL";
+      activeCity = "ALL";
+      searchQuery = "";
+      searchInput.value = "";
+      cityFilterSelect.value = "ALL";
+      clearSearchBtn.classList.add("hidden");
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    });
+
+    // Start App & Infinite Animation Loop
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      setupCanvasInteractions();
+      fetchPlaces();
+      requestAnimationFrame(updateCanvas);
+    });
+  </script>
+</body>
+</html>
