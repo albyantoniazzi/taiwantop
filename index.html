@@ -86,8 +86,9 @@
     /* Unified lowercase badge styling across all sections */
     .badge-pill {
       text-transform: lowercase;
-      font-size: 10px;
-      line-height: 1rem;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1rem;
       letter-spacing: 0.01em;
     }
   </style>
@@ -178,15 +179,21 @@
       </div>
     </div>
 
-    <!-- Category Pills Row: Horizontally scrollable on small/overflow screens -->
-    <div class="mt-4 overflow-x-auto scrollbar-none py-1 -mx-4 px-4 sm:-mx-[10vw] sm:px-[10vw]">
-      <div class="flex items-center gap-1 flex-nowrap" id="category-filters">
-        <button 
-          data-category="ALL"
-          class="cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer"
-        >
-          all
-        </button>
+    <!-- Category Pills Row: Horizontally scrollable, cleanly cut off flush with photos -->
+    <div class="mt-4 overflow-hidden">
+      <!-- Scrollable Track (aligned with posts block width) -->
+      <div 
+        id="category-scroll-container"
+        class="overflow-x-auto scrollbar-none py-1"
+      >
+        <div class="flex items-center gap-1 flex-nowrap" id="category-filters">
+          <button 
+            data-category="ALL"
+            class="cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer"
+          >
+            all
+          </button>
+        </div>
       </div>
     </div>
 
@@ -219,8 +226,8 @@
       </button>
     </div>
 
-    <!-- Responsive Adaptive Grid Container: 1 col on mobile, 2 sm, 3 md/lg, 4 xl, 5 2xl -->
-    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-8 gap-y-10"></div>
+    <!-- Responsive Adaptive Grid: 1 col mobile, 2 sm, 3 on most desktop sizes (~350-400px wide), 4 on ultra-wide 2xl -->
+    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-10"></div>
 
   </main>
 
@@ -416,6 +423,7 @@
     const loadingEl = document.getElementById("loading-state");
     const emptyEl = document.getElementById("empty-state");
     const categoryContainer = document.getElementById("category-filters");
+    const categoryScrollContainer = document.getElementById("category-scroll-container");
     const cityFilterSelect = document.getElementById("city-filter");
     const searchInput = document.getElementById("search-input");
     const clearSearchBtn = document.getElementById("clear-search-btn");
@@ -443,6 +451,28 @@
     const modalNextBtn = document.getElementById("modal-next-btn");
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
+
+    // Dynamic toolbar scroll fade & blur updates
+    function updateToolbarFades() {
+      if (!categoryScrollContainer || !toolbarFadeLeft || !toolbarFadeRight) return;
+      const el = categoryScrollContainer;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 4) {
+        toolbarFadeLeft.style.opacity = '0';
+        toolbarFadeRight.style.opacity = '0';
+        return;
+      }
+      const atStart = el.scrollLeft <= 6;
+      const atEnd = el.scrollLeft >= maxScroll - 6;
+
+      toolbarFadeLeft.style.opacity = atStart ? '0' : '1';
+      toolbarFadeRight.style.opacity = atEnd ? '0' : '1';
+    }
+
+    if (categoryScrollContainer) {
+      categoryScrollContainer.addEventListener("scroll", updateToolbarFades, { passive: true });
+      window.addEventListener("resize", updateToolbarFades);
+    }
 
     // Deterministic PRNG seeded by today's calendar date
     function seededRandom(seed) {
@@ -496,7 +526,7 @@
           <button 
             type="button"
             data-category="${escapeHtml(cat.toLowerCase())}"
-            class="card-cat-badge badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+            class="card-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
           >
             ${escapeHtml(cat.toLowerCase())}
           </button>
@@ -574,15 +604,15 @@
 
         if (cat.toUpperCase() === "ALL") {
           if (isCurrentActive) {
-            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
           } else {
-            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer";
           }
         } else {
           if (isCurrentActive) {
-            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] dark:border-white dark:bg-white dark:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] dark:border-white dark:bg-white dark:text-[#292929] shadow-sm ring-1 ring-[#292929]/30 dark:ring-white/40 cursor-pointer";
           } else {
-            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
+            btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
           }
         }
       });
@@ -622,7 +652,7 @@
       // "all" Button
       const allBtn = document.createElement("button");
       allBtn.dataset.category = "ALL";
-      allBtn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer";
+      allBtn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#EBF1E5] text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-[#333333] dark:text-white dark:hover:bg-white dark:hover:text-[#292929] shadow-sm cursor-pointer";
       allBtn.textContent = "all";
       allBtn.addEventListener("click", () => setCategory("ALL"));
       categoryContainer.appendChild(allBtn);
@@ -630,7 +660,7 @@
       sortedCategories.forEach(cat => {
         const btn = document.createElement("button");
         btn.dataset.category = cat;
-        btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-2.5 py-0.5 font-medium rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
+        btn.className = "cat-filter-btn badge-pill flex-shrink-0 px-3 py-1 font-bold rounded-full lowercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-[#EBF1E5] hover:text-[#292929] hover:border-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-[#333333] dark:hover:text-white dark:hover:border-white cursor-pointer";
         btn.textContent = cat;
         btn.addEventListener("click", () => setCategory(cat));
         categoryContainer.appendChild(btn);
@@ -728,7 +758,7 @@
 
       // City Badge in Modal (clickable to filter by city)
       if (place.city) {
-        modalCityBadge.className = "badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer";
+        modalCityBadge.className = "badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer";
         modalCityBadge.textContent = place.city.toLowerCase();
         modalCityBadge.onclick = (e) => {
           e.stopPropagation();
@@ -749,7 +779,7 @@
         <button 
           type="button"
           data-category="${escapeHtml(cat.toLowerCase())}"
-          class="modal-cat-badge badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full font-medium lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+          class="modal-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
         >
           ${escapeHtml(cat.toLowerCase())}
         </button>
