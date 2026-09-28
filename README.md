@@ -4,6 +4,7 @@ Selection of Taiwan's Top Spots
 
 🔗 https://albyantoniazzi.github.io/taiwantop
 
-<img width="1024" height="696" alt="Screenshot-2026" src="https://github.com/user-attachments/assets/22bad58c-db0d-485f-83ff-9b200244b418" />
+<img width="826" height="600" alt="screen" src="https://github.com/user-attachments/assets/46ec1a97-cccd-40d8-b11c-38f94f62a1a3" />
+
 
 
