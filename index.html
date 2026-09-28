@@ -233,10 +233,10 @@
 
   <!-- Reintroduced Directory Stats Footer with 10% browser margins -->
   <footer id="stats-footer" class="w-full pt-10 pb-16">
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-8 mb-8">
       
-      <!-- Overview Numbers with Large Digits and Small Labels -->
-      <div class="flex-shrink-0 lg:w-80">
+      <!-- Overview Numbers with Large Digits and Small Labels (Column 1) -->
+      <div class="col-span-1">
         <h3 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
         <div class="flex items-baseline gap-6 sm:gap-8 mt-4 text-[#292929] dark:text-white">
           <div class="flex flex-col">
@@ -254,8 +254,8 @@
         </div>
       </div>
 
-      <!-- Top 5 Categories Infographic -->
-      <div class="flex-1 max-w-3xl">
+      <!-- Top 5 Categories Infographic (Starts under Column 2 when screen is larger) -->
+      <div class="col-span-1 sm:col-start-2 lg:col-start-2 lg:col-span-2 2xl:col-start-2 2xl:col-span-3">
         <h4 class="text-xs font-bold uppercase tracking-wider text-[#292929] dark:text-white mb-4">TOP 5 CATEGORIES</h4>
         <div id="stats-chart" class="space-y-3">
           <!-- Populated dynamically via JS -->
@@ -526,7 +526,7 @@
           <button 
             type="button"
             data-category="${escapeHtml(cat.toLowerCase())}"
-            class="card-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+            class="card-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
           >
             ${escapeHtml(cat.toLowerCase())}
           </button>
@@ -758,7 +758,7 @@
 
       // City Badge in Modal (clickable to filter by city)
       if (place.city) {
-        modalCityBadge.className = "badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer";
+        modalCityBadge.className = "badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
         modalCityBadge.textContent = place.city.toLowerCase();
         modalCityBadge.onclick = (e) => {
           e.stopPropagation();
@@ -779,7 +779,7 @@
         <button 
           type="button"
           data-category="${escapeHtml(cat.toLowerCase())}"
-          class="modal-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] hover:opacity-80 transition cursor-pointer"
+          class="modal-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
         >
           ${escapeHtml(cat.toLowerCase())}
         </button>
