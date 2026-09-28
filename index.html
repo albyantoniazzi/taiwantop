@@ -295,36 +295,36 @@
     <!-- Modal Wrapper with Centered Outside Navigation Arrows -->
     <div id="modal-container" class="relative w-full max-w-2xl flex items-center justify-center">
 
-      <!-- Previous Arrow (Outside card, vertically centered) -->
+      <!-- Previous Arrow (Hidden on phone, shown on desktop browser) -->
       <button 
         id="modal-prev-btn" 
         type="button" 
         title="Previous spot (←)"
         aria-label="Previous spot"
-        class="absolute -left-3 sm:-left-12 md:-left-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#EBF1E5] dark:hover:bg-white text-white hover:text-[#292929] border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="hidden md:block absolute md:-left-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
       >
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <!-- Next Arrow (Outside card, vertically centered) -->
+      <!-- Next Arrow (Hidden on phone, shown on desktop browser) -->
       <button 
         id="modal-next-btn" 
         type="button" 
         title="Next spot (→)"
         aria-label="Next spot"
-        class="absolute -right-3 sm:-right-12 md:-right-14 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-[#EBF1E5] dark:hover:bg-white text-white hover:text-[#292929] border border-white/20 backdrop-blur-md transition shadow-xl disabled:opacity-20 disabled:pointer-events-none focus:outline-none"
+        class="hidden md:block absolute md:-right-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
       >
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
 
-      <!-- Modal Card Box -->
+      <!-- Modal Card Box (Sharp rectangular corners) -->
       <div 
         id="modal-card" 
-        class="relative w-full max-h-[90vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+        class="relative w-full max-h-[90vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-none shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
         <div class="overflow-y-auto flex-1 scrollbar-none">
           <!-- Hero Photo -->
@@ -906,6 +906,45 @@
       e.stopPropagation();
       navigateModal(1);
     });
+
+    // Touch swipe left / right gestures for mobile navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const SWIPE_THRESHOLD = 45;
+
+    modalCardEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchEndX = touchStartX;
+        touchEndY = touchStartY;
+      }
+    }, { passive: true });
+
+    modalCardEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        touchEndX = e.touches[0].clientX;
+        touchEndY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    modalCardEl.addEventListener('touchend', () => {
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      // Verify that horizontal gesture is dominant over vertical scrolling
+      if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY) * 1.35) {
+        if (deltaX < 0) {
+          // Swipe left -> view next place
+          navigateModal(1);
+        } else {
+          // Swipe right -> view previous place
+          navigateModal(-1);
+        }
+      }
+    }, { passive: true });
 
     function copyTextToClipboard(text) {
       if (navigator.clipboard && window.isSecureContext) {
