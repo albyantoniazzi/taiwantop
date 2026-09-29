@@ -233,6 +233,18 @@
     <!-- Responsive Adaptive Grid: 1 col mobile, 2 sm, 3 on most desktop sizes (~350-400px wide), 4 on ultra-wide 2xl -->
     <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-10"></div>
 
+    <!-- Load More Button Container -->
+    <div id="load-more-container" class="hidden pt-10 pb-4 flex justify-center items-center">
+      <button 
+        id="load-more-btn" 
+        type="button" 
+        class="h-9 inline-flex items-center gap-2 px-5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal transition shadow-sm cursor-pointer focus:outline-none"
+      >
+        <span>LOAD MORE</span>
+        <span class="text-xs">↓</span>
+      </button>
+    </div>
+
   </main>
 
   <!-- Reintroduced Directory Stats Footer with 10% browser margins -->
@@ -424,6 +436,8 @@
     // State Variables
     let allPlaces = [];
     let visiblePlaces = [];
+    let displayedCount = 24;
+    const PAGE_SIZE = 24;
     let activeCity = "ALL";
     let activeCategory = "ALL";
     let searchQuery = "";
@@ -432,6 +446,8 @@
 
     // DOM Elements
     const gridEl = document.getElementById("places-grid");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const loadMoreBtn = document.getElementById("load-more-btn");
     const loadingEl = document.getElementById("loading-state");
     const emptyEl = document.getElementById("empty-state");
     const categoryContainer = document.getElementById("category-filters");
@@ -501,136 +517,167 @@
         .replace(/^-+|-+$/g, '');
     }
 
+    function createCardElement(place, index) {
+      const card = document.createElement('article');
+      card.className = "flex flex-col group cursor-pointer pb-6 border-b border-[#292929] dark:border-white";
+
+      const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+      const safeTitle = escapeHtml(place.title);
+      const safeDesc = escapeHtml(place.description);
+
+      const cityHtml = place.city ? `
+        <button 
+          type="button"
+          data-city="${escapeHtml(place.city)}"
+          class="card-city-badge badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold capitalize border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
+        >
+          <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+          <span>${escapeHtml(formatCityName(place.city))}</span>
+        </button>
+      ` : '';
+
+      const tagsHtml = place.categories.map(cat => `
+        <button 
+          type="button"
+          data-category="${escapeHtml(cat.toLowerCase())}"
+          class="card-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
+        >
+          ${escapeHtml(cat.toLowerCase())}
+        </button>
+      `).join('');
+
+      const mapArrowHtml = place.mapLink ? `
+        <a 
+          href="${encodeURI(place.mapLink)}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          title="Open in Google Maps"
+          aria-label="Open ${safeTitle} in Google Maps"
+          class="card-map-arrow flex-shrink-0 text-base sm:text-lg font-bold text-[#292929] dark:text-white hover:opacity-70 transition p-0.5 leading-none focus:outline-none"
+        >
+          ↗
+        </a>
+      ` : '';
+
+      card.innerHTML = `
+        <!-- Image Box (Aspect ~16/10) -->
+        <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden mb-3">
+          <img 
+            src="${escapeHtml(imageSource)}" 
+            alt="${safeTitle}" 
+            loading="lazy"
+            onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
+            class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
+          />
+        </div>
+
+        <!-- Title Row with Right-Aligned Maps Arrow -->
+        <div class="flex items-baseline justify-between gap-2">
+          <h2 class="text-base sm:text-lg font-bold text-[#292929] dark:text-white tracking-tight leading-snug">
+            ${safeTitle}
+          </h2>
+          ${mapArrowHtml}
+        </div>
+
+        <!-- Description (Semibold) -->
+        ${safeDesc ? `
+          <p class="text-[11px] sm:text-xs text-[#292929] dark:text-white font-semibold mt-1 line-clamp-2 leading-relaxed">
+            ${safeDesc}
+          </p>
+        ` : ''}
+
+        <!-- Badges Row (City + Categories) -->
+        <div class="mt-2.5 flex items-center gap-1 flex-wrap">
+          ${cityHtml}
+          ${tagsHtml}
+        </div>
+      `;
+
+      // Card click opens modal
+      card.addEventListener('click', () => openModal(index));
+
+      // Maps arrow click stops card modal trigger
+      const arrowEl = card.querySelector('.card-map-arrow');
+      if (arrowEl) {
+        arrowEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+
+      // City badge click filters by city without opening modal
+      const cityBtn = card.querySelector('.card-city-badge');
+      if (cityBtn) {
+        cityBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const city = cityBtn.getAttribute('data-city');
+          if (city) {
+            activeCity = city;
+            cityFilterSelect.value = city;
+            updateUrlState();
+            filterPlaces();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      }
+
+      // Badges click sets category without opening modal
+      card.querySelectorAll('.card-cat-badge').forEach(badgeBtn => {
+        badgeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cat = badgeBtn.getAttribute('data-category');
+          if (cat) {
+            setCategory(cat);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+
+      return card;
+    }
+
     function renderCards() {
       gridEl.innerHTML = '';
 
       if (visiblePlaces.length === 0) {
         emptyEl.classList.remove('hidden');
+        loadMoreContainer.classList.add('hidden');
         startDinoGame();
         return;
       }
       emptyEl.classList.add('hidden');
       stopDinoGame();
 
-      visiblePlaces.forEach((place, index) => {
-        const card = document.createElement('article');
-        card.className = "flex flex-col group cursor-pointer pb-6 border-b border-[#292929] dark:border-white";
-
-        const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
-        const safeTitle = escapeHtml(place.title);
-        const safeDesc = escapeHtml(place.description);
-
-        const cityHtml = place.city ? `
-          <button 
-            type="button"
-            data-city="${escapeHtml(place.city)}"
-            class="card-city-badge badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold capitalize border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
-          >
-            <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
-            </svg>
-            <span>${escapeHtml(formatCityName(place.city))}</span>
-          </button>
-        ` : '';
-
-        const tagsHtml = place.categories.map(cat => `
-          <button 
-            type="button"
-            data-category="${escapeHtml(cat.toLowerCase())}"
-            class="card-cat-badge badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm"
-          >
-            ${escapeHtml(cat.toLowerCase())}
-          </button>
-        `).join('');
-
-        const mapArrowHtml = place.mapLink ? `
-          <a 
-            href="${encodeURI(place.mapLink)}" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            title="Open in Google Maps"
-            aria-label="Open ${safeTitle} in Google Maps"
-            class="card-map-arrow flex-shrink-0 text-base sm:text-lg font-bold text-[#292929] dark:text-white hover:opacity-70 transition p-0.5 leading-none focus:outline-none"
-          >
-            ↗
-          </a>
-        ` : '';
-
-        card.innerHTML = `
-          <!-- Image Box (Aspect ~16/10) -->
-          <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden mb-3">
-            <img 
-              src="${escapeHtml(imageSource)}" 
-              alt="${safeTitle}" 
-              loading="lazy"
-              onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
-              class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
-            />
-          </div>
-
-          <!-- Title Row with Right-Aligned Maps Arrow -->
-          <div class="flex items-baseline justify-between gap-2">
-            <h2 class="text-base sm:text-lg font-bold text-[#292929] dark:text-white tracking-tight leading-snug">
-              ${safeTitle}
-            </h2>
-            ${mapArrowHtml}
-          </div>
-
-          <!-- Description (Semibold) -->
-          ${safeDesc ? `
-            <p class="text-[11px] sm:text-xs text-[#292929] dark:text-white font-semibold mt-1 line-clamp-2 leading-relaxed">
-              ${safeDesc}
-            </p>
-          ` : ''}
-
-          <!-- Badges Row (City + Categories) -->
-          <div class="mt-2.5 flex items-center gap-1 flex-wrap">
-            ${cityHtml}
-            ${tagsHtml}
-          </div>
-        `;
-
-        // Card click opens modal
-        card.addEventListener('click', () => openModal(index));
-
-        // Maps arrow click stops card modal trigger
-        const arrowEl = card.querySelector('.card-map-arrow');
-        if (arrowEl) {
-          arrowEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-          });
-        }
-
-        // City badge click filters by city without opening modal
-        const cityBtn = card.querySelector('.card-city-badge');
-        if (cityBtn) {
-          cityBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const city = cityBtn.getAttribute('data-city');
-            if (city) {
-              activeCity = city;
-              cityFilterSelect.value = city;
-              updateUrlState();
-              filterPlaces();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          });
-        }
-
-        // Badges click sets category without opening modal
-        card.querySelectorAll('.card-cat-badge').forEach(badgeBtn => {
-          badgeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const cat = badgeBtn.getAttribute('data-category');
-            if (cat) {
-              setCategory(cat);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          });
-        });
-
+      const itemsToRender = visiblePlaces.slice(0, displayedCount);
+      itemsToRender.forEach((place, index) => {
+        const card = createCardElement(place, index);
         gridEl.appendChild(card);
       });
+
+      updateLoadMoreVisibility();
+    }
+
+    function appendNextBatch() {
+      const start = displayedCount;
+      const nextBatchEnd = Math.min(start + PAGE_SIZE, visiblePlaces.length);
+
+      for (let i = start; i < nextBatchEnd; i++) {
+        const card = createCardElement(visiblePlaces[i], i);
+        gridEl.appendChild(card);
+      }
+
+      displayedCount = nextBatchEnd;
+      updateLoadMoreVisibility();
+    }
+
+    function updateLoadMoreVisibility() {
+      if (displayedCount < visiblePlaces.length) {
+        loadMoreContainer.classList.remove('hidden');
+        loadMoreBtn.innerHTML = `<span>LOAD MORE</span><span class="text-xs">↓</span>`;
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
     }
 
     function filterPlaces() {
@@ -645,6 +692,7 @@
         return matchesCity && matchesCategory && matchesSearch;
       });
 
+      displayedCount = PAGE_SIZE;
       renderCards();
     }
 
@@ -867,6 +915,12 @@
       // Prev/Next Arrows
       modalPrevBtn.disabled = index <= 0;
       modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      // If user navigates forward in modal past the currently rendered card count, auto-load more
+      if (index >= displayedCount) {
+        displayedCount = Math.min(index + PAGE_SIZE, visiblePlaces.length);
+        renderCards();
+      }
 
       // Reveal Modal
       modalEl.classList.remove("opacity-0", "pointer-events-none");
@@ -1419,6 +1473,10 @@
       activeCity = e.target.value;
       updateUrlState();
       filterPlaces();
+    });
+
+    loadMoreBtn.addEventListener("click", () => {
+      appendNextBatch();
     });
 
     document.addEventListener("DOMContentLoaded", () => {
