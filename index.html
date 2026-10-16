@@ -486,26 +486,19 @@
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
 
-    // Deterministic PRNG seeded by today's calendar date
-    function seededRandom(seed) {
-      let state = seed % 2147483647;
-      if (state <= 0) state += 2147483646;
-      return function() {
-        state = (state * 16807) % 2147483647;
-        return (state - 1) / 2147483646;
-      };
-    }
-
-    function dailyShuffle(array) {
-      const now = new Date();
-      const dateSeed = (now.getFullYear() * 10000) + ((now.getMonth() + 1) * 100) + now.getDate();
-      const rng = seededRandom(dateSeed);
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // Extract numerical Flickr photo ID from URL for chronological sorting
+    function extractFlickrPhotoId(url) {
+      if (!url) return 0n;
+      // Matches standard Flickr CDN URLs: /server/photoId_secret... or /photos/user/photoId
+      const match = String(url).match(/\/(?:photos\/[^\/]+\/)?(\d{8,})[_\/]/) || String(url).match(/\/(\d{8,})/);
+      if (match && match[1]) {
+        try {
+          return BigInt(match[1]);
+        } catch (e) {
+          return 0n;
+        }
       }
-      return shuffled;
+      return 0n;
     }
 
     function createSlug(title) {
@@ -1083,12 +1076,20 @@
           const photo = getFieldValue(row, ['photo', 'image', 'picture', 'url', 'photo_url']);
           const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
           const slug = createSlug(title);
+          const flickrId = extractFlickrPhotoId(photo);
 
-          return { title, slug, city, categories, description, photo, mapLink };
+          return { title, slug, city, categories, description, photo, mapLink, flickrId };
         })
         .filter(Boolean);
 
-      allPlaces = dailyShuffle(parsedPlaces);
+      // Sort numerically descending by Flickr ID (newest upload first)
+      parsedPlaces.sort((a, b) => {
+        if (b.flickrId > a.flickrId) return 1;
+        if (b.flickrId < a.flickrId) return -1;
+        return 0;
+      });
+
+      allPlaces = parsedPlaces;
 
       populateCityFilter();
       populateCategoryFilters();
