@@ -214,7 +214,7 @@
 
     <!-- Empty State with Dino Game -->
     <div id="empty-state" class="hidden py-12 flex flex-col items-center justify-center text-center">
-      <p class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2">Sorry, nothing here...</p>
+      <p id="empty-state-title" class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2 transition-opacity duration-200">Sorry, nothing here...</p>
       
       <!-- Dino Game Container -->
       <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
@@ -247,53 +247,64 @@
 
   </main>
 
-  <!-- Reintroduced Directory Stats Footer with 10% browser margins -->
-  <footer id="stats-footer" class="w-full pt-10 pb-16">
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-8 mb-8">
+  <!-- Full-Width Edge-to-Edge Illustrated Jiufen Footer -->
+  <footer id="stats-footer" class="w-full mt-10 relative overflow-hidden bg-[#EBF1E5] dark:bg-[#333333]">
+    <!-- Background Illustration - Completely Full Width Edge-to-Edge -->
+    <img 
+      src="footer.png" 
+      alt="Taiwan Jiufen Panorama" 
+      class="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none dark:invert dark:hue-rotate-180 dark:contrast-125 dark:brightness-90 transition-[filter] duration-300"
+      onerror="this.style.opacity='0.25';"
+    />
+
+    <!-- Content Layer with 10% browser margins matching header & main -->
+    <div class="relative z-10 w-full max-w-[1920px] mx-auto px-4 sm:px-[10vw] min-h-[380px] sm:min-h-[460px] md:min-h-[520px] flex flex-col justify-between py-6 sm:py-8">
       
-      <!-- Overview Numbers with Large Digits and Small Labels (Column 1) -->
-      <div class="col-span-1">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
-        <div class="flex items-baseline gap-6 sm:gap-8 mt-4 text-[#292929] dark:text-white">
-          <div class="flex flex-col">
-            <span id="footer-total-places" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
-            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">places</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="footer-total-cities" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
-            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">cities</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="footer-total-cats" class="text-3xl sm:text-4xl font-bold tracking-tight">0</span>
-            <span class="text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">categories</span>
+      <!-- Top Row Content: Open Sky Area on the Right for Directory Overview -->
+      <div class="w-full flex justify-end">
+        <div class="text-right backdrop-blur-sm sm:backdrop-blur-none bg-[#EBF1E5]/70 dark:bg-[#333333]/70 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-lg sm:rounded-none border border-[#292929]/20 sm:border-0 dark:border-white/20">
+          <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
+          <div class="flex items-baseline justify-end gap-5 sm:gap-7 mt-2 sm:mt-3 text-[#292929] dark:text-white">
+            <div class="flex flex-col items-end">
+              <span id="footer-total-places" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">places</span>
+            </div>
+            <div class="flex flex-col items-end">
+              <span id="footer-total-cities" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">cities</span>
+            </div>
+            <div class="flex flex-col items-end">
+              <span id="footer-total-cats" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">categories</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Top 5 Categories Infographic (Starts under Column 2 when screen is larger) -->
-      <div class="col-span-1 sm:col-start-2 lg:col-start-2 lg:col-span-2 2xl:col-start-2 2xl:col-span-3">
-        <h4 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white mb-4">TOP 5 CATEGORIES</h4>
-        <div id="stats-chart" class="space-y-3">
-          <!-- Populated dynamically via JS -->
-        </div>
+      <!-- Bottom Row Overlay Badges Floating Over Illustration -->
+      <div class="w-full flex items-center justify-between gap-3 pt-8">
+        <!-- Back to top Badge -->
+        <button 
+          type="button" 
+          id="back-to-top-btn" 
+          onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" 
+          class="badge-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold border border-[#292929] dark:border-white bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer shadow-md backdrop-blur-sm"
+        >
+          <span>Back to top</span>
+          <span class="text-xs">↑</span>
+        </button>
+
+        <!-- Creator Badge -->
+        <a 
+          href="https://albyantoniazzi.github.io/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="badge-pill inline-flex items-center px-3.5 py-1.5 rounded-full font-bold border border-[#292929] dark:border-white bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer shadow-md backdrop-blur-sm"
+        >
+          @albyantoniazzi
+        </a>
       </div>
 
-    </div>
-
-    <!-- Full-width edge-to-edge dividing line above footer bottom credits (decreased thickness by 1pt) -->
-    <div class="w-full border-t border-[#292929] dark:border-white"></div>
-
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-[10vw] pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#292929] dark:text-white gap-2 font-semibold">
-      <button 
-        type="button" 
-        id="back-to-top-btn" 
-        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" 
-        class="inline-flex items-center gap-1 hover:underline cursor-pointer focus:outline-none"
-      >
-        <span>Back to top</span>
-        <span>↑</span>
-      </button>
-      <a href="https://albyantoniazzi.github.io/" target="_blank" rel="noopener noreferrer" class="hover:underline">@albyantoniazzi</a>
     </div>
   </footer>
 
@@ -450,6 +461,7 @@
     const loadMoreBtn = document.getElementById("load-more-btn");
     const loadingEl = document.getElementById("loading-state");
     const emptyEl = document.getElementById("empty-state");
+    const emptyTitleEl = document.getElementById("empty-state-title");
     const categoryContainer = document.getElementById("category-filters");
     const categoryScrollContainer = document.getElementById("category-scroll-container");
     const cityFilterSelect = document.getElementById("city-filter");
@@ -458,11 +470,25 @@
     const themeToggleBtn = document.getElementById("theme-toggle");
     const yinYangIcon = document.getElementById("yin-yang-icon");
 
+    // Modal & Toast Elements
+    const modalEl = document.getElementById("detail-modal");
+    const modalCardEl = document.getElementById("modal-card");
+    const modalImageEl = document.getElementById("modal-image");
+    const modalTitleEl = document.getElementById("modal-title");
+    const modalDescEl = document.getElementById("modal-description");
+    const modalCityBadge = document.getElementById("modal-city-badge");
+    const modalTags = document.getElementById("modal-tags");
+    const modalMapLink = document.getElementById("modal-map-link");
+    const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalPrevBtn = document.getElementById("modal-prev-btn");
+    const modalNextBtn = document.getElementById("modal-next-btn");
+    const toastEl = document.getElementById("toast-notification");
+    const toastMsg = document.getElementById("toast-message");
+
     // Stats Footer Elements
     const footerPlacesCount = document.getElementById("footer-total-places");
     const footerCitiesCount = document.getElementById("footer-total-cities");
     const footerCatsCount = document.getElementById("footer-total-cats");
-    const statsChartEl = document.getElementById("stats-chart");
 
     // Dino Game Elements & State
     const dinoCanvas = document.getElementById("dino-canvas");
@@ -470,35 +496,85 @@
     let dinoAnimId = null;
     let dinoGameActive = false;
     let dinoState = null;
+    let audioCtx = null;
 
-    // Modal & Toast Elements
-    const modalEl = document.getElementById("detail-modal");
-    const modalCardEl = document.getElementById("modal-card");
-    const modalShareBtn = document.getElementById("modal-share-btn");
-    const modalImageEl = document.getElementById("modal-image");
-    const modalTitleEl = document.getElementById("modal-title");
-    const modalDescEl = document.getElementById("modal-description");
-    const modalMapLink = document.getElementById("modal-map-link");
-    const modalCityBadge = document.getElementById("modal-city-badge");
-    const modalTags = document.getElementById("modal-tags");
-    const modalPrevBtn = document.getElementById("modal-prev-btn");
-    const modalNextBtn = document.getElementById("modal-next-btn");
-    const toastEl = document.getElementById("toast-notification");
-    const toastMsg = document.getElementById("toast-message");
-
-    // Extract numerical Flickr photo ID from URL for chronological sorting
-    function extractFlickrPhotoId(url) {
-      if (!url) return 0n;
-      // Matches standard Flickr CDN URLs: /server/photoId_secret... or /photos/user/photoId
-      const match = String(url).match(/\/(?:photos\/[^\/]+\/)?(\d{8,})[_\/]/) || String(url).match(/\/(\d{8,})/);
-      if (match && match[1]) {
-        try {
-          return BigInt(match[1]);
-        } catch (e) {
-          return 0n;
+    // Web Audio Synthesizer for Retro Goose "Quack"
+    function playQuackSound() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioCtx = new AudioContextClass();
         }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+
+        // Two oscillators slightly detuned to create a nasal duck/goose timbre
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const bandpass = audioCtx.createBiquadFilter();
+        const gainNode = audioCtx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+
+        // Nasal formant bandpass filter (centered around typical waterfowl quack frequencies)
+        bandpass.type = 'bandpass';
+        bandpass.frequency.setValueAtTime(750, now);
+        bandpass.frequency.exponentialRampToValueAtTime(420, now + 0.16);
+        bandpass.Q.setValueAtTime(3.2, now);
+
+        // Pitch inflection: quick upward chirp then downward quack glissando
+        osc1.frequency.setValueAtTime(290, now);
+        osc1.frequency.exponentialRampToValueAtTime(380, now + 0.04);
+        osc1.frequency.exponentialRampToValueAtTime(210, now + 0.16);
+
+        osc2.frequency.setValueAtTime(145, now);
+        osc2.frequency.exponentialRampToValueAtTime(190, now + 0.04);
+        osc2.frequency.exponentialRampToValueAtTime(105, now + 0.16);
+
+        // Amplitude envelope: fast attack, quick decay
+        gainNode.gain.setValueAtTime(0.0001, now);
+        gainNode.gain.linearRampToValueAtTime(0.24, now + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+        osc1.connect(bandpass);
+        osc2.connect(bandpass);
+        bandpass.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.17);
+        osc2.stop(now + 0.17);
+      } catch (e) {
+        // AudioContext may be restricted by policy until user interaction
       }
-      return 0n;
+    }
+
+    // Deterministic PRNG seeded by today's calendar date
+    function seededRandom(seed) {
+      let state = seed % 2147483647;
+      if (state <= 0) state += 2147483646;
+      return function() {
+        state = (state * 16807) % 2147483647;
+        return (state - 1) / 2147483646;
+      };
+    }
+
+    function dailyShuffle(array) {
+      const now = new Date();
+      const dateSeed = (now.getFullYear() * 10000) + ((now.getMonth() + 1) * 100) + now.getDate();
+      const rng = seededRandom(dateSeed);
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
     }
 
     function createSlug(title) {
@@ -760,7 +836,7 @@
       });
     }
 
-    function renderStatsChart() {
+    function renderStatsOverview() {
       const catCount = {};
       allPlaces.forEach(p => {
         p.categories.forEach(c => {
@@ -769,40 +845,12 @@
         });
       });
 
-      const sorted = Object.entries(catCount)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5); // Top 5 categories
-
       const uniqueCities = new Set(allPlaces.map(p => p.city).filter(Boolean)).size;
       const totalUniqueCats = Object.keys(catCount).length;
 
-      footerPlacesCount.textContent = allPlaces.length;
-      footerCitiesCount.textContent = uniqueCities;
-      footerCatsCount.textContent = totalUniqueCats;
-
-      const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
-
-      statsChartEl.innerHTML = sorted.map(([category, count]) => {
-        const percent = Math.round((count / maxCount) * 100);
-        return `
-          <div class="flex items-center gap-3 text-xs group cursor-pointer" onclick="setCategory('${escapeHtml(category)}')">
-            <div class="w-28 sm:w-36 flex-shrink-0">
-              <span class="badge-pill inline-flex items-center px-3 py-1 rounded-full font-bold lowercase border border-[#292929] bg-transparent text-[#292929] dark:border-white dark:bg-transparent dark:text-white group-hover:bg-[#292929] group-hover:text-[#EBF1E5] dark:group-hover:bg-white dark:group-hover:text-[#292929] transition-all duration-150">
-                ${escapeHtml(category)}
-              </span>
-            </div>
-            <div class="flex-1 h-[1px] rounded-full bg-[#292929]/20 dark:bg-white/20 overflow-hidden">
-              <div 
-                class="h-full bg-[#292929] dark:bg-white rounded-full transition-all duration-500 ease-out" 
-                style="width: ${percent}%;"
-              ></div>
-            </div>
-            <div class="w-8 text-right font-bold text-[#292929] dark:text-white font-mono text-xs">
-              ${count}
-            </div>
-          </div>
-        `;
-      }).join('');
+      if (footerPlacesCount) footerPlacesCount.textContent = allPlaces.length;
+      if (footerCitiesCount) footerCitiesCount.textContent = uniqueCities;
+      if (footerCatsCount) footerCatsCount.textContent = totalUniqueCats;
     }
 
     function parseUrlState() {
@@ -1076,24 +1124,16 @@
           const photo = getFieldValue(row, ['photo', 'image', 'picture', 'url', 'photo_url']);
           const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
           const slug = createSlug(title);
-          const flickrId = extractFlickrPhotoId(photo);
 
-          return { title, slug, city, categories, description, photo, mapLink, flickrId };
+          return { title, slug, city, categories, description, photo, mapLink };
         })
         .filter(Boolean);
 
-      // Sort numerically descending by Flickr ID (newest upload first)
-      parsedPlaces.sort((a, b) => {
-        if (b.flickrId > a.flickrId) return 1;
-        if (b.flickrId < a.flickrId) return -1;
-        return 0;
-      });
-
-      allPlaces = parsedPlaces;
+      allPlaces = dailyShuffle(parsedPlaces);
 
       populateCityFilter();
       populateCategoryFilters();
-      renderStatsChart();
+      renderStatsOverview();
 
       const deepLinkedSpotSlug = parseUrlState();
       cityFilterSelect.value = activeCity;
@@ -1136,69 +1176,134 @@
       startDinoGame();
     }
 
-    // Duck Runner Game Engine (Slower Pace, Duck Sprite & Hot Pot Obstacles)
-    const DUCK_SPRITE = [
-      "          #####      ",
-      "         #######     ",
-      "         ## # ###    ",
-      "         ########    ",
-      "         ####        ",
-      "         ######      ",
-      "         #####       ",
-      "         #####       ",
-      "         #####       ",
-      "         #####       ",
-      "       ########      ",
-      "     ############    ",
-      "    ##############   ",
-      "   ################  ",
-      "  #################  ",
-      "  #################  ",
-      "   ###############   ",
-      "    #############    ",
-      "      ##########     ",
-      "        ######       ",
-      "        #    #       ",
-      "        #    #       ",
-      "        ##   ##      "
+    // Goose Runner Engine: Bigger Long-Necked Goose & 3 Distinct Obstacle Styles (Hot Pot, Simple Flame, Clay Oven)
+    const GOOSE_SPRITE = [
+      "            ######          ",
+      "           ########         ",
+      "           ## # ####        ",
+      "           #########        ",
+      "           #####            ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "           ####             ",
+      "         ########           ",
+      "       ############         ",
+      "     ################       ",
+      "    ##################      ",
+      "   ####################     ",
+      "  ######################    ",
+      "  ######################    ",
+      "   ####################     ",
+      "    ##################      ",
+      "      ##############        ",
+      "        ##########          ",
+      "         #      #           ",
+      "         #      #           ",
+      "         #      #           ",
+      "         #      #           ",
+      "        ##     ##           "
     ];
 
-    // Cooking Hot Pot with handles and rim
+    // Obstacle 1: Large Hot Pot with handles and rim (22 wide x 17 high)
     const HOTPOT_SPRITE = [
-      "   ############   ",
-      "   #          #   ",
-      "##################",
-      "#                #",
-      "##  ##########  ##",
-      " #  ##########  # ",
-      " ###############  ",
+      "    ##############    ",
+      "    #            #    ",
+      "########################",
+      "##                    ##",
+      "###   ############   ###",
+      " #    ############    # ",
+      " ###################### ",
+      "  ####################  ",
+      "   ##################   ",
+      "    ################    ",
+      "     ##############     ",
+      "     ##############     ",
+      "     ##############     ",
+      "    ################    ",
+      "    #              #    ",
+      "   ##################   ",
+      "   ##################   "
+    ];
+
+    // Obstacle 2: Roaring Simple Flame (18 wide x 20 high)
+    const SIMPLE_FLAME_SPRITE = [
+      "        ##        ",
+      "       ####       ",
+      "       ####       ",
+      "      ######      ",
+      "     ########     ",
+      "     ###  ###     ",
+      "    ####  ####    ",
+      "   ###### ####    ",
       "  #############   ",
-      "   ###########    ",
-      "    #########     ",
-      "    #########     ",
-      "   ###########    "
+      "  ##############  ",
+      " ################ ",
+      " ################ ",
+      "##################",
+      "##################",
+      " ################ ",
+      "  ##############  ",
+      "   ############   ",
+      "    ##########    ",
+      "     ########     ",
+      "      ######      "
+    ];
+
+    // Obstacle 3: Traditional Dome Clay Oven with fire opening (22 wide x 22 high)
+    const CLAY_OVEN_SPRITE = [
+      "       ######       ",
+      "     ##########     ",
+      "    ############    ",
+      "   ##############   ",
+      "  ################  ",
+      "  ################  ",
+      " ################## ",
+      " ################## ",
+      " ################## ",
+      " ################## ",
+      " ####          #### ",
+      " ###   ######   ### ",
+      " ###  ########  ### ",
+      " ###  ########  ### ",
+      " ###  ########  ### ",
+      " ###  ########  ### ",
+      " ###  ########  ### ",
+      " ####          #### ",
+      " ################## ",
+      " ################## ",
+      "####################",
+      "####################"
     ];
 
     function initDinoState() {
+      if (emptyTitleEl) {
+        emptyTitleEl.classList.remove('opacity-0', 'pointer-events-none');
+        emptyTitleEl.classList.add('opacity-100');
+      }
       return {
         dino: {
           x: 40,
-          y: 112,
+          y: 104,
           vy: 0,
-          width: 21,
-          height: 23,
+          width: 28,
+          height: 31,
           isJumping: false,
           legTimer: 0,
           legToggle: false
         },
         obstacles: [],
         clouds: [
-          { x: 120, y: 35, speed: 0.25 },
-          { x: 380, y: 25, speed: 0.3 }
+          { x: 120, y: 25, speed: 0.5 },
+          { x: 380, y: 18, speed: 0.65 }
         ],
         score: 0,
         highScore: parseInt(localStorage.getItem('tot-dino-hi') || '0', 10),
-        speed: 2.2, // Significantly slowed down base speed
+        speed: 4.2, // Faster base speed
         spawnTimer: 0,
         isGameOver: false,
         groundTicks: [],
@@ -1208,13 +1313,21 @@
 
     function jumpDino() {
       if (!dinoState) return;
+
+      // When the user plays/jumps, hide the "Sorry, nothing here..." text
+      if (emptyTitleEl && !dinoState.isGameOver) {
+        emptyTitleEl.classList.remove('opacity-100');
+        emptyTitleEl.classList.add('opacity-0', 'pointer-events-none');
+      }
+
       if (dinoState.isGameOver) {
         dinoState = initDinoState();
         return;
       }
       if (!dinoState.dino.isJumping) {
-        dinoState.dino.vy = -6.8; // Tuned for gentle, slow-paced jump
+        dinoState.dino.vy = -8.6; // High snappy jump for fast speed & tall obstacles
         dinoState.dino.isJumping = true;
+        playQuackSound();
       }
     }
 
@@ -1244,11 +1357,11 @@
       dinoCtx.fillStyle = themeColor;
       dinoState.clouds.forEach(cloud => {
         if (!dinoState.isGameOver) cloud.x -= cloud.speed;
-        if (cloud.x < -50) cloud.x = canvasW + Math.random() * 80;
+        if (cloud.x < -60) cloud.x = canvasW + Math.random() * 90;
 
-        dinoCtx.globalAlpha = 0.35;
-        dinoCtx.fillRect(cloud.x, cloud.y, 28, 6);
-        dinoCtx.fillRect(cloud.x + 6, cloud.y - 4, 16, 4);
+        dinoCtx.globalAlpha = 0.3;
+        dinoCtx.fillRect(cloud.x, cloud.y, 34, 7);
+        dinoCtx.fillRect(cloud.x + 8, cloud.y - 5, 18, 5);
         dinoCtx.globalAlpha = 1.0;
       });
 
@@ -1257,12 +1370,12 @@
       dinoCtx.fillRect(0, groundY, canvasW, 1);
 
       if (!dinoState.isGameOver) {
-        if (Math.random() < 0.12) {
-          dinoState.groundTicks.push({ x: canvasW, y: groundY + 3 + Math.floor(Math.random() * 4), w: 2 + Math.floor(Math.random() * 4) });
+        if (Math.random() < 0.22) {
+          dinoState.groundTicks.push({ x: canvasW, y: groundY + 3 + Math.floor(Math.random() * 4), w: 3 + Math.floor(Math.random() * 5) });
         }
         for (let i = dinoState.groundTicks.length - 1; i >= 0; i--) {
           dinoState.groundTicks[i].x -= dinoState.speed;
-          if (dinoState.groundTicks[i].x < -10) {
+          if (dinoState.groundTicks[i].x < -15) {
             dinoState.groundTicks.splice(i, 1);
           }
         }
@@ -1271,11 +1384,11 @@
         dinoCtx.fillRect(tick.x, tick.y, tick.w, 1);
       });
 
-      // Duck Physics
+      // Goose Physics
       const dino = dinoState.dino;
       if (!dinoState.isGameOver) {
         dino.y += dino.vy;
-        dino.vy += 0.35; // Gentle gravity for slower gameplay
+        dino.vy += 0.58; // Snappy gravity for fast-paced gameplay
 
         if (dino.y >= groundY - dino.height) {
           dino.y = groundY - dino.height;
@@ -1284,85 +1397,134 @@
         }
 
         dino.legTimer++;
-        if (dino.legTimer > 8) {
+        if (dino.legTimer > 5) {
           dino.legToggle = !dino.legToggle;
           dino.legTimer = 0;
         }
 
-        // Score & Speed (gentle scaling)
-        dinoState.score += 0.08;
+        // Score & Speed scaling
+        dinoState.score += 0.16;
         if (dinoState.score > dinoState.highScore) {
           dinoState.highScore = Math.floor(dinoState.score);
           localStorage.setItem('tot-dino-hi', String(dinoState.highScore));
         }
-        dinoState.speed = Math.min(4.8, 2.2 + Math.floor(dinoState.score / 100) * 0.18);
+        dinoState.speed = Math.min(8.2, 4.2 + Math.floor(dinoState.score / 100) * 0.35);
 
-        // Hot Pot Obstacles Spawning (well-spaced)
+        // Spawn Randomized Obstacles (Hot Pot, Simple Flame, Clay Oven)
         dinoState.spawnTimer++;
-        const spawnThreshold = Math.max(90, 160 - Math.floor(dinoState.speed * 8));
-        if (dinoState.spawnTimer > spawnThreshold && Math.random() < 0.03) {
+        const spawnThreshold = Math.max(55, 95 - Math.floor(dinoState.speed * 4.5));
+        if (dinoState.spawnTimer > spawnThreshold && Math.random() < 0.05) {
+          const types = ['hotpot', 'flame', 'oven'];
+          const chosenType = types[Math.floor(Math.random() * types.length)];
+          let obsH = 18;
+          let obsW = 24;
+
+          if (chosenType === 'oven') {
+            obsH = 22;
+            obsW = 20;
+          } else if (chosenType === 'flame') {
+            obsH = 20;
+            obsW = 18;
+          } else {
+            obsH = 18;
+            obsW = 24;
+          }
+
           dinoState.obstacles.push({
-            x: canvasW + 15,
-            y: groundY - 14,
-            width: 18,
-            height: 14
+            type: chosenType,
+            x: canvasW + 20,
+            y: groundY - obsH,
+            width: obsW,
+            height: obsH
           });
           dinoState.spawnTimer = 0;
         }
       }
 
-      // Draw Duck (with beak)
-      drawPixelMap(dinoCtx, DUCK_SPRITE, dino.x, dino.y, 1, themeColor);
-      // Flat duck bill / beak
+      // Draw Big Long-Necked Goose
+      drawPixelMap(dinoCtx, GOOSE_SPRITE, dino.x, dino.y, 1, themeColor);
+      // Prominent Goose Beak
       dinoCtx.fillStyle = themeColor;
-      dinoCtx.fillRect(dino.x + 16, dino.y + 2, 5, 2);
+      dinoCtx.fillRect(dino.x + 20, dino.y + 2, 7, 3);
+      dinoCtx.fillRect(dino.x + 22, dino.y + 5, 4, 1);
 
-      // Running feet animation
+      // Running Feet Animation with Long Goose Legs
       if (!dino.isJumping && !dinoState.isGameOver) {
         dinoCtx.fillStyle = themeColor;
         if (dino.legToggle) {
-          dinoCtx.fillRect(dino.x + 8, dino.y + 21, 4, 2);
+          dinoCtx.fillRect(dino.x + 7, dino.y + 28, 6, 3);
         } else {
-          dinoCtx.fillRect(dino.x + 13, dino.y + 21, 4, 2);
+          dinoCtx.fillRect(dino.x + 15, dino.y + 28, 6, 3);
         }
       }
 
       // Tick flame animation
       dinoState.flameTick++;
 
-      // Draw & Update Hot Pot Obstacles
+      // Draw & Update Obstacles
       for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
         const obs = dinoState.obstacles[i];
         if (!dinoState.isGameOver) {
           obs.x -= dinoState.speed;
         }
 
-        // Draw Hot Pot Body
-        drawPixelMap(dinoCtx, HOTPOT_SPRITE, obs.x, obs.y + 2, 1, themeColor);
+        if (obs.type === 'hotpot') {
+          // Hot Pot Sprite
+          drawPixelMap(dinoCtx, HOTPOT_SPRITE, obs.x, obs.y + 1, 1, themeColor);
 
-        // Animated Flame on top
-        const flamePhase = Math.floor((dinoState.flameTick + i * 5) / 6) % 3;
-        const flameCenterX = obs.x + 9;
-        const flameBaseY = obs.y + 1;
+          // Animated Hot Pot Steam & Flame on top
+          const flamePhase = Math.floor((dinoState.flameTick + i * 4) / 5) % 3;
+          const flameCenterX = obs.x + 12;
+          const flameBaseY = obs.y;
 
-        dinoCtx.fillStyle = themeColor;
-        if (flamePhase === 0) {
-          dinoCtx.fillRect(flameCenterX - 2, flameBaseY - 6, 4, 5);
-          dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 9, 2, 3);
-          dinoCtx.fillRect(flameCenterX + 3, flameBaseY - 4, 2, 3);
-        } else if (flamePhase === 1) {
-          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 5, 5, 4);
-          dinoCtx.fillRect(flameCenterX, flameBaseY - 8, 2, 4);
-          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 7, 2, 2);
-        } else {
-          dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 7, 3, 6);
-          dinoCtx.fillRect(flameCenterX + 1, flameBaseY - 10, 2, 3);
-          dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 4, 2, 3);
+          dinoCtx.fillStyle = themeColor;
+          if (flamePhase === 0) {
+            dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 6, 6, 5);
+            dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 10, 3, 4);
+            dinoCtx.fillRect(flameCenterX + 4, flameBaseY - 5, 2, 4);
+          } else if (flamePhase === 1) {
+            dinoCtx.fillRect(flameCenterX - 4, flameBaseY - 5, 7, 4);
+            dinoCtx.fillRect(flameCenterX, flameBaseY - 9, 3, 5);
+            dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 8, 2, 3);
+          } else {
+            dinoCtx.fillRect(flameCenterX - 2, flameBaseY - 8, 4, 7);
+            dinoCtx.fillRect(flameCenterX + 2, flameBaseY - 11, 2, 4);
+            dinoCtx.fillRect(flameCenterX - 4, flameBaseY - 5, 3, 3);
+          }
+        } else if (obs.type === 'flame') {
+          // Simple Roaring Flame
+          drawPixelMap(dinoCtx, SIMPLE_FLAME_SPRITE, obs.x, obs.y, 1, themeColor);
+          
+          // Dancing flame sparks at the top tip
+          const sparkPhase = Math.floor((dinoState.flameTick + i * 3) / 4) % 3;
+          dinoCtx.fillStyle = themeColor;
+          if (sparkPhase === 0) {
+            dinoCtx.fillRect(obs.x + 8, obs.y - 4, 3, 3);
+            dinoCtx.fillRect(obs.x + 3, obs.y - 2, 2, 2);
+          } else if (sparkPhase === 1) {
+            dinoCtx.fillRect(obs.x + 10, obs.y - 6, 2, 3);
+            dinoCtx.fillRect(obs.x + 12, obs.y - 3, 2, 2);
+          } else {
+            dinoCtx.fillRect(obs.x + 7, obs.y - 5, 4, 2);
+            dinoCtx.fillRect(obs.x + 13, obs.y - 2, 2, 2);
+          }
+        } else if (obs.type === 'oven') {
+          // Dome Clay Oven Sprite
+          drawPixelMap(dinoCtx, CLAY_OVEN_SPRITE, obs.x, obs.y, 1, themeColor);
+
+          // Glowing flickering ember inside oven opening
+          const emberPhase = Math.floor((dinoState.flameTick + i * 2) / 4) % 2;
+          dinoCtx.fillStyle = themeColor;
+          if (emberPhase === 0) {
+            dinoCtx.fillRect(obs.x + 8, obs.y + 13, 4, 3);
+          } else {
+            dinoCtx.fillRect(obs.x + 7, obs.y + 12, 6, 4);
+          }
         }
 
-        // Collision Check (AABB with friendly hitbox)
-        const dBox = { x: dino.x + 3, y: dino.y + 2, w: dino.width - 6, h: dino.height - 3 };
-        const oBox = { x: obs.x + 2, y: obs.y - 4, w: obs.width - 4, h: obs.height + 4 };
+        // Collision Check (AABB with fair hitboxes)
+        const dBox = { x: dino.x + 4, y: dino.y + 2, w: dino.width - 8, h: dino.height - 3 };
+        const oBox = { x: obs.x + 2, y: obs.y - 2, w: obs.width - 4, h: obs.height + 2 };
 
         if (
           dBox.x < oBox.x + oBox.w &&
@@ -1371,9 +1533,14 @@
           dBox.y + dBox.h > oBox.y
         ) {
           dinoState.isGameOver = true;
+          // Show the text again once game is over
+          if (emptyTitleEl) {
+            emptyTitleEl.classList.remove('opacity-0', 'pointer-events-none');
+            emptyTitleEl.classList.add('opacity-100');
+          }
         }
 
-        if (obs.x < -30) {
+        if (obs.x < -40) {
           dinoState.obstacles.splice(i, 1);
         }
       }
@@ -1390,9 +1557,9 @@
       if (dinoState.isGameOver) {
         dinoCtx.textAlign = "center";
         dinoCtx.font = "bold 14px 'Google Sans Code', monospace";
-        dinoCtx.fillText("G A M E   O V E R", canvasW / 2, 70);
+        dinoCtx.fillText("G A M E   O V E R", canvasW / 2, 68);
         dinoCtx.font = "11px 'Google Sans Code', monospace";
-        dinoCtx.fillText("TAP OR PRESS SPACE TO RESTART", canvasW / 2, 92);
+        dinoCtx.fillText("TAP OR PRESS SPACE TO RESTART", canvasW / 2, 90);
       }
 
       dinoAnimId = requestAnimationFrame(updateDinoGame);
