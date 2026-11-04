@@ -254,59 +254,59 @@
 
   </main>
 
-  <!-- Full-Width Edge-to-Edge Illustrated Jiufen Footer -->
-  <footer id="stats-footer" class="w-full mt-10 relative overflow-hidden bg-[#EBF1E5] dark:bg-[#333333]">
-    <!-- Background Illustration - Completely Full Width Edge-to-Edge -->
-    <img 
-      src="footer.png" 
-      alt="Taiwan Jiufen Panorama" 
-      class="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none dark:invert dark:hue-rotate-180 dark:contrast-125 dark:brightness-90 transition-[filter] duration-300"
-      onerror="this.style.opacity='0.25';"
-    />
-
-    <!-- Content Layer with 10% browser margins matching header & main -->
-    <div class="relative z-10 w-full max-w-[1920px] mx-auto px-4 sm:px-[10vw] min-h-[380px] sm:min-h-[460px] md:min-h-[520px] flex flex-col justify-between py-6 sm:py-8">
+  <!-- Clean Minimal Footer with Directory Overview and Categories Chart -->
+  <footer id="stats-footer" class="w-full mt-12 py-10 px-4 sm:px-[10vw]">
+    <div class="w-full max-w-[1920px] mx-auto flex flex-col gap-10">
       
-      <!-- Top Row Content: Open Sky Area on the Right for Directory Overview -->
-      <div class="w-full flex justify-end">
-        <div class="text-right backdrop-blur-sm sm:backdrop-blur-none bg-[#EBF1E5]/70 dark:bg-[#333333]/70 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-lg sm:rounded-none border border-[#292929]/20 sm:border-0 dark:border-white/20">
-          <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
-          <div class="flex items-baseline justify-end gap-5 sm:gap-7 mt-2 sm:mt-3 text-[#292929] dark:text-white">
-            <div class="flex flex-col items-end">
-              <span id="footer-total-places" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
-              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">places</span>
+      <!-- Top Row: Overview & Categories Chart -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Directory Overview Stats -->
+        <div class="md:col-span-5 flex flex-col">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Directory Overview</h3>
+          <div class="flex items-baseline gap-6 sm:gap-8 mt-4 text-[#292929] dark:text-white">
+            <div class="flex flex-col">
+              <span id="footer-total-places" class="text-2xl sm:text-3xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-[#292929] dark:text-white">places</span>
             </div>
-            <div class="flex flex-col items-end">
-              <span id="footer-total-cities" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
-              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">cities</span>
+            <div class="flex flex-col">
+              <span id="footer-total-cities" class="text-2xl sm:text-3xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-[#292929] dark:text-white">cities</span>
             </div>
-            <div class="flex flex-col items-end">
-              <span id="footer-total-cats" class="text-2xl sm:text-4xl font-bold tracking-tight">0</span>
-              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold mt-0.5 text-[#292929] dark:text-white">categories</span>
+            <div class="flex flex-col">
+              <span id="footer-total-cats" class="text-2xl sm:text-3xl font-bold tracking-tight">0</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-[#292929] dark:text-white">categories</span>
             </div>
           </div>
         </div>
+
+        <!-- Top 5 Categories Breakdown -->
+        <div class="md:col-span-7 flex flex-col">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#292929] dark:text-white">Top 5 Categories</h3>
+          <div id="footer-top-categories" class="flex flex-col gap-2.5 mt-4">
+            <!-- Dynamically populated with category bars and outline badges -->
+          </div>
+        </div>
+
       </div>
 
-      <!-- Bottom Row Overlay Badges Floating Over Illustration -->
-      <div class="w-full flex items-center justify-between gap-3 pt-8">
-        <!-- Back to top Badge -->
+      <!-- Footer Bottom Bar: Divider line sits between overview and Back to Top / Creator bar -->
+      <div class="pt-6 border-t border-[#292929] dark:border-white flex items-center justify-between text-xs text-[#292929] dark:text-white">
         <button 
           type="button" 
           id="back-to-top-btn" 
           onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" 
-          class="badge-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold border border-[#292929] dark:border-white bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer shadow-md backdrop-blur-sm"
+          class="badge-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold border border-[#292929] dark:border-white bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer shadow-sm"
         >
           <span>Back to top</span>
           <span class="text-xs">↑</span>
         </button>
 
-        <!-- Creator Badge -->
         <a 
           href="https://albyantoniazzi.github.io/" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="badge-pill inline-flex items-center px-3.5 py-1.5 rounded-full font-bold border border-[#292929] dark:border-white bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer shadow-md backdrop-blur-sm"
+          class="underline font-semibold hover:opacity-75 transition-opacity"
         >
           @albyantoniazzi
         </a>
@@ -496,6 +496,7 @@
     const footerPlacesCount = document.getElementById("footer-total-places");
     const footerCitiesCount = document.getElementById("footer-total-cities");
     const footerCatsCount = document.getElementById("footer-total-cats");
+    const footerTopCatsContainer = document.getElementById("footer-top-categories");
 
     // Dino Game Elements & State
     const dinoCanvas = document.getElementById("dino-canvas");
@@ -858,6 +859,42 @@
       if (footerPlacesCount) footerPlacesCount.textContent = allPlaces.length;
       if (footerCitiesCount) footerCitiesCount.textContent = uniqueCities;
       if (footerCatsCount) footerCatsCount.textContent = totalUniqueCats;
+
+      // Render Top 5 Categories chart
+      if (footerTopCatsContainer) {
+        footerTopCatsContainer.innerHTML = '';
+        const sortedCats = Object.entries(catCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+
+        const maxCount = sortedCats.length > 0 ? sortedCats[0][1] : 1;
+
+        sortedCats.forEach(([category, count]) => {
+          const pct = Math.round((count / maxCount) * 100);
+          const row = document.createElement('div');
+          row.className = "flex items-center gap-3 w-full group cursor-pointer";
+          row.innerHTML = `
+            <button 
+              type="button" 
+              class="badge-pill px-2.5 py-0.5 rounded-full font-bold lowercase border border-[#292929] bg-transparent text-[#292929] hover:bg-[#292929] hover:text-[#EBF1E5] dark:border-white dark:bg-transparent dark:text-white dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer flex-shrink-0"
+            >
+              ${escapeHtml(category)}
+            </button>
+            <div class="flex-1 h-2 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full bg-[#292929] dark:bg-white transition-all duration-500 rounded-full" style="width: ${pct}%;"></div>
+            </div>
+            <span class="text-xs font-bold text-[#292929] dark:text-white tabular-nums flex-shrink-0 w-6 text-right">${count}</span>
+          `;
+
+          // Clicking category row filters by that category
+          row.addEventListener('click', () => {
+            setCategory(category);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+
+          footerTopCatsContainer.appendChild(row);
+        });
+      }
     }
 
     function parseUrlState() {
