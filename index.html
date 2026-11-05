@@ -224,35 +224,35 @@
       <p id="empty-state-title" class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2 transition-opacity duration-200">Sorry, nothing here...</p>
       
       <!-- Dino Game Container -->
-      <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
-        <canvas 
-          id="dino-canvas" 
-          width="600" 
-          height="160" 
-          class="w-full h-[160px] bg-transparent cursor-pointer border-b border-[#292929] dark:border-white select-none touch-none"
-        ></canvas>
-        <div class="mt-3 flex items-center justify-center w-full text-[11px] font-semibold text-[#292929] dark:text-white px-1">
-          <span>Press [SPACE] or Tap to Jump</span>
-        </div>
+    <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
+      <canvas 
+        id="dino-canvas" 
+        width="600" 
+        height="160" 
+        class="w-full h-[160px] bg-transparent cursor-pointer border-b border-[#292929] dark:border-white select-none touch-none"
+      ></canvas>
+      <div class="mt-3 flex items-center justify-center w-full text-[11px] font-semibold text-[#292929] dark:text-white px-1">
+        <span>Press [SPACE] or Tap to Jump</span>
       </div>
     </div>
+  </div>
 
-    <!-- Responsive Adaptive Grid: 1 col mobile, 2 sm, 3 on most desktop sizes (~350-400px wide), 4 on ultra-wide 2xl -->
-    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-10"></div>
+  <!-- Responsive Adaptive Grid: 1 col mobile, 2 sm, 3 on most desktop sizes (~350-400px wide), 4 on ultra-wide 2xl -->
+  <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-10"></div>
 
-    <!-- Load More Button Container -->
-    <div id="load-more-container" class="hidden pt-10 pb-4 flex justify-center items-center">
-      <button 
-        id="load-more-btn" 
-        type="button" 
-        class="h-9 inline-flex items-center gap-2 px-5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal transition shadow-sm cursor-pointer focus:outline-none"
-      >
-        <span>LOAD MORE</span>
-        <span class="text-xs">↓</span>
-      </button>
-    </div>
+  <!-- Load More Button Container -->
+  <div id="load-more-container" class="hidden pt-10 pb-4 flex justify-center items-center">
+    <button 
+      id="load-more-btn" 
+      type="button" 
+      class="h-9 inline-flex items-center gap-2 px-5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal transition shadow-sm cursor-pointer focus:outline-none"
+    >
+      <span>LOAD MORE</span>
+      <span class="text-xs">↓</span>
+    </button>
+  </div>
 
-  </main>
+</main>
 
   <!-- Clean Minimal Footer with Directory Overview and Categories Chart -->
   <footer id="stats-footer" class="w-full mt-12 py-10 px-4 sm:px-[10vw]">
@@ -451,6 +451,12 @@
         .join(' ');
     }
 
+    // Safely get photo URL: keep the original source as primary/fallback to avoid Flickr 404 on missing _z sizes
+    function getGridThumbnailUrl(url) {
+      if (!url) return DEFAULT_FALLBACK_IMAGE;
+      return url;
+    }
+
     // State Variables
     let allPlaces = [];
     let visiblePlaces = [];
@@ -459,6 +465,7 @@
     let activeCity = "ALL";
     let activeCategory = "ALL";
     let searchQuery = "";
+    let searchDebounceTimer = null;
     let rotationDeg = 0;
     let activeModalIndex = -1;
 
@@ -506,7 +513,7 @@
     let dinoState = null;
     let audioCtx = null;
 
-    // Web Audio Synthesizer for Retro Goose "Quack"
+    // Web Audio Synthesizer for Retro Goose "Quack" with touch/gesture safe unlock
     function playQuackSound() {
       try {
         if (!audioCtx) {
@@ -559,30 +566,22 @@
         osc1.stop(now + 0.17);
         osc2.stop(now + 0.17);
       } catch (e) {
-        // AudioContext may be restricted by policy until user interaction
+        // Silently handled if blocked by audio policy
       }
     }
 
-    // Deterministic PRNG seeded by today's calendar date
-    function seededRandom(seed) {
-      let state = seed % 2147483647;
-      if (state <= 0) state += 2147483646;
-      return function() {
-        state = (state * 16807) % 2147483647;
-        return (state - 1) / 2147483646;
-      };
-    }
-
-    function dailyShuffle(array) {
-      const now = new Date();
-      const dateSeed = (now.getFullYear() * 10000) + ((now.getMonth() + 1) * 100) + now.getDate();
-      const rng = seededRandom(dateSeed);
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // Helper to safely extract numeric Flickr photo ID from CDN URL
+    function extractFlickrPhotoId(url) {
+      if (!url || typeof url !== 'string') return 0n;
+      const match = url.match(/\/(\d+)_/);
+      if (match && match[1]) {
+        try {
+          return BigInt(match[1]);
+        } catch (e) {
+          return 0n;
+        }
       }
-      return shuffled;
+      return 0n;
     }
 
     function createSlug(title) {
@@ -598,7 +597,7 @@
       const card = document.createElement('article');
       card.className = "flex flex-col group cursor-pointer pb-6 border-b border-[#292929] dark:border-white";
 
-      const imageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+      const fullImageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
       const safeTitle = escapeHtml(place.title);
       const safeDesc = escapeHtml(place.description);
 
@@ -639,13 +638,14 @@
       ` : '';
 
       card.innerHTML = `
-        <!-- Image Box (Aspect ~16/10) -->
+        <!-- Image Box (Aspect ~16/10) with layout shift prevention -->
         <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden mb-3">
           <img 
-            src="${escapeHtml(imageSource)}" 
+            src="${escapeHtml(fullImageSource)}" 
             alt="${safeTitle}" 
             loading="lazy"
-            onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMAGE}';"
+            decoding="async"
+            onerror="if(this.dataset.triedOriginal!=='true'){this.dataset.triedOriginal='true';this.src='${escapeHtml(place.photo || DEFAULT_FALLBACK_IMAGE)}';}else{this.onerror=null;this.src='${DEFAULT_FALLBACK_IMAGE}';}"
             class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
           />
         </div>
@@ -726,11 +726,13 @@
       emptyEl.classList.add('hidden');
       stopDinoGame();
 
+      const fragment = document.createDocumentFragment();
       const itemsToRender = visiblePlaces.slice(0, displayedCount);
       itemsToRender.forEach((place, index) => {
         const card = createCardElement(place, index);
-        gridEl.appendChild(card);
+        fragment.appendChild(card);
       });
+      gridEl.appendChild(fragment);
 
       updateLoadMoreVisibility();
     }
@@ -738,12 +740,14 @@
     function appendNextBatch() {
       const start = displayedCount;
       const nextBatchEnd = Math.min(start + PAGE_SIZE, visiblePlaces.length);
+      const fragment = document.createDocumentFragment();
 
       for (let i = start; i < nextBatchEnd; i++) {
         const card = createCardElement(visiblePlaces[i], i);
-        gridEl.appendChild(card);
+        fragment.appendChild(card);
       }
 
+      gridEl.appendChild(fragment);
       displayedCount = nextBatchEnd;
       updateLoadMoreVisibility();
     }
@@ -926,18 +930,22 @@
 
         const queryString = params.toString();
         const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
-        window.history.replaceState({}, "", newUrl);
+        window.history.replaceState({}, '', newUrl);
       } catch (err) {
-        console.warn("Could not sync URL history:", err);
+        // Silently catch history API access errors in constrained iframes
       }
     }
 
-    // Modal Operations
+    // Modal Operations with Scroll-Lock Prevention
     window.openModal = function(index) {
       if (!visiblePlaces[index]) return;
       activeModalIndex = index;
       const place = visiblePlaces[index];
 
+      // Lock body scroll to prevent background scroll bleed
+      document.body.style.overflow = 'hidden';
+
+      // Full resolution for modal hero
       modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
       modalImageEl.alt = place.title;
       modalTitleEl.textContent = place.title;
@@ -1017,6 +1025,9 @@
     };
 
     window.closeModal = function() {
+      // Restore background scroll
+      document.body.style.overflow = '';
+
       modalEl.classList.remove("opacity-100");
       modalEl.classList.add("opacity-0", "pointer-events-none");
       modalCardEl.classList.remove("scale-100");
@@ -1168,12 +1179,18 @@
           const photo = getFieldValue(row, ['photo', 'image', 'picture', 'url', 'photo_url']);
           const mapLink = getFieldValue(row, ['map_link', 'map', 'google_map_url', 'google map url link', 'link']);
           const slug = createSlug(title);
+          const flickrId = extractFlickrPhotoId(photo);
 
-          return { title, slug, city, categories, description, photo, mapLink };
+          return { title, slug, city, categories, description, photo, mapLink, flickrId };
         })
         .filter(Boolean);
 
-      allPlaces = dailyShuffle(parsedPlaces);
+      // Sort in descending order by Flickr photo ID (highest ID / newest first)
+      allPlaces = parsedPlaces.sort((a, b) => {
+        if (b.flickrId > a.flickrId) return 1;
+        if (b.flickrId < a.flickrId) return -1;
+        return 0;
+      });
 
       populateCityFilter();
       populateCategoryFilters();
@@ -1613,6 +1630,7 @@
       if (dinoGameActive) return;
       dinoGameActive = true;
       dinoState = initDinoState();
+      if (dinoAnimId) cancelAnimationFrame(dinoAnimId);
       dinoAnimId = requestAnimationFrame(updateDinoGame);
     }
 
@@ -1623,6 +1641,18 @@
         dinoAnimId = null;
       }
     }
+
+    // Cancel animation loop if user leaves page/tab to save mobile battery
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && dinoGameActive) {
+        if (dinoAnimId) {
+          cancelAnimationFrame(dinoAnimId);
+          dinoAnimId = null;
+        }
+      } else if (!document.hidden && dinoGameActive && !dinoAnimId) {
+        dinoAnimId = requestAnimationFrame(updateDinoGame);
+      }
+    });
 
     if (dinoCanvas) {
       dinoCanvas.addEventListener('pointerdown', (e) => {
@@ -1665,18 +1695,23 @@
       });
     }
 
-    // Input Events
+    // Debounced Search Input Events to avoid layout thrashing while typing
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
       clearSearchBtn.classList.toggle("hidden", !searchQuery);
-      updateUrlState();
-      filterPlaces();
+      
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        updateUrlState();
+        filterPlaces();
+      }, 150);
     });
 
     clearSearchBtn.addEventListener("click", () => {
       searchInput.value = "";
       searchQuery = "";
       clearSearchBtn.classList.add("hidden");
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
       updateUrlState();
       filterPlaces();
     });
