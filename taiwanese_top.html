@@ -30,6 +30,10 @@
     }
 
     * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
       margin: 0;
       padding: 0;
@@ -89,6 +93,21 @@
       cursor: grabbing;
     }
 
+    /* Filtered Top-Aligned Masonry Mode */
+    #viewport.is-masonry-mode {
+      overflow-y: auto;
+      overflow-x: hidden;
+      cursor: default;
+      touch-action: pan-y;
+      padding: 112px 16px 96px;
+    }
+
+    @media (min-width: 640px) {
+      #viewport.is-masonry-mode {
+        padding: 96px 24px 96px;
+      }
+    }
+
     #world-layer {
       position: absolute;
       top: 0;
@@ -97,6 +116,70 @@
       height: 100%;
       pointer-events: none;
       will-change: transform;
+    }
+
+    #viewport.is-masonry-mode #world-layer {
+      position: relative;
+      width: 100%;
+      max-width: 1480px;
+      height: auto;
+      margin: 0 auto;
+      pointer-events: auto;
+    }
+
+    .masonry-grid {
+      column-count: 2;
+      column-gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .masonry-grid {
+        column-count: 3;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .masonry-grid {
+        column-count: 4;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .masonry-grid {
+        column-count: 5;
+      }
+    }
+
+    .masonry-card {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 14px;
+      break-inside: avoid;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255,255,255,0.03);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .masonry-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 28px 58px -12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(56, 217, 169, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .masonry-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .masonry-card:hover img {
+      transform: scale(1.05);
     }
 
     /* Spatial Card Tile */
@@ -476,6 +559,7 @@
       activeCategory: 'ALL',
       activeCity: 'ALL',
       searchQuery: '',
+      isMasonryMode: false,
       camX: 0,
       camY: 0,
       targetX: 0,
@@ -502,7 +586,7 @@
     const gridBackdrop = document.getElementById('grid-backdrop');
 
     /**
-     * RFC-4180 compliant CSV parser supporting quoted multiline fields & escaped quotes
+     * RFC-4180 compliant CSV parser handling quoted commas and newlines
      */
     function parseCSV(text) {
       const rows = [];
@@ -511,37 +595,37 @@
       let inQuotes = false;
 
       for (let i = 0; i < text.length; i++) {
-        const char = text[i];
+        const ch = text[i];
         const next = text[i + 1];
 
         if (inQuotes) {
-          if (char === '"' && next === '"') {
+          if (ch === '"' && next === '"') {
             field += '"';
             i++;
-          } else if (char === '"') {
+          } else if (ch === '"') {
             inQuotes = false;
           } else {
-            field += char;
+            field += ch;
           }
         } else {
-          if (char === '"') {
+          if (ch === '"') {
             inQuotes = true;
-          } else if (char === ',') {
+          } else if (ch === ',') {
             row.push(field.trim());
             field = '';
-          } else if (char === '\r' && next === '\n') {
+          } else if (ch === '\r' && next === '\n') {
             row.push(field.trim());
             rows.push(row);
             row = [];
             field = '';
             i++;
-          } else if (char === '\n' || char === '\r') {
+          } else if (ch === '\n' || ch === '\r') {
             row.push(field.trim());
             rows.push(row);
             row = [];
             field = '';
           } else {
-            field += char;
+            field += ch;
           }
         }
       }
@@ -555,27 +639,29 @@
     }
 
     /**
-     * Map flexible CSV column headers into normalized Taiwanese Top destination objects
+     * Normalize a parsed CSV row into a structured Taiwan place object
      */
-    function mapRowToPlace(headers, cells, index) {
-      const getCol = (keywords) => {
-        const idx = headers.findIndex(h => keywords.some(k => h.includes(k)));
-        return idx !== -1 && cells[idx] ? cells[idx].trim() : '';
+    function mapRowToPlace(headers, row, index) {
+      const getCol = (candidates) => {
+        for (const cand of candidates) {
+          const idx = headers.findIndex(h => h.includes(cand));
+          if (idx !== -1 && row[idx]) return row[idx].trim();
+        }
+        return '';
       };
 
-      const title = getCol(['title', 'name', 'place', 'spot', 'destination', '地點', '名稱']) || cells[0] || `Taiwan Spot #${index + 1}`;
-      const city = getCol(['city', 'county', 'location', 'area', 'district', '城市', '縣市']) || 'Taiwan';
-      const rawCategory = getCol(['category', 'categories', 'type', 'tag', '分類', '類別']) || 'Curated';
-      const categories = rawCategory
+      const title = getCol(['name', 'title', 'place', 'spot', 'destination']) || row[0] || `Taiwan Spot #${index + 1}`;
+      const city = getCol(['city', 'county', 'location', 'area', 'region']) || 'Taiwan';
+      const rawCat = getCol(['category', 'categories', 'type', 'tag', 'tags']) || 'Curated';
+      const categories = rawCat
         .split(',')
         .map(c => c.trim())
         .filter(Boolean);
-      const description = getCol(['description', 'desc', 'notes', 'note', 'review', 'about', 'summary', '簡介', '備註']) ||
-        `Curated destination in ${city}, Taiwan.`;
-      const rawImage = getCol(['image', 'photo', 'img', 'pic', 'picture', 'thumbnail', 'flickr', '照片', '圖片']) ||
+      const description = getCol(['description', 'desc', 'notes', 'note', 'review', 'about', 'summary']) || `Curated destination in ${city}.`;
+      const rawImage = getCol(['image', 'photo', 'img', 'pic', 'picture', 'url', 'cover']) ||
         FALLBACK_PLACES[index % FALLBACK_PLACES.length].image;
-      const mapsUrl = getCol(['map', 'google', 'link', 'url', 'coords', '地圖']) ||
-        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${title} ${city} Taiwan`)}`;
+      const mapsUrl = getCol(['map', 'google', 'gmap', 'link', 'direction']) ||
+        `https://maps.google.com/?q=${encodeURIComponent(title + ' ' + city + ' Taiwan')}`;
       const coords = getCol(['coord', 'lat', 'gps']) || '';
 
       return {
@@ -589,24 +675,26 @@
         image: rawImage,
         modalImage: rawImage,
         mapsUrl,
-        aspectRatio: 0.92
+        aspectRatio: null
       };
     }
 
     /**
-     * Preload image dimensions to preserve original uncropped aspect ratios in the masonry grid
+     * Preload image to measure its natural uncropped aspect ratio
      */
     function preloadPlaceAspectRatio(place) {
       return new Promise((resolve) => {
         if (!place.image) {
+          place.aspectRatio = 0.92;
           resolve();
           return;
         }
         const img = new Image();
         img.onload = () => {
           if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-            const rawRatio = img.naturalHeight / img.naturalWidth;
-            place.aspectRatio = Math.max(0.55, Math.min(1.85, rawRatio));
+            place.aspectRatio = Math.max(0.55, Math.min(1.75, img.naturalHeight / img.naturalWidth));
+          } else {
+            place.aspectRatio = 0.92;
           }
           resolve();
         };
@@ -619,7 +707,7 @@
     }
 
     /**
-     * Fetch published Google Sheets CSV, parse places, preload aspect ratios, and initialize view
+     * Fetch live Google Sheet CSV, preload original photo ratios, and open ?place= link if present
      */
     async function loadDatabase() {
       let loadedPlaces = [];
@@ -632,37 +720,46 @@
 
         if (rows.length >= 2) {
           const headers = rows[0].map(h => h.toLowerCase().trim());
-          loadedPlaces = rows.slice(1)
-            .filter(r => r.some(cell => cell.trim() !== ''))
-            .map((cells, idx) => mapRowToPlace(headers, cells, idx));
+          loadedPlaces = rows
+            .slice(1)
+            .map((r, idx) => mapRowToPlace(headers, r, idx))
+            .filter(p => p.title && p.title !== '');
         }
       } catch (err) {
-        console.warn('Falling back to curated dataset:', err);
+        console.warn('Using fallback dataset:', err);
       }
 
       if (loadedPlaces.length === 0) {
-        loadedPlaces = FALLBACK_PLACES.map(p => ({ ...p, aspectRatio: 0.92 }));
+        loadedPlaces = FALLBACK_PLACES.map(p => ({
+          ...p,
+          modalImage: p.image,
+          aspectRatio: 0.92
+        }));
       }
 
       state.places = loadedPlaces;
       state.filteredPlaces = [...loadedPlaces];
 
-      // Preload first batch immediately for crisp initial masonry proportions
-      await Promise.all(loadedPlaces.slice(0, 14).map(preloadPlaceAspectRatio));
-
       buildCategoryBar();
       rebuildSpatialBlueprint();
 
-      // Center initial viewport on the first cluster
-      if (state.slots.length > 0) {
-        const firstSlot = state.slots[0];
-        state.camX = -(firstSlot.baseX + firstSlot.width * 0.5);
-        state.camY = -(firstSlot.baseY + firstSlot.height * 0.5);
-        state.targetX = state.camX;
-        state.targetY = state.camY;
+      // Prioritized batch preloading so initial visible tiles snap to true aspect ratios quickly
+      const firstBatch = state.places.slice(0, 12);
+      await Promise.all(firstBatch.map(preloadPlaceAspectRatio));
+      if (!state.isMasonryMode) {
+        rebuildSpatialBlueprint();
       }
 
-      // Check for ?place= deep link
+      const rest = state.places.slice(12);
+      if (rest.length > 0) {
+        Promise.all(rest.map(preloadPlaceAspectRatio)).then(() => {
+          if (!state.isMasonryMode) {
+            rebuildSpatialBlueprint();
+          }
+        });
+      }
+
+      // Check for ?place= shareable link parameter on initial load
       try {
         const params = new URLSearchParams(window.location.search);
         const sharedSlug = params.get('place');
@@ -676,21 +773,81 @@
           }
         }
       } catch (e) {
-        // Ignore URL parsing errors
-      }
-
-      // Progressively measure remaining photos in the background
-      if (loadedPlaces.length > 14) {
-        Promise.all(loadedPlaces.slice(14).map(preloadPlaceAspectRatio)).then(() => {
-          rebuildSpatialBlueprint();
-        });
+        // Ignore URL parsing issues
       }
     }
 
     /**
-     * Build uniform masonry blueprint with equal 14px spacing and interleaved empty architectural boxes when sparse
+     * Determine whether the view should use top-aligned masonry (filtered) or infinite canvas (ALL)
+     */
+    function isFilteredView() {
+      return (
+        state.activeCategory !== 'ALL' ||
+        state.activeCity !== 'ALL' ||
+        state.searchQuery.trim() !== ''
+      );
+    }
+
+    /**
+     * Render clean top-aligned masonry grid without empty placeholder boxes for filtered results
+     */
+    function renderTopMasonry() {
+      state.tilePool.forEach(el => el.remove());
+      state.tilePool.clear();
+      worldLayer.innerHTML = '';
+
+      viewport.classList.add('is-masonry-mode');
+      viewport.classList.remove('is-dragging');
+      viewport.scrollTop = 0;
+      gridBackdrop.style.backgroundPosition = '0px 0px';
+
+      if (state.filteredPlaces.length === 0) {
+        worldLayer.innerHTML = `
+          <div class="w-full py-24 text-center font-mono-tech text-xs text-zinc-400">
+            No places found matching your selection.
+          </div>
+        `;
+        return;
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'masonry-grid';
+
+      state.filteredPlaces.forEach((place, idx) => {
+        const card = document.createElement('article');
+        card.className = 'masonry-card group';
+        card.innerHTML = `
+          <div class="relative w-full overflow-hidden bg-[#1a1a1e]">
+            <img src="${place.image}" alt="${place.title.replace(/"/g, '&quot;')}" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute bottom-2.5 left-3 right-3">
+              <h3 class="font-normal text-xs sm:text-sm text-white leading-tight drop-shadow">${formatCJKThin(place.title)}</h3>
+            </div>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          openDetailModal(idx);
+        });
+        grid.appendChild(card);
+      });
+
+      worldLayer.appendChild(grid);
+    }
+
+    /**
+     * Build uniform masonry blueprint for the infinite canvas (ALL view only, no empty boxes)
      */
     function rebuildSpatialBlueprint() {
+      state.isMasonryMode = isFilteredView();
+
+      if (state.isMasonryMode) {
+        renderTopMasonry();
+        return;
+      }
+
+      viewport.classList.remove('is-masonry-mode');
+      worldLayer.innerHTML = '';
+
       const gap = 14;
       const isMobile = window.innerWidth < 640;
       const colWidth = isMobile ? 220 : 286;
@@ -698,41 +855,16 @@
       const colHeights = new Array(cols).fill(0);
 
       const items = state.filteredPlaces;
-      const minSlots = Math.max(items.length, cols * 3);
       const slots = [];
 
-      // Interleave real photo indices with empty placeholder slots evenly across the grid
-      const slotAssignments = new Array(minSlots).fill(-1);
-      if (items.length > 0 && items.length < minSlots) {
-        const stride = minSlots / items.length;
-        const usedPositions = new Set();
-        for (let idx = 0; idx < items.length; idx++) {
-          const jitter = ((idx * 7) % 3) - 1;
-          let pos = Math.round(idx * stride + (idx % 2 === 1 ? 1 : 0) + jitter * 0.4);
-          pos = ((pos % minSlots) + minSlots) % minSlots;
-          while (usedPositions.has(pos)) {
-            pos = (pos + 1) % minSlots;
-          }
-          usedPositions.add(pos);
-          slotAssignments[pos] = idx;
-        }
-      } else {
-        for (let idx = 0; idx < items.length; idx++) {
-          slotAssignments[idx] = idx;
-        }
-      }
-
-      for (let i = 0; i < minSlots; i++) {
-        // Pick shortest column for uniform masonry packing
+      for (let i = 0; i < items.length; i++) {
         let shortestCol = 0;
         for (let c = 1; c < cols; c++) {
           if (colHeights[c] < colHeights[shortestCol]) shortestCol = c;
         }
 
-        const placeIdx = slotAssignments[i];
-        const isEmpty = placeIdx === -1;
-        const place = isEmpty ? null : items[placeIdx];
-        const ratio = isEmpty ? (0.78 + ((i * 31) % 38) / 100) : (place.aspectRatio || 0.92);
+        const place = items[i];
+        const ratio = place.aspectRatio || 0.92;
         const height = Math.round(colWidth * ratio);
 
         const baseX = shortestCol * (colWidth + gap);
@@ -740,8 +872,8 @@
 
         slots.push({
           slotIndex: i,
-          isEmpty,
-          placeIndex: placeIdx,
+          isEmpty: false,
+          placeIndex: i,
           place,
           baseX,
           baseY,
@@ -752,23 +884,29 @@
         colHeights[shortestCol] += height + gap;
       }
 
-      // Normalize column bottoms so vertical wrap seam maintains uniform 14px spacing
       const maxColHeight = Math.max(...colHeights, 600);
       state.sectorW = cols * (colWidth + gap);
       state.sectorH = maxColHeight;
 
-      // Clear existing DOM tiles so updated slots render cleanly
       state.tilePool.forEach(el => el.remove());
       state.tilePool.clear();
       state.slots = slots;
     }
 
     /**
-     * Smoothly pan camera to center a specific filtered place index
+     * Smoothly pan camera (or scroll masonry card into view) for a filtered place index
      */
     function flyToPlace(index) {
+      if (state.isMasonryMode) {
+        const cards = worldLayer.querySelectorAll('.masonry-card');
+        if (cards[index]) {
+          cards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
       if (!state.slots || state.slots.length === 0) return;
-      const slot = state.slots.find(s => !s.isEmpty && s.placeIndex === index) || state.slots[0];
+      const slot = state.slots.find(s => s.placeIndex === index) || state.slots[0];
       if (!slot) return;
 
       pauseAmbientDrift(1600);
@@ -1104,9 +1242,9 @@
     }
 
     function bindInteractions() {
-      // Mouse Pan
+      // Mouse Pan (Infinite Canvas Mode Only)
       viewport.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
+        if (state.isMasonryMode || e.button !== 0) return;
         pauseAmbientDrift(1100);
         state.isDragging = true;
         state.dragMoved = false;
@@ -1118,7 +1256,7 @@
       });
 
       window.addEventListener('mousemove', (e) => {
-        if (!state.isDragging) return;
+        if (state.isMasonryMode || !state.isDragging) return;
         pauseAmbientDrift(1100);
         const dx = e.clientX - state.lastPointerX;
         const dy = e.clientY - state.lastPointerY;
@@ -1145,16 +1283,18 @@
         setTimeout(() => { state.dragMoved = false; }, 40);
       });
 
-      // Trackpad / Mouse Wheel Pan (No Zoom)
+      // Trackpad / Mouse Wheel Pan (Infinite Canvas Mode Only; Native Vertical Scroll in Masonry Mode)
       viewport.addEventListener('wheel', (e) => {
+        if (state.isMasonryMode) return;
         e.preventDefault();
         pauseAmbientDrift(1100);
         state.targetX -= e.deltaX;
         state.targetY -= e.deltaY;
       }, { passive: false });
 
-      // Single-Finger Touch Pan (Pinch Zoom Disabled)
+      // Single-Finger Touch Pan (Infinite Canvas Mode Only; Native Touch Scroll in Masonry Mode)
       viewport.addEventListener('touchstart', (e) => {
+        if (state.isMasonryMode) return;
         pauseAmbientDrift(1100);
         if (e.touches.length === 1) {
           state.isDragging = true;
@@ -1169,6 +1309,7 @@
       }, { passive: true });
 
       viewport.addEventListener('touchmove', (e) => {
+        if (state.isMasonryMode) return;
         if (e.touches.length === 1 && state.isDragging) {
           pauseAmbientDrift(1100);
           const dx = e.touches[0].clientX - state.lastPointerX;
@@ -1186,6 +1327,7 @@
       }, { passive: true });
 
       viewport.addEventListener('touchend', () => {
+        if (state.isMasonryMode) return;
         pauseAmbientDrift(1100);
         state.isDragging = false;
         setTimeout(() => { state.dragMoved = false; }, 50);
@@ -1194,6 +1336,12 @@
       // Keyboard Navigation (Arrow keys + Escape)
       window.addEventListener('keydown', (e) => {
         if (document.activeElement === document.getElementById('search-input')) return;
+        if (e.key === 'Escape') {
+          closeDetailModal();
+          document.getElementById('autocomplete-dropdown').classList.add('hidden');
+          return;
+        }
+        if (state.isMasonryMode) return;
         const step = 180;
         if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
           pauseAmbientDrift(1100);
@@ -1202,10 +1350,6 @@
         if (e.key === 'ArrowRight') state.targetX -= step;
         if (e.key === 'ArrowUp') state.targetY += step;
         if (e.key === 'ArrowDown') state.targetY -= step;
-        if (e.key === 'Escape') {
-          closeDetailModal();
-          document.getElementById('autocomplete-dropdown').classList.add('hidden');
-        }
       });
 
       // Search & Autocomplete Listeners
@@ -1270,14 +1414,21 @@
       });
 
       window.addEventListener('resize', () => {
-        rebuildSpatialBlueprint();
+        if (!state.isMasonryMode) {
+          rebuildSpatialBlueprint();
+        }
       });
     }
 
     /**
-     * Infinite Toroidal Viewport Culling & Inertial Camera Loop (60fps)
+     * Infinite Toroidal Viewport Culling & Inertial Camera Loop (60fps, paused in Masonry Mode)
      */
     function updateCanvas() {
+      if (state.isMasonryMode) {
+        requestAnimationFrame(updateCanvas);
+        return;
+      }
+
       const modalOpen = !document.getElementById('detail-modal').classList.contains('hidden');
 
       if (!state.isDragging) {
@@ -1363,8 +1514,8 @@
                   <div class="card-media" style="min-height: ${slot.height}px;">
                     <img src="${place.image}" alt="${place.title.replace(/"/g, '&quot;')}" loading="lazy" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="absolute bottom-3 left-3.5 right-3.5">
-                      <h3 class="font-normal text-base sm:text-lg text-white leading-snug drop-shadow">${formatCJKThin(place.title)}</h3>
+                    <div class="absolute bottom-2.5 left-3 right-3">
+                      <h3 class="font-normal text-xs sm:text-sm text-white leading-tight drop-shadow">${formatCJKThin(place.title)}</h3>
                     </div>
                   </div>
                 `;
