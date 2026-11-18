@@ -165,7 +165,7 @@
     .filter-pill.active {
       background: #f4f4f6;
       color: #0b0b0c;
-      border-color: #f4f4f6;
+      border: 1px solid #f4f4f6;
       font-weight: 600;
     }
 
@@ -174,8 +174,14 @@
       color: #0b0b0c;
     }
 
+    .filter-pill:not(.active) {
+      background: rgba(11, 11, 12, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
     .filter-pill:not(.active):hover {
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(11, 11, 12, 0.82);
+      border-color: rgba(255, 255, 255, 0.35);
       color: #ffffff;
     }
 
@@ -251,7 +257,7 @@
   <!-- BOTTOM HUD: Dynamic Category Badge Toolbar -->
   <footer class="fixed bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-30 flex items-center justify-center pointer-events-none">
     <nav id="category-bar" aria-label="Category Filter Navigation" class="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full pointer-events-auto py-1">
-      <button data-category="ALL" class="filter-pill active hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 hover:text-white transition whitespace-nowrap flex items-center gap-1.5">
+      <button data-category="ALL" class="filter-pill active font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 hover:text-white transition whitespace-nowrap flex items-center gap-1.5">
         <span>All</span>
       </button>
     </nav>
@@ -259,54 +265,66 @@
 
   <!-- PLACE DETAIL LIGHTBOX MODAL -->
   <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md transition-opacity">
-    <div class="relative w-full max-w-lg bg-[#131316] border border-white/15 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
-      <!-- Close Button -->
-      <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 border border-white/15 text-white flex items-center justify-center transition">
-        ✕
+    <!-- Outer Wrapper with Left & Right Arrow Controls -->
+    <div class="relative w-full max-w-2xl flex items-center justify-center gap-3 sm:gap-5">
+      <!-- Left Arrow Outside Box (Prev) -->
+      <button
+        id="modal-prev-btn"
+        type="button"
+        aria-label="Previous place"
+        title="Previous"
+        class="hud-glass shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full text-zinc-200 hover:bg-white hover:text-black transition flex items-center justify-center cursor-pointer shadow-xl"
+      >
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
 
-      <!-- Hero Image (1:1 Aspect Ratio) -->
-      <div class="relative aspect-square w-full max-h-[54vh] bg-zinc-900 shrink-0 overflow-hidden">
-        <img id="modal-img" src="" alt="" class="w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#131316] via-transparent to-black/30"></div>
-        <div class="absolute bottom-3.5 left-5 right-5 flex flex-wrap items-end justify-between gap-2">
-          <div>
+      <!-- Modal Box -->
+      <div class="relative w-full max-w-lg bg-[#131316] border border-white/15 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+        <!-- Close Button -->
+        <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 border border-white/15 text-white flex items-center justify-center transition cursor-pointer">
+          ✕
+        </button>
+
+        <!-- Hero Image (1:1 Aspect Ratio) -->
+        <div class="relative aspect-square w-full max-h-[54vh] bg-zinc-900 shrink-0 overflow-hidden">
+          <img id="modal-img" src="" alt="" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#131316] via-transparent to-black/30"></div>
+          <div class="absolute bottom-2 left-5 right-5">
             <h2 id="modal-title" class="font-editorial text-xl sm:text-2xl text-white leading-tight">Place Name</h2>
           </div>
-          <div id="modal-rating" class="font-mono-tech text-xs px-3 py-1 rounded-xl bg-black/60 border border-white/10 text-amber-300">
-            ★ 4.8
+        </div>
+
+        <!-- Content Body with Uniform Vertical Spacing -->
+        <div class="px-5 pt-2 pb-4 overflow-y-auto custom-scroll flex flex-col gap-4">
+          <!-- City & Category Badges -->
+          <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono-tech">
+            <button
+              id="modal-city-btn"
+              type="button"
+              title="Browse places in this city"
+              class="hud-glass font-mono-tech text-[11px] h-9 px-3.5 rounded-full text-zinc-200 hover:bg-white hover:text-black transition flex items-center gap-1.5 cursor-pointer group"
+            >
+              <svg class="w-3.5 h-3.5 text-white group-hover:text-black shrink-0 transition-colors" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+              </svg>
+              <span id="modal-city-text">City</span>
+            </button>
+            <div id="modal-category" class="flex flex-wrap items-center gap-1.5"></div>
+            <div id="modal-coords" class="ml-auto text-zinc-500 text-[11px]"></div>
           </div>
-        </div>
-      </div>
 
-      <!-- Content Body -->
-      <div class="p-5 overflow-y-auto custom-scroll space-y-2.5">
-        <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono-tech border-b border-white/10 pb-2.5">
-          <button
-            id="modal-city-btn"
-            type="button"
-            title="Browse places in this city"
-            class="hud-glass font-mono-tech text-[11px] h-9 px-3.5 rounded-full text-zinc-200 hover:bg-white hover:text-black transition flex items-center gap-1.5 cursor-pointer group"
-          >
-            <svg class="w-3.5 h-3.5 text-white group-hover:text-black shrink-0 transition-colors" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
-            </svg>
-            <span id="modal-city-text">City</span>
-          </button>
-          <div id="modal-category" class="flex flex-wrap items-center gap-1.5"></div>
-          <div id="modal-coords" class="ml-auto text-zinc-500 text-[11px]"></div>
-        </div>
+          <!-- Separation Line -->
+          <div class="w-full h-px bg-white/10 shrink-0"></div>
 
-        <p id="modal-desc" class="font-mono-tech italic text-xs sm:text-[13px] text-zinc-300 leading-relaxed">
-          Description goes here.
-        </p>
+          <!-- Description -->
+          <p id="modal-desc" class="font-mono-tech italic text-xs sm:text-[13px] text-zinc-300 leading-relaxed m-0">
+            Description goes here.
+          </p>
 
-        <!-- Extra CSV metadata tags if present -->
-        <div id="modal-meta-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-
-        <!-- Actions (Uniform Pill Badges, No Divider Line) -->
-        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-          <div class="flex flex-wrap items-center gap-2">
+          <!-- Actions: Google Maps Left, Share Right -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <a id="modal-map-link" href="#" target="_blank" rel="noopener noreferrer"
                class="inline-flex items-center gap-1.5 font-mono-tech text-[11px] uppercase tracking-wider h-10 px-4 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition">
               <span>Open in Google Maps</span>
@@ -316,7 +334,7 @@
             </a>
 
             <button id="modal-share-btn" type="button"
-               class="hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-10 px-4 rounded-full text-zinc-200 hover:bg-white hover:text-black transition inline-flex items-center gap-1.5 cursor-pointer">
+               class="hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-10 px-4 rounded-full text-zinc-200 hover:bg-white hover:text-black transition inline-flex items-center gap-1.5 cursor-pointer ml-auto">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke-linecap="round" stroke-linejoin="round"/>
@@ -324,17 +342,21 @@
               <span id="modal-share-text">Share</span>
             </button>
           </div>
-
-          <div class="flex items-center gap-2">
-            <button id="modal-prev-btn" class="hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-10 px-4 rounded-full text-zinc-200 hover:bg-white hover:text-black transition cursor-pointer">
-              ← Prev
-            </button>
-            <button id="modal-next-btn" class="hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-10 px-4 rounded-full text-zinc-200 hover:bg-white hover:text-black transition cursor-pointer">
-              Next →
-            </button>
-          </div>
         </div>
       </div>
+
+      <!-- Right Arrow Outside Box (Next) -->
+      <button
+        id="modal-next-btn"
+        type="button"
+        aria-label="Next place"
+        title="Next"
+        class="hud-glass shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full text-zinc-200 hover:bg-white hover:text-black transition flex items-center justify-center cursor-pointer shadow-xl"
+      >
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -790,15 +812,14 @@
       const sortedCats = Array.from(counts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
       let html = `
-        <button data-category="ALL" class="filter-pill ${state.activeCategory === 'ALL' && state.activeCity === 'ALL' ? 'active' : ''} hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
-          <span>All</span>
-          <span class="opacity-60 text-[10px]">${state.places.length}</span>
+        <button data-category="ALL" class="filter-pill ${state.activeCategory === 'ALL' && state.activeCity === 'ALL' ? 'active' : ''} font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 transition whitespace-nowrap inline-flex items-center cursor-pointer">
+          <span>All<sup class="opacity-65 text-[8px] leading-none ml-0.5 font-normal">${state.places.length}</sup></span>
         </button>
       `;
 
       if (state.activeCity !== 'ALL') {
         html += `
-          <button data-clear-city="1" class="filter-pill active hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
+          <button data-clear-city="1" class="filter-pill active font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
             <span>📍 ${state.activeCity}</span>
             <span class="text-[10px] opacity-75">✕</span>
           </button>
@@ -808,9 +829,8 @@
       sortedCats.forEach(([cat, count]) => {
         const isActive = state.activeCategory === cat;
         html += `
-          <button data-category="${cat.replace(/"/g, '&quot;')}" class="filter-pill ${isActive ? 'active' : ''} hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
-            <span>${cat}</span>
-            <span class="opacity-60 text-[10px]">${count}</span>
+          <button data-category="${cat.replace(/"/g, '&quot;')}" class="filter-pill ${isActive ? 'active' : ''} font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 transition whitespace-nowrap inline-flex items-center cursor-pointer">
+            <span>${cat}<sup class="opacity-65 text-[8px] leading-none ml-0.5 font-normal">${count}</sup></span>
           </button>
         `;
       });
@@ -967,7 +987,6 @@
       document.getElementById('modal-img').src = place.modalImage || place.image;
       document.getElementById('modal-img').alt = place.title;
       document.getElementById('modal-title').innerHTML = formatCJKThin(place.title);
-      document.getElementById('modal-rating').textContent = `★ ${place.rating}`;
       document.getElementById('modal-city-text').textContent = place.city;
       document.getElementById('modal-coords').textContent = place.coords || '';
       document.getElementById('modal-desc').textContent = place.description;
@@ -1152,7 +1171,9 @@
       // Modal Controls
       document.getElementById('close-modal-btn').addEventListener('click', closeDetailModal);
       document.getElementById('detail-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'detail-modal') closeDetailModal();
+        if (e.target.id === 'detail-modal' || e.target.parentElement?.id === 'detail-modal') {
+          closeDetailModal();
+        }
       });
 
       document.getElementById('modal-prev-btn').addEventListener('click', () => {
