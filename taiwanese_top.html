@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TAIWANESE TOP — Infinite Spatial Atlas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-canvas: #0b0b0c;
+      --bg-card: #141416;
+      --border-subtle: rgba(255, 255, 255, 0.09);
+      --border-hover: rgba(255, 255, 255, 0.28);
+      --text-primary: #f4f4f6;
+      --text-secondary: #9898a0;
+      --accent-jade: #38d9a9;
+      --accent-amber: #f59f00;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .font-editorial {
+      font-family: 'Instrument Serif', Georgia, serif;
+    }
+
+    .font-mono-tech {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Subtle architectural dot matrix background that shifts with pan */
+    #grid-backdrop {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.11) 1px, transparent 1px);
+      background-size: 36px 36px;
+      z-index: 0;
+      will-change: background-position, background-size;
+    }
+
+    /* Ambient vignette for depth */
+    #vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 48%, rgba(5, 5, 7, 0.82) 100%);
+      z-index: 2;
+    }
+
+    /* Infinite Viewport */
+    #viewport {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      z-index: 1;
+      touch-action: none;
+    }
+
+    #viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    #world-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    /* Spatial Card Tile */
+    .spatial-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      pointer-events: auto;
+      cursor: pointer;
+      box-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255,255,255,0.03);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      will-change: transform, opacity;
+    }
+
+    .spatial-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 28px 58px -12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(56, 217, 169, 0.14);
+      z-index: 20;
+    }
+
+    .spatial-card .card-media {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: #1a1a1e;
+    }
+
+    .spatial-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .spatial-card:hover img {
+      transform: scale(1.06);
+    }
+
+    /* Glassmorphic Floating HUD */
+    .hud-glass {
+      background: rgba(16, 16, 19, 0.72);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Custom Scrollbar inside modal */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 99px;
+    }
+
+    /* Filter Pill Active State */
+    .filter-pill.active {
+      background: #f4f4f6;
+      color: #0b0b0c;
+      border-color: #f4f4f6;
+      font-weight: 500;
+    }
+
+    /* Hide scrollbar on bottom category dock while preserving smooth horizontal scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+    .live-dot {
+      animation: pulseDot 2.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Coordinate Dot Matrix -->
+  <div id="grid-backdrop"></div>
+  <div id="vignette"></div>
+
+  <!-- Infinite Spatial Viewport -->
+  <main id="viewport" aria-label="Infinite Canvas of Taiwanese Top Destinations">
+    <div id="world-layer"></div>
+  </main>
+
+  <!-- TOP HUD: Editorial Header & Search -->
+  <header class="fixed top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 z-30 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+    <!-- Single Unified Title Box -->
+    <div class="hud-glass rounded-full h-11 px-5 flex items-center justify-center pointer-events-auto">
+      <div class="flex flex-wrap items-center justify-center gap-2.5">
+        <h1 class="font-editorial text-[18px] sm:text-[22px] tracking-tight leading-none text-white">TAIWANESE TOP</h1>
+        <span class="font-mono-tech text-[11px] tracking-normal text-zinc-300 leading-none">
+          Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-200 underline decoration-emerald-400/40 underline-offset-2 transition">@albyantoniazzi</a>
+        </span>
+      </div>
+    </div>
+
+    <!-- Right Controls: Search with CSV Autocomplete -->
+    <div class="flex items-center gap-2.5 pointer-events-auto ml-auto sm:ml-0">
+      <!-- Quick Jump / Search with CSV Autocomplete -->
+      <div class="relative">
+        <div class="hud-glass rounded-full h-11 px-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-3.5-3.5" stroke-linecap="round"></path>
+          </svg>
+          <input
+            id="search-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Search..."
+            class="bg-transparent font-mono-tech text-[11px] tracking-normal text-white placeholder-zinc-400 focus:outline-none w-32 sm:w-48"
+          />
+          <button id="clear-search-btn" class="hidden text-zinc-400 hover:text-white text-xs px-1" title="Clear">✕</button>
+        </div>
+
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div
+          id="autocomplete-dropdown"
+          class="hidden absolute right-0 sm:left-0 mt-2 w-64 sm:w-72 max-h-64 overflow-y-auto custom-scroll hud-glass rounded-2xl p-1.5 z-40 shadow-2xl"
+        ></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BOTTOM HUD: Dynamic Category Badge Toolbar -->
+  <footer class="fixed bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-30 flex items-center justify-center pointer-events-none">
+    <nav id="category-bar" aria-label="Category Filter Navigation" class="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full pointer-events-auto py-1">
+      <button data-category="ALL" class="filter-pill active hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 hover:text-white transition whitespace-nowrap flex items-center gap-1.5">
+        <span>All</span>
+      </button>
+    </nav>
+  </footer>
+
+  <!-- PLACE DETAIL LIGHTBOX MODAL -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md transition-opacity">
+    <div class="relative w-full max-w-2xl bg-[#131316] border border-white/15 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <!-- Close Button -->
+      <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 border border-white/15 text-white flex items-center justify-center transition">
+        ✕
+      </button>
+
+      <!-- Hero Image -->
+      <div class="relative h-60 sm:h-72 w-full bg-zinc-900 shrink-0 overflow-hidden">
+        <img id="modal-img" src="" alt="" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#131316] via-transparent to-black/30"></div>
+        <div class="absolute bottom-4 left-6 right-6 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h2 id="modal-title" class="font-editorial text-3xl sm:text-4xl text-white leading-none">Place Name</h2>
+          </div>
+          <div id="modal-rating" class="font-mono-tech text-xs px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-amber-300">
+            ★ 4.8
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Body -->
+      <div class="p-6 overflow-y-auto custom-scroll space-y-5">
+        <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-400 font-mono-tech border-b border-white/10 pb-4">
+          <div id="modal-city" class="flex items-center gap-1.5 text-zinc-200">
+            <span>📍</span> <span>City, Taiwan</span>
+          </div>
+          <div id="modal-category" class="flex flex-wrap items-center gap-1.5"></div>
+          <div id="modal-coords" class="ml-auto text-zinc-500">
+            25.0330° N, 121.5654° E
+          </div>
+        </div>
+
+        <p id="modal-desc" class="font-mono-tech italic text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Description goes here.
+        </p>
+
+        <!-- Extra CSV metadata tags if present -->
+        <div id="modal-meta-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"></div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10">
+          <a id="modal-map-link" href="#" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-medium text-xs sm:text-sm hover:bg-zinc-200 transition">
+            <span>Open in Google Maps</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M7 17L17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <div class="flex items-center gap-2">
+            <button id="modal-prev-btn" class="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-zinc-200 transition">
+              ← Prev
+            </button>
+            <button id="modal-next-btn" class="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-zinc-200 transition">
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * TAIWANESE TOP — Infinite Spatial Canvas Engine
+     * Inspired by Codrops "Infinite Canvas: Building a Seamless, Pan-Anywhere Image Space"
+     * Architecture:
+     *  - Virtual 2D world coordinates with toroidal wrap-around tiling (infinite seamless panning in all directions)
+     *  - Smooth spring-damped velocity inertia (pan + pinch/wheel zoom around pointer)
+     *  - Viewport frustum culling + DOM node pooling so thousands of wrapped tiles render at 60fps
+     *  - Live Google Sheets CSV parser with automatic schema inference & rich curated fallback dataset
+     */
+
+    const CSV_ENDPOINTS = [
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv'
+    ];
+
+    // Curated fallback dataset of Taiwan's top iconic destinations (used if offline)
+    const FALLBACK_PLACES = [
+      {
+        id: 1,
+        title: "Jiufen Old Street",
+        subtitle: "九份老街",
+        city: "Ruifang, New Taipei",
+        region: "North",
+        category: "Mountain Heritage",
+        rating: "4.6",
+        coords: "25.1099° N, 121.8452° E",
+        aspect: "tall",
+        description: "Cascading red-lantern teahouses clinging to steep coastal cliffs overlooking Keelung Islet. Once a prosperous gold-mining town, its misty alleyways inspired cinema aesthetics across East Asia.",
+        image: "https://images.unsplash.com/photo-1552993873-0dd1110e025f?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Jiufen+Old+Street+Taiwan",
+        highlight: "A-Mei Teahouse & Taro Balls"
+      },
+      {
+        id: 2,
+        title: "Taroko Gorge",
+        subtitle: "太魯閣峽谷",
+        city: "Xiulin, Hualien",
+        region: "East & Islands",
+        category: "National Park",
+        rating: "4.9",
+        coords: "24.1587° N, 121.6216° E",
+        aspect: "wide",
+        description: "Sheer marble canyon walls carved over millions of years by the rushing turquoise Liwu River, featuring cliffside suspension bridges, Swallow Grotto, and Eternal Spring Shrine.",
+        image: "https://images.unsplash.com/photo-1508264165352-258db2ebd59b?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Taroko+Gorge+Taiwan",
+        highlight: "Shakadang & Zhuilu Old Trail"
+      },
+      {
+        id: 3,
+        title: "Taipei 101",
+        subtitle: "台北101",
+        city: "Xinyi, Taipei",
+        region: "North",
+        category: "Architectural Icon",
+        rating: "4.7",
+        coords: "25.0339° N, 121.5645° E",
+        aspect: "tall",
+        description: "Rising 508 meters like a segmented bamboo stalk in the heart of Xinyi District, housing a 660-metric-ton tuned mass damper and panoramic 89th-floor observatory.",
+        image: "https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Taipei+101",
+        highlight: "89F Observatory & Elephant Mountain View"
+      },
+      {
+        id: 4,
+        title: "Sun Moon Lake",
+        subtitle: "日月潭",
+        city: "Yuchi, Nantou",
+        region: "Central",
+        category: "Alpine Lake",
+        rating: "4.7",
+        coords: "23.8573° N, 120.9159° E",
+        aspect: "square",
+        description: "Taiwan's largest alpine body of water surrounded by emerald foothills and Thao indigenous culture, famous for morning mist reflections and one of the world's most scenic cycling paths.",
+        image: "https://images.unsplash.com/photo-1571474004502-c1def214ac6d?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Sun+Moon+Lake+Taiwan",
+        highlight: "Xiangshan Visitor Center & Ropeway"
+      },
+      {
+        id: 5,
+        title: "Alishan Forest Railway",
+        subtitle: "阿里山森林鐵路",
+        city: "Alishan, Chiayi",
+        region: "Central",
+        category: "Cloud Forest",
+        rating: "4.8",
+        coords: "23.5101° N, 120.8030° E",
+        aspect: "wide",
+        description: "Historic narrow-gauge mountain railway ascending through thousand-year-old red cypress groves to witness the famed sea of clouds and sunrise over Yushan peak.",
+        image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Alishan+National+Forest+Recreation+Area",
+        highlight: "Zhushan Sunrise & Sacred Tree Trail"
+      },
+      {
+        id: 6,
+        title: "Yehliu Geopark",
+        subtitle: "野柳地質公園",
+        city: "Wanli, New Taipei",
+        region: "North",
+        category: "Coastal Geology",
+        rating: "4.5",
+        coords: "25.2061° N, 121.6899° E",
+        aspect: "square",
+        description: "A dramatic 1,700-meter cape sculpted by Pacific wave erosion and differential weathering into surreal hoodoo stones, including the iconic Queen's Head formation.",
+        image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Yehliu+Geopark+Taiwan",
+        highlight: "Queen's Head & Candle Rocks"
+      },
+      {
+        id: 7,
+        title: "Dragon & Tiger Pagodas",
+        subtitle: "龍虎塔 · 蓮池潭",
+        city: "Zuoying, Kaohsiung",
+        region: "South",
+        category: "Cultural Landmark",
+        rating: "4.5",
+        coords: "22.6805° N, 120.2924° E",
+        aspect: "tall",
+        description: "Twin seven-story vibrant pagodas rising from Lotus Pond in Kaohsiung. Local tradition invites visitors to enter through the dragon's throat and exit the tiger's jaws to turn bad luck into fortune.",
+        image: "https://images.unsplash.com/photo-1598935898639-81586f7d2129?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Dragon+and+Tiger+Pagodas+Kaohsiung",
+        highlight: "Lotus Pond Sunset Walk"
+      },
+      {
+        id: 8,
+        title: "Kenting & Eluanbi Cape",
+        subtitle: "墾丁 · 鵝鑾鼻燈塔",
+        city: "Hengchun, Pingtung",
+        region: "South",
+        category: "Tropical Coast",
+        rating: "4.6",
+        coords: "21.9025° N, 120.8522° E",
+        aspect: "wide",
+        description: "Taiwan's southernmost tip where the Pacific Ocean meets the Taiwan Strait, anchored by a 19th-century fortified white lighthouse, coral cliffs, and turquoise surf bays.",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Eluanbi+Lighthouse+Kenting",
+        highlight: "Longpan Park & Baishawan Beach"
+      },
+      {
+        id: 9,
+        title: "Chihkan Tower",
+        subtitle: "赤崁樓",
+        city: "West Central, Tainan",
+        region: "South",
+        category: "Historic Architecture",
+        rating: "4.4",
+        coords: "22.9975° N, 120.2025° E",
+        aspect: "square",
+        description: "Originally built as Fort Provintia in 1653 in Taiwan's ancient capital, blending Dutch stone foundations with ornate Qing-era swallowtail roofs, koi ponds, and imperial stone steles.",
+        image: "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Chihkan+Tower+Tainan",
+        highlight: "Tainan Old Street & Beef Soup"
+      },
+      {
+        id: 10,
+        title: "Shifen Sky Lanterns",
+        subtitle: "十分老街",
+        city: "Pingxi, New Taipei",
+        region: "North",
+        category: "Living Tradition",
+        rating: "4.5",
+        coords: "25.0426° N, 121.7764° E",
+        aspect: "tall",
+        description: "A lively historic railway town where trains pass mere steps from wooden storefronts and travelers release calligraphy-brushed paper lanterns into the Keelung River valley.",
+        image: "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Shifen+Old+Street+Taiwan",
+        highlight: "Pingxi Line & Shifen Waterfall"
+      },
+      {
+        id: 11,
+        title: "Qingshui Cliffs",
+        subtitle: "清水斷崖",
+        city: "Xiulin, Hualien",
+        region: "East & Islands",
+        category: "Coastal Wonder",
+        rating: "4.8",
+        coords: "24.1869° N, 121.6626° E",
+        aspect: "wide",
+        description: "Twenty-one kilometers of vertical coastal gneiss and marble cliffs plunging 800 meters straight into the electric sapphire waters of the Pacific Ocean.",
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Qingshui+Cliff+Hualien",
+        highlight: "Chongde Coastal Overlook"
+      },
+      {
+        id: 12,
+        title: "Lanyu (Orchid Island)",
+        subtitle: "蘭嶼",
+        city: "Lanyu, Taitung",
+        region: "East & Islands",
+        category: "Volcanic Island",
+        rating: "4.8",
+        coords: "22.0537° N, 121.5416° E",
+        aspect: "square",
+        description: "A remote volcanic island off Taiwan's southeastern coast, home to the seafaring Tao people, hand-carved plank canoes, coral reefs, and untamed coastal grasslands.",
+        image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Orchid+Island+Taiwan",
+        highlight: "Dongqing Bay & Flying Fish Season"
+      },
+      {
+        id: 13,
+        title: "Gaomei Wetlands",
+        subtitle: "高美濕地",
+        city: "Qingshui, Taichung",
+        region: "Central",
+        category: "Ecological Sanctuary",
+        rating: "4.6",
+        coords: "24.3121° N, 120.5497° E",
+        aspect: "wide",
+        description: "Expansive tidal mudflats along the Taiwan Strait where wooden boardwalks stretch toward silhouetted wind turbines, transforming into a giant sky mirror at golden hour.",
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Gaomei+Wetlands+Taichung",
+        highlight: "Sunset Boardwalk & Fiddler Crabs"
+      },
+      {
+        id: 14,
+        title: "National Palace Museum",
+        subtitle: "國立故宮博物院",
+        city: "Shilin, Taipei",
+        region: "North",
+        category: "Museum & Heritage",
+        rating: "4.7",
+        coords: "25.1024° N, 121.5485° E",
+        aspect: "square",
+        description: "Housing nearly 700,000 imperial Chinese artifacts spanning 8,000 years, including the famed Jadeite Cabbage, Meat-Shaped Stone, and Northern Song landscape scrolls.",
+        image: "https://images.unsplash.com/photo-1565967511849-76a60a516170?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=National+Palace+Museum+Taipei",
+        highlight: "Jadeite Cabbage & Zhishan Garden"
+      },
+      {
+        id: 15,
+        title: "Pier-2 Art Center",
+        subtitle: "駁二藝術特區",
+        city: "Yancheng, Kaohsiung",
+        region: "South",
+        category: "Contemporary Design",
+        rating: "4.6",
+        coords: "22.6200° N, 120.2816° E",
+        aspect: "tall",
+        description: "Revitalized harborfront shipping warehouses transformed into an open-air contemporary art campus, indie bookstores, design studios, and the rotating Great Harbor Bridge.",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Pier-2+Art+Center+Kaohsiung",
+        highlight: "Great Harbor Bridge & Hamasen Railway"
+      },
+      {
+        id: 16,
+        title: "Chishang Brown Boulevard",
+        subtitle: "池上伯朗大道",
+        city: "Chishang, Taitung",
+        region: "East & Islands",
+        category: "East Rift Valley",
+        rating: "4.7",
+        coords: "23.0975° N, 121.2189° E",
+        aspect: "wide",
+        description: "A winding, utility-pole-free country lane cutting across golden rice paddies framed by the Central and Coastal Mountain Ranges in Taitung's lush East Rift Valley.",
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80",
+        mapsUrl: "https://www.google.com/maps/search/?api=1&query=Brown+Boulevard+Chishang+Taitung",
+        highlight: "Takeshi Kaneshiro Tree & Dapo Pond"
+      }
+    ];
+
+    // Application State
+    const state = {
+      places: [],
+      filteredPlaces: [],
+      activeCategory: 'ALL',
+      searchQuery: '',
+      isLiveSheet: false,
+      selectedIndex: -1,
+
+      // Camera / Infinite Canvas Transform State (Fixed 1:1 Scale, No Zoom)
+      camX: 0,
+      camY: 0,
+      targetX: 0,
+      targetY: 0,
+
+      // Pointer & Gesture Physics
+      isDragging: false,
+      dragMoved: false,
+      lastPointerX: 0,
+      lastPointerY: 0,
+      velX: 0,
+      velY: 0,
+
+      // World Tiling Dimensions (Mosaic Masonry Pattern)
+      tileCols: 4,
+      tileRows: 4,
+      cellW: 276,
+      cellH: 256,
+      worldW: 1104,
+      worldH: 1024,
+      imageRatios: new Map(),
+
+      // Active DOM Pool for Virtualized Infinite Tiling
+      nodePool: new Map()
+    };
+
+    // DOM References
+    const viewport = document.getElementById('viewport');
+    const worldLayer = document.getElementById('world-layer');
+    const gridBackdrop = document.getElementById('grid-backdrop');
+
+    /**
+     * Preload natural image dimensions so every mosaic card matches its photo's exact uncropped aspect ratio
+     */
+    function preloadImageRatios(places) {
+      return Promise.all(places.map(p => new Promise((resolve) => {
+        if (!p.image || state.imageRatios.has(p.image)) {
+          resolve();
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+            state.imageRatios.set(p.image, img.naturalHeight / img.naturalWidth);
+          }
+          resolve();
+        };
+        img.onerror = () => {
+          state.imageRatios.set(p.image, 0.75);
+          resolve();
+        };
+        img.src = p.image;
+      })));
+    }
+
+    /**
+     * Builds a uniform-gap masonry layout using each photo's original uncropped aspect ratio
+     * with identical horizontal and vertical spacing across infinite X/Y sectors.
+     * Never duplicates places; fills remaining slots with subtle empty architectural boxes.
+     */
+    function rebuildSpatialBlueprint() {
+      // Clear existing DOM nodes
+      worldLayer.innerHTML = '';
+      state.nodePool.clear();
+
+      const count = state.filteredPlaces.length;
+      const minCols = Math.max(4, Math.ceil((window.innerWidth + 320) / 278));
+      const minRows = Math.max(3, Math.ceil((window.innerHeight + 320) / 240));
+      state.tileCols = Math.max(minCols, Math.ceil(Math.sqrt(count * 1.4)));
+      state.tileRows = Math.max(minRows, Math.ceil(count / state.tileCols));
+
+      const colWidth = 264;
+      const gap = 14;
+      state.cellW = colWidth + gap;
+      state.cellH = 264;
+      state.worldW = state.tileCols * state.cellW;
+
+      // Distribute items into shortest column so column heights stay naturally balanced
+      const columns = Array.from({ length: state.tileCols }, (_, c) => ({
+        col: c,
+        initialOffset: (c % 2 === 1) ? 84 : ((c % 3 === 2) ? 42 : 0),
+        items: [],
+        totalH: 0
+      }));
+
+      const totalSlots = Math.max(count, state.tileCols * state.tileRows);
+      const emptyHeights = [190, 240, 210, 270, 175];
+
+      // Spread real places evenly across the grid indices without ever repeating a place
+      const slotMap = new Array(totalSlots).fill(null);
+      if (count > 0) {
+        const stride = totalSlots / count;
+        for (let pIdx = 0; pIdx < count; pIdx++) {
+          let targetIdx = Math.min(totalSlots - 1, Math.floor(pIdx * stride));
+          while (slotMap[targetIdx] !== null && targetIdx < totalSlots - 1) {
+            targetIdx++;
+          }
+          slotMap[targetIdx] = pIdx;
+        }
+      }
+
+      for (let idx = 0; idx < totalSlots; idx++) {
+        const assignedPlaceIdx = slotMap[idx];
+        const isEmpty = assignedPlaceIdx === null;
+        const place = isEmpty ? null : state.filteredPlaces[assignedPlaceIdx];
+        const ratio = isEmpty ? 0.8 : (state.imageRatios.get(place.image) || 0.75);
+        const cardH = isEmpty
+          ? emptyHeights[idx % emptyHeights.length]
+          : Math.max(120, Math.round(colWidth * ratio));
+
+        // Pick column with smallest current height (including stagger) for balanced masonry
+        let targetCol = columns[0];
+        for (let c = 1; c < columns.length; c++) {
+          if (columns[c].initialOffset + columns[c].totalH < targetCol.initialOffset + targetCol.totalH) {
+            targetCol = columns[c];
+          }
+        }
+
+        targetCol.items.push({
+          slotIndex: idx,
+          placeIndex: isEmpty ? -1 : assignedPlaceIdx,
+          place,
+          isEmpty,
+          col: targetCol.col,
+          width: colWidth,
+          height: cardH
+        });
+        targetCol.totalH += cardH + gap;
+      }
+
+      // Equalize column period cleanly with uniform `gap` horizontally & vertically
+      const maxTotalH = Math.max(...columns.map(col => col.totalH));
+      state.worldH = maxTotalH;
+      state.slots = [];
+
+      columns.forEach(colObj => {
+        const slack = maxTotalH - colObj.totalH;
+        const perItemAdjust = colObj.items.length > 0 ? slack / colObj.items.length : 0;
+        let runningY = colObj.initialOffset;
+
+        colObj.items.forEach(item => {
+          const adjustedH = Math.max(110, Math.round(item.height + perItemAdjust));
+          state.slots.push({
+            ...item,
+            baseX: colObj.col * state.cellW,
+            baseY: Math.round(runningY),
+            height: adjustedH
+          });
+          runningY += adjustedH + gap;
+        });
+      });
+
+      // Center initial view on the first populated card
+      const firstPopulated = state.slots.find(s => !s.isEmpty) || state.slots[0];
+      if (firstPopulated && state.camX === 0 && state.camY === 0) {
+        state.camX = state.targetX = -firstPopulated.baseX - (firstPopulated.width * 0.5);
+        state.camY = state.targetY = -firstPopulated.baseY - (firstPopulated.height * 0.5);
+      }
+    }
+
+    /**
+     * Smoothly glide camera to center on a specific filtered place index
+     */
+    function flyToPlace(placeIdx) {
+      if (!state.slots || state.slots.length === 0) return;
+      const targetSlot = state.slots.find(s => !s.isEmpty && s.placeIndex === placeIdx)
+        || state.slots.find(s => !s.isEmpty)
+        || state.slots[0];
+      state.velX = 0;
+      state.velY = 0;
+      state.targetX = -targetSlot.baseX - (targetSlot.width * 0.5);
+      state.targetY = -targetSlot.baseY - (targetSlot.height * 0.5);
+    }
+
+    /**
+     * Create DOM card element for a virtualized mosaic tile (Full uncropped photo + Title only, or empty architectural box)
+     */
+    function createCardElement(slot) {
+      if (slot.isEmpty || !slot.place) {
+        const emptyEl = document.createElement('div');
+        emptyEl.className = 'spatial-card pointer-events-none opacity-45';
+        emptyEl.style.width = `${slot.width}px`;
+        emptyEl.style.height = `${slot.height}px`;
+        emptyEl.style.background = 'rgba(20, 20, 24, 0.42)';
+        emptyEl.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+        return emptyEl;
+      }
+
+      const p = slot.place;
+      const el = document.createElement('article');
+      el.className = 'spatial-card group';
+      el.style.width = `${slot.width}px`;
+      el.style.height = `${slot.height}px`;
+
+      const fallbackSvg = `https://placehold.co/600x450/18181b/a1a1aa?text=${encodeURIComponent(p.title)}`;
+
+      el.innerHTML = `
+        <div class="card-media h-full">
+          <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" onerror="this.onerror=null;this.src='${fallbackSvg}';" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-90 group-hover:opacity-95 transition-opacity"></div>
+          <div class="absolute bottom-3 left-3.5 right-3.5">
+            <h3 class="font-editorial text-lg sm:text-xl text-white leading-snug drop-shadow-sm group-hover:text-emerald-300 transition-colors">
+              ${p.title}
+            </h3>
+          </div>
+        </div>
+      `;
+
+      // Click handler distinguishes true clicks from drag gestures
+      el.addEventListener('click', (e) => {
+        if (state.dragMoved) return;
+        e.stopPropagation();
+        openDetailModal(slot.placeIndex);
+      });
+
+      return el;
+    }
+
+    /**
+     * Build dynamic single-category badge pills in the bottom toolbar (splitting comma-separated categories)
+     */
+    function buildCategoryToolbar() {
+      const categoryBar = document.getElementById('category-bar');
+      if (!categoryBar) return;
+
+      const categoryCounts = new Map();
+      state.places.forEach(p => {
+        const cats = Array.isArray(p.categories) ? p.categories : [p.category];
+        cats.forEach(rawCat => {
+          const cat = (rawCat || '').trim();
+          if (cat) {
+            categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1);
+          }
+        });
+      });
+
+      const uniqueCategories = Array.from(categoryCounts.keys());
+
+      categoryBar.innerHTML = `
+        <button data-category="ALL" class="filter-pill ${state.activeCategory === 'ALL' ? 'active' : ''} hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 hover:text-white transition whitespace-nowrap flex items-center gap-1.5 shrink-0">
+          <span>All</span>
+          <span class="opacity-65 text-[10px]">${state.places.length}</span>
+        </button>
+      ` + uniqueCategories.map(cat => `
+        <button data-category="${cat.replace(/"/g, '&quot;')}" class="filter-pill ${state.activeCategory === cat ? 'active' : ''} hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-11 px-4 rounded-full text-zinc-200 hover:text-white transition whitespace-nowrap flex items-center gap-1.5 shrink-0">
+          <span>${cat}</span>
+          <span class="opacity-65 text-[10px]">${categoryCounts.get(cat)}</span>
+        </button>
+      `).join('');
+
+      categoryBar.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          categoryBar.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.activeCategory = btn.dataset.category;
+          applyFilters();
+          flyToPlace(0);
+        });
+      });
+    }
+
+    /**
+     * Render CSV Name Autocomplete Dropdown
+     */
+    function renderAutocomplete(queryText) {
+      const dropdown = document.getElementById('autocomplete-dropdown');
+      const q = queryText.toLowerCase().trim();
+
+      if (!q) {
+        dropdown.classList.add('hidden');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      const matches = state.places
+        .filter(p =>
+          p.title.toLowerCase().includes(q) ||
+          (p.subtitle && p.subtitle.toLowerCase().includes(q))
+        )
+        .slice(0, 8);
+
+      if (matches.length === 0) {
+        dropdown.innerHTML = `
+          <div class="px-3 py-2.5 text-xs text-zinc-400 font-mono-tech">
+            No matching place in CSV
+          </div>
+        `;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = matches.map(p => `
+        <button
+          type="button"
+          data-place-id="${p.id}"
+          class="autocomplete-item w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center justify-between gap-2"
+        >
+          <span class="text-xs sm:text-sm text-white truncate">${p.title}</span>
+          <span class="font-mono-tech text-[10px] text-zinc-400 shrink-0">${(p.categories && p.categories[0]) || p.category}</span>
+        </button>
+      `).join('');
+
+      dropdown.querySelectorAll('.autocomplete-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const placeId = Number(btn.dataset.placeId);
+          const selectedPlace = state.places.find(item => item.id === placeId);
+          if (!selectedPlace) return;
+
+          const searchInput = document.getElementById('search-input');
+          const clearSearchBtn = document.getElementById('clear-search-btn');
+
+          searchInput.value = selectedPlace.title;
+          state.searchQuery = selectedPlace.title;
+          clearSearchBtn.classList.remove('hidden');
+          dropdown.classList.add('hidden');
+
+          // Reset category to ALL if needed so the selected place is guaranteed visible
+          const placeCats = Array.isArray(selectedPlace.categories) ? selectedPlace.categories : [selectedPlace.category];
+          if (state.activeCategory !== 'ALL' && !placeCats.includes(state.activeCategory)) {
+            state.activeCategory = 'ALL';
+            document.querySelectorAll('#category-bar .filter-pill').forEach(b => {
+              b.classList.toggle('active', b.dataset.category === 'ALL');
+            });
+          }
+
+          applyFilters();
+          const filteredIdx = state.filteredPlaces.findIndex(item => item.id === placeId);
+          flyToPlace(filteredIdx >= 0 ? filteredIdx : 0);
+        });
+      });
+
+      dropdown.classList.remove('hidden');
+    }
+
+    /**
+     * Pointer & Touch Pan Gestures (Fixed Scale — Zoom Disabled)
+     */
+    function bindInteractions() {
+      // Mouse Pan
+      viewport.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        state.isDragging = true;
+        state.dragMoved = false;
+        state.lastPointerX = e.clientX;
+        state.lastPointerY = e.clientY;
+        state.velX = 0;
+        state.velY = 0;
+        viewport.classList.add('is-dragging');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!state.isDragging) return;
+        const dx = e.clientX - state.lastPointerX;
+        const dy = e.clientY - state.lastPointerY;
+
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          state.dragMoved = true;
+        }
+
+        state.targetX += dx;
+        state.targetY += dy;
+        state.velX = dx * 0.65;
+        state.velY = dy * 0.65;
+
+        state.lastPointerX = e.clientX;
+        state.lastPointerY = e.clientY;
+      });
+
+      window.addEventListener('mouseup', () => {
+        state.isDragging = false;
+        viewport.classList.remove('is-dragging');
+        setTimeout(() => { state.dragMoved = false; }, 40);
+      });
+
+      // Trackpad / Mouse Wheel Pan (No Zoom)
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        state.targetX -= e.deltaX;
+        state.targetY -= e.deltaY;
+      }, { passive: false });
+
+      // Single-Finger Touch Pan (Pinch Zoom Disabled)
+      viewport.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          state.isDragging = true;
+          state.dragMoved = false;
+          state.lastPointerX = e.touches[0].clientX;
+          state.lastPointerY = e.touches[0].clientY;
+          state.velX = 0;
+          state.velY = 0;
+        } else {
+          state.isDragging = false;
+        }
+      }, { passive: true });
+
+      viewport.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && state.isDragging) {
+          const dx = e.touches[0].clientX - state.lastPointerX;
+          const dy = e.touches[0].clientY - state.lastPointerY;
+          if (Math.abs(dx) > 4 || Math.abs(dy) > 4) state.dragMoved = true;
+
+          state.targetX += dx;
+          state.targetY += dy;
+          state.velX = dx * 0.6;
+          state.velY = dy * 0.6;
+
+          state.lastPointerX = e.touches[0].clientX;
+          state.lastPointerY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      viewport.addEventListener('touchend', () => {
+        state.isDragging = false;
+        setTimeout(() => { state.dragMoved = false; }, 50);
+      });
+
+      // Keyboard Navigation (Arrow keys + Escape)
+      window.addEventListener('keydown', (e) => {
+        if (document.activeElement === document.getElementById('search-input')) return;
+        const step = 180;
+        if (e.key === 'ArrowLeft') state.targetX += step;
+        if (e.key === 'ArrowRight') state.targetX -= step;
+        if (e.key === 'ArrowUp') state.targetY += step;
+        if (e.key === 'ArrowDown') state.targetY -= step;
+        if (e.key === 'Escape') {
+          closeDetailModal();
+          document.getElementById('autocomplete-dropdown').classList.add('hidden');
+        }
+      });
+
+      // Search Input & CSV Autocomplete
+      const searchInput = document.getElementById('search-input');
+      const clearSearchBtn = document.getElementById('clear-search-btn');
+      const autocompleteDropdown = document.getElementById('autocomplete-dropdown');
+
+      searchInput.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
+        clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
+        renderAutocomplete(state.searchQuery);
+        applyFilters();
+        flyToPlace(0);
+      });
+
+      searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim()) {
+          renderAutocomplete(searchInput.value);
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !autocompleteDropdown.contains(e.target)) {
+          autocompleteDropdown.classList.add('hidden');
+        }
+      });
+
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        state.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        autocompleteDropdown.classList.add('hidden');
+        applyFilters();
+      });
+
+      // Detail Modal Controls
+      document.getElementById('close-modal-btn').addEventListener('click', closeDetailModal);
+      document.getElementById('detail-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'detail-modal') closeDetailModal();
+      });
+      document.getElementById('modal-prev-btn').addEventListener('click', () => {
+        const nextIdx = (state.selectedIndex - 1 + state.filteredPlaces.length) % state.filteredPlaces.length;
+        openDetailModal(nextIdx);
+        flyToPlace(nextIdx);
+      });
+      document.getElementById('modal-next-btn').addEventListener('click', () => {
+        const nextIdx = (state.selectedIndex + 1) % state.filteredPlaces.length;
+        openDetailModal(nextIdx);
+        flyToPlace(nextIdx);
+      });
+    }
+
+    /**
+     * Open Place Lightbox Modal
+     */
+    function openDetailModal(index) {
+      state.selectedIndex = index;
+      const p = state.filteredPlaces[index];
+      if (!p) return;
+
+      const modal = document.getElementById('detail-modal');
+      const fallbackSvg = `https://placehold.co/800x500/18181b/a1a1aa?text=${encodeURIComponent(p.title)}`;
+
+      const imgEl = document.getElementById('modal-img');
+      imgEl.onerror = () => { imgEl.src = fallbackSvg; };
+      imgEl.src = p.image;
+      imgEl.alt = p.title;
+
+      document.getElementById('modal-title').textContent = p.subtitle ? `${p.title} (${p.subtitle})` : p.title;
+      document.getElementById('modal-rating').textContent = `★ ${p.rating}`;
+      document.getElementById('modal-city').innerHTML = `<span>📍</span> <span>${p.city}</span>`;
+
+      const cats = Array.isArray(p.categories) ? p.categories : [p.category];
+      const modalCategoryEl = document.getElementById('modal-category');
+      modalCategoryEl.innerHTML = cats.map(cat => `
+        <button
+          type="button"
+          data-modal-cat="${cat.replace(/"/g, '&quot;')}"
+          class="hud-glass font-mono-tech text-[11px] uppercase tracking-wider h-8 px-3.5 rounded-full text-zinc-200 hover:bg-white hover:text-black transition whitespace-nowrap"
+        >${cat}</button>
+      `).join('');
+
+      modalCategoryEl.querySelectorAll('[data-modal-cat]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chosenCat = btn.dataset.modalCat;
+          closeDetailModal();
+          state.activeCategory = chosenCat;
+          document.querySelectorAll('#category-bar .filter-pill').forEach(b => {
+            b.classList.toggle('active', b.dataset.category === chosenCat);
+          });
+          applyFilters();
+          flyToPlace(0);
+        });
+      });
+
+      document.getElementById('modal-coords').textContent = p.coords || 'Taiwan';
+      document.getElementById('modal-desc').textContent = p.description;
+      document.getElementById('modal-map-link').href = p.mapsUrl;
+
+      // Render highlight or extra CSV fields
+      const metaGrid = document.getElementById('modal-meta-grid');
+      metaGrid.innerHTML = '';
+
+      if (p.highlight) {
+        metaGrid.innerHTML += `
+          <div class="p-3 rounded-2xl bg-white/5 border border-white/10">
+            <div class="font-mono-tech text-[10px] uppercase tracking-wider text-zinc-500">Signature Experience</div>
+            <div class="text-xs sm:text-sm text-zinc-200 mt-1">${p.highlight}</div>
+          </div>
+        `;
+      }
+
+      if (p.extraFields) {
+        Object.entries(p.extraFields).slice(0, 4).forEach(([k, v]) => {
+          metaGrid.innerHTML += `
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <div class="font-mono-tech text-[10px] uppercase tracking-wider text-zinc-500">${k}</div>
+              <div class="text-xs sm:text-sm text-zinc-200 mt-1">${v}</div>
+            </div>
+          `;
+        });
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDetailModal() {
+      const modal = document.getElementById('detail-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    /**
+     * RFC-4180 Compliant CSV Parser
+     */
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentField = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (insideQuotes) {
+          if (char === '"' && nextChar === '"') {
+            currentField += '"';
+            i++;
+          } else if (char === '"') {
+            insideQuotes = false;
+          } else {
+            currentField += char;
+          }
+        } else {
+          if (char === '"') {
+            insideQuotes = true;
+          } else if (char === ',') {
+            currentRow.push(currentField.trim());
+            currentField = '';
+          } else if (char === '\r' && nextChar === '\n') {
+            currentRow.push(currentField.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentField = '';
+            i++;
+          } else if (char === '\n' || char === '\r') {
+            currentRow.push(currentField.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentField = '';
+          } else {
+            currentField += char;
+          }
+        }
+      }
+
+      if (currentField.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentField.trim());
+        rows.push(currentRow);
+      }
+
+      return rows.filter(r => r.some(cell => cell.length > 0));
+    }
+
+    /**
+     * Normalize region strings from CSV into filter buckets
+     */
+    function normalizeRegion(rawRegion, city = '') {
+      const text = `${rawRegion} ${city}`.toLowerCase();
+      if (text.includes('north') || text.includes('taipei') || text.includes('keelung') || text.includes('taoyuan') || text.includes('hsinchu') || text.includes('yilan')) {
+        return 'North';
+      }
+      if (text.includes('central') || text.includes('taichung') || text.includes('nantou') || text.includes('changhua') || text.includes('miaoli') || text.includes('yunlin') || text.includes('chiayi') || text.includes('alishan')) {
+        return 'Central';
+      }
+      if (text.includes('south') || text.includes('tainan') || text.includes('kaohsiung') || text.includes('pingtung') || text.includes('kenting')) {
+        return 'South';
+      }
+      if (text.includes('east') || text.includes('hualien') || text.includes('taitung') || text.includes('island') || text.includes('penghu') || text.includes('kinmen') || text.includes('matsu') || text.includes('lanyu')) {
+        return 'East & Islands';
+      }
+      return 'North';
+    }
+
+    /**
+     * Map flexible CSV columns onto structured place objects
+     */
+    function mapRowToPlace(headers, row, index) {
+      const record = {};
+      headers.forEach((h, i) => {
+        record[h.toLowerCase().trim()] = row[i] || '';
+      });
+
+      const pick = (...keys) => {
+        for (const k of keys) {
+          const foundKey = Object.keys(record).find(rk => rk === k || rk.includes(k));
+          if (foundKey && record[foundKey]) return record[foundKey];
+        }
+        return '';
+      };
+
+      const title = pick('name', 'title', 'place', 'spot', 'destination', 'location') || row[0] || `Taiwan Spot #${index + 1}`;
+      const subtitle = pick('chinese', 'mandarin', 'subtitle', 'zh', 'local');
+      const city = pick('city', 'county', 'area', 'district', 'address') || 'Taiwan';
+      const rawRegion = pick('region', 'zone', 'part');
+      const region = normalizeRegion(rawRegion, city);
+      const rawCategory = pick('category', 'type', 'tag', 'theme') || 'Curated Spot';
+      const categories = rawCategory.split(',').map(c => c.trim()).filter(Boolean);
+      const category = categories.join(' · ') || 'Curated Spot';
+      const rating = pick('rating', 'score', 'stars') || '4.8';
+      const coords = pick('coords', 'coordinates', 'lat', 'gps') || '23.6978° N, 120.9605° E';
+      const description = pick('description', 'desc', 'about', 'notes', 'summary', 'info', 'review') ||
+        `Selected highlight in ${city}, featured in the TAIWANESE TOP spatial collection.`;
+      const highlight = pick('highlight', 'must', 'specialty', 'tip', 'recommendation');
+
+      let image = pick('image', 'photo', 'img', 'pic', 'thumbnail', 'cover', 'url');
+      if (image && !image.startsWith('http')) {
+        image = '';
+      }
+      if (!image) {
+        const fallbackHero = FALLBACK_PLACES[index % FALLBACK_PLACES.length].image;
+        image = fallbackHero;
+      }
+
+      const mapsUrl = pick('map', 'google', 'link', 'directions') ||
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${title} ${city} Taiwan`)}`;
+
+      // Capture any remaining unmapped CSV columns for the detail modal
+      const standardTokens = ['name', 'title', 'place', 'spot', 'destination', 'location', 'chinese', 'mandarin', 'subtitle', 'zh', 'local', 'city', 'county', 'area', 'district', 'address', 'region', 'zone', 'part', 'category', 'type', 'tag', 'theme', 'rating', 'score', 'stars', 'coords', 'coordinates', 'lat', 'gps', 'description', 'desc', 'about', 'notes', 'summary', 'info', 'review', 'highlight', 'must', 'specialty', 'tip', 'recommendation', 'image', 'photo', 'img', 'pic', 'thumbnail', 'cover', 'url', 'map', 'google', 'link', 'directions'];
+      const extraFields = {};
+      headers.forEach((h, i) => {
+        const keyLower = h.toLowerCase().trim();
+        if (h && row[i] && !standardTokens.some(tok => keyLower.includes(tok))) {
+          extraFields[h] = row[i];
+        }
+      });
+
+      return {
+        id: index + 1,
+        title,
+        subtitle,
+        city,
+        region,
+        category,
+        categories: categories.length ? categories : ['Curated Spot'],
+        rating,
+        coords,
+        description,
+        image,
+        mapsUrl,
+        highlight,
+        extraFields: Object.keys(extraFields).length ? extraFields : null
+      };
+    }
+
+    /**
+     * Fetch & Parse Google Sheets CSV with fallback safety
+     */
+    async function loadDatabase() {
+      let loadedFromSheet = false;
+
+      for (const url of CSV_ENDPOINTS) {
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) continue;
+          const csvText = await response.text();
+          if (!csvText || csvText.trim().startsWith('<!DOCTYPE')) continue;
+
+          const rows = parseCSV(csvText);
+          if (rows.length >= 2) {
+            const headers = rows[0];
+            const parsedPlaces = rows
+              .slice(1)
+              .map((row, idx) => mapRowToPlace(headers, row, idx))
+              .filter(p => p.title && p.title.length > 0);
+
+            if (parsedPlaces.length > 0) {
+              state.places = parsedPlaces;
+              state.isLiveSheet = true;
+              loadedFromSheet = true;
+              break;
+            }
+          }
+        } catch (err) {
+          console.warn('CSV fetch attempt failed, falling back if needed:', err);
+        }
+      }
+
+      if (!loadedFromSheet) {
+        state.places = FALLBACK_PLACES.map(p => ({
+          ...p,
+          categories: p.category.split(',').map(c => c.trim()).filter(Boolean)
+        }));
+        state.isLiveSheet = false;
+      }
+
+      buildCategoryToolbar();
+      await preloadImageRatios(state.places);
+      applyFilters();
+    }
+
+    /**
+     * Filter places by active single category and search input, then rebuild mosaic
+     */
+    function applyFilters() {
+      const q = state.searchQuery.toLowerCase().trim();
+
+      state.filteredPlaces = state.places.filter(p => {
+        const placeCats = Array.isArray(p.categories) ? p.categories : [p.category];
+        const matchesCategory = state.activeCategory === 'ALL' || placeCats.includes(state.activeCategory);
+        const matchesQuery = !q ||
+          p.title.toLowerCase().includes(q) ||
+          (p.subtitle && p.subtitle.toLowerCase().includes(q)) ||
+          (p.city && p.city.toLowerCase().includes(q)) ||
+          (p.category && p.category.toLowerCase().includes(q));
+        return matchesCategory && matchesQuery;
+      });
+
+      if (state.filteredPlaces.length === 0) {
+        state.filteredPlaces = [...state.places];
+      }
+
+      rebuildSpatialBlueprint();
+    }
+
+    /**
+     * Infinite Toroidal Viewport Culling & Inertial Camera Loop (60fps)
+     */
+    function updateCanvas() {
+      if (!state.isDragging) {
+        state.targetX += state.velX;
+        state.targetY += state.velY;
+        state.velX *= 0.92;
+        state.velY *= 0.92;
+
+        if (Math.abs(state.velX) < 0.01) state.velX = 0;
+        if (Math.abs(state.velY) < 0.01) state.velY = 0;
+      }
+
+      // Smooth spring damping toward target camera coordinates
+      state.camX += (state.targetX - state.camX) * 0.14;
+      state.camY += (state.targetY - state.camY) * 0.14;
+
+      // Parallax dot-matrix backdrop
+      gridBackdrop.style.backgroundPosition = `${state.camX * 0.35}px ${state.camY * 0.35}px`;
+
+      if (state.slots && state.slots.length > 0 && state.worldW > 0 && state.worldH > 0) {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const buffer = 360;
+
+        // Visible bounds in world space (camera centered on viewport)
+        const minWorldX = -state.camX - (vw * 0.5) - buffer;
+        const maxWorldX = -state.camX + (vw * 0.5) + buffer;
+        const minWorldY = -state.camY - (vh * 0.5) - buffer;
+        const maxWorldY = -state.camY + (vh * 0.5) + buffer;
+
+        const startSecX = Math.floor(minWorldX / state.worldW);
+        const endSecX = Math.floor(maxWorldX / state.worldW);
+        const startSecY = Math.floor(minWorldY / state.worldH);
+        const endSecY = Math.floor(maxWorldY / state.worldH);
+
+        const activeKeys = new Set();
+
+        for (let sx = startSecX; sx <= endSecX; sx++) {
+          const offsetX = sx * state.worldW;
+          for (let sy = startSecY; sy <= endSecY; sy++) {
+            const offsetY = sy * state.worldH;
+
+            for (let i = 0; i < state.slots.length; i++) {
+              const slot = state.slots[i];
+              const worldX = offsetX + slot.baseX;
+              const worldY = offsetY + slot.baseY;
+
+              if (
+                worldX + slot.width < minWorldX ||
+                worldX > maxWorldX ||
+                worldY + slot.height < minWorldY ||
+                worldY > maxWorldY
+              ) {
+                continue;
+              }
+
+              const key = `${sx}:${sy}:${slot.slotIndex}`;
+              activeKeys.add(key);
+
+              let el = state.nodePool.get(key);
+              if (!el) {
+                el = createCardElement(slot);
+                state.nodePool.set(key, el);
+                worldLayer.appendChild(el);
+              }
+
+              const screenX = Math.round(worldX + state.camX + vw * 0.5);
+              const screenY = Math.round(worldY + state.camY + vh * 0.5);
+              el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`;
+            }
+          }
+        }
+
+        // Recycle tiles outside viewport frustum
+        for (const [key, el] of state.nodePool.entries()) {
+          if (!activeKeys.has(key)) {
+            el.remove();
+            state.nodePool.delete(key);
+          }
+        }
+      }
+
+      requestAnimationFrame(updateCanvas);
+    }
+
+    // Boot Application
+    window.addEventListener('DOMContentLoaded', () => {
+      bindInteractions();
+      loadDatabase();
+      requestAnimationFrame(updateCanvas);
+    });
+  </script>
+</body>
+</html>
