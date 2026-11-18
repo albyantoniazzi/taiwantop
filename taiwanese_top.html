@@ -502,7 +502,7 @@
     const gridBackdrop = document.getElementById('grid-backdrop');
 
     /**
-     * Robust RFC-compliant CSV parser supporting quoted multiline fields
+     * RFC-4180 compliant CSV parser supporting quoted multiline fields & escaped quotes
      */
     function parseCSV(text) {
       const rows = [];
@@ -514,171 +514,181 @@
         const char = text[i];
         const next = text[i + 1];
 
-        if (char === '"') {
-          if (inQuotes && next === '"') {
+        if (inQuotes) {
+          if (char === '"' && next === '"') {
             field += '"';
             i++;
+          } else if (char === '"') {
+            inQuotes = false;
           } else {
-            inQuotes = !inQuotes;
+            field += char;
           }
-        } else if (char === ',' && !inQuotes) {
-          row.push(field.trim());
-          field = '';
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-          if (char === '\r' && next === '\n') i++;
-          row.push(field.trim());
-          if (row.some(cell => cell.length > 0)) rows.push(row);
-          row = [];
-          field = '';
         } else {
-          field += char;
+          if (char === '"') {
+            inQuotes = true;
+          } else if (char === ',') {
+            row.push(field.trim());
+            field = '';
+          } else if (char === '\r' && next === '\n') {
+            row.push(field.trim());
+            rows.push(row);
+            row = [];
+            field = '';
+            i++;
+          } else if (char === '\n' || char === '\r') {
+            row.push(field.trim());
+            rows.push(row);
+            row = [];
+            field = '';
+          } else {
+            field += char;
+          }
         }
       }
 
       if (field.length > 0 || row.length > 0) {
         row.push(field.trim());
-        if (row.some(cell => cell.length > 0)) rows.push(row);
+        rows.push(row);
       }
 
-      return rows;
+      return rows.filter(r => r.some(cell => cell !== ''));
     }
 
     /**
-     * Map a CSV row to a normalized destination object
+     * Map flexible CSV column headers into normalized Taiwanese Top destination objects
      */
-    function mapRowToPlace(headers, row, index) {
-      const record = {};
-      headers.forEach((h, idx) => {
-        record[h.toLowerCase().trim()] = row[idx] || '';
-      });
-
-      const pick = (...keys) => {
-        for (const k of keys) {
-          const foundKey = Object.keys(record).find(rk => rk === k || rk.includes(k));
-          if (foundKey && record[foundKey]) return record[foundKey];
-        }
-        return '';
+    function mapRowToPlace(headers, cells, index) {
+      const getCol = (keywords) => {
+        const idx = headers.findIndex(h => keywords.some(k => h.includes(k)));
+        return idx !== -1 && cells[idx] ? cells[idx].trim() : '';
       };
 
-      const title = pick('title', 'name', 'place', 'spot', 'destination', 'location') || `Taiwan Spot #${index + 1}`;
-      const subtitle = pick('chinese', 'mandarin', 'subtitle', 'zh', 'native');
-      const city = pick('city', 'county', 'area', 'district', 'region') || 'Taiwan';
-      const rawCat = pick('category', 'categories', 'type', 'tag', 'tags') || 'Curated';
-      const categories = rawCat
+      const title = getCol(['title', 'name', 'place', 'spot', 'destination', '地點', '名稱']) || cells[0] || `Taiwan Spot #${index + 1}`;
+      const city = getCol(['city', 'county', 'location', 'area', 'district', '城市', '縣市']) || 'Taiwan';
+      const rawCategory = getCol(['category', 'categories', 'type', 'tag', '分類', '類別']) || 'Curated';
+      const categories = rawCategory
         .split(',')
         .map(c => c.trim())
         .filter(Boolean);
-
-      const rating = pick('rating', 'score', 'stars') || '4.8';
-      const coords = pick('coords', 'coordinates', 'latlng', 'gps');
-      const description = pick('description', 'desc', 'notes', 'note', 'review', 'about', 'summary') ||
-        'Selected destination from the Taiwanese Top curated archive.';
-      const rawImage = pick('image', 'photo', 'img', 'picture', 'url_image', 'cover');
-      const mapsUrl = pick('maps', 'google maps', 'map', 'link', 'url', 'gmaps') ||
-        `https://maps.google.com/?q=${encodeURIComponent(title + ' ' + city + ' Taiwan')}`;
-
-      const fallbackImg = FALLBACK_PLACES[index % FALLBACK_PLACES.length].image;
-      const finalImg = rawImage && rawImage.startsWith('http') ? rawImage : fallbackImg;
+      const description = getCol(['description', 'desc', 'notes', 'note', 'review', 'about', 'summary', '簡介', '備註']) ||
+        `Curated destination in ${city}, Taiwan.`;
+      const rawImage = getCol(['image', 'photo', 'img', 'pic', 'picture', 'thumbnail', 'flickr', '照片', '圖片']) ||
+        FALLBACK_PLACES[index % FALLBACK_PLACES.length].image;
+      const mapsUrl = getCol(['map', 'google', 'link', 'url', 'coords', '地圖']) ||
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${title} ${city} Taiwan`)}`;
+      const coords = getCol(['coord', 'lat', 'gps']) || '';
 
       return {
         id: index + 1,
         title,
-        subtitle,
         city,
         categories: categories.length ? categories : ['Curated'],
         category: categories[0] || 'Curated',
-        rating,
         coords,
         description,
-        image: finalImg,
-        modalImage: finalImg,
+        image: rawImage,
+        modalImage: rawImage,
         mapsUrl,
-        aspectRatio: 0.82 + ((index * 37) % 45) / 100
+        aspectRatio: 0.92
       };
     }
 
     /**
-     * Preload image to measure natural uncropped aspect ratio and update mosaic tile height
+     * Preload image dimensions to preserve original uncropped aspect ratios in the masonry grid
      */
-    function preloadPlaceAspectRatio(place, onUpdate) {
-      if (!place || !place.image || place._ratioLoaded) return;
-      place._ratioLoaded = true;
-      const img = new Image();
-      img.onload = () => {
-        if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-          const ratio = img.naturalHeight / img.naturalWidth;
-          place.aspectRatio = Math.max(0.55, Math.min(1.85, ratio));
-          if (typeof onUpdate === 'function') onUpdate();
+    function preloadPlaceAspectRatio(place) {
+      return new Promise((resolve) => {
+        if (!place.image) {
+          resolve();
+          return;
         }
-      };
-      img.src = place.image;
+        const img = new Image();
+        img.onload = () => {
+          if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+            const rawRatio = img.naturalHeight / img.naturalWidth;
+            place.aspectRatio = Math.max(0.55, Math.min(1.85, rawRatio));
+          }
+          resolve();
+        };
+        img.onerror = () => {
+          place.aspectRatio = 0.92;
+          resolve();
+        };
+        img.src = place.image;
+      });
     }
 
     /**
-     * Fetch live Google Sheets CSV and initialize the infinite spatial atlas
+     * Fetch published Google Sheets CSV, parse places, preload aspect ratios, and initialize view
      */
     async function loadDatabase() {
+      let loadedPlaces = [];
+
       try {
         const response = await fetch(CSV_URL);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const csvText = await response.text();
         const rows = parseCSV(csvText);
 
-        if (rows.length < 2) throw new Error('Empty CSV dataset');
-
-        const headers = rows[0];
-        const parsedPlaces = rows
-          .slice(1)
-          .map((row, idx) => mapRowToPlace(headers, row, idx))
-          .filter(p => p.title && p.title.trim().length > 0);
-
-        state.places = parsedPlaces.length > 0 ? parsedPlaces : FALLBACK_PLACES.map((p, i) => ({
-          ...p,
-          modalImage: p.image,
-          aspectRatio: 0.85 + ((i * 29) % 40) / 100
-        }));
+        if (rows.length >= 2) {
+          const headers = rows[0].map(h => h.toLowerCase().trim());
+          loadedPlaces = rows.slice(1)
+            .filter(r => r.some(cell => cell.trim() !== ''))
+            .map((cells, idx) => mapRowToPlace(headers, cells, idx));
+        }
       } catch (err) {
-        console.warn('Using fallback archive:', err);
-        state.places = FALLBACK_PLACES.map((p, i) => ({
-          ...p,
-          modalImage: p.image,
-          aspectRatio: 0.85 + ((i * 29) % 40) / 100
-        }));
+        console.warn('Falling back to curated dataset:', err);
       }
 
-      // Prioritize preloading first 14 visible tiles immediately
-      let refreshTimer = null;
-      const scheduleLayoutRefresh = () => {
-        clearTimeout(refreshTimer);
-        refreshTimer = setTimeout(() => {
-          rebuildSpatialBlueprint();
-        }, 90);
-      };
+      if (loadedPlaces.length === 0) {
+        loadedPlaces = FALLBACK_PLACES.map(p => ({ ...p, aspectRatio: 0.92 }));
+      }
 
-      state.places.slice(0, 14).forEach(place => preloadPlaceAspectRatio(place, scheduleLayoutRefresh));
-      setTimeout(() => {
-        state.places.slice(14).forEach(place => preloadPlaceAspectRatio(place, scheduleLayoutRefresh));
-      }, 350);
+      state.places = loadedPlaces;
+      state.filteredPlaces = [...loadedPlaces];
+
+      // Preload first batch immediately for crisp initial masonry proportions
+      await Promise.all(loadedPlaces.slice(0, 14).map(preloadPlaceAspectRatio));
 
       buildCategoryBar();
-      applyFilters(false);
+      rebuildSpatialBlueprint();
 
-      // Open shared modal if ?place= query parameter is present
-      const params = new URLSearchParams(window.location.search);
-      const sharedSlug = params.get('place');
-      if (sharedSlug) {
-        const matchIdx = state.filteredPlaces.findIndex(
-          p => slugifyPlace(p.title) === sharedSlug || String(p.id) === sharedSlug
-        );
-        if (matchIdx !== -1) {
-          flyToPlace(matchIdx);
-          openDetailModal(matchIdx);
+      // Center initial viewport on the first cluster
+      if (state.slots.length > 0) {
+        const firstSlot = state.slots[0];
+        state.camX = -(firstSlot.baseX + firstSlot.width * 0.5);
+        state.camY = -(firstSlot.baseY + firstSlot.height * 0.5);
+        state.targetX = state.camX;
+        state.targetY = state.camY;
+      }
+
+      // Check for ?place= deep link
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const sharedSlug = params.get('place');
+        if (sharedSlug) {
+          const matchIdx = state.filteredPlaces.findIndex(
+            p => slugifyPlace(p.title) === sharedSlug || String(p.id) === sharedSlug
+          );
+          if (matchIdx !== -1) {
+            flyToPlace(matchIdx);
+            openDetailModal(matchIdx);
+          }
         }
+      } catch (e) {
+        // Ignore URL parsing errors
+      }
+
+      // Progressively measure remaining photos in the background
+      if (loadedPlaces.length > 14) {
+        Promise.all(loadedPlaces.slice(14).map(preloadPlaceAspectRatio)).then(() => {
+          rebuildSpatialBlueprint();
+        });
       }
     }
 
     /**
-     * Build uniform masonry blueprint with equal 14px spacing and empty architectural boxes when sparse
+     * Build uniform masonry blueprint with equal 14px spacing and interleaved empty architectural boxes when sparse
      */
     function rebuildSpatialBlueprint() {
       const gap = 14;
@@ -691,6 +701,27 @@
       const minSlots = Math.max(items.length, cols * 3);
       const slots = [];
 
+      // Interleave real photo indices with empty placeholder slots evenly across the grid
+      const slotAssignments = new Array(minSlots).fill(-1);
+      if (items.length > 0 && items.length < minSlots) {
+        const stride = minSlots / items.length;
+        const usedPositions = new Set();
+        for (let idx = 0; idx < items.length; idx++) {
+          const jitter = ((idx * 7) % 3) - 1;
+          let pos = Math.round(idx * stride + (idx % 2 === 1 ? 1 : 0) + jitter * 0.4);
+          pos = ((pos % minSlots) + minSlots) % minSlots;
+          while (usedPositions.has(pos)) {
+            pos = (pos + 1) % minSlots;
+          }
+          usedPositions.add(pos);
+          slotAssignments[pos] = idx;
+        }
+      } else {
+        for (let idx = 0; idx < items.length; idx++) {
+          slotAssignments[idx] = idx;
+        }
+      }
+
       for (let i = 0; i < minSlots; i++) {
         // Pick shortest column for uniform masonry packing
         let shortestCol = 0;
@@ -698,8 +729,9 @@
           if (colHeights[c] < colHeights[shortestCol]) shortestCol = c;
         }
 
-        const isEmpty = i >= items.length;
-        const place = isEmpty ? null : items[i];
+        const placeIdx = slotAssignments[i];
+        const isEmpty = placeIdx === -1;
+        const place = isEmpty ? null : items[placeIdx];
         const ratio = isEmpty ? (0.78 + ((i * 31) % 38) / 100) : (place.aspectRatio || 0.92);
         const height = Math.round(colWidth * ratio);
 
@@ -709,7 +741,7 @@
         slots.push({
           slotIndex: i,
           isEmpty,
-          placeIndex: isEmpty ? -1 : i,
+          placeIndex: placeIdx,
           place,
           baseX,
           baseY,
@@ -882,7 +914,7 @@
     }
 
     /**
-     * Render live autocomplete dropdown for place names and cities from CSV
+     * Render live autocomplete dropdown for categories, cities, and place names from CSV
      */
     function renderAutocomplete(query) {
       const dropdown = document.getElementById('autocomplete-dropdown');
@@ -892,6 +924,15 @@
         dropdown.innerHTML = '';
         return;
       }
+
+      const matchingCategories = Array.from(
+        new Set(
+          state.places
+            .flatMap(p => p.categories || [])
+            .map(c => c.trim())
+            .filter(c => c && c.toLowerCase().includes(q))
+        )
+      ).slice(0, 4);
 
       const matchingCities = Array.from(
         new Set(
@@ -903,9 +944,9 @@
 
       const matchingPlaces = state.places
         .filter(p => p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q))
-        .slice(0, 7);
+        .slice(0, 6);
 
-      if (matchingCities.length === 0 && matchingPlaces.length === 0) {
+      if (matchingCategories.length === 0 && matchingCities.length === 0 && matchingPlaces.length === 0) {
         dropdown.innerHTML = `<div class="px-3 py-2.5 text-xs font-mono-tech text-zinc-400">No matches found</div>`;
         dropdown.classList.remove('hidden');
         return;
@@ -913,11 +954,21 @@
 
       let html = '';
 
+      matchingCategories.forEach(cat => {
+        const count = state.places.filter(p => (p.categories || []).includes(cat)).length;
+        html += `
+          <button type="button" data-ac-cat="${cat.replace(/"/g, '&quot;')}" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center justify-between gap-2 text-xs font-mono-tech text-amber-300">
+            <span class="truncate"># ${cat} <sup class="opacity-70 text-[9px]">${count}</sup></span>
+            <span class="text-[10px] text-zinc-400 uppercase shrink-0">Category</span>
+          </button>
+        `;
+      });
+
       matchingCities.forEach(city => {
         html += `
           <button type="button" data-ac-city="${city.replace(/"/g, '&quot;')}" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center justify-between gap-2 text-xs font-mono-tech text-emerald-300">
-            <span>📍 Browse ${city}</span>
-            <span class="text-[10px] text-zinc-400 uppercase">City</span>
+            <span class="truncate">📍 ${city}</span>
+            <span class="text-[10px] text-zinc-400 uppercase shrink-0">City</span>
           </button>
         `;
       });
@@ -936,6 +987,20 @@
 
       dropdown.innerHTML = html;
       dropdown.classList.remove('hidden');
+
+      dropdown.querySelectorAll('[data-ac-cat]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.getAttribute('data-ac-cat');
+          state.activeCategory = cat;
+          state.activeCity = 'ALL';
+          state.searchQuery = '';
+          document.getElementById('search-input').value = '';
+          document.getElementById('clear-search-btn').classList.add('hidden');
+          dropdown.classList.add('hidden');
+          buildCategoryBar();
+          applyFilters(true);
+        });
+      });
 
       dropdown.querySelectorAll('[data-ac-city]').forEach(btn => {
         btn.addEventListener('click', () => {
