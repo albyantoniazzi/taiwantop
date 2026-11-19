@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taiwan Top</title>
+
+  <!-- Open Graph & SEO Metadata -->
+  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:title" content="Taiwan Top" />
+  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Taiwan Top" />
+  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+
+  <!-- Typography: Inter Display for headlines/prose, JetBrains Mono for interface label roles & numbers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Display:wght@400;500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PapaParse for Google Sheets CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        borderRadius: {
+          none: '0px',
+          DEFAULT: '0px',
+          sm: '0px',
+          md: '0px',
+          lg: '0px',
+          full: '0px'
+        },
+        extend: {
+          fontFamily: {
+            sans: ['"Inter Display"', '"Inter"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            page: 'var(--bg-page)',
+            panel: 'var(--bg-panel)',
+            'panel-alt': 'var(--bg-panel-alt)',
+            'text-1': 'var(--text-1)',
+            'text-2': 'var(--text-2)',
+            'text-3': 'var(--text-3)',
+            line: 'var(--border-line)',
+            'line-strong': 'var(--border-line-strong)',
+            'accent-fill': 'var(--accent-fill)',
+            'accent-ink': 'var(--accent-ink)',
+            'accent-text': 'var(--accent-text)',
+            'focus-ring': 'var(--focus-ring)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Sodium Design Tokens: White & Warm Near-Black Grounds, 1px Rules, Zero Radius, One Sodium Yellow */
+    .sodium {
+      --bg-page: #ffffff;
+      --bg-panel: #f9f8f6;
+      --bg-panel-alt: #f2f0ec;
+      --text-1: #161513;
+      --text-2: #55524a;
+      --text-3: #7d796f;
+      --border-line: #dcd9d0;
+      --border-line-strong: #161513;
+      --accent-fill: #f5d90a;
+      --accent-ink: #161513;
+      --accent-text: #7a6800;
+      --focus-ring: #161513;
+      --scrim: rgba(22, 21, 19, 0.56);
+    }
+
+    html.dark .sodium {
+      --bg-page: #141311;
+      --bg-panel: #1b1a17;
+      --bg-panel-alt: #24221e;
+      --text-1: #f2f0eb;
+      --text-2: #a8a398;
+      --text-3: #78746b;
+      --border-line: #2e2c27;
+      --border-line-strong: #f2f0eb;
+      --accent-fill: #f5d90a;
+      --accent-ink: #141311;
+      --accent-text: #f5d90a;
+      --focus-ring: #f5d90a;
+      --scrim: rgba(10, 9, 8, 0.72);
+    }
+
+    *, *::before, *::after {
+      border-radius: 0px !important;
+      box-shadow: none !important;
+      font-weight: 400;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100dvh;
+      margin: 0;
+    }
+
+    /* Sodium Typography Roles (Single Weight 400, Mono Capitals via Roles Only) */
+    .type-title {
+      font-family: "Inter Display", "Inter", system-ui, sans-serif;
+      font-size: 20px;
+      line-height: 28px;
+      letter-spacing: -0.015em;
+    }
+
+    .type-body {
+      font-family: "Inter Display", "Inter", system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .type-code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      line-height: 20px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .type-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      line-height: 16px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .type-label-sm {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      line-height: 14px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .type-micro {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      line-height: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Sodium Structural Rules & Frames */
+    .frame {
+      border: 1px solid var(--border-line);
+      background-color: var(--bg-panel);
+    }
+
+    .panel-head {
+      min-height: 40px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-line);
+      background-color: var(--bg-panel-alt);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .rule-row {
+      border-bottom: 1px solid var(--border-line);
+    }
+
+    .rule-row:last-child {
+      border-bottom: none;
+    }
+
+    .rule-col {
+      border-right: 1px solid var(--border-line);
+    }
+
+    /* Sodium Controls: 32px height, 2px focus ring, zero radius */
+    .sodium-btn-primary {
+      height: 32px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: var(--accent-fill);
+      color: var(--accent-ink);
+      border: 1px solid var(--accent-fill);
+      cursor: pointer;
+    }
+    .sodium-btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .sodium-btn-secondary {
+      height: 32px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: var(--bg-page);
+      color: var(--text-1);
+      border: 1px solid var(--border-line);
+      cursor: pointer;
+    }
+    .sodium-btn-secondary:hover {
+      border-color: var(--border-line-strong);
+      background-color: var(--bg-panel-alt);
+    }
+
+    .sodium-btn-ghost {
+      height: 32px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: transparent;
+      color: var(--text-2);
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .sodium-btn-ghost:hover {
+      color: var(--text-1);
+      background-color: var(--bg-panel-alt);
+      border-color: var(--border-line);
+    }
+
+    .sodium-control:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    /* Scrollbar hiding */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-[#141311]">
+  <!-- Sodium Root Scope -->
+  <div class="sodium min-h-dvh bg-page text-text-1 font-sans selection:bg-accent-fill selection:text-accent-ink">
+
+    <!-- Top Application Bar -->
+    <header class="w-full border-b border-line bg-panel">
+      <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-12 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <a href="index.html" class="type-title text-text-1 hover:text-accent-text truncate sodium-control">
+            Taiwan Top
+          </a>
+          <span class="text-line select-none">/</span>
+          <span class="type-label-sm text-text-2 truncate">
+            Curated index by
+            <a
+              href="https://www.instagram.com/alby.food/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline text-text-1 hover:text-accent-text sodium-control"
+            >@albyantoniazzi</a>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button
+            id="theme-toggle"
+            type="button"
+            aria-label="Switch color theme"
+            class="sodium-btn-secondary sodium-control type-label-sm"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="2" y="2" width="12" height="12" />
+              <rect x="8" y="2" width="6" height="12" fill="currentColor" />
+            </svg>
+            <span id="theme-toggle-label">Dark theme</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 pb-20 space-y-4">
+
+      <!-- Status Strip & Filter Control Frame -->
+      <section class="frame" aria-label="Directory controls and telemetry">
+        <div class="panel-head">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-accent-fill border border-line-strong inline-block" aria-hidden="true"></span>
+            <h1 class="type-label text-text-1">Taiwan places index</h1>
+          </div>
+          <span id="sync-status-label" class="type-label-sm text-accent-text">Syncing feed</span>
+        </div>
+
+        <!-- Status Strip: One ruled row of cells, type-micro over type-code -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-line bg-page">
+          <div class="p-3 border-b sm:border-b-0 border-r border-line">
+            <div class="type-micro text-text-3">Total places</div>
+            <div id="stat-total-places" class="type-code text-text-1 mt-0.5">--</div>
+          </div>
+          <div class="p-3 border-b sm:border-b-0 sm:border-r border-line">
+            <div class="type-micro text-text-3">Matching view</div>
+            <div id="stat-visible-places" class="type-code text-text-1 mt-0.5">--</div>
+          </div>
+          <div class="p-3 border-r border-line">
+            <div class="type-micro text-text-3">Cities indexed</div>
+            <div id="stat-total-cities" class="type-code text-text-1 mt-0.5">--</div>
+          </div>
+          <div class="p-3">
+            <div class="type-micro text-text-3">Active filter</div>
+            <div id="stat-active-filter" class="type-code text-text-1 mt-0.5 truncate">ALL</div>
+          </div>
+        </div>
+
+        <!-- Filter Bar Row -->
+        <div class="p-3 bg-panel flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+          <div class="relative flex-1 max-w-xl" id="search-wrapper">
+            <div class="flex items-center border border-line focus-within:border-line-strong bg-page h-8">
+              <span class="pl-2.5 pr-2 text-text-3 flex items-center" aria-hidden="true">
+                <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="2" y="2" width="9" height="9" />
+                  <path d="M11 11L14.5 14.5" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Filter by place, city, dish, or note..."
+                autocomplete="off"
+                aria-label="Filter directory places"
+                aria-autocomplete="list"
+                aria-controls="search-autocomplete"
+                class="w-full h-full bg-transparent text-text-1 placeholder:text-text-3 type-body pr-7 focus:outline-none"
+              />
+              <button
+                id="clear-search-btn"
+                type="button"
+                aria-label="Clear filter query"
+                class="hidden px-2 h-full type-label-sm text-text-2 hover:text-text-1 cursor-pointer sodium-control"
+              >
+                Clear
+              </button>
+            </div>
+
+            <!-- Autocomplete Dropdown Panel -->
+            <ul
+              id="search-autocomplete"
+              role="listbox"
+              class="hidden absolute left-0 right-0 top-full mt-[-1px] z-40 max-h-64 overflow-y-auto bg-page border border-line-strong divide-y divide-line scrollbar-none"
+            ></ul>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              id="reset-filters-btn"
+              type="button"
+              class="sodium-btn-secondary sodium-control type-label-sm"
+            >
+              Reset filters
+            </button>
+            <button
+              id="open-random-btn"
+              type="button"
+              class="sodium-btn-primary sodium-control type-label-sm"
+            >
+              Inspect random spot
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Directory Records Frame -->
+      <section class="frame" aria-label="Curated places grid">
+        <div class="panel-head">
+          <span class="type-label text-text-1">Directory records</span>
+          <span id="records-range-label" class="type-label-sm text-text-2">0 records</span>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="py-16 px-4 flex items-center justify-center bg-page">
+          <div class="flex items-center gap-2.5 type-label text-text-2">
+            <span class="w-2.5 h-2.5 bg-accent-fill border border-line-strong inline-block"></span>
+            <span>Loading directory records</span>
+          </div>
+        </div>
+
+        <!-- Empty State with Goose Runner -->
+        <div id="empty-state" class="hidden py-10 px-4 flex flex-col items-center justify-center text-center bg-page">
+          <p id="empty-state-title" class="type-body text-text-1 mb-1">No matching places found in this view.</p>
+          <p class="type-label-sm text-text-3 mb-4">Press space or tap canvas to run</p>
+
+          <div class="w-full max-w-xl border border-line bg-panel p-3">
+            <canvas
+              id="dino-canvas"
+              width="600"
+              height="160"
+              class="w-full h-[160px] bg-page cursor-pointer border border-line select-none touch-none"
+            ></canvas>
+            <div class="mt-2 flex items-center justify-between type-label-sm text-text-2">
+              <span>Jump control: space / tap</span>
+              <button
+                type="button"
+                id="empty-reset-btn"
+                class="underline text-text-1 hover:text-accent-text cursor-pointer sodium-control"
+              >
+                Clear active filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ruled Matrix Grid (1px internal rules via gap-px on bg-line) -->
+        <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-line"></div>
+
+        <!-- Pagination / Load More Footer Row -->
+        <div id="load-more-container" class="hidden p-3 bg-panel border-t border-line flex items-center justify-between">
+          <span id="pagination-progress" class="type-label-sm text-text-2">Showing 0 of 0</span>
+          <button
+            id="load-more-btn"
+            type="button"
+            class="sodium-btn-secondary sodium-control type-label-sm"
+          >
+            Load next batch
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Category Strip -->
+    <nav
+      aria-label="Category filter strip"
+      class="fixed bottom-0 left-0 right-0 z-30 w-full bg-panel border-t border-line h-11 flex items-center"
+    >
+      <div
+        id="category-scroll-container"
+        class="w-full max-w-[1600px] mx-auto overflow-x-auto scrollbar-none px-4 sm:px-6"
+      >
+        <div class="flex items-center gap-1.5 flex-nowrap min-w-max" id="category-filters">
+          <button
+            data-category="ALL"
+            type="button"
+            class="cat-filter-btn h-7 px-2.5 inline-flex items-center gap-1.5 border border-line-strong bg-text-1 text-page type-label-sm cursor-pointer sodium-control"
+          >
+            <span>All</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Detail Inspector Dialog (Sodium Portal Layer) -->
+    <div
+      id="detail-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6"
+      style="background-color: var(--scrim);"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="modal-title"
+    >
+      <div id="modal-container" class="relative w-full max-w-xl">
+        <div
+          id="modal-card"
+          class="w-full max-h-[90dvh] flex flex-col bg-page border border-line-strong overflow-hidden"
+        >
+          <!-- Dialog Header Bar -->
+          <div class="panel-head flex-shrink-0">
+            <div class="flex items-center gap-2 min-w-0">
+              <span id="modal-index-indicator" class="type-label-sm text-text-2">Record 00 / 00</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button
+                id="modal-prev-btn"
+                type="button"
+                aria-label="Previous place"
+                class="sodium-btn-secondary sodium-control type-label-sm disabled:opacity-40 disabled:pointer-events-none"
+              >
+                Prev
+              </button>
+              <button
+                id="modal-next-btn"
+                type="button"
+                aria-label="Next place"
+                class="sodium-btn-secondary sodium-control type-label-sm disabled:opacity-40 disabled:pointer-events-none"
+              >
+                Next
+              </button>
+              <button
+                id="modal-close-btn"
+                type="button"
+                aria-label="Close inspector"
+                class="sodium-btn-secondary sodium-control type-label-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+
+          <!-- Dialog Scrollable Content -->
+          <div class="overflow-y-auto flex-1 scrollbar-none">
+            <!-- Hero Photo -->
+            <div class="w-full aspect-square max-h-[420px] bg-panel-alt border-b border-line overflow-hidden">
+              <img
+                id="modal-image"
+                src=""
+                alt=""
+                class="w-full h-full object-cover object-center"
+              />
+            </div>
+
+            <!-- Metadata & Description -->
+            <div class="divide-y divide-line">
+              <div class="p-4 bg-page">
+                <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                  <button type="button" id="modal-city-badge" class="sodium-control"></button>
+                  <div id="modal-tags" class="flex flex-wrap items-center gap-1.5"></div>
+                </div>
+                <h2 id="modal-title" class="type-title text-text-1"></h2>
+              </div>
+
+              <div class="p-4 bg-panel">
+                <div class="type-micro text-text-3 mb-1">Field notes</div>
+                <p id="modal-description" class="type-body text-text-2 whitespace-pre-line"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialog Action Footer (At most ONE yellow primary slab) -->
+          <div class="p-3 bg-panel-alt border-t border-line flex items-center justify-between gap-2 flex-shrink-0">
+            <button
+              id="modal-share-btn"
+              type="button"
+              class="sodium-btn-secondary sodium-control type-label-sm"
+            >
+              <svg id="modal-share-copy-icon" class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="5" y="5" width="9" height="9" />
+                <path d="M11 5V2H2V11H5" />
+              </svg>
+              <span id="modal-share-label">Copy link</span>
+            </button>
+
+            <a
+              id="modal-map-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="sodium-btn-primary sodium-control type-label-sm"
+            >
+              <span>Open in Google Maps</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M4 12L12 4M12 4H6M12 4V10" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Toast -->
+    <div
+      id="toast-notification"
+      role="status"
+      aria-live="polite"
+      class="hidden fixed bottom-14 right-4 z-50 px-3 py-2 bg-page border border-line-strong text-text-1 flex items-center gap-2"
+    >
+      <span class="w-2 h-2 bg-accent-fill border border-line-strong inline-block" aria-hidden="true"></span>
+      <span id="toast-message" class="type-label-sm">Link copied to clipboard</span>
+    </div>
+
+  </div>
+
+  <script>
+    // CSV URL & Fallback Image
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatCityName(str) {
+      if (!str) return '';
+      return str
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    // State Variables
+    let allPlaces = [];
+    let visiblePlaces = [];
+    let displayedCount = 24;
+    const PAGE_SIZE = 24;
+    let activeCategory = "ALL";
+    let searchQuery = "";
+    let searchDebounceTimer = null;
+    let activeModalIndex = -1;
+    let autocompleteIndex = [];
+    let activeSuggestionIdx = -1;
+
+    // DOM Elements
+    const gridEl = document.getElementById("places-grid");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const paginationProgressEl = document.getElementById("pagination-progress");
+    const loadingEl = document.getElementById("loading-state");
+    const emptyEl = document.getElementById("empty-state");
+    const emptyTitleEl = document.getElementById("empty-state-title");
+    const emptyResetBtn = document.getElementById("empty-reset-btn");
+    const categoryContainer = document.getElementById("category-filters");
+    const searchWrapper = document.getElementById("search-wrapper");
+    const searchInput = document.getElementById("search-input");
+    const searchAutocompleteEl = document.getElementById("search-autocomplete");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const resetFiltersBtn = document.getElementById("reset-filters-btn");
+    const openRandomBtn = document.getElementById("open-random-btn");
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+
+    // Telemetry Elements
+    const syncStatusLabel = document.getElementById("sync-status-label");
+    const statTotalPlaces = document.getElementById("stat-total-places");
+    const statVisiblePlaces = document.getElementById("stat-visible-places");
+    const statTotalCities = document.getElementById("stat-total-cities");
+    const statActiveFilter = document.getElementById("stat-active-filter");
+    const recordsRangeLabel = document.getElementById("records-range-label");
+
+    // Modal & Toast Elements
+    const modalEl = document.getElementById("detail-modal");
+    const modalCardEl = document.getElementById("modal-card");
+    const modalIndexIndicator = document.getElementById("modal-index-indicator");
+    const modalImageEl = document.getElementById("modal-image");
+    const modalTitleEl = document.getElementById("modal-title");
+    const modalDescEl = document.getElementById("modal-description");
+    const modalCityBadge = document.getElementById("modal-city-badge");
+    const modalTags = document.getElementById("modal-tags");
+    const modalMapLink = document.getElementById("modal-map-link");
+    const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalShareLabel = document.getElementById("modal-share-label");
+    const modalPrevBtn = document.getElementById("modal-prev-btn");
+    const modalNextBtn = document.getElementById("modal-next-btn");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
+    const toastEl = document.getElementById("toast-notification");
+    const toastMsg = document.getElementById("toast-message");
+    let shareResetTimeout = null;
+
+    function extractFlickrPhotoId(url) {
+      if (!url || typeof url !== 'string') return 0n;
+      const match = url.match(/\/(\d+)_/);
+      try {
+        return match ? BigInt(match[1]) : 0n;
+      } catch {
+        return 0n;
+      }
+    }
+
+    function slugify(str) {
+      return String(str || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function showToast(message) {
+      if (!toastEl || !toastMsg) return;
+      toastMsg.textContent = message;
+      toastEl.classList.remove("hidden");
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toastEl.classList.add("hidden");
+      }, 2400);
+    }
+
+    function updateStatusStrip() {
+      const uniqueCities = new Set(allPlaces.map(p => p.city.toLowerCase()).filter(Boolean));
+      if (statTotalPlaces) statTotalPlaces.textContent = String(allPlaces.length);
+      if (statVisiblePlaces) statVisiblePlaces.textContent = String(visiblePlaces.length);
+      if (statTotalCities) statTotalCities.textContent = String(uniqueCities.size);
+
+      const activeParts = [];
+      if (activeCategory !== "ALL") activeParts.push(activeCategory.toUpperCase());
+      if (searchQuery.trim()) activeParts.push(`"${searchQuery.trim()}"`);
+      if (statActiveFilter) {
+        statActiveFilter.textContent = activeParts.length > 0 ? activeParts.join(" + ") : "ALL";
+      }
+
+      const shown = Math.min(displayedCount, visiblePlaces.length);
+      if (recordsRangeLabel) {
+        recordsRangeLabel.textContent = `${shown} of ${visiblePlaces.length} records`;
+      }
+      if (paginationProgressEl) {
+        paginationProgressEl.textContent = `Showing ${shown} of ${visiblePlaces.length} records`;
+      }
+    }
+
+    function createCardElement(place, index) {
+      const card = document.createElement('article');
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Inspect ${place.title}`);
+      card.className = "bg-page hover:bg-panel transition-colors flex flex-col cursor-pointer select-none sodium-control group";
+
+      const fullImageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+      const safeTitle = escapeHtml(place.title);
+      const safeDesc = escapeHtml(place.description);
+      const safeCity = escapeHtml(place.city || 'Taiwan');
+      const primaryCat = place.categories[0] ? escapeHtml(place.categories[0]) : 'Spot';
+
+      card.innerHTML = `
+        <div class="px-3 py-2 border-b border-line bg-panel flex items-center justify-between gap-2">
+          <span class="type-label-sm text-text-2 truncate">${safeCity}</span>
+          <span class="type-micro text-text-3 border border-line px-1.5 py-0.5 bg-page flex-shrink-0">${primaryCat}</span>
+        </div>
+
+        <div class="relative aspect-square w-full bg-panel-alt border-b border-line overflow-hidden">
+          <img
+            src="${escapeHtml(fullImageSource)}"
+            alt="${safeTitle}"
+            loading="lazy"
+            decoding="async"
+            onerror="if(this.dataset.triedOriginal!=='true'){this.dataset.triedOriginal='true';this.src='${escapeHtml(place.photo || DEFAULT_FALLBACK_IMAGE)}';}else{this.onerror=null;this.src='${DEFAULT_FALLBACK_IMAGE}';}"
+            class="w-full h-full object-cover object-center"
+          />
+        </div>
+
+        <div class="p-3 flex-1 flex flex-col justify-between gap-2">
+          <div>
+            <h2 class="type-body text-text-1 group-hover:text-accent-text line-clamp-1">
+              ${safeTitle}
+            </h2>
+            ${safeDesc ? `
+              <p class="type-body text-text-2 mt-1 line-clamp-2">
+                ${safeDesc}
+              </p>
+            ` : `
+              <p class="type-body text-text-3 mt-1">
+                No field notes recorded.
+              </p>
+            `}
+          </div>
+
+          <div class="pt-2 border-t border-line flex items-center justify-between">
+            <span class="type-micro text-text-3">#${String(index + 1).padStart(3, '0')}</span>
+            <span class="type-label-sm text-text-1 group-hover:text-accent-text">Inspect record</span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => openModal(index));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(index);
+        }
+      });
+
+      return card;
+    }
+
+    function renderCards() {
+      gridEl.innerHTML = "";
+      updateStatusStrip();
+
+      if (visiblePlaces.length === 0) {
+        gridEl.classList.add("hidden");
+        emptyEl.classList.remove("hidden");
+        loadMoreContainer.classList.add("hidden");
+        startDinoGame();
+        return;
+      }
+
+      gridEl.classList.remove("hidden");
+      emptyEl.classList.add("hidden");
+      stopDinoGame();
+
+      const slice = visiblePlaces.slice(0, displayedCount);
+      const fragment = document.createDocumentFragment();
+      slice.forEach((place, idx) => {
+        fragment.appendChild(createCardElement(place, idx));
+      });
+      gridEl.appendChild(fragment);
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function appendNextBatch() {
+      const start = displayedCount;
+      const end = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+      if (start >= end) return;
+
+      const fragment = document.createDocumentFragment();
+      for (let i = start; i < end; i++) {
+        fragment.appendChild(createCardElement(visiblePlaces[i], i));
+      }
+      gridEl.appendChild(fragment);
+      displayedCount = end;
+      updateStatusStrip();
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function filterPlaces() {
+      const q = searchQuery.toLowerCase().trim();
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+
+      visiblePlaces = allPlaces.filter(place => {
+        const matchesCategory = (activeCategory === "ALL") || place.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase());
+        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
+        return matchesCategory && matchesSearch;
+      });
+
+      displayedCount = PAGE_SIZE;
+      renderCards();
+    }
+
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const btnCat = btn.getAttribute("data-category");
+        const isActive = btnCat.toLowerCase() === activeCategory.toLowerCase();
+
+        if (isActive) {
+          btn.className = "cat-filter-btn h-7 px-2.5 inline-flex items-center gap-1.5 border border-line-strong bg-text-1 text-page type-label-sm cursor-pointer sodium-control";
+        } else {
+          btn.className = "cat-filter-btn h-7 px-2.5 inline-flex items-center gap-1.5 border border-line bg-page text-text-2 hover:text-text-1 hover:border-line-strong type-label-sm cursor-pointer sodium-control";
+        }
+      });
+    }
+
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory.toLowerCase() === cat.toLowerCase() && cat.toLowerCase() !== "all") ? "ALL" : cat;
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    };
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      const catDisplay = {};
+
+      allPlaces.forEach(p => {
+        const seenInPlace = new Set();
+        p.categories.forEach(c => {
+          const clean = c.trim().replace(/\s+/g, ' ');
+          const key = clean.toLowerCase();
+          if (key && !seenInPlace.has(key)) {
+            seenInPlace.add(key);
+            catCount[key] = (catCount[key] || 0) + 1;
+            if (!catDisplay[key]) catDisplay[key] = clean;
+          }
+        });
+      });
+
+      const sortedKeys = Object.keys(catCount).sort((a, b) => a.localeCompare(b));
+
+      const allBtn = categoryContainer.querySelector('[data-category="ALL"]');
+      categoryContainer.innerHTML = "";
+      if (allBtn) {
+        allBtn.innerHTML = `<span>All</span><span class="opacity-75">${allPlaces.length}</span>`;
+        allBtn.onclick = () => setCategory("ALL");
+        categoryContainer.appendChild(allBtn);
+      }
+
+      sortedKeys.forEach(key => {
+        const count = catCount[key] || 0;
+        const displayLabel = catDisplay[key];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-category", displayLabel);
+        btn.className = "cat-filter-btn h-7 px-2.5 inline-flex items-center gap-1.5 border border-line bg-page text-text-2 hover:text-text-1 hover:border-line-strong type-label-sm cursor-pointer sodium-control";
+        btn.innerHTML = `<span>${escapeHtml(displayLabel)}</span><span class="opacity-75">${count}</span>`;
+        btn.onclick = () => setCategory(displayLabel);
+        categoryContainer.appendChild(btn);
+      });
+    }
+
+    function parseUrlState() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("cat")) activeCategory = params.get("cat");
+        const initialCity = params.get("city");
+        const initialQ = params.get("q");
+        if (initialQ || initialCity) {
+          searchQuery = [initialCity, initialQ].filter(Boolean).join(" ").trim();
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateUrlState(targetSpotSlug = null) {
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
+      try {
+        const params = new URLSearchParams();
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      } catch (err) {
+        // Ignore history API access errors in constrained iframes
+      }
+    }
+
+    window.openModal = function(index) {
+      if (!visiblePlaces[index]) return;
+      activeModalIndex = index;
+      const place = visiblePlaces[index];
+
+      if (shareResetTimeout) clearTimeout(shareResetTimeout);
+      if (modalShareLabel) modalShareLabel.textContent = "Copy link";
+
+      document.body.style.overflow = 'hidden';
+
+      if (modalIndexIndicator) {
+        modalIndexIndicator.textContent = `Record ${String(index + 1).padStart(2, '0')} / ${String(visiblePlaces.length).padStart(2, '0')}`;
+      }
+
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
+      modalImageEl.alt = place.title;
+      modalTitleEl.textContent = place.title;
+      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
+
+      if (place.city) {
+        modalCityBadge.className = "h-6 px-2 inline-flex items-center gap-1 border border-line-strong bg-text-1 text-page type-label-sm cursor-pointer sodium-control";
+        modalCityBadge.innerHTML = `<span>${escapeHtml(place.city)}</span>`;
+        modalCityBadge.onclick = (e) => {
+          e.stopPropagation();
+          searchQuery = formatCityName(place.city);
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.remove("hidden");
+          closeModal();
+          updateUrlState();
+          filterPlaces();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        modalCityBadge.classList.remove("hidden");
+      } else {
+        modalCityBadge.classList.add("hidden");
+      }
+
+      modalTags.innerHTML = "";
+      place.categories.forEach(cat => {
+        const tagBtn = document.createElement("button");
+        tagBtn.type = "button";
+        tagBtn.className = "h-6 px-2 inline-flex items-center border border-line bg-panel text-text-1 hover:border-line-strong type-label-sm cursor-pointer sodium-control";
+        tagBtn.textContent = cat;
+        tagBtn.onclick = (e) => {
+          e.stopPropagation();
+          closeModal();
+          setCategory(cat);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        modalTags.appendChild(tagBtn);
+      });
+
+      const queryMap = encodeURIComponent(`${place.title} ${place.city || 'Taiwan'}`);
+      modalMapLink.href = place.link || `https://www.google.com/maps/search/?api=1&query=${queryMap}`;
+
+      if (modalPrevBtn) modalPrevBtn.disabled = index <= 0;
+      if (modalNextBtn) modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      updateUrlState(place.slug);
+
+      modalEl.classList.remove("hidden");
+      modalEl.classList.add("flex");
+      modalEl.setAttribute("aria-hidden", "false");
+    };
+
+    window.closeModal = function() {
+      activeModalIndex = -1;
+      document.body.style.overflow = '';
+      modalEl.classList.add("hidden");
+      modalEl.classList.remove("flex");
+      modalEl.setAttribute("aria-hidden", "true");
+      updateUrlState();
+    };
+
+    function navigateModal(delta) {
+      if (activeModalIndex === -1) return;
+      const nextIdx = activeModalIndex + delta;
+      if (nextIdx >= 0 && nextIdx < visiblePlaces.length) {
+        openModal(nextIdx);
+      }
+    }
+
+    function processPlacesData(rows) {
+      const parsedPlaces = [];
+
+      rows.forEach((row, idx) => {
+        const title = (row.Title || row.title || row.Name || row.name || "").trim();
+        if (!title) return;
+
+        const city = (row.City || row.city || row.Location || row.location || "").trim();
+        const rawCats = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || "").trim();
+        const seenCats = new Set();
+        const categories = [];
+        if (rawCats) {
+          rawCats.split(/[,;|]+/).forEach(c => {
+            const clean = c.trim().replace(/\s+/g, ' ');
+            const key = clean.toLowerCase();
+            if (clean && !seenCats.has(key)) {
+              seenCats.add(key);
+              categories.push(clean);
+            }
+          });
+        }
+        const description = (row.Description || row.description || row.Notes || row.notes || "").trim();
+        const photo = (row.Photo || row.photo || row.Image || row.image || row.URL || "").trim();
+        const link = (row.Link || row.link || row.Maps || row.maps || row["Google Maps"] || "").trim();
+
+        parsedPlaces.push({
+          id: idx,
+          slug: slugify(title),
+          title,
+          city,
+          categories,
+          description,
+          photo,
+          link,
+          flickrId: extractFlickrPhotoId(photo)
+        });
+      });
+
+      allPlaces = parsedPlaces.sort((a, b) => {
+        if (b.flickrId > a.flickrId) return 1;
+        if (b.flickrId < a.flickrId) return -1;
+        return 0;
+      });
+
+      buildAutocompleteIndex();
+      populateCategoryFilters();
+
+      const deepLinkedSpotSlug = parseUrlState();
+      updateToolbarStyles();
+      filterPlaces();
+
+      if (deepLinkedSpotSlug) {
+        const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
+        if (targetIndex !== -1) openModal(targetIndex);
+      }
+
+      loadingEl.classList.add("hidden");
+      if (syncStatusLabel) syncStatusLabel.textContent = "Index ready";
+    }
+
+    async function fetchPlaces() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: results => processPlacesData(results.data || []),
+          error: err => {
+            console.error("CSV Parse Error:", err);
+            loadingEl.classList.add("hidden");
+            if (syncStatusLabel) syncStatusLabel.textContent = "Feed unavailable";
+            emptyEl.classList.remove("hidden");
+            startDinoGame();
+          }
+        });
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        loadingEl.classList.add("hidden");
+        if (syncStatusLabel) syncStatusLabel.textContent = "Feed unavailable";
+        emptyEl.classList.remove("hidden");
+        startDinoGame();
+      }
+    }
+
+    // Search Autocomplete
+    function buildAutocompleteIndex() {
+      const seen = new Map();
+      const stopWords = new Set(["the", "and", "for", "with", "from", "that", "this", "are", "was", "have", "has", "not", "but", "you", "your", "all", "can", "into", "very", "just", "one", "out", "about"]);
+
+      const addTerm = (label, type, priority) => {
+        const clean = label.trim();
+        if (!clean || clean.length < 2) return;
+        const key = clean.toLowerCase();
+        const existing = seen.get(key);
+        if (!existing || priority < existing.priority) {
+          seen.set(key, { label: clean, type, priority });
+        }
+      };
+
+      allPlaces.forEach(p => {
+        if (p.city) addTerm(formatCityName(p.city), "city", 1);
+        p.categories.forEach(c => addTerm(c.toLowerCase(), "category", 2));
+        if (p.title) addTerm(p.title, "place", 3);
+
+        const words = `${p.title} ${p.description}`.toLowerCase().match(/[a-z0-9\u4e00-\u9fa5]{3,}/g) || [];
+        words.forEach(w => {
+          if (!stopWords.has(w)) addTerm(w, "term", 4);
+        });
+      });
+
+      autocompleteIndex = Array.from(seen.values()).sort((a, b) => a.priority - b.priority || a.label.localeCompare(b.label));
+    }
+
+    function hideAutocomplete() {
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.classList.add("hidden");
+      searchAutocompleteEl.innerHTML = "";
+    }
+
+    function applyAutocompleteSuggestion(suggestionLabel) {
+      const currentVal = searchInput.value;
+      const parts = currentVal.split(/\s+/);
+      if (parts.length > 1 && currentVal.slice(-1) !== " ") {
+        parts[parts.length - 1] = suggestionLabel;
+        searchInput.value = parts.join(" ");
+      } else {
+        searchInput.value = suggestionLabel;
+      }
+      searchQuery = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      hideAutocomplete();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    function renderAutocompleteSuggestions(val) {
+      const raw = val.trim().toLowerCase();
+      if (!raw) {
+        hideAutocomplete();
+        return;
+      }
+
+      const tokens = raw.split(/\s+/);
+      const lastToken = tokens[tokens.length - 1];
+
+      const topMatches = autocompleteIndex
+        .filter(item => {
+          const lower = item.label.toLowerCase();
+          return lower.includes(raw) || (lastToken.length >= 2 && lower.startsWith(lastToken));
+        })
+        .slice(0, 8);
+
+      if (topMatches.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.innerHTML = "";
+
+      topMatches.forEach((match) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.className = "px-3 py-2 type-body text-text-1 hover:bg-panel-alt cursor-pointer flex items-center justify-between gap-2";
+
+        li.innerHTML = `
+          <span class="truncate">${escapeHtml(match.label)}</span>
+          <span class="type-micro text-text-3 flex-shrink-0">${escapeHtml(match.type)}</span>
+        `;
+
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          applyAutocompleteSuggestion(match.label);
+        });
+
+        searchAutocompleteEl.appendChild(li);
+      });
+
+      searchAutocompleteEl.classList.remove('hidden');
+    }
+
+    searchInput.addEventListener("input", () => {
+      const val = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !val);
+      renderAutocompleteSuggestions(val);
+
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        searchQuery = val;
+        updateUrlState();
+        filterPlaces();
+      }, 150);
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      const items = searchAutocompleteEl.querySelectorAll("li");
+      if (searchAutocompleteEl.classList.contains("hidden") || items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
+      } else if (e.key === "Enter" && activeSuggestionIdx >= 0) {
+        e.preventDefault();
+        const label = items[activeSuggestionIdx].querySelector("span").textContent;
+        applyAutocompleteSuggestion(label);
+        return;
+      } else if (e.key === "Escape") {
+        hideAutocomplete();
+        return;
+      } else {
+        return;
+      }
+
+      items.forEach((el, i) => {
+        el.classList.toggle("bg-panel-alt", i === activeSuggestionIdx);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (searchWrapper && !searchWrapper.contains(e.target)) {
+        hideAutocomplete();
+      }
+    });
+
+    function clearAllFilters() {
+      searchInput.value = "";
+      searchQuery = "";
+      activeCategory = "ALL";
+      clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      updateUrlState();
+      filterPlaces();
+    });
+
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", clearAllFilters);
+    if (emptyResetBtn) emptyResetBtn.addEventListener("click", clearAllFilters);
+
+    if (openRandomBtn) {
+      openRandomBtn.addEventListener("click", () => {
+        if (visiblePlaces.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * visiblePlaces.length);
+        openModal(randomIndex);
+      });
+    }
+
+    // Modal & Keyboard Listeners
+    modalEl.addEventListener("click", (e) => {
+      if (e.target === modalEl || e.target.id === "modal-container") {
+        closeModal();
+      }
+    });
+
+    if (modalPrevBtn) modalPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(-1); });
+    if (modalNextBtn) modalNextBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(1); });
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
+
+    if (modalShareBtn) {
+      modalShareBtn.addEventListener("click", () => {
+        const tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand("copy");
+          if (modalShareLabel) modalShareLabel.textContent = "Link copied";
+          showToast("Direct link copied to clipboard");
+          if (shareResetTimeout) clearTimeout(shareResetTimeout);
+          shareResetTimeout = setTimeout(() => {
+            if (modalShareLabel) modalShareLabel.textContent = "Copy link";
+          }, 2200);
+        } catch {
+          // Ignore clipboard error
+        }
+        document.body.removeChild(tempInput);
+      });
+    }
+
+    let touchStartX = 0;
+    modalCardEl.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalCardEl.addEventListener("touchend", (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        navigateModal(diff < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    document.addEventListener("keydown", (e) => {
+      if (activeModalIndex !== -1) {
+        if (e.key === "Escape") closeModal();
+        else if (e.key === "ArrowLeft") navigateModal(-1);
+        else if (e.key === "ArrowRight") navigateModal(1);
+      }
+    });
+
+    // Empty-State Goose Runner
+    const dinoCanvas = document.getElementById("dino-canvas");
+    const dinoCtx = dinoCanvas ? dinoCanvas.getContext("2d") : null;
+    let gameLoopId = null;
+    let gameRunning = false;
+    let gameOver = false;
+    let gameScore = 0;
+    let gameSpeed = 4.2;
+    let frameTick = 0;
+    let audioCtx = null;
+
+    const goose = {
+      x: 48,
+      y: 112,
+      w: 28,
+      h: 34,
+      vy: 0,
+      gravity: 0.58,
+      jumpPower: -8.8,
+      grounded: true
+    };
+    let obstacles = [];
+
+    function playQuackSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(210, now + 0.14);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(950, now);
+        filter.Q.setValueAtTime(3.2, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.17);
+      } catch {
+        // Ignore audio errors
+      }
+    }
+
+    function resetDinoGame() {
+      goose.y = 112;
+      goose.vy = 0;
+      goose.grounded = true;
+      obstacles = [];
+      gameScore = 0;
+      gameSpeed = 4.2;
+      gameOver = false;
+      gameRunning = true;
+      if (emptyTitleEl) emptyTitleEl.classList.add("opacity-0");
+    }
+
+    function jumpGoose() {
+      if (emptyEl.classList.contains("hidden")) return;
+      if (!gameRunning || gameOver) {
+        resetDinoGame();
+      }
+      if (goose.grounded) {
+        goose.vy = goose.jumpPower;
+        goose.grounded = false;
+        playQuackSound();
+      }
+    }
+
+    function spawnObstacle() {
+      const types = ["hotpot", "flame", "oven"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const specs = {
+        hotpot: { w: 28, h: 24 },
+        flame: { w: 20, h: 28 },
+        oven: { w: 30, h: 30 }
+      };
+      const spec = specs[type];
+      obstacles.push({
+        x: 620,
+        y: 146 - spec.h,
+        w: spec.w,
+        h: spec.h,
+        type
+      });
+    }
+
+    function drawGoose(ctx, ink, bg) {
+      const x = Math.round(goose.x);
+      const y = Math.round(goose.y);
+      ctx.fillStyle = ink;
+
+      ctx.fillRect(x, y + 14, 18, 11);
+      ctx.fillRect(x - 3, y + 12, 5, 5);
+      ctx.fillRect(x + 13, y + 2, 5, 14);
+      ctx.fillRect(x + 13, y, 9, 6);
+
+      ctx.fillStyle = "#f5d90a";
+      ctx.fillRect(x + 22, y + 2, 6, 3);
+
+      ctx.fillStyle = bg;
+      ctx.fillRect(x + 18, y + 1, 2, 2);
+
+      ctx.fillStyle = ink;
+      const step = goose.grounded ? Math.floor(frameTick / 5) % 2 : 0;
+      if (step === 0) {
+        ctx.fillRect(x + 5, y + 25, 2, 9);
+        ctx.fillRect(x + 12, y + 25, 2, 6);
+      } else {
+        ctx.fillRect(x + 5, y + 25, 2, 6);
+        ctx.fillRect(x + 12, y + 25, 2, 9);
+      }
+    }
+
+    function drawObstacle(ctx, obs, ink) {
+      const x = Math.round(obs.x);
+      const y = Math.round(obs.y);
+      const flicker = Math.floor(frameTick / 4) % 2 === 0;
+
+      if (obs.type === "hotpot") {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 3, y + 5, 22, 13);
+        ctx.fillRect(x, y + 7, 3, 4);
+        ctx.fillRect(x + 25, y + 7, 3, 4);
+        ctx.fillStyle = "#f5d90a";
+        ctx.fillRect(x + 7, y + 19, 14, flicker ? 5 : 3);
+      } else if (obs.type === "flame") {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 2, y + 23, 16, 5);
+        ctx.fillStyle = "#f5d90a";
+        ctx.fillRect(x + 4, y + 8, 12, 15);
+        ctx.fillRect(x + 7, y + (flicker ? 1 : 4), 6, 8);
+      } else {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 4, y, 22, 6);
+        ctx.fillRect(x, y + 6, 30, 24);
+        ctx.fillStyle = "#f5d90a";
+        ctx.fillRect(x + 9, y + 16, 12, flicker ? 14 : 12);
+      }
+    }
+
+    function updateDinoGame() {
+      if (!dinoCtx || emptyEl.classList.contains("hidden")) {
+        gameLoopId = null;
+        return;
+      }
+
+      const isDark = document.documentElement.classList.contains("dark");
+      const ink = isDark ? "#f2f0eb" : "#161513";
+      const bg = isDark ? "#141311" : "#ffffff";
+      dinoCtx.clearRect(0, 0, dinoCanvas.width, dinoCanvas.height);
+
+      dinoCtx.fillStyle = ink;
+      dinoCtx.fillRect(0, 146, dinoCanvas.width, 1);
+
+      if (gameRunning && !gameOver) {
+        frameTick++;
+        goose.vy += goose.gravity;
+        goose.y += goose.vy;
+
+        if (goose.y >= 112) {
+          goose.y = 112;
+          goose.vy = 0;
+          goose.grounded = true;
+        }
+
+        if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 360 - Math.random() * 140) {
+          spawnObstacle();
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          const obs = obstacles[i];
+          obs.x -= gameSpeed;
+          if (obs.x + obs.w < 0) {
+            obstacles.splice(i, 1);
+            gameScore++;
+            gameSpeed = Math.min(8.2, 4.2 + gameScore * 0.12);
+            continue;
+          }
+
+          if (
+            goose.x + 4 < obs.x + obs.w - 4 &&
+            goose.x + goose.w - 6 > obs.x + 4 &&
+            goose.y + 4 < obs.y + obs.h - 2 &&
+            goose.y + goose.h - 2 > obs.y + 4
+          ) {
+            gameOver = true;
+            gameRunning = false;
+            if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
+          }
+        }
+      }
+
+      drawGoose(dinoCtx, ink, bg);
+      obstacles.forEach(obs => drawObstacle(dinoCtx, obs, ink));
+
+      dinoCtx.fillStyle = ink;
+      dinoCtx.font = "11px 'JetBrains Mono', monospace";
+      dinoCtx.textAlign = "right";
+      dinoCtx.fillText(`SCORE ${String(gameScore).padStart(3, "0")}`, dinoCanvas.width - 12, 20);
+
+      if (gameOver) {
+        dinoCtx.textAlign = "center";
+        dinoCtx.fillText("GAME OVER - TAP OR SPACE TO RETRY", dinoCanvas.width / 2, 74);
+      }
+
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function startDinoGame() {
+      if (!dinoCanvas || gameLoopId) return;
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function stopDinoGame() {
+      if (gameLoopId) {
+        cancelAnimationFrame(gameLoopId);
+        gameLoopId = null;
+      }
+      gameRunning = false;
+      if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
+    }
+
+    if (dinoCanvas) {
+      dinoCanvas.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        jumpGoose();
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.activeElement !== searchInput && !emptyEl.classList.contains("hidden")) {
+        e.preventDefault();
+        jumpGoose();
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        stopDinoGame();
+      } else if (!emptyEl.classList.contains("hidden")) {
+        startDinoGame();
+      }
+    });
+
+    // Theme Initialization & Switcher
+    function updateThemeUI(isDark) {
+      if (themeToggleLabel) {
+        themeToggleLabel.textContent = isDark ? "Light theme" : "Dark theme";
+      }
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem("taiwantop-theme");
+      const isDark = savedTheme === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      updateThemeUI(isDark);
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("taiwantop-theme", isDark ? "dark" : "light");
+        updateThemeUI(isDark);
+      });
+    }
+
+    loadMoreBtn.addEventListener("click", () => {
+      appendNextBatch();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      fetchPlaces();
+    });
+  </script>
+</body>
+</html>
