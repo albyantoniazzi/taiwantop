@@ -3,1407 +3,2559 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TAIWAN TOP</title>
+  <title>TAIWAN TOP — Curated Places by @albyantoniazzi</title>
+  <meta name="description" content="A curated directory of top places, eats, and hidden gems across Taiwan compiled by @albyantoniazzi (@alby.food)." />
 
-  <!-- Open Graph & SEO Metadata -->
-  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
-  <meta property="og:title" content="TAIWAN TOP" />
-  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TAIWAN TOP" />
-  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
-  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
-
-  <!-- Google Sans Code Font -->
+  <!-- Fonts: Roboto Flex & Material Symbols Outlined per Material Design 3 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS for responsive layout utilities -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- PapaParse for Google Sheets CSV Parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
+  <!-- PapaParse for client-side CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaTfpa48djpNbZ18legh+9h+9h6Q1A1jYx81Y1b+9h6Q1A1jYx81Y1b+9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Fallback CDN for PapaParse if integrity hash differs across mirrors -->
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            mono: ['"Google Sans Code"', 'monospace']
-          },
-          colors: {
-            brand: {
-              bg: '#EBF1E5',
-              black: '#292929',
-              badge: '#292929'
-            },
-            surface: {
-              DEFAULT: '#0f131a',
-              card: '#161b24',
-              border: '#232b3b'
-            }
-          }
-        }
-      }
-    };
+    if (typeof Papa === 'undefined') {
+      document.write('<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"><\/script>');
+    }
   </script>
 
   <style>
+    /* ==========================================================================
+       MATERIAL DESIGN 3 (MD3) DESIGN TOKENS
+       Dynamic Taiwan-inspired seed palette (Alishan Jade & Night Market Lantern Terracotta)
+       ========================================================================== */
+    :root {
+      /* Light Scheme Color Tokens */
+      --md-sys-color-primary: #1B6B52;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #A5F2D3;
+      --md-sys-color-on-primary-container: #002116;
+
+      --md-sys-color-secondary: #4C6358;
+      --md-sys-color-on-secondary: #FFFFFF;
+      --md-sys-color-secondary-container: #CEE9DA;
+      --md-sys-color-on-secondary-container: #092017;
+
+      --md-sys-color-tertiary: #9C4233;
+      --md-sys-color-on-tertiary: #FFFFFF;
+      --md-sys-color-tertiary-container: #FFDAD4;
+      --md-sys-color-on-tertiary-container: #410000;
+
+      --md-sys-color-error: #BA1A1A;
+      --md-sys-color-on-error: #FFFFFF;
+      --md-sys-color-error-container: #FFDAD6;
+      --md-sys-color-on-error-container: #410002;
+
+      --md-sys-color-surface: #F6FBF7;
+      --md-sys-color-on-surface: #171D1A;
+      --md-sys-color-on-surface-variant: #3F4944;
+
+      --md-sys-color-surface-container-lowest: #FFFFFF;
+      --md-sys-color-surface-container-low: #F0F5F1;
+      --md-sys-color-surface-container: #EAEFEB;
+      --md-sys-color-surface-container-high: #E4EAE5;
+      --md-sys-color-surface-container-highest: #DFE4E0;
+
+      --md-sys-color-inverse-surface: #2C322F;
+      --md-sys-color-inverse-on-surface: #EDF2EE;
+      --md-sys-color-inverse-primary: #8AD6B8;
+
+      --md-sys-color-outline: #707973;
+      --md-sys-color-outline-variant: #BFC9C2;
+      --md-sys-color-scrim: rgba(0, 0, 0, 0.48);
+
+      /* Typography Tokens */
+      --md-sys-typescale-font-family: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Shape Tokens */
+      --md-sys-shape-corner-extra-small: 4px;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-large-increased: 20px;
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-full: 9999px;
+
+      /* Motion Tokens */
+      --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+      --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+      --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+      --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+      --md-sys-motion-duration-short: 200ms;
+      --md-sys-motion-duration-medium: 300ms;
+      --md-sys-motion-duration-long: 450ms;
+    }
+
+    /* Dark Mode Theme Tokens */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --md-sys-color-primary: #8AD6B8;
+        --md-sys-color-on-primary: #003828;
+        --md-sys-color-primary-container: #00513C;
+        --md-sys-color-on-primary-container: #A5F2D3;
+
+        --md-sys-color-secondary: #B3CCBE;
+        --md-sys-color-on-secondary: #1E352B;
+        --md-sys-color-secondary-container: #354B41;
+        --md-sys-color-on-secondary-container: #CEE9DA;
+
+        --md-sys-color-tertiary: #FFB4A7;
+        --md-sys-color-on-tertiary: #5F150B;
+        --md-sys-color-tertiary-container: #7D2B1F;
+        --md-sys-color-on-tertiary-container: #FFDAD4;
+
+        --md-sys-color-error: #FFB4AB;
+        --md-sys-color-on-error: #690005;
+        --md-sys-color-error-container: #93000A;
+        --md-sys-color-on-error-container: #FFDAD6;
+
+        --md-sys-color-surface: #0F1512;
+        --md-sys-color-on-surface: #DFE4E0;
+        --md-sys-color-on-surface-variant: #BFC9C2;
+
+        --md-sys-color-surface-container-lowest: #0A0F0D;
+        --md-sys-color-surface-container-low: #171D1A;
+        --md-sys-color-surface-container: #1B211E;
+        --md-sys-color-surface-container-high: #262B28;
+        --md-sys-color-surface-container-highest: #303633;
+
+        --md-sys-color-inverse-surface: #DFE4E0;
+        --md-sys-color-inverse-on-surface: #2C322F;
+        --md-sys-color-inverse-primary: #1B6B52;
+
+        --md-sys-color-outline: #89938D;
+        --md-sys-color-outline-variant: #3F4944;
+        --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --md-sys-color-primary: #8AD6B8;
+      --md-sys-color-on-primary: #003828;
+      --md-sys-color-primary-container: #00513C;
+      --md-sys-color-on-primary-container: #A5F2D3;
+
+      --md-sys-color-secondary: #B3CCBE;
+      --md-sys-color-on-secondary: #1E352B;
+      --md-sys-color-secondary-container: #354B41;
+      --md-sys-color-on-secondary-container: #CEE9DA;
+
+      --md-sys-color-tertiary: #FFB4A7;
+      --md-sys-color-on-tertiary: #5F150B;
+      --md-sys-color-tertiary-container: #7D2B1F;
+      --md-sys-color-on-tertiary-container: #FFDAD4;
+
+      --md-sys-color-surface: #0F1512;
+      --md-sys-color-on-surface: #DFE4E0;
+      --md-sys-color-on-surface-variant: #BFC9C2;
+
+      --md-sys-color-surface-container-lowest: #0A0F0D;
+      --md-sys-color-surface-container-low: #171D1A;
+      --md-sys-color-surface-container: #1B211E;
+      --md-sys-color-surface-container-high: #262B28;
+      --md-sys-color-surface-container-highest: #303633;
+
+      --md-sys-color-inverse-surface: #DFE4E0;
+      --md-sys-color-inverse-on-surface: #2C322F;
+      --md-sys-color-inverse-primary: #1B6B52;
+
+      --md-sys-color-outline: #89938D;
+      --md-sys-color-outline-variant: #3F4944;
+      --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+    }
+
+    /* Base & Typography Setup */
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     html {
+      font-family: var(--md-sys-typescale-font-family);
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
       scroll-behavior: smooth;
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      transition: background-color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard),
+                  color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+      overflow-x: hidden;
     }
 
-    /* Scrollbar utility */
-    .scrollbar-none::-webkit-scrollbar {
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
+    }
+
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* MD3 Top App Bar */
+    .md3-top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--md-sys-color-surface);
+      border-bottom: 1px solid transparent;
+      transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    .md3-top-app-bar.scrolled {
+      background-color: var(--md-sys-color-surface-container);
+      border-bottom-color: var(--md-sys-color-outline-variant);
+    }
+
+    /* MD3 Search Bar (Docked Pill) */
+    .md3-search-bar {
+      background-color: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-full);
+      border: 1px solid transparent;
+      transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    .md3-search-bar:focus-within {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Autocomplete Dropdown Menu (MD3 Menu) */
+    .md3-autocomplete-menu {
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+      overflow: hidden;
+      transform-origin: top center;
+      animation: menuEnter var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+
+    @keyframes menuEnter {
+      from { opacity: 0; transform: translateY(-6px) scaleY(0.96); }
+      to { opacity: 1; transform: translateY(0) scaleY(1); }
+    }
+
+    .md3-autocomplete-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      min-height: 48px;
+      cursor: pointer;
+      transition: background-color 150ms ease;
+    }
+
+    .md3-autocomplete-item:hover,
+    .md3-autocomplete-item.active {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+
+    /* MD3 Filter Chips */
+    .md3-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background-color: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface-variant);
+      transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-filter-chip:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+      border-color: var(--md-sys-color-outline);
+    }
+
+    .md3-filter-chip:active {
+      transform: scale(0.97);
+    }
+
+    .md3-filter-chip[aria-pressed="true"] {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .md3-filter-chip .chip-count {
+      font-size: 0.75rem;
+      padding: 1px 7px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .md3-filter-chip[aria-pressed="true"] .chip-count {
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+    }
+
+    /* Horizontal chip scroll container with subtle scrollbar hiding */
+    .chip-scroll-strip {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-strip::-webkit-scrollbar {
       display: none;
     }
-    .scrollbar-none {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+
+    /* MD3 Place Card (Square aspect-ratio visual card) */
+    .md3-place-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: var(--md-sys-shape-corner-large);
+      background-color: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized);
     }
 
-    /* Smooth theme transitions */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.3s;
-      animation-timing-function: ease-in-out;
-    }
-    .theme-transition,
-    .theme-transition *,
-    .theme-transition *::before,
-    .theme-transition *::after {
-      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+    .md3-place-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
     }
 
-    /* Unified badge styling across all sections */
-    .badge-pill {
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1.1rem;
+    .md3-place-card:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
+
+    .md3-place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-place-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .md3-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(10, 16, 13, 0.88) 0%,
+        rgba(10, 16, 13, 0.42) 45%,
+        rgba(10, 16, 13, 0.08) 75%,
+        rgba(10, 16, 13, 0.25) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* MD3 Buttons */
+    .md3-btn-filled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 24px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      font-weight: 600;
+      font-size: 0.9375rem;
       letter-spacing: 0.01em;
+      cursor: pointer;
+      border: none;
+      transition: filter 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-filled:hover {
+      filter: brightness(1.06);
+    }
+
+    .md3-btn-filled:active {
+      transform: scale(0.98);
+    }
+
+    .md3-btn-tonal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      border: none;
+      transition: filter 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-tonal:hover {
+      filter: brightness(0.96);
+    }
+
+    .md3-btn-tonal:active {
+      transform: scale(0.98);
+    }
+
+    .md3-btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+      border: 1px solid var(--md-sys-color-outline);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-outlined:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+    }
+
+    .md3-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .md3-icon-btn:hover {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+
+    .md3-icon-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* MD3 Dialog / Detail Modal */
+    .md3-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: var(--md-sys-color-scrim);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    .md3-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .md3-modal-dialog {
+      width: 100%;
+      max-width: 860px;
+      max-height: 92vh;
+      background-color: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-extra-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.94) translateY(12px);
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized-decelerate);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    .md3-modal-backdrop.open .md3-modal-dialog {
+      transform: scale(1) translateY(0);
+    }
+
+    /* MD3 Snackbar */
+    .md3-snackbar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      z-index: 80;
+      background-color: var(--md-sys-color-inverse-surface);
+      color: var(--md-sys-color-inverse-on-surface);
+      padding: 12px 20px;
+      border-radius: var(--md-sys-shape-corner-small);
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized),
+                  opacity var(--md-sys-motion-duration-short) ease;
+    }
+
+    .md3-snackbar.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Skeleton Shimmer for Loading State */
+    .skeleton-pulse {
+      background: linear-gradient(
+        90deg,
+        var(--md-sys-color-surface-container) 25%,
+        var(--md-sys-color-surface-container-highest) 50%,
+        var(--md-sys-color-surface-container) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Dino / Duck Runner Canvas */
+    #dino-canvas {
+      display: block;
+      width: 100%;
+      height: 180px;
+      border-radius: var(--md-sys-shape-corner-large);
+      background-color: var(--md-sys-color-surface-container-lowest);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      cursor: pointer;
+      touch-action: manipulation;
     }
   </style>
 </head>
+<body class="antialiased selection:bg-emerald-500/20">
 
-<body class="font-mono bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white selection:bg-[#292929] selection:text-[#EBF1E5] dark:selection:bg-white dark:selection:text-[#333333]">
+  <!-- ========================================================================
+       MD3 TOP APP BAR & INTEGRATED SEARCH / FILTER HEADER
+       ======================================================================== -->
+  <header id="top-app-bar" class="md3-top-app-bar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-3">
+      <!-- Top Row: Brand Identity, Social Attribution & Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- Brand Logo & Title -->
+        <div class="flex items-center gap-3">
+          <button
+            id="brand-reset-btn"
+            type="button"
+            class="flex items-center gap-3 text-left group focus:outline-none"
+            title="Reset all filters and return to top"
+          >
+            <div
+              class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
+              style="background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);"
+            >
+              <span class="material-symbols-outlined filled text-2xl">folder</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--md-sys-color-on-surface);">
+                  TAIWAN TOP
+                </h1>
+                <span
+                  id="header-total-badge"
+                  class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                  style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
+                >
+                  Loading…
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm" style="color: var(--md-sys-color-on-surface-variant);">
+                Curated by
+                <a
+                  href="https://www.instagram.com/alby.food/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-semibold underline decoration-dotted underline-offset-2 hover:opacity-80"
+                  style="color: var(--md-sys-color-primary);"
+                  onclick="event.stopPropagation()"
+                >@alby.food</a>
+              </p>
+            </div>
+          </button>
+        </div>
 
-  <!-- Header: Centered Title, Subtitle & Unified Rich Search -->
-  <header class="w-full max-w-[1920px] mx-auto pt-4 sm:pt-6 pb-5 px-3 sm:px-[10vw] flex flex-col items-center text-center relative">
-    
-    <!-- Theme Toggle positioned cleanly at top right aligned with title -->
-    <div class="absolute right-3 sm:right-[10vw] top-4 sm:top-6">
-      <button 
-        id="theme-toggle" 
-        type="button" 
-        title="Toggle Light / Dark Mode"
-        aria-label="Toggle Light and Dark Mode" 
-        class="p-1 flex items-center justify-center focus:outline-none transition-transform hover:scale-105"
-      >
-        <svg 
-          id="yin-yang-icon" 
-          class="w-6 h-6 transition-transform duration-500 ease-in-out cursor-pointer drop-shadow-sm select-none" 
-          viewBox="0 0 100 100"
-        >
-          <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#292929" stroke-width="2.5"/>
-          <path d="M 50 3 A 47 47 0 0 1 50 97 A 23.5 23.5 0 0 1 50 50 A 23.5 23.5 0 0 0 50 3 Z" fill="#292929"/>
-          <circle cx="50" cy="26.5" r="7" fill="#292929"/>
-          <circle cx="50" cy="73.5" r="7" fill="#ffffff"/>
-        </svg>
-      </button>
-    </div>
+        <!-- Search Input & Autocomplete Container -->
+        <div class="relative w-full md:w-96 lg:w-[440px] order-3 md:order-2">
+          <div class="md3-search-bar flex items-center px-4 h-12">
+            <span class="material-symbols-outlined mr-3 text-xl" style="color: var(--md-sys-color-on-surface-variant);">
+              search
+            </span>
+            <input
+              id="search-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search spots, cities, beef noodle, coffee…"
+              aria-label="Search curated Taiwan places"
+              aria-autocomplete="list"
+              aria-controls="autocomplete-list"
+              aria-expanded="false"
+              class="w-full bg-transparent border-none outline-none text-sm sm:text-base placeholder:opacity-65"
+              style="color: var(--md-sys-color-on-surface);"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              aria-label="Clear search query"
+              class="hidden ml-1 w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              style="color: var(--md-sys-color-on-surface-variant);"
+            >
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
 
-    <!-- Brand Text & Creator Credit -->
-    <a href="index.html" class="text-xl sm:text-2xl italic font-medium tracking-tight leading-8 text-[#292929] dark:text-white hover:opacity-80 transition-opacity">
-      Taiwan Top
-    </a>
-    <p class="mt-0.5 text-[11px] sm:text-xs text-[#292929]/80 dark:text-white/80 font-normal">
-      by <a 
-        href="https://www.instagram.com/alby.food/" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        class="underline font-normal hover:opacity-75 transition-opacity"
-      >@albyantoniazzi</a>
-    </p>
+          <!-- Autocomplete Suggestions Dropdown -->
+          <div
+            id="autocomplete-dropdown"
+            class="md3-autocomplete-menu hidden absolute left-0 right-0 mt-2 z-50"
+            role="listbox"
+            aria-label="Search suggestions"
+          >
+            <ul id="autocomplete-list" class="py-1 max-h-80 overflow-y-auto"></ul>
+          </div>
+        </div>
 
-    <!-- Rich Search Input (Integrates Cities, Categories, Titles & Descriptions) -->
-    <div class="relative w-full max-w-md mt-4 text-left" id="search-wrapper">
-      <div class="relative flex items-center border-b border-[#292929] dark:border-white">
-        <svg class="w-4 h-4 absolute left-0 text-[#292929]/60 dark:text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-        </svg>
-        <input 
-          type="text" 
-          id="search-input" 
-          placeholder="Search places, cities, food..." 
-          autocomplete="off"
-          aria-autocomplete="list"
-          aria-controls="search-autocomplete"
-          class="w-full bg-transparent border-0 rounded-none pl-6 pr-7 py-1.5 text-[11px] sm:text-xs font-semibold text-[#292929] dark:text-white placeholder:italic placeholder:font-normal placeholder:text-[11px] sm:placeholder:text-xs placeholder-[#292929]/60 dark:placeholder-white/60 focus:outline-none transition"
-        />
-        <button 
-          id="clear-search-btn" 
-          type="button" 
-          aria-label="Clear search"
-          class="hidden absolute right-0.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#292929] dark:text-white hover:opacity-70 cursor-pointer"
-        >
-          ×
-        </button>
+        <!-- Right Utility Actions: Theme Toggle & Instagram Link -->
+        <div class="flex items-center gap-2 order-2 md:order-3">
+          <a
+            href="https://www.instagram.com/alby.food/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md3-btn-tonal !px-3.5 !min-h-[40px] text-xs sm:text-sm"
+            title="Follow @alby.food on Instagram"
+          >
+            <span class="material-symbols-outlined text-lg">photo_camera</span>
+            <span class="hidden sm:inline">@alby.food</span>
+          </a>
+          <button
+            id="theme-toggle-btn"
+            type="button"
+            class="md3-icon-btn !w-10 !h-10"
+            aria-label="Toggle light or dark theme"
+            title="Toggle color theme"
+          >
+            <span id="theme-icon" class="material-symbols-outlined text-xl">dark_mode</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Autocomplete Suggestions List (Cities, Categories, Titles, Words) -->
-      <ul 
-        id="search-autocomplete" 
-        role="listbox"
-        class="hidden absolute left-0 right-0 top-full mt-0 z-40 max-h-64 overflow-y-auto rounded-none bg-[#EBF1E5] dark:bg-[#333333] border border-t-0 border-[#292929] dark:border-white shadow-xl divide-y divide-[#292929]/15 dark:divide-white/15 scrollbar-none"
-      ></ul>
+      <!-- Category Filter Chips Bar -->
+      <nav aria-label="Category filters" class="mt-3 pt-2 border-t" style="border-color: var(--md-sys-color-outline-variant);">
+        <div class="flex items-center gap-2">
+          <div
+            id="category-filters"
+            class="chip-scroll-strip flex items-center gap-2 overflow-x-auto py-1 flex-1"
+            role="toolbar"
+            aria-label="Filter places by category"
+          >
+            <!-- Populated dynamically by populateCategoryFilters() -->
+          </div>
+        </div>
+      </nav>
     </div>
-
   </header>
 
-  <!-- Main Grid with mobile side margins matching thumbnail spacing (12px / gap-3) -->
-  <main class="w-full max-w-[1920px] mx-auto px-3 sm:px-[10vw] pt-2 pb-16">
-
-    <!-- Loading State -->
-    <div id="loading-state" class="py-24 flex items-center justify-center">
-      <div class="flex items-center gap-3 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white">
-        <span class="w-3 h-3 rounded-full bg-[#292929] dark:bg-white animate-ping"></span>
-        <span>Loading places...</span>
-      </div>
-    </div>
-
-    <!-- Empty State with Dino Game -->
-    <div id="empty-state" class="hidden py-12 flex flex-col items-center justify-center text-center">
-      <p id="empty-state-title" class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2 transition-opacity duration-200">Sorry, nothing here...</p>
-      
-      <!-- Dino Game Container -->
-    <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
-      <canvas 
-        id="dino-canvas" 
-        width="600" 
-        height="160" 
-        class="w-full h-[160px] bg-transparent cursor-pointer border-b border-[#292929] dark:border-white select-none touch-none"
-      ></canvas>
-      <div class="mt-3 flex items-center justify-center w-full text-[11px] font-semibold text-[#292929] dark:text-white px-1">
-        <span>Press [SPACE] or Tap to Jump</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Responsive Adaptive Grid: Single column on mobile, multi-column on larger screens -->
-  <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"></div>
-
-  <!-- Load More Button Container -->
-  <div id="load-more-container" class="hidden pt-6 pb-1 flex justify-center items-center">
-    <button 
-      id="load-more-btn" 
-      type="button" 
-      class="py-1 text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal hover:underline underline-offset-4 transition cursor-pointer focus:outline-none"
-    >
-      LOAD MORE&nbsp;<span class="text-xs">↓</span>
-    </button>
-  </div>
-
-</main>
-
-  <!-- Full-Width Bottom Categories Toolbar -->
-  <nav 
-    aria-label="Category Filters"
-    class="fixed bottom-0 left-0 right-0 z-30 w-full bg-[#EBF1E5]/95 dark:bg-[#333333]/95 backdrop-blur-md border-t border-[#292929] dark:border-white py-2.5"
-  >
-    <div 
-      id="category-scroll-container"
-      class="w-full overflow-x-auto scrollbar-none px-4 sm:px-6"
-    >
-      <div class="flex items-center justify-start sm:justify-center gap-1.5 flex-nowrap min-w-max mx-auto" id="category-filters">
-        <button 
-          data-category="ALL"
-          class="cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer"
+  <!-- ========================================================================
+       MAIN CONTENT AREA: STATUS BAR, PLACES GRID, PAGINATION & EMPTY STATE
+       ======================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Active Filter Status & Result Counter -->
+    <div id="results-toolbar" class="flex flex-wrap items-center justify-between gap-2 mb-5">
+      <div class="flex items-center gap-2 flex-wrap">
+        <p id="results-summary" class="text-sm font-medium" style="color: var(--md-sys-color-on-surface-variant);">
+          Fetching curated spots from Google Sheets…
+        </p>
+        <button
+          id="reset-filters-inline-btn"
+          type="button"
+          class="hidden text-xs font-semibold px-3 py-1 rounded-full transition-colors"
+          style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
         >
-          ALL
+          Clear active filters
         </button>
       </div>
+      <div class="text-xs hidden sm:flex items-center gap-1.5" style="color: var(--md-sys-color-on-surface-variant);">
+        <span class="material-symbols-outlined text-base">sort</span>
+        <span>Sorted newest first</span>
+      </div>
     </div>
-  </nav>
 
-  <div 
-    id="detail-modal" 
-    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 lg:p-8 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    <!-- Loading Skeleton Grid (shown during initial CSV fetch) -->
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <!-- 12 placeholder cards generated via JS or static markup -->
+    </div>
+
+    <!-- Curated Places Square Card Grid -->
+    <section
+      id="places-grid"
+      aria-label="Curated places in Taiwan"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+    ></section>
+
+    <!-- Pagination Load More Container -->
+    <div id="load-more-container" class="hidden mt-8 mb-2 flex flex-col items-center">
+      <button id="load-more-btn" type="button" class="md3-btn-filled">
+        <span class="material-symbols-outlined text-xl">expand_more</span>
+        <span id="load-more-label">Load More</span>
+      </button>
+    </div>
+
+    <!-- Empty State & Interactive HTML5 Runner Game Fallback -->
+    <section
+      id="empty-state"
+      class="hidden my-6 p-6 sm:p-8 rounded-3xl border max-w-2xl mx-auto text-center"
+      style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
+      aria-live="polite"
+    >
+      <div
+        class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center"
+        style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
+      >
+        <span id="empty-state-icon" class="material-symbols-outlined text-3xl">search_off</span>
+      </div>
+      <h2 id="empty-state-title" class="text-xl sm:text-2xl font-bold mb-4" style="color: var(--md-sys-color-on-surface);">
+        No matching spots found
+      </h2>
+      <p id="empty-state-subtitle" class="hidden text-sm sm:text-base mb-5 max-w-md mx-auto" style="color: var(--md-sys-color-on-surface-variant);"></p>
+
+      <!-- Interactive Canvas Runner Game -->
+      <div class="mb-5 text-left">
+        <div class="flex items-center justify-between text-xs font-semibold mb-1.5 px-1" style="color: var(--md-sys-color-on-surface-variant);">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">sports_esports</span>
+            <span>HOT POT GOOSE RUN — Press <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">Space</kbd> or Tap to Jump</span>
+          </span>
+          <span id="game-score-readout">SCORE: 0000 · BEST: 0000</span>
+        </div>
+        <canvas id="dino-canvas" tabindex="0" aria-label="Hot Pot Goose Runner mini-game"></canvas>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="empty-reset-btn" type="button" class="md3-btn-filled">
+          <span class="material-symbols-outlined text-xl">restart_alt</span>
+          <span>Show all places</span>
+        </button>
+        <button id="retry-fetch-btn" type="button" class="md3-btn-outlined hidden">
+          <span class="material-symbols-outlined text-xl">refresh</span>
+          <span>Retry loading CSV</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 border-t text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-4"
+    style="border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined filled text-lg" style="color: var(--md-sys-color-primary);">folder</span>
+      <span><strong>TAIWAN TOP</strong> - Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="font-semibold underline" style="color: var(--md-sys-color-primary);">@alby.food</a></span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span>Keyboard: <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">/</kbd> to search · <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">←</kbd> <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">→</kbd> in modal</span>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       MD3 DETAIL MODAL (SPOT INSPECTOR)
+       ======================================================================== -->
+  <div
+    id="place-modal"
+    class="md3-modal-backdrop"
     role="dialog"
     aria-modal="true"
+    aria-labelledby="modal-title"
     aria-hidden="true"
   >
-    <!-- Modal Wrapper with Centered Outside Navigation Arrows -->
-    <div id="modal-container" class="relative w-full max-w-lg flex items-center justify-center">
-
-      <!-- Previous Arrow (Hidden on phone, shown on desktop browser) -->
-      <button 
-        id="modal-prev-btn" 
-        type="button" 
-        title="Previous spot (←)"
-        aria-label="Previous spot"
-        class="hidden md:block absolute md:-left-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
+    <div id="modal-dialog-card" class="md3-modal-dialog">
+      <!-- Top Modal Bar -->
+      <div
+        class="flex items-center justify-between px-4 sm:px-6 py-3 border-b shrink-0"
+        style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
       >
-        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
-      <!-- Next Arrow (Hidden on phone, shown on desktop browser) -->
-      <button 
-        id="modal-next-btn" 
-        type="button" 
-        title="Next spot (→)"
-        aria-label="Next spot"
-        class="hidden md:block absolute md:-right-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
-      >
-        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
-      <!-- Modal Card Box (Same border radius as home photos) -->
-      <div 
-        id="modal-card" 
-        class="relative w-full max-h-[92vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-md shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
-      >
-        <!-- Small Top-Right Close Button -->
-        <button 
-          id="modal-close-btn" 
-          type="button" 
-          title="Close (Esc)" 
-          aria-label="Close modal"
-          class="absolute top-2.5 right-2.5 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-[#292929]/75 hover:bg-[#292929] text-white backdrop-blur-sm transition-colors cursor-pointer focus:outline-none"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <div class="overflow-y-auto flex-1 scrollbar-none">
-          <!-- Hero Photo (1:1 square crop) -->
-          <div class="relative w-full aspect-square bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
-            <img 
-              id="modal-image" 
-              src="" 
-              alt="" 
-              class="w-full h-full object-cover object-center" 
-            />
-          </div>
-
-          <!-- Body Details -->
-          <div class="p-3.5 sm:p-4 space-y-2">
-            <div>
-              <div class="flex items-center gap-1 mb-3 flex-wrap">
-                <button type="button" id="modal-city-badge" class="cursor-pointer"></button>
-                <div id="modal-tags" class="flex flex-wrap items-center gap-1"></div>
-              </div>
-              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white"></h2>
-            </div>
-
-            <p id="modal-description" class="text-[11px] sm:text-xs italic leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
-
-            <!-- External Action Button Bar: View on Google Maps left, Share Place right -->
-            <div class="pt-1 pb-0 flex flex-wrap items-center justify-between gap-2">
-              <a 
-                id="modal-map-link" 
-                href="#" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm cursor-pointer"
-              >
-                <span>View on Google Maps</span>
-                <span class="text-xs">↗</span>
-              </a>
-
-              <button 
-                id="modal-share-btn" 
-                type="button" 
-                title="Copy direct link to this spot" 
-                aria-label="Share Place"
-                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none cursor-pointer"
-              >
-                <svg id="modal-share-copy-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span id="modal-share-check-icon" class="hidden text-xs leading-none font-bold">✔</span>
-                <span id="modal-share-label">Share Place</span>
-              </button>
-            </div>
-          </div>
+        <div class="flex items-center gap-2">
+          <button id="modal-prev-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Previous place" title="Previous spot (Left Arrow)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button id="modal-next-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Next place" title="Next spot (Right Arrow)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          <span id="modal-counter" class="text-xs font-semibold ml-1" style="color: var(--md-sys-color-on-surface-variant);">
+            1 / 1
+          </span>
         </div>
 
+        <div class="flex items-center gap-2">
+          <button id="modal-share-btn" type="button" class="md3-btn-tonal !min-h-[40px] !px-4 text-xs sm:text-sm" title="Copy direct link to this spot">
+            <span class="material-symbols-outlined text-lg">share</span>
+            <span>Share</span>
+          </button>
+          <button id="modal-close-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Close modal" title="Close (Escape)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Scrollable Content -->
+      <div class="overflow-y-auto grid grid-cols-1 md:grid-cols-2 flex-1">
+        <!-- Photo Showcase -->
+        <div class="relative aspect-square md:aspect-auto md:min-h-[380px] bg-black/10 flex items-center justify-center overflow-hidden">
+          <img
+            id="modal-image"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Metadata, Categories, Description & Google Maps Action -->
+        <div class="p-5 sm:p-7 flex flex-col justify-between gap-5">
+          <div>
+            <!-- City Badge (Clickable filter) -->
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <button
+                id="modal-city-btn"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-transform active:scale-95"
+                style="background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);"
+                title="Filter by this city"
+              >
+                <span class="material-symbols-outlined filled text-base">location_on</span>
+                <span id="modal-city-text">Taiwan</span>
+              </button>
+            </div>
+
+            <!-- Place Title -->
+            <h2 id="modal-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug mb-3" style="color: var(--md-sys-color-on-surface);">
+              Place Title
+            </h2>
+
+            <!-- Category Tags (Clickable filters) -->
+            <div id="modal-categories" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+            <!-- Description -->
+            <p
+              id="modal-description"
+              class="text-sm sm:text-base leading-relaxed whitespace-pre-line"
+              style="color: var(--md-sys-color-on-surface-variant);"
+            ></p>
+          </div>
+
+          <!-- Bottom Primary Action: Google Maps -->
+          <div class="pt-4 border-t flex flex-col sm:flex-row items-stretch sm:items-center gap-3" style="border-color: var(--md-sys-color-outline-variant);">
+            <a
+              id="modal-maps-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="md3-btn-filled flex-1 text-center"
+            >
+              <span class="material-symbols-outlined text-xl">map</span>
+              <span>Open in Google Maps</span>
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div 
-    id="toast-notification" 
-    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] text-xs font-semibold rounded-full shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
-  >
-    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-    </svg>
-    <span id="toast-message">Link copied to clipboard!</span>
+  <!-- ========================================================================
+       MD3 SNACKBAR FEEDBACK TOAST
+       ======================================================================== -->
+  <div id="snackbar" class="md3-snackbar" role="status" aria-live="polite">
+    <span class="material-symbols-outlined text-lg" style="color: var(--md-sys-color-inverse-primary);">check_circle</span>
+    <span id="snackbar-text">Link copied to clipboard</span>
   </div>
 
+  <!-- ========================================================================
+       APPLICATION LOGIC
+       ======================================================================== -->
   <script>
-    // CSV URL & Fallback Image
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
-    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
+    (() => {
+      'use strict';
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
+      /* ----------------------------------------------------------------------
+         CONSTANTS & CONFIGURATION
+         ---------------------------------------------------------------------- */
+      const CSV_URL =
+        'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+      const FALLBACK_PHOTO =
+        'https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg';
+      const PAGE_SIZE = 24;
 
-    function capitalizeFirstLetter(str) {
-      if (!str) return '';
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+      const STOP_WORDS = new Set([
+        'the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was',
+        'were', 'have', 'has', 'had', 'not', 'but', 'what', 'all', 'when',
+        'can', 'there', 'use', 'each', 'which', 'their', 'if', 'will', 'way',
+        'about', 'many', 'then', 'them', 'would', 'like', 'into', 'has', 'more',
+        'two', 'see', 'out', 'very', 'just', 'one', 'also', 'its', 'you', 'your',
+        'taiwan', 'place', 'spot', 'great', 'good', 'best', 'really'
+      ]);
 
-    function formatCityName(str) {
-      if (!str) return '';
-      return str
-        .split(/\s+/)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-    }
+      /* ----------------------------------------------------------------------
+         APPLICATION STATE
+         ---------------------------------------------------------------------- */
+      let allPlaces = [];
+      let visiblePlaces = [];
+      let displayedCount = PAGE_SIZE;
 
-    // Safely get photo URL: keep the original source as primary/fallback to avoid Flickr 404 on missing _z sizes
-    function getGridThumbnailUrl(url) {
-      if (!url) return DEFAULT_FALLBACK_IMAGE;
-      return url;
-    }
+      let activeCategory = 'ALL';
+      let searchQuery = '';
+      let activeModalIndex = -1;
+      let pendingSpotSlug = null;
 
-    // State Variables
-    let allPlaces = [];
-    let visiblePlaces = [];
-    let displayedCount = 24;
-    const PAGE_SIZE = 24;
-    let activeCategory = "ALL";
-    let searchQuery = "";
-    let searchDebounceTimer = null;
-    let rotationDeg = 0;
-    let activeModalIndex = -1;
-    let autocompleteIndex = [];
-    let activeSuggestionIdx = -1;
+      // Autocomplete state
+      let autocompleteIndex = [];
+      let currentSuggestions = [];
+      let highlightedSuggestionIdx = -1;
+      let searchDebounceTimer = null;
 
-    // DOM Elements
-    const gridEl = document.getElementById("places-grid");
-    const loadMoreContainer = document.getElementById("load-more-container");
-    const loadMoreBtn = document.getElementById("load-more-btn");
-    const loadingEl = document.getElementById("loading-state");
-    const emptyEl = document.getElementById("empty-state");
-    const emptyTitleEl = document.getElementById("empty-state-title");
-    const categoryContainer = document.getElementById("category-filters");
-    const categoryScrollContainer = document.getElementById("category-scroll-container");
-    const searchWrapper = document.getElementById("search-wrapper");
-    const searchInput = document.getElementById("search-input");
-    const searchAutocompleteEl = document.getElementById("search-autocomplete");
-    const clearSearchBtn = document.getElementById("clear-search-btn");
-    const themeToggleBtn = document.getElementById("theme-toggle");
-    const yinYangIcon = document.getElementById("yin-yang-icon");
+      // Runner game state
+      let dinoAnimFrameId = null;
+      let dinoGameRunning = false;
+      let audioCtx = null;
 
-    // Modal & Toast Elements
-    const modalEl = document.getElementById("detail-modal");
-    const modalCardEl = document.getElementById("modal-card");
-    const modalImageEl = document.getElementById("modal-image");
-    const modalTitleEl = document.getElementById("modal-title");
-    const modalDescEl = document.getElementById("modal-description");
-    const modalCityBadge = document.getElementById("modal-city-badge");
-    const modalTags = document.getElementById("modal-tags");
-    const modalMapLink = document.getElementById("modal-map-link");
-    const modalShareBtn = document.getElementById("modal-share-btn");
-    const modalShareLabel = document.getElementById("modal-share-label");
-    const modalShareCopyIcon = document.getElementById("modal-share-copy-icon");
-    const modalShareCheckIcon = document.getElementById("modal-share-check-icon");
-    const modalPrevBtn = document.getElementById("modal-prev-btn");
-    const modalNextBtn = document.getElementById("modal-next-btn");
-    const modalCloseBtn = document.getElementById("modal-close-btn");
-    const toastEl = document.getElementById("toast-notification");
-    const toastMsg = document.getElementById("toast-message");
-    let shareResetTimeout = null;
+      /* ----------------------------------------------------------------------
+         DOM ELEMENT REFERENCES
+         ---------------------------------------------------------------------- */
+      const els = {
+        topAppBar: document.getElementById('top-app-bar'),
+        brandResetBtn: document.getElementById('brand-reset-btn'),
+        headerTotalBadge: document.getElementById('header-total-badge'),
+        searchInput: document.getElementById('search-input'),
+        clearSearchBtn: document.getElementById('clear-search-btn'),
+        autocompleteDropdown: document.getElementById('autocomplete-dropdown'),
+        autocompleteList: document.getElementById('autocomplete-list'),
+        themeToggleBtn: document.getElementById('theme-toggle-btn'),
+        themeIcon: document.getElementById('theme-icon'),
+        categoryFilters: document.getElementById('category-filters'),
+        resultsSummary: document.getElementById('results-summary'),
+        resetFiltersInlineBtn: document.getElementById('reset-filters-inline-btn'),
+        loadingSkeleton: document.getElementById('loading-skeleton'),
+        placesGrid: document.getElementById('places-grid'),
+        loadMoreContainer: document.getElementById('load-more-container'),
+        loadMoreBtn: document.getElementById('load-more-btn'),
+        loadMoreLabel: document.getElementById('load-more-label'),
+        emptyState: document.getElementById('empty-state'),
+        emptyStateIcon: document.getElementById('empty-state-icon'),
+        emptyStateTitle: document.getElementById('empty-state-title'),
+        emptyStateSubtitle: document.getElementById('empty-state-subtitle'),
+        emptyResetBtn: document.getElementById('empty-reset-btn'),
+        retryFetchBtn: document.getElementById('retry-fetch-btn'),
+        dinoCanvas: document.getElementById('dino-canvas'),
+        gameScoreReadout: document.getElementById('game-score-readout'),
+        placeModal: document.getElementById('place-modal'),
+        modalDialogCard: document.getElementById('modal-dialog-card'),
+        modalPrevBtn: document.getElementById('modal-prev-btn'),
+        modalNextBtn: document.getElementById('modal-next-btn'),
+        modalCounter: document.getElementById('modal-counter'),
+        modalShareBtn: document.getElementById('modal-share-btn'),
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+        modalImage: document.getElementById('modal-image'),
+        modalCityBtn: document.getElementById('modal-city-btn'),
+        modalCityText: document.getElementById('modal-city-text'),
+        modalTitle: document.getElementById('modal-title'),
+        modalCategories: document.getElementById('modal-categories'),
+        modalDescription: document.getElementById('modal-description'),
+        modalMapsLink: document.getElementById('modal-maps-link'),
+        snackbar: document.getElementById('snackbar'),
+        snackbarText: document.getElementById('snackbar-text')
+      };
 
-    // Extract Flickr numerical photo ID safely as BigInt
-    function extractFlickrPhotoId(url) {
-      if (!url || typeof url !== 'string') return 0n;
-      const match = url.match(/\/(\d+)_/);
-      try {
-        return match ? BigInt(match[1]) : 0n;
-      } catch {
+      /* ----------------------------------------------------------------------
+         NORMALIZATION & UTILITY HELPERS
+         ---------------------------------------------------------------------- */
+
+      /**
+       * Converts a place title into a clean URL-safe slug.
+       */
+      function slugify(str) {
+        return String(str || '')
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'spot';
+      }
+
+      /**
+       * Normalizes city names (trims, collapses spaces, title-cases ASCII words).
+       */
+      function formatCityName(rawCity) {
+        const cleaned = String(rawCity || '').trim().replace(/\s+/g, ' ');
+        if (!cleaned) return '';
+        return cleaned
+          .split(' ')
+          .map((word) =>
+            /^[a-zA-Z]/.test(word)
+              ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+              : word
+          )
+          .join(' ');
+      }
+
+      /**
+       * Extracts numeric Flickr photo ID as BigInt so records can be sorted descending.
+       * Example Flickr URL: https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg
+       */
+      function extractFlickrPhotoId(photoUrl) {
+        if (!photoUrl) return 0n;
+        const match = String(photoUrl).match(/\/(\d{8,20})_[a-zA-Z0-9]+/);
+        if (match && match[1]) {
+          try {
+            return BigInt(match[1]);
+          } catch {
+            return 0n;
+          }
+        }
+        const fallbackDigits = String(photoUrl).match(/(\d{9,20})/);
+        if (fallbackDigits && fallbackDigits[1]) {
+          try {
+            return BigInt(fallbackDigits[1]);
+          } catch {
+            return 0n;
+          }
+        }
         return 0n;
       }
-    }
 
-    function slugify(str) {
-      return String(str || '')
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    }
-
-    function showToast(message) {
-      if (!toastEl || !toastMsg) return;
-      toastMsg.textContent = message;
-      toastEl.classList.remove("opacity-0", "translate-y-3", "pointer-events-none");
-      clearTimeout(window._toastTimeout);
-      window._toastTimeout = setTimeout(() => {
-        toastEl.classList.add("opacity-0", "translate-y-3", "pointer-events-none");
-      }, 2400);
-    }
-
-    function createCardElement(place, index) {
-      const card = document.createElement('article');
-      card.className = "relative aspect-square w-full rounded-md overflow-hidden bg-stone-300 dark:bg-stone-800 group cursor-pointer select-none shadow-sm";
-
-      const fullImageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
-      const safeTitle = escapeHtml(place.title);
-      const safeDesc = escapeHtml(place.description);
-
-      card.innerHTML = `
-        <!-- 1:1 Square Photo -->
-        <img 
-          src="${escapeHtml(fullImageSource)}" 
-          alt="${safeTitle}" 
-          loading="lazy"
-          decoding="async"
-          onerror="if(this.dataset.triedOriginal!=='true'){this.dataset.triedOriginal='true';this.src='${escapeHtml(place.photo || DEFAULT_FALLBACK_IMAGE)}';}else{this.onerror=null;this.src='${DEFAULT_FALLBACK_IMAGE}';}"
-          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
-        />
-
-        <!-- Smooth Dark Gradient Overlay for Legibility -->
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
-
-        <!-- Overlaid Title & Subtitle (Categories hidden until modal open) -->
-        <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 flex flex-col justify-end text-left pointer-events-none">
-          <h2 class="text-sm sm:text-base font-bold text-white tracking-tight leading-snug line-clamp-1 drop-shadow-sm">
-            ${safeTitle}
-          </h2>
-          ${safeDesc ? `
-            <p class="text-[11px] sm:text-xs text-white/85 font-medium mt-0.5 line-clamp-1 leading-snug">
-              ${safeDesc}
-            </p>
-          ` : ''}
-        </div>
-      `;
-
-      // Card click opens modal
-      card.addEventListener('click', () => openModal(index));
-
-      return card;
-    }
-
-    function renderCards() {
-      gridEl.innerHTML = "";
-      if (visiblePlaces.length === 0) {
-        emptyEl.classList.remove("hidden");
-        loadMoreContainer.classList.add("hidden");
-        startDinoGame();
-        return;
-      }
-
-      emptyEl.classList.add("hidden");
-      stopDinoGame();
-
-      const slice = visiblePlaces.slice(0, displayedCount);
-      const fragment = document.createDocumentFragment();
-      slice.forEach((place, idx) => {
-        fragment.appendChild(createCardElement(place, idx));
-      });
-      gridEl.appendChild(fragment);
-
-      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
-    }
-
-    function appendNextBatch() {
-      const start = displayedCount;
-      const end = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
-      if (start >= end) return;
-
-      const fragment = document.createDocumentFragment();
-      for (let i = start; i < end; i++) {
-        fragment.appendChild(createCardElement(visiblePlaces[i], i));
-      }
-      gridEl.appendChild(fragment);
-      displayedCount = end;
-
-      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
-    }
-
-    function filterPlaces() {
-      const q = searchQuery.toLowerCase().trim();
-      const rawTokens = q.split(/\s+/).filter(Boolean);
-
-      visiblePlaces = allPlaces.filter(place => {
-        const matchesCategory = (activeCategory === "ALL") || place.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase());
-        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
-        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
-        return matchesCategory && matchesSearch;
-      });
-
-      displayedCount = PAGE_SIZE;
-      renderCards();
-    }
-
-    function updateToolbarStyles() {
-      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
-      buttons.forEach(btn => {
-        const btnCat = btn.getAttribute("data-category");
-        const isActive = btnCat.toLowerCase() === activeCategory.toLowerCase();
-
-        if (isActive) {
-          btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-transparent text-[#292929] dark:border-white dark:bg-transparent dark:text-white shadow-sm cursor-pointer";
-        } else {
-          btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer";
-        }
-      });
-    }
-
-    window.setCategory = function(cat) {
-      activeCategory = (activeCategory.toLowerCase() === cat.toLowerCase() && cat.toLowerCase() !== "all") ? "ALL" : cat;
-      updateToolbarStyles();
-      updateUrlState();
-      filterPlaces();
-    };
-
-    function populateCategoryFilters() {
-      const catCount = {};
-      const catDisplay = {};
-
-      allPlaces.forEach(p => {
-        const seenInPlace = new Set();
-        p.categories.forEach(c => {
-          const clean = c.trim().replace(/\s+/g, ' ');
-          const key = clean.toLowerCase();
-          if (key && !seenInPlace.has(key)) {
-            seenInPlace.add(key);
-            catCount[key] = (catCount[key] || 0) + 1;
-            if (!catDisplay[key]) catDisplay[key] = clean;
+      /**
+       * Picks the first non-empty field among candidate column names.
+       */
+      function pickField(row, keys) {
+        for (const key of keys) {
+          if (row[key] !== undefined && row[key] !== null) {
+            const val = String(row[key]).trim();
+            if (val.length > 0) return val;
           }
-        });
-      });
-
-      // Sort categories alphabetically
-      const sortedKeys = Object.keys(catCount).sort((a, b) => a.localeCompare(b));
-
-      // Keep "ALL" button with total count and append sorted categories
-      const allBtn = categoryContainer.querySelector('[data-category="ALL"]');
-      categoryContainer.innerHTML = "";
-      if (allBtn) {
-        allBtn.innerHTML = `<span>ALL</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${allPlaces.length}</span>`;
-        allBtn.onclick = () => setCategory("ALL");
-        categoryContainer.appendChild(allBtn);
-      }
-
-      sortedKeys.forEach(key => {
-        const count = catCount[key] || 0;
-        const displayLabel = catDisplay[key];
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.setAttribute("data-category", displayLabel);
-        btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer";
-        btn.innerHTML = `<span>${escapeHtml(displayLabel.toUpperCase())}</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${count}</span>`;
-        btn.onclick = () => setCategory(displayLabel);
-        categoryContainer.appendChild(btn);
-      });
-    }
-
-    function renderStatsOverview() {
-      const uniqueCities = new Set(allPlaces.map(p => p.city.toLowerCase()).filter(Boolean));
-      const catCounts = {};
-      allPlaces.forEach(p => {
-        p.categories.forEach(c => {
-          const clean = c.trim();
-          if (clean) catCounts[clean] = (catCounts[clean] || 0) + 1;
-        });
-      });
-
-      const totalPlacesEl = document.getElementById("footer-total-places");
-      const totalCitiesEl = document.getElementById("footer-total-cities");
-      const totalCatsEl = document.getElementById("footer-total-cats");
-      const topCatsContainer = document.getElementById("footer-top-categories");
-
-      if (totalPlacesEl) totalPlacesEl.textContent = allPlaces.length;
-      if (totalCitiesEl) totalCitiesEl.textContent = uniqueCities.size;
-      if (totalCatsEl) totalCatsEl.textContent = Object.keys(catCounts).length;
-
-      if (topCatsContainer) {
-        topCatsContainer.innerHTML = "";
-        const sorted = Object.entries(catCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
-
-        sorted.forEach(([cat, count]) => {
-          const pct = Math.max(8, Math.round((count / maxCount) * 100));
-          const row = document.createElement("div");
-          row.className = "flex items-center gap-3";
-          row.innerHTML = `
-            <button 
-              type="button"
-              class="badge-pill px-3 py-0.5 rounded-full lowercase border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-colors cursor-pointer flex-shrink-0 w-28 truncate text-center"
-            >
-              ${escapeHtml(cat.toLowerCase())}
-            </button>
-            <div class="flex-1 h-2 rounded-full bg-[#292929]/15 dark:bg-white/15 overflow-hidden">
-              <div class="h-full bg-[#292929] dark:bg-white rounded-full transition-all duration-500" style="width: ${pct}%"></div>
-            </div>
-            <span class="text-xs font-bold tabular-nums w-7 text-right">${count}</span>
-          `;
-          row.querySelector("button").addEventListener("click", () => {
-            setCategory(cat);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-          topCatsContainer.appendChild(row);
-        });
-      }
-    }
-
-    function parseUrlState() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has("cat")) activeCategory = params.get("cat");
-        const initialCity = params.get("city");
-        const initialQ = params.get("q");
-        if (initialQ || initialCity) {
-          searchQuery = [initialCity, initialQ].filter(Boolean).join(" ").trim();
-          searchInput.value = searchQuery;
-          clearSearchBtn.classList.toggle("hidden", !searchQuery);
         }
-        return params.get("spot");
-      } catch (err) {
-        return null;
-      }
-    }
-
-    function updateUrlState(targetSpotSlug = null) {
-      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
-        return;
-      }
-      try {
-        const params = new URLSearchParams();
-        if (activeCategory !== "ALL") params.set("cat", activeCategory);
-        if (searchQuery.trim()) params.set("q", searchQuery.trim());
-        if (targetSpotSlug) params.set("spot", targetSpotSlug);
-
-        const queryString = params.toString();
-        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      } catch (err) {
-        // Silently catch history API access errors in constrained iframes
-      }
-    }
-
-    // Modal Operations with Scroll-Lock Prevention
-    window.openModal = function(index) {
-      if (!visiblePlaces[index]) return;
-      activeModalIndex = index;
-      const place = visiblePlaces[index];
-
-      // Reset Share button state when opening a spot
-      if (shareResetTimeout) clearTimeout(shareResetTimeout);
-      if (modalShareLabel) modalShareLabel.textContent = "Share Place";
-      if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
-      if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
-
-      // Lock body scroll to prevent background scroll bleed
-      document.body.style.overflow = 'hidden';
-
-      // Full resolution for modal hero
-      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
-      modalImageEl.alt = place.title;
-      modalTitleEl.textContent = place.title;
-      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
-
-      // City Badge in Modal (clickable to filter via rich search)
-      if (place.city) {
-        modalCityBadge.className = "badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold uppercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
-        modalCityBadge.innerHTML = `
-          <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
-          </svg>
-          <span>${escapeHtml(place.city.toUpperCase())}</span>
-        `;
-        modalCityBadge.onclick = (e) => {
-          e.stopPropagation();
-          searchQuery = formatCityName(place.city);
-          searchInput.value = searchQuery;
-          clearSearchBtn.classList.remove("hidden");
-          closeModal();
-          updateUrlState();
-          filterPlaces();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        modalCityBadge.classList.remove("hidden");
-      } else {
-        modalCityBadge.classList.add("hidden");
+        return '';
       }
 
-      // Categories in Modal (clickable to filter by category)
-      modalTags.innerHTML = "";
-      place.categories.forEach(cat => {
-        const tagBtn = document.createElement("button");
-        tagBtn.type = "button";
-        tagBtn.className = "badge-pill px-3 py-1 rounded-full uppercase font-bold border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer";
-        tagBtn.textContent = cat.toUpperCase();
-        tagBtn.onclick = (e) => {
-          e.stopPropagation();
-          closeModal();
-          setCategory(cat);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        };
-        modalTags.appendChild(tagBtn);
-      });
+      /**
+       * Normalizes a raw CSV row into a structured place object.
+       */
+      function normalizePlaceRow(row, index) {
+        const title = pickField(row, ['Title', 'title', 'Name', 'name']);
+        if (!title) return null;
 
-      // Google Maps Link
-      const queryMap = encodeURIComponent(`${place.title} ${place.city || 'Taiwan'}`);
-      modalMapLink.href = place.link || `https://www.google.com/maps/search/?api=1&query=${queryMap}`;
+        const rawCity = pickField(row, ['City', 'city', 'Location', 'location']);
+        const city = formatCityName(rawCity);
 
-      // Prev / Next arrow states
-      if (modalPrevBtn) modalPrevBtn.disabled = index <= 0;
-      if (modalNextBtn) modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+        const rawCat = pickField(row, [
+          'Category',
+          'category',
+          'Categories',
+          'categories',
+          'Tags',
+          'tags'
+        ]);
 
-      updateUrlState(place.slug);
-
-      modalEl.classList.remove("opacity-0", "pointer-events-none");
-      modalEl.setAttribute("aria-hidden", "false");
-      modalCardEl.classList.remove("scale-95");
-      modalCardEl.classList.add("scale-100");
-    };
-
-    window.closeModal = function() {
-      activeModalIndex = -1;
-      document.body.style.overflow = '';
-      modalEl.classList.add("opacity-0", "pointer-events-none");
-      modalEl.setAttribute("aria-hidden", "true");
-      modalCardEl.classList.remove("scale-100");
-      modalCardEl.classList.add("scale-95");
-      updateUrlState();
-    };
-
-    function navigateModal(delta) {
-      if (activeModalIndex === -1) return;
-      const nextIdx = activeModalIndex + delta;
-      if (nextIdx >= 0 && nextIdx < visiblePlaces.length) {
-        openModal(nextIdx);
-      }
-    }
-
-    // Parse CSV Data & Hydrate UI
-    function processPlacesData(rows) {
-      const parsedPlaces = [];
-
-      rows.forEach((row, idx) => {
-        const title = (row.Title || row.title || row.Name || row.name || "").trim();
-        if (!title) return;
-
-        const city = (row.City || row.city || row.Location || row.location || "").trim();
-        const rawCats = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || "").trim();
-        const seenCats = new Set();
+        // Split on ,, ;, or |, trim, collapse spaces, deduplicate case-insensitively per place
+        const seenCatLower = new Set();
         const categories = [];
-        if (rawCats) {
-          rawCats.split(/[,;|]+/).forEach(c => {
-            const clean = c.trim().replace(/\s+/g, ' ');
-            const key = clean.toLowerCase();
-            if (clean && !seenCats.has(key)) {
-              seenCats.add(key);
-              categories.push(clean);
+        if (rawCat) {
+          rawCat.split(/[,;|]+/).forEach((part) => {
+            const normalized = part.trim().replace(/\s+/g, ' ');
+            if (!normalized) return;
+            const lower = normalized.toLowerCase();
+            if (!seenCatLower.has(lower)) {
+              seenCatLower.add(lower);
+              categories.push(normalized);
             }
           });
         }
-        const description = (row.Description || row.description || row.Notes || row.notes || "").trim();
-        const photo = (row.Photo || row.photo || row.Image || row.image || row.URL || "").trim();
-        const link = (row.Link || row.link || row.Maps || row.maps || row["Google Maps"] || "").trim();
 
-        parsedPlaces.push({
-          id: idx,
-          slug: slugify(title),
+        const description = pickField(row, [
+          'Description',
+          'description',
+          'Notes',
+          'notes'
+        ]);
+
+        const rawPhoto = pickField(row, ['Photo', 'photo', 'Image', 'image', 'URL']);
+        const photo = rawPhoto || FALLBACK_PHOTO;
+        const flickrId = extractFlickrPhotoId(photo);
+
+        const link = pickField(row, ['Link', 'link', 'Maps', 'maps', 'Google Maps']);
+
+        const slug = slugify(title);
+        const searchable = [title, description, categories.join(' '), city]
+          .join(' ')
+          .toLowerCase();
+
+        return {
+          id: index,
+          slug,
           title,
           city,
           categories,
+          categoriesLower: categories.map((c) => c.toLowerCase()),
           description,
           photo,
+          flickrId,
           link,
-          flickrId: extractFlickrPhotoId(photo)
-        });
-      });
-
-      // Sort in descending order by Flickr photo ID (highest ID / newest first)
-      allPlaces = parsedPlaces.sort((a, b) => {
-        if (b.flickrId > a.flickrId) return 1;
-        if (b.flickrId < a.flickrId) return -1;
-        return 0;
-      });
-
-      buildAutocompleteIndex();
-      populateCategoryFilters();
-
-      const deepLinkedSpotSlug = parseUrlState();
-      updateToolbarStyles();
-      filterPlaces();
-
-      if (deepLinkedSpotSlug) {
-        const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
-        if (targetIndex !== -1) openModal(targetIndex);
+          searchable
+        };
       }
 
-      loadingEl.classList.add("hidden");
-    }
+      /**
+       * Displays a brief Material Design 3 snackbar toast.
+       */
+      let snackbarTimeout = null;
+      function showSnackbar(message) {
+        els.snackbarText.textContent = message;
+        els.snackbar.classList.add('show');
+        clearTimeout(snackbarTimeout);
+        snackbarTimeout = setTimeout(() => {
+          els.snackbar.classList.remove('show');
+        }, 2800);
+      }
 
-    async function fetchPlaces() {
-      try {
-        const response = await fetch(SHEET_CSV_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const csvText = await response.text();
+      /* ----------------------------------------------------------------------
+         1. STATE MANAGEMENT & URL SYNCHRONIZATION
+         ---------------------------------------------------------------------- */
 
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: results => processPlacesData(results.data || []),
-          error: err => {
-            console.error("CSV Parse Error:", err);
-            loadingEl.classList.add("hidden");
-            emptyEl.classList.remove("hidden");
-            startDinoGame();
+      /**
+       * Reads cat, city, q, and spot query parameters from window.location.search on load.
+       */
+      function parseUrlState() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const catParam = params.get('cat');
+          const cityParam = params.get('city');
+          const qParam = params.get('q');
+          const spotParam = params.get('spot');
+
+          if (catParam && catParam.trim()) {
+            activeCategory = catParam.trim().toLowerCase();
           }
-        });
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        loadingEl.classList.add("hidden");
-        emptyEl.classList.remove("hidden");
-        startDinoGame();
-      }
-    }
 
-    // Rich Search Autocomplete Indexing & Rendering
-    function buildAutocompleteIndex() {
-      const seen = new Map();
-      const stopWords = new Set(["the", "and", "for", "with", "from", "that", "this", "are", "was", "have", "has", "not", "but", "you", "your", "all", "can", "into", "very", "just", "one", "out", "about"]);
+          if (qParam && qParam.trim()) {
+            searchQuery = qParam.trim();
+          } else if (cityParam && cityParam.trim()) {
+            searchQuery = cityParam.trim();
+          }
 
-      const addTerm = (label, type, priority) => {
-        const clean = label.trim();
-        if (!clean || clean.length < 2) return;
-        const key = clean.toLowerCase();
-        const existing = seen.get(key);
-        if (!existing || priority < existing.priority) {
-          seen.set(key, { label: clean, type, priority });
+          if (searchQuery) {
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          }
+
+          if (spotParam && spotParam.trim()) {
+            pendingSpotSlug = spotParam.trim().toLowerCase();
+          }
+        } catch (err) {
+          console.warn('Unable to parse URL parameters:', err);
         }
-      };
+      }
 
-      allPlaces.forEach(p => {
-        if (p.city) addTerm(formatCityName(p.city), "city", 1);
-        p.categories.forEach(c => addTerm(c.toLowerCase(), "food", 2));
-        if (p.title) addTerm(p.title, "place", 3);
+      /**
+       * Synchronizes active filters and inspected spot slug back to the URL via history.replaceState.
+       * Skips blob: or null origins to avoid SecurityError in sandboxed frames.
+       */
+      function updateUrlState(targetSpotSlug = null) {
+        try {
+          if (
+            window.location.protocol === 'blob:' ||
+            window.location.origin === 'null' ||
+            !window.history ||
+            typeof window.history.replaceState !== 'function'
+          ) {
+            return;
+          }
 
-        const words = `${p.title} ${p.description}`.toLowerCase().match(/[a-z0-9\u4e00-\u9fa5]{3,}/g) || [];
-        words.forEach(w => {
-          if (!stopWords.has(w)) addTerm(w, "word", 4);
+          const url = new URL(window.location.href);
+          const params = url.searchParams;
+
+          if (activeCategory && activeCategory !== 'ALL') {
+            params.set('cat', activeCategory);
+          } else {
+            params.delete('cat');
+          }
+
+          if (searchQuery && searchQuery.trim()) {
+            params.set('q', searchQuery.trim());
+          } else {
+            params.delete('q');
+          }
+          params.delete('city');
+
+          const activeSlug =
+            targetSpotSlug !== null
+              ? targetSpotSlug
+              : activeModalIndex >= 0 && visiblePlaces[activeModalIndex]
+              ? visiblePlaces[activeModalIndex].slug
+              : null;
+
+          if (activeSlug) {
+            params.set('spot', activeSlug);
+          } else {
+            params.delete('spot');
+          }
+
+          const newSearch = params.toString();
+          const newRelativeUrl = `${url.pathname}${newSearch ? '?' + newSearch : ''}${url.hash}`;
+          window.history.replaceState(null, '', newRelativeUrl);
+        } catch (err) {
+          // Silently ignore history errors in restricted origins
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         2. FILTERING, SEARCH & AUTOCOMPLETE ENGINE
+         ---------------------------------------------------------------------- */
+
+      /**
+       * Aggregates unique lowercase category keys across allPlaces, counts occurrences,
+       * sorts keys alphabetically, and renders category filter buttons + ALL button.
+       */
+      function populateCategoryFilters() {
+        const categoryMap = new Map(); // lowerKey -> { label, count }
+
+        allPlaces.forEach((place) => {
+          place.categories.forEach((cat) => {
+            const key = cat.toLowerCase();
+            if (!categoryMap.has(key)) {
+              categoryMap.set(key, { label: cat, count: 0 });
+            }
+            categoryMap.get(key).count += 1;
+          });
         });
-      });
 
-      autocompleteIndex = Array.from(seen.values()).sort((a, b) => a.priority - b.priority || a.label.localeCompare(b.label));
-    }
+        // Validate activeCategory from URL against existing categories
+        if (activeCategory !== 'ALL' && !categoryMap.has(activeCategory.toLowerCase())) {
+          activeCategory = 'ALL';
+        } else if (activeCategory !== 'ALL') {
+          activeCategory = activeCategory.toLowerCase();
+        }
 
-    function hideAutocomplete() {
-      activeSuggestionIdx = -1;
-      searchAutocompleteEl.classList.add("hidden");
-      searchAutocompleteEl.innerHTML = "";
-    }
+        const sortedKeys = Array.from(categoryMap.keys()).sort((a, b) =>
+          a.localeCompare(b)
+        );
 
-    function applyAutocompleteSuggestion(suggestionLabel) {
-      const currentVal = searchInput.value;
-      const parts = currentVal.split(/\s+/);
-      if (parts.length > 1 && currentVal.slice(-1) !== " ") {
-        parts[parts.length - 1] = suggestionLabel;
-        searchInput.value = parts.join(" ");
-      } else {
-        searchInput.value = suggestionLabel;
+        const fragment = document.createDocumentFragment();
+
+        // ALL Button
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'md3-filter-chip';
+        allBtn.dataset.category = 'ALL';
+        allBtn.setAttribute('aria-pressed', activeCategory === 'ALL' ? 'true' : 'false');
+        allBtn.innerHTML = `
+          <span>ALL</span>
+          <span class="chip-count">${allPlaces.length}</span>
+        `;
+        allBtn.addEventListener('click', () => setCategory('ALL'));
+        fragment.appendChild(allBtn);
+
+        // Individual Category Buttons
+        sortedKeys.forEach((key) => {
+          const item = categoryMap.get(key);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'md3-filter-chip';
+          btn.dataset.category = key;
+          btn.setAttribute('aria-pressed', activeCategory === key ? 'true' : 'false');
+          btn.innerHTML = `
+            <span>${escapeHtml(item.label)}</span>
+            <span class="chip-count">${item.count}</span>
+          `;
+          btn.addEventListener('click', () => setCategory(key));
+          fragment.appendChild(btn);
+        });
+
+        els.categoryFilters.innerHTML = '';
+        els.categoryFilters.appendChild(fragment);
       }
-      searchQuery = searchInput.value;
-      clearSearchBtn.classList.toggle("hidden", !searchQuery);
-      hideAutocomplete();
-      updateUrlState();
-      filterPlaces();
-    }
 
-    function renderAutocompleteSuggestions(val) {
-      const raw = val.trim().toLowerCase();
-      if (!raw) {
+      /**
+       * Toggles activeCategory (reverts to "ALL" if active non-ALL category is clicked again)
+       * and re-runs filterPlaces(). If the empty-state game is running and the search query
+       * is hiding spots in the newly chosen category, clears the search query so the user
+       * immediately navigates to that category.
+       */
+      function setCategory(cat) {
+        const normalized = cat === 'ALL' ? 'ALL' : String(cat).toLowerCase();
+        if (normalized !== 'ALL' && activeCategory === normalized) {
+          activeCategory = 'ALL';
+        } else {
+          activeCategory = normalized;
+        }
+
+        // If the runner game is active (no visible results), clear stale search query
+        // when switching categories so clicking a category immediately shows its places
+        if (dinoGameRunning && searchQuery.trim().length > 0) {
+          searchQuery = '';
+          els.searchInput.value = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+        }
+
+        // Update aria-pressed state on chip buttons
+        const buttons = els.categoryFilters.querySelectorAll('.md3-filter-chip');
+        buttons.forEach((btn) => {
+          const isMatch = btn.dataset.category === activeCategory;
+          btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+        });
+
+        filterPlaces();
+      }
+
+      /**
+       * Filters allPlaces by activeCategory and whitespace-separated search tokens,
+       * resets pagination to PAGE_SIZE, updates URL state, and renders cards.
+       */
+      function filterPlaces() {
+        const rawTokens = searchQuery
+          .toLowerCase()
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        visiblePlaces = allPlaces.filter((place) => {
+          // Category filter check
+          if (
+            activeCategory !== 'ALL' &&
+            !place.categoriesLower.includes(activeCategory)
+          ) {
+            return false;
+          }
+
+          // Multi-token search check
+          if (rawTokens.length > 0) {
+            return rawTokens.every((tok) => place.searchable.includes(tok));
+          }
+
+          return true;
+        });
+
+        displayedCount = PAGE_SIZE;
+        updateResultsSummary();
+        updateUrlState();
+        renderCards();
+      }
+
+      /**
+       * Updates the result counter and inline filter reset visibility.
+       */
+      function updateResultsSummary() {
+        const total = allPlaces.length;
+        const shown = visiblePlaces.length;
+        const hasFilters = activeCategory !== 'ALL' || searchQuery.trim().length > 0;
+
+        if (hasFilters) {
+          els.resetFiltersInlineBtn.classList.remove('hidden');
+        } else {
+          els.resetFiltersInlineBtn.classList.add('hidden');
+        }
+
+        if (total === 0) {
+          els.resultsSummary.textContent = 'No places loaded.';
+          return;
+        }
+
+        if (!hasFilters) {
+          els.resultsSummary.textContent = `Showing ${Math.min(displayedCount, shown)} of ${total} curated spots across Taiwan`;
+        } else {
+          els.resultsSummary.textContent = `Found ${shown} matching ${shown === 1 ? 'spot' : 'spots'} out of ${total}`;
+        }
+      }
+
+      /**
+       * Builds the weighted autocomplete index from cities (priority 1),
+       * categories (priority 2), place titles (priority 3), and non-stop words 3+ chars (priority 4).
+       */
+      function buildAutocompleteIndex() {
+        const seen = new Map(); // lowerTerm -> { term, type, priority, icon }
+
+        const addEntry = (term, type, priority, icon) => {
+          const clean = String(term || '').trim();
+          if (!clean) return;
+          const lower = clean.toLowerCase();
+          if (!seen.has(lower) || seen.get(lower).priority > priority) {
+            seen.set(lower, { term: clean, lower, type, priority, icon });
+          }
+        };
+
+        allPlaces.forEach((place) => {
+          // Priority 1: Cities
+          if (place.city) {
+            addEntry(place.city, 'city', 1, 'location_on');
+          }
+          // Priority 2: Categories
+          place.categories.forEach((cat) => {
+            addEntry(cat, 'food', 2, 'restaurant');
+          });
+          // Priority 3: Place titles
+          addEntry(place.title, 'place', 3, 'storefront');
+          // Priority 4: Non-stop words length >= 3 from title and description
+          const words = `${place.title} ${place.description}`
+            .toLowerCase()
+            .replace(/[^a-z0-9\u4e00-\u9fff\s]/g, ' ')
+            .split(/\s+/);
+          words.forEach((w) => {
+            if (w.length >= 3 && !STOP_WORDS.has(w) && !/^\d+$/.test(w)) {
+              addEntry(w, 'word', 4, 'tag');
+            }
+          });
+        });
+
+        autocompleteIndex = Array.from(seen.values()).sort((a, b) => {
+          if (a.priority !== b.priority) return a.priority - b.priority;
+          return a.term.localeCompare(b.term);
+        });
+      }
+
+      /**
+       * Updates and displays up to 8 autocomplete suggestions for the current input value.
+       */
+      function updateAutocompleteSuggestions(rawVal) {
+        const query = rawVal.trim().toLowerCase();
+        if (!query) {
+          hideAutocomplete();
+          return;
+        }
+
+        // Prefix matches first, then substring matches, ordered by priority
+        const prefixMatches = [];
+        const substringMatches = [];
+
+        for (const item of autocompleteIndex) {
+          if (item.lower === query) continue;
+          if (item.lower.startsWith(query)) {
+            prefixMatches.push(item);
+          } else if (item.lower.includes(query)) {
+            substringMatches.push(item);
+          }
+          if (prefixMatches.length >= 8) break;
+        }
+
+        currentSuggestions = [...prefixMatches, ...substringMatches].slice(0, 8);
+        highlightedSuggestionIdx = -1;
+
+        if (currentSuggestions.length === 0) {
+          hideAutocomplete();
+          return;
+        }
+
+        els.autocompleteList.innerHTML = '';
+        currentSuggestions.forEach((item, idx) => {
+          const li = document.createElement('li');
+          li.className = 'md3-autocomplete-item';
+          li.setAttribute('role', 'option');
+          li.id = `ac-option-${idx}`;
+          li.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="material-symbols-outlined text-lg shrink-0" style="color: var(--md-sys-color-primary);">${item.icon}</span>
+              <span class="truncate text-sm font-medium">${escapeHtml(item.term)}</span>
+            </div>
+            <span class="text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full shrink-0 ml-2"
+              style="background-color: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface-variant);">
+              ${item.type}
+            </span>
+          `;
+          li.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            selectAutocompleteSuggestion(item);
+          });
+          els.autocompleteList.appendChild(li);
+        });
+
+        els.autocompleteDropdown.classList.remove('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'true');
+      }
+
+      function hideAutocomplete() {
+        els.autocompleteDropdown.classList.add('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'false');
+        currentSuggestions = [];
+        highlightedSuggestionIdx = -1;
+      }
+
+      function selectAutocompleteSuggestion(item) {
+        if (item.type === 'food') {
+          // Apply category filter directly if it matches a known category
+          els.searchInput.value = '';
+          searchQuery = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+          setCategory(item.lower);
+          return;
+        }
+
+        searchQuery = item.term;
+        els.searchInput.value = item.term;
+        els.clearSearchBtn.classList.remove('hidden');
         hideAutocomplete();
-        return;
+        filterPlaces();
       }
 
-      const tokens = raw.split(/\s+/);
-      const lastToken = tokens[tokens.length - 1];
+      function highlightAutocompleteItem(newIdx) {
+        const items = els.autocompleteList.querySelectorAll('.md3-autocomplete-item');
+        if (!items.length) return;
 
-      const topMatches = autocompleteIndex
-        .filter(item => {
-          const lower = item.label.toLowerCase();
-          return lower.includes(raw) || (lastToken.length >= 2 && lower.startsWith(lastToken));
-        })
-        .slice(0, 8);
+        if (newIdx < 0) newIdx = items.length - 1;
+        if (newIdx >= items.length) newIdx = 0;
+        highlightedSuggestionIdx = newIdx;
 
-      if (topMatches.length === 0) {
-        hideAutocomplete();
-        return;
+        items.forEach((el, i) => {
+          el.classList.toggle('active', i === highlightedSuggestionIdx);
+        });
+        items[highlightedSuggestionIdx].scrollIntoView({ block: 'nearest' });
       }
 
-      activeSuggestionIdx = -1;
-      searchAutocompleteEl.innerHTML = "";
+      /* ----------------------------------------------------------------------
+         3. GRID RENDERING, PAGINATION & DETAIL MODAL
+         ---------------------------------------------------------------------- */
 
-      topMatches.forEach((match, idx) => {
-        const li = document.createElement('li');
-        li.setAttribute('role', 'option');
-        li.className = "px-3.5 py-2 text-xs font-semibold text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer flex items-center justify-between gap-2 transition-colors";
+      /**
+       * Creates a single square place card DOM element.
+       */
+      function createPlaceCardElement(place, index) {
+        const card = document.createElement('article');
+        card.className = 'md3-place-card group';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${place.title}${place.city ? ', ' + place.city : ''}`);
 
-        const badgeLabel = match.type === 'word'
-          ? ''
-          : match.type === 'city'
-            ? `<span class="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider opacity-75 font-bold flex-shrink-0"><svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>city</span>`
-            : `<span class="text-[9px] uppercase tracking-wider opacity-65 font-bold flex-shrink-0">${escapeHtml(match.type)}</span>`;
-        li.innerHTML = `
-          <span class="truncate">${escapeHtml(match.label)}</span>
-          ${badgeLabel}
+        const primaryCat = place.categories[0] || '';
+
+        card.innerHTML = `
+          <img
+            src="${escapeHtml(place.photo)}"
+            alt="${escapeHtml(place.title)}"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="md3-card-scrim"></div>
+
+          <!-- Top City Pill -->
+          ${
+            place.city
+              ? `<div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-1 pointer-events-none">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md bg-black/50 text-white border border-white/15 truncate max-w-full">
+                    <span class="material-symbols-outlined filled text-sm text-emerald-300">location_on</span>
+                    <span class="truncate">${escapeHtml(place.city)}</span>
+                  </span>
+                </div>`
+              : ''
+          }
+
+          <!-- Bottom Title & Primary Category -->
+          <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+            ${
+              primaryCat
+                ? `<span class="text-xs uppercase tracking-wider font-bold text-emerald-300 mb-1 truncate">
+                    ${escapeHtml(primaryCat)}
+                  </span>`
+                : ''
+            }
+            <h3 class="text-white font-bold text-lg sm:text-xl leading-snug line-clamp-2 drop-shadow">
+              ${escapeHtml(place.title)}
+            </h3>
+          </div>
         `;
 
-        li.addEventListener('mousedown', (e) => {
-          e.preventDefault(); // Keep focus from blurring before click finishes
-          applyAutocompleteSuggestion(match.label);
+        // Fallback image on load error
+        const imgEl = card.querySelector('img');
+        imgEl.addEventListener('error', function onImgError() {
+          if (this.src !== FALLBACK_PHOTO) {
+            this.src = FALLBACK_PHOTO;
+          }
         });
 
-        searchAutocompleteEl.appendChild(li);
-      });
+        card.addEventListener('click', () => openModal(index));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(index);
+          }
+        });
 
-      searchAutocompleteEl.classList.remove('hidden');
-    }
-
-    // Debounced Search Input Events to avoid layout thrashing while typing
-    searchInput.addEventListener("input", () => {
-      const val = searchInput.value;
-      clearSearchBtn.classList.toggle("hidden", !val);
-      renderAutocompleteSuggestions(val);
-
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(() => {
-        searchQuery = val;
-        updateUrlState();
-        filterPlaces();
-      }, 150);
-    });
-
-    searchInput.addEventListener("keydown", (e) => {
-      const items = searchAutocompleteEl.querySelectorAll("li");
-      if (searchAutocompleteEl.classList.contains("hidden") || items.length === 0) return;
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
-      } else if (e.key === "Enter" && activeSuggestionIdx >= 0) {
-        e.preventDefault();
-        const label = items[activeSuggestionIdx].querySelector("span").textContent;
-        applyAutocompleteSuggestion(label);
-        return;
-      } else if (e.key === "Escape") {
-        hideAutocomplete();
-        return;
-      } else {
-        return;
+        return card;
       }
 
-      items.forEach((el, i) => {
-        el.classList.toggle("bg-[#292929]", i === activeSuggestionIdx);
-        el.classList.toggle("text-[#EBF1E5]", i === activeSuggestionIdx);
-      });
-    });
+      /**
+       * Clears #places-grid and renders up to displayedCount square cards using DocumentFragment.
+       * Handles empty-state runner game activation when visiblePlaces.length === 0.
+       */
+      function renderCards() {
+        els.loadingSkeleton.classList.add('hidden');
+        els.placesGrid.innerHTML = '';
 
-    document.addEventListener("click", (e) => {
-      if (searchWrapper && !searchWrapper.contains(e.target)) {
-        hideAutocomplete();
+        if (visiblePlaces.length === 0) {
+          els.placesGrid.classList.add('hidden');
+          els.loadMoreContainer.classList.add('hidden');
+          showEmptyState(false);
+          return;
+        }
+
+        // Hide empty state and stop game when results exist
+        hideEmptyState();
+        els.placesGrid.classList.remove('hidden');
+
+        const slice = visiblePlaces.slice(0, displayedCount);
+        const fragment = document.createDocumentFragment();
+        slice.forEach((place, idx) => {
+          fragment.appendChild(createPlaceCardElement(place, idx));
+        });
+        els.placesGrid.appendChild(fragment);
+
+        updatePaginationControls();
       }
-    });
 
-    clearSearchBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      searchQuery = "";
-      clearSearchBtn.classList.add("hidden");
-      hideAutocomplete();
-      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
-      updateUrlState();
-      filterPlaces();
-    });
+      /**
+       * Appends the next PAGE_SIZE (24) items from visiblePlaces to #places-grid.
+       */
+      function appendNextBatch() {
+        if (displayedCount >= visiblePlaces.length) return;
 
-    // Modal & Global Keyboard / Touch Listeners
-    modalEl.addEventListener("click", (e) => {
-      if (e.target === modalEl || e.target.id === "modal-container") {
-        closeModal();
+        const start = displayedCount;
+        const end = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+        const nextSlice = visiblePlaces.slice(start, end);
+
+        const fragment = document.createDocumentFragment();
+        nextSlice.forEach((place, offset) => {
+          fragment.appendChild(createPlaceCardElement(place, start + offset));
+        });
+
+        els.placesGrid.appendChild(fragment);
+        displayedCount = end;
+        updateResultsSummary();
+        updatePaginationControls();
       }
-    });
 
-    if (modalPrevBtn) modalPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(-1); });
-    if (modalNextBtn) modalNextBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(1); });
-    if (modalCloseBtn) modalCloseBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
+      function updatePaginationControls() {
+        const totalVisible = visiblePlaces.length;
+        const currentlyShown = Math.min(displayedCount, totalVisible);
 
-    if (modalShareBtn) {
-      modalShareBtn.addEventListener("click", () => {
-        const tempInput = document.createElement("input");
-        tempInput.value = window.location.href;
-        document.body.appendChild(tempInput);
-        tempInput.select();
+        if (currentlyShown < totalVisible) {
+          const remaining = totalVisible - currentlyShown;
+          els.loadMoreContainer.classList.remove('hidden');
+          els.loadMoreLabel.textContent = `Load More (${remaining} remaining)`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
+      }
+
+      /**
+       * Opens the detail modal for visiblePlaces[index] and synchronizes the URL slug.
+       */
+      function openModal(index) {
+        if (index < 0 || index >= visiblePlaces.length) return;
+        activeModalIndex = index;
+        const place = visiblePlaces[index];
+
+        // Ensure card batch is loaded up to this index if navigated via arrow keys
+        if (index >= displayedCount) {
+          while (displayedCount <= index && displayedCount < visiblePlaces.length) {
+            appendNextBatch();
+          }
+        }
+
+        // Image with fallback
+        els.modalImage.src = place.photo || FALLBACK_PHOTO;
+        els.modalImage.alt = place.title;
+        els.modalImage.onerror = function () {
+          if (this.src !== FALLBACK_PHOTO) {
+            this.src = FALLBACK_PHOTO;
+          }
+        };
+
+        // Title & Counter
+        els.modalTitle.textContent = place.title;
+        els.modalCounter.textContent = `${index + 1} / ${visiblePlaces.length}`;
+
+        // Prev / Next button states
+        els.modalPrevBtn.disabled = visiblePlaces.length <= 1;
+        els.modalNextBtn.disabled = visiblePlaces.length <= 1;
+
+        // Clickable City Badge
+        if (place.city) {
+          els.modalCityBtn.classList.remove('hidden');
+          els.modalCityText.textContent = place.city;
+          els.modalCityBtn.onclick = () => {
+            closeModal();
+            activeCategory = 'ALL';
+            populateCategoryFilters();
+            searchQuery = place.city;
+            els.searchInput.value = place.city;
+            els.clearSearchBtn.classList.remove('hidden');
+            filterPlaces();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+        } else {
+          els.modalCityBtn.classList.add('hidden');
+        }
+
+        // Clickable Category Tags
+        els.modalCategories.innerHTML = '';
+        place.categories.forEach((cat) => {
+          const tagBtn = document.createElement('button');
+          tagBtn.type = 'button';
+          tagBtn.className = 'md3-filter-chip !h-8 !text-xs';
+          tagBtn.setAttribute(
+            'aria-pressed',
+            activeCategory === cat.toLowerCase() ? 'true' : 'false'
+          );
+          tagBtn.textContent = cat;
+          tagBtn.addEventListener('click', () => {
+            closeModal();
+            searchQuery = '';
+            els.searchInput.value = '';
+            els.clearSearchBtn.classList.add('hidden');
+            setCategory(cat.toLowerCase());
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+          els.modalCategories.appendChild(tagBtn);
+        });
+
+        // Description
+        els.modalDescription.textContent =
+          place.description ||
+          `Curated recommendation in ${place.city || 'Taiwan'} from @albyantoniazzi's Taiwan Top list.`;
+
+        // Google Maps Link (provided or dynamically constructed)
+        const mapsUrl =
+          place.link ||
+          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${place.title} ${place.city || 'Taiwan'}`
+          )}`;
+        els.modalMapsLink.href = mapsUrl;
+
+        // Show Modal
+        els.placeModal.classList.add('open');
+        els.placeModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        updateUrlState(place.slug);
+      }
+
+      function closeModal() {
+        if (activeModalIndex === -1) return;
+        activeModalIndex = -1;
+        els.placeModal.classList.remove('open');
+        els.placeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        updateUrlState(null);
+      }
+
+      function stepModal(delta) {
+        if (activeModalIndex === -1 || visiblePlaces.length <= 1) return;
+        const nextIdx =
+          (activeModalIndex + delta + visiblePlaces.length) % visiblePlaces.length;
+        openModal(nextIdx);
+      }
+
+      /**
+       * Copies window.location.href to clipboard using document.execCommand('copy') fallback.
+       */
+      function shareCurrentSpot() {
+        const shareUrl = window.location.href;
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
         try {
-          document.execCommand("copy");
-          if (modalShareLabel) modalShareLabel.textContent = "Copied";
-          if (modalShareCopyIcon) modalShareCopyIcon.classList.add("hidden");
-          if (modalShareCheckIcon) modalShareCheckIcon.classList.remove("hidden");
-          if (shareResetTimeout) clearTimeout(shareResetTimeout);
-          shareResetTimeout = setTimeout(() => {
-            if (modalShareLabel) modalShareLabel.textContent = "Share Place";
-            if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
-            if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
-          }, 2200);
+          document.execCommand('copy');
+          showSnackbar('Spot link copied to clipboard!');
         } catch {
-          // Silently ignore if copy command fails
-        }
-        document.body.removeChild(tempInput);
-      });
-    }
-
-    // Touch Swipe Support inside Modal
-    let touchStartX = 0;
-    modalCardEl.addEventListener("touchstart", (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    modalCardEl.addEventListener("touchend", (e) => {
-      const diff = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(diff) > 50) {
-        navigateModal(diff < 0 ? 1 : -1);
-      }
-    }, { passive: true });
-
-    document.addEventListener("keydown", (e) => {
-      if (activeModalIndex !== -1) {
-        if (e.key === "Escape") closeModal();
-        else if (e.key === "ArrowLeft") navigateModal(-1);
-        else if (e.key === "ArrowRight") navigateModal(1);
-      }
-    });
-
-    // 404 Mini-Game: Long-Necked Goose Runner with Web Audio Quack
-    const dinoCanvas = document.getElementById("dino-canvas");
-    const dinoCtx = dinoCanvas ? dinoCanvas.getContext("2d") : null;
-    let gameLoopId = null;
-    let gameRunning = false;
-    let gameOver = false;
-    let gameScore = 0;
-    let gameSpeed = 4.2;
-    let frameTick = 0;
-    let audioCtx = null;
-
-    const goose = {
-      x: 48,
-      y: 112,
-      w: 28,
-      h: 34,
-      vy: 0,
-      gravity: 0.58,
-      jumpPower: -8.8,
-      grounded: true
-    };
-    let obstacles = [];
-
-    function playQuackSound() {
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === "suspended") {
-          audioCtx.resume();
-        }
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const filter = audioCtx.createBiquadFilter();
-        const gain = audioCtx.createGain();
-
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(340, now);
-        osc.frequency.exponentialRampToValueAtTime(210, now + 0.14);
-
-        filter.type = "bandpass";
-        filter.frequency.setValueAtTime(950, now);
-        filter.Q.setValueAtTime(3.2, now);
-
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.16, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.17);
-      } catch {
-        // Ignore audio errors if blocked
-      }
-    }
-
-    function resetDinoGame() {
-      goose.y = 112;
-      goose.vy = 0;
-      goose.grounded = true;
-      obstacles = [];
-      gameScore = 0;
-      gameSpeed = 4.2;
-      gameOver = false;
-      gameRunning = true;
-      if (emptyTitleEl) emptyTitleEl.classList.add("opacity-0");
-    }
-
-    function jumpGoose() {
-      if (emptyEl.classList.contains("hidden")) return;
-      if (!gameRunning || gameOver) {
-        resetDinoGame();
-      }
-      if (goose.grounded) {
-        goose.vy = goose.jumpPower;
-        goose.grounded = false;
-        playQuackSound();
-      }
-    }
-
-    function spawnObstacle() {
-      const types = ["hotpot", "flame", "oven"];
-      const type = types[Math.floor(Math.random() * types.length)];
-      const specs = {
-        hotpot: { w: 28, h: 24 },
-        flame: { w: 20, h: 28 },
-        oven: { w: 30, h: 30 }
-      };
-      const spec = specs[type];
-      obstacles.push({
-        x: 620,
-        y: 146 - spec.h,
-        w: spec.w,
-        h: spec.h,
-        type
-      });
-    }
-
-    function drawGoose(ctx, ink) {
-      const x = Math.round(goose.x);
-      const y = Math.round(goose.y);
-      ctx.fillStyle = ink;
-
-      // Body
-      ctx.fillRect(x, y + 14, 18, 11);
-      ctx.fillRect(x - 3, y + 12, 5, 5); // tail
-
-      // Long Upright Neck & Head
-      ctx.fillRect(x + 13, y + 2, 5, 14);
-      ctx.fillRect(x + 13, y, 9, 6);
-
-      // Beak
-      ctx.fillStyle = "#f97316";
-      ctx.fillRect(x + 22, y + 2, 6, 3);
-
-      // Eye
-      ctx.fillStyle = document.documentElement.classList.contains("dark") ? "#333333" : "#EBF1E5";
-      ctx.fillRect(x + 18, y + 1, 2, 2);
-
-      // Animated Legs
-      ctx.fillStyle = "#f97316";
-      const step = goose.grounded ? Math.floor(frameTick / 5) % 2 : 0;
-      if (step === 0) {
-        ctx.fillRect(x + 5, y + 25, 2, 9);
-        ctx.fillRect(x + 12, y + 25, 2, 6);
-      } else {
-        ctx.fillRect(x + 5, y + 25, 2, 6);
-        ctx.fillRect(x + 12, y + 25, 2, 9);
-      }
-    }
-
-    function drawObstacle(ctx, obs, ink) {
-      const x = Math.round(obs.x);
-      const y = Math.round(obs.y);
-      const flicker = Math.floor(frameTick / 4) % 2 === 0;
-
-      if (obs.type === "hotpot") {
-        // Pot body & handles
-        ctx.fillStyle = ink;
-        ctx.fillRect(x + 3, y + 5, 22, 13);
-        ctx.fillRect(x, y + 7, 3, 4);
-        ctx.fillRect(x + 25, y + 7, 3, 4);
-        // Flame underneath
-        ctx.fillStyle = "#f97316";
-        ctx.fillRect(x + 7, y + 19, 14, flicker ? 5 : 3);
-      } else if (obs.type === "flame") {
-        // Campfire logs
-        ctx.fillStyle = ink;
-        ctx.fillRect(x + 2, y + 23, 16, 5);
-        // Roaring flame
-        ctx.fillStyle = "#f97316";
-        ctx.fillRect(x + 4, y + 8, 12, 15);
-        ctx.fillRect(x + 7, y + (flicker ? 1 : 4), 6, 8);
-      } else {
-        // Clay oven dome
-        ctx.fillStyle = ink;
-        ctx.fillRect(x + 4, y, 22, 6);
-        ctx.fillRect(x, y + 6, 30, 24);
-        // Glowing oven mouth
-        ctx.fillStyle = "#f97316";
-        ctx.fillRect(x + 9, y + 16, 12, flicker ? 14 : 12);
-      }
-    }
-
-    function updateDinoGame() {
-      if (!dinoCtx || emptyEl.classList.contains("hidden")) {
-        gameLoopId = null;
-        return;
-      }
-
-      const isDark = document.documentElement.classList.contains("dark");
-      const ink = isDark ? "#ffffff" : "#292929";
-      dinoCtx.clearRect(0, 0, dinoCanvas.width, dinoCanvas.height);
-
-      // Ground line
-      dinoCtx.fillStyle = ink;
-      dinoCtx.fillRect(0, 146, dinoCanvas.width, 1);
-
-      if (gameRunning && !gameOver) {
-        frameTick++;
-        goose.vy += goose.gravity;
-        goose.y += goose.vy;
-
-        if (goose.y >= 112) {
-          goose.y = 112;
-          goose.vy = 0;
-          goose.grounded = true;
-        }
-
-        if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 360 - Math.random() * 140) {
-          spawnObstacle();
-        }
-
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-          const obs = obstacles[i];
-          obs.x -= gameSpeed;
-          if (obs.x + obs.w < 0) {
-            obstacles.splice(i, 1);
-            gameScore++;
-            gameSpeed = Math.min(8.2, 4.2 + gameScore * 0.12);
-            continue;
-          }
-
-          // Forgiving hitbox collision check
-          if (
-            goose.x + 4 < obs.x + obs.w - 4 &&
-            goose.x + goose.w - 6 > obs.x + 4 &&
-            goose.y + 4 < obs.y + obs.h - 2 &&
-            goose.y + goose.h - 2 > obs.y + 4
-          ) {
-            gameOver = true;
-            gameRunning = false;
-            if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
-          }
+          showSnackbar('Unable to copy link');
+        } finally {
+          document.body.removeChild(textArea);
         }
       }
 
-      drawGoose(dinoCtx, ink);
-      obstacles.forEach(obs => drawObstacle(dinoCtx, obs, ink));
+      /* ----------------------------------------------------------------------
+         4. EMPTY STATE & HTML5 RUNNER MINI-GAME WITH WEB AUDIO SYNTHESIS
+         ---------------------------------------------------------------------- */
 
-      // HUD Score
-      dinoCtx.fillStyle = ink;
-      dinoCtx.font = "bold 11px 'Google Sans Code', monospace";
-      dinoCtx.textAlign = "right";
-      dinoCtx.fillText(`SCORE ${String(gameScore).padStart(3, "0")}`, dinoCanvas.width - 12, 20);
+      function showEmptyState(isFetchError = false) {
+        els.emptyState.classList.remove('hidden');
 
-      if (gameOver) {
-        dinoCtx.textAlign = "center";
-        dinoCtx.fillText("GAME OVER — TAP OR SPACE TO RETRY", dinoCanvas.width / 2, 74);
-      }
+        if (isFetchError) {
+          els.emptyStateIcon.textContent = 'cloud_off';
+          els.emptyStateTitle.textContent = 'Could not reach the Google Sheets feed';
+          els.emptyStateSubtitle.textContent =
+            'Check your connection or retry fetching the live directory — in the meantime, play Hot Pot Goose Run!';
+          els.emptyStateSubtitle.classList.remove('hidden');
+          els.retryFetchBtn.classList.remove('hidden');
+          els.emptyResetBtn.classList.add('hidden');
+        } else {
+          els.emptyStateIcon.textContent = 'search_off';
+          els.emptyStateTitle.textContent = 'No matching spots found';
+          els.emptyStateSubtitle.textContent = '';
+          els.emptyStateSubtitle.classList.add('hidden');
+          els.retryFetchBtn.classList.add('hidden');
+          els.emptyResetBtn.classList.remove('hidden');
+        }
 
-      gameLoopId = requestAnimationFrame(updateDinoGame);
-    }
-
-    function startDinoGame() {
-      if (!dinoCanvas || gameLoopId) return;
-      gameLoopId = requestAnimationFrame(updateDinoGame);
-    }
-
-    function stopDinoGame() {
-      if (gameLoopId) {
-        cancelAnimationFrame(gameLoopId);
-        gameLoopId = null;
-      }
-      gameRunning = false;
-      if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
-    }
-
-    if (dinoCanvas) {
-      dinoCanvas.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        jumpGoose();
-      });
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space" && document.activeElement !== searchInput && !emptyEl.classList.contains("hidden")) {
-        e.preventDefault();
-        jumpGoose();
-      }
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        stopDinoGame();
-      } else if (!emptyEl.classList.contains("hidden")) {
         startDinoGame();
       }
-    });
 
-    // Theme Initialization & Yin-Yang Toggle
-    // Theme Initialization & Yin-Yang Toggle (Defaults to Light Mode)
-    function initTheme() {
-      const savedTheme = localStorage.getItem("taiwantop-theme");
-      const isDark = savedTheme === "dark";
-      document.documentElement.classList.toggle("dark", isDark);
-      rotationDeg = isDark ? 180 : 0;
-      if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
-    }
+      function hideEmptyState() {
+        els.emptyState.classList.add('hidden');
+        stopDinoGame();
+      }
 
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener("click", () => {
-        const isDark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("taiwantop-theme", isDark ? "dark" : "light");
-        rotationDeg += 180;
-        if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
-      });
-    }
+      /**
+       * Synthesizes a playful duck quack sound using Web Audio API (no external audio URLs).
+       */
+      function playQuackSound() {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          if (!audioCtx) {
+            audioCtx = new AudioContextClass();
+          }
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
 
-    loadMoreBtn.addEventListener("click", () => {
-      appendNextBatch();
-    });
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const filter = audioCtx.createBiquadFilter();
+          const gain = audioCtx.createGain();
 
-    document.addEventListener("DOMContentLoaded", () => {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(340, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.05);
+          osc.frequency.exponentialRampToValueAtTime(250, now + 0.16);
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(950, now);
+          filter.Q.setValueAtTime(3.2, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.14, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.19);
+        } catch {
+          // Ignore audio context restrictions
+        }
+      }
+
+      // Runner Game Controller
+      let gameController = null;
+
+      function startDinoGame() {
+        if (dinoGameRunning) return;
+        const canvas = els.dinoCanvas;
+        if (!canvas) return;
+
+        dinoGameRunning = true;
+        const ctx = canvas.getContext('2d');
+
+        let width = 600;
+        let height = 180;
+        const groundY = 148;
+
+        const resizeCanvas = () => {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = Math.max(280, Math.floor(rect.width || 600));
+          height = 180;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Long-necked goose player with forgiving floaty jump physics
+        const player = {
+          x: 52,
+          y: groundY - 42,
+          w: 32,
+          h: 42,
+          vy: 0,
+          gravity: 0.56,
+          jumpForce: -12.4,
+          grounded: true,
+          jumpBuffer: 0
+        };
+
+        let obstacles = [];
+        let clouds = [
+          { x: 140, y: 34, s: 0.9 },
+          { x: 380, y: 24, s: 1.1 },
+          { x: 540, y: 42, s: 0.8 }
+        ];
+        let score = 0;
+        let highScore = Number(localStorage.getItem('taiwanTopDuckHigh') || 0);
+        let speed = 4.2;
+        let spawnCooldown = 85;
+        let isGameOver = false;
+        let frameTick = 0;
+
+        const updateScoreUI = () => {
+          const s = String(Math.floor(score)).padStart(4, '0');
+          const b = String(Math.floor(highScore)).padStart(4, '0');
+          els.gameScoreReadout.textContent = `SCORE: ${s} · BEST: ${b}`;
+        };
+
+        const resetRun = () => {
+          obstacles = [];
+          score = 0;
+          speed = 4.2;
+          spawnCooldown = 75;
+          player.y = groundY - player.h;
+          player.vy = 0;
+          player.grounded = true;
+          player.jumpBuffer = 0;
+          isGameOver = false;
+          updateScoreUI();
+        };
+
+        const triggerJump = () => {
+          if (isGameOver) {
+            resetRun();
+            playQuackSound();
+            return;
+          }
+          if (player.grounded) {
+            player.vy = player.jumpForce;
+            player.grounded = false;
+            player.jumpBuffer = 0;
+            playQuackSound();
+          } else {
+            // Buffer jump input right before landing for responsive feel
+            player.jumpBuffer = 8;
+          }
+        };
+
+        const onKeyDown = (e) => {
+          if (!dinoGameRunning) return;
+          if (document.activeElement === els.searchInput) return;
+          if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
+            e.preventDefault();
+            e.stopPropagation();
+            triggerJump();
+          }
+        };
+
+        const onPointerDown = (e) => {
+          e.preventDefault();
+          canvas.focus();
+          triggerJump();
+        };
+
+        // Capture phase ensures Space always triggers jump reliably without scrolling
+        window.addEventListener('keydown', onKeyDown, true);
+        canvas.addEventListener('pointerdown', onPointerDown);
+
+        gameController = {
+          cleanup() {
+            window.removeEventListener('resize', resizeCanvas);
+            window.removeEventListener('keydown', onKeyDown, true);
+            canvas.removeEventListener('pointerdown', onPointerDown);
+          }
+        };
+
+        const drawGoose = (x, y, tick, monoColor, bgColor) => {
+          const p = 3; // 3px crisp pixel grid
+          const px = Math.round(x);
+          const py = Math.round(y);
+          const step = player.grounded ? Math.floor(tick / 6) % 2 : 0;
+
+          ctx.fillStyle = monoColor;
+          const rect = (gx, gy, gw, gh) => {
+            ctx.fillRect(px + gx * p, py + gy * p, gw * p, gh * p);
+          };
+
+          // Pixel Goose Head & Beak (top-right, long-necked silhouette)
+          rect(7, 0, 3, 3);   // Head
+          rect(10, 1, 3, 1);  // Upper beak
+          rect(10, 2, 2, 1);  // Lower beak
+
+          // Long Pixel Neck
+          rect(7, 3, 2, 5);
+
+          // Goose Body & Tail
+          rect(0, 7, 2, 1);   // Tail tip
+          rect(1, 8, 8, 3);   // Upper torso
+          rect(2, 11, 6, 1);  // Lower belly
+
+          // Eye cutout (single-color negative pixel like Chrome Dino)
+          ctx.fillStyle = bgColor;
+          rect(8, 1, 1, 1);
+          ctx.fillStyle = monoColor;
+
+          // Animated Pixel Legs
+          if (!player.grounded) {
+            rect(3, 12, 1, 2);
+            rect(6, 12, 1, 2);
+          } else if (step === 0) {
+            rect(3, 12, 1, 2);
+            rect(3, 13, 2, 1);
+            rect(6, 12, 1, 1);
+          } else {
+            rect(3, 12, 1, 1);
+            rect(6, 12, 1, 2);
+            rect(6, 13, 2, 1);
+          }
+        };
+
+        const drawFlamingHotPot = (obs, tick, monoColor, bgColor) => {
+          const p = 3; // 3px crisp pixel grid
+          const px = Math.round(obs.x);
+          const py = Math.round(obs.y);
+          const flamePhase = Math.floor(tick / 7) % 2;
+
+          ctx.fillStyle = monoColor;
+          const rect = (gx, gy, gw, gh) => {
+            ctx.fillRect(px + gx * p, py + gy * p, gw * p, gh * p);
+          };
+
+          // Pixel Flames / Steam rising from pot
+          if (flamePhase === 0) {
+            rect(2, 0, 1, 2);
+            rect(5, 1, 1, 2);
+            rect(7, 0, 1, 2);
+          } else {
+            rect(3, 1, 1, 2);
+            rect(5, 0, 1, 2);
+            rect(8, 1, 1, 2);
+          }
+
+          // Hot Pot Rim & Side Handles
+          rect(0, 4, 1, 1);   // Left handle
+          rect(1, 3, 8, 1);   // Top rim
+          rect(9, 4, 1, 1);   // Right handle
+
+          // Cast-Iron Pot Body
+          rect(1, 4, 8, 3);
+          rect(2, 7, 6, 1);
+
+          // Single-color negative pixel flame/broth detail inside pot
+          ctx.fillStyle = bgColor;
+          rect(3, 5, 1, 1);
+          rect(6, 5, 1, 1);
+          ctx.fillStyle = monoColor;
+
+          // Base Burner & Flickering Bottom Flames
+          rect(2, 8, 1, 1);
+          rect(4, 8, 2, 1);
+          rect(7, 8, 1, 1);
+        };
+
+        const loop = () => {
+          if (!dinoGameRunning) return;
+          frameTick++;
+
+          const styles = getComputedStyle(document.documentElement);
+          const surfaceColor = styles.getPropertyValue('--md-sys-color-surface-container-lowest').trim() || '#FFFFFF';
+          const outlineColor = styles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#BFC9C2';
+          const monoColor = styles.getPropertyValue('--md-sys-color-on-surface').trim() || '#171D1A';
+          const mutedColor = styles.getPropertyValue('--md-sys-color-on-surface-variant').trim() || '#3F4944';
+
+          ctx.fillStyle = surfaceColor;
+          ctx.fillRect(0, 0, width, height);
+
+          // Pixel Clouds (single-color subtle monochrome blocks)
+          ctx.fillStyle = outlineColor;
+          clouds.forEach((c) => {
+            if (!isGameOver) c.x -= speed * 0.22;
+            if (c.x < -50) c.x = width + 40;
+            const cx = Math.round(c.x);
+            const cy = Math.round(c.y);
+            ctx.fillRect(cx + 6, cy, 18, 3);
+            ctx.fillRect(cx, cy + 3, 30, 3);
+          });
+
+          // Pixel Ground Line & Pebbles (Chrome Dino style)
+          ctx.fillStyle = monoColor;
+          ctx.fillRect(0, groundY, width, 2);
+          for (let gx = -((frameTick * Math.round(speed)) % 48); gx < width; gx += 48) {
+            ctx.fillRect(gx + 8, groundY + 5, 6, 2);
+            ctx.fillRect(gx + 26, groundY + 8, 3, 2);
+          }
+
+          if (!isGameOver) {
+            if (player.jumpBuffer > 0) player.jumpBuffer--;
+
+            // Player physics
+            player.vy += player.gravity;
+            player.y += player.vy;
+            if (player.y >= groundY - player.h) {
+              player.y = groundY - player.h;
+              player.vy = 0;
+              player.grounded = true;
+              if (player.jumpBuffer > 0) {
+                player.vy = player.jumpForce;
+                player.grounded = false;
+                player.jumpBuffer = 0;
+                playQuackSound();
+              }
+            }
+
+            // Generous spacing between hot pot obstacles for smooth playability
+            spawnCooldown--;
+            if (spawnCooldown <= 0) {
+              const potW = 30;
+              const potH = 27;
+              obstacles.push({
+                x: width + 20,
+                y: groundY - potH,
+                w: potW,
+                h: potH
+              });
+              spawnCooldown = Math.floor(88 + Math.random() * 58 - Math.min(speed * 2.2, 18));
+            }
+
+            // Update obstacles & check forgiving collisions
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+              const obs = obstacles[i];
+              obs.x -= speed;
+
+              // Generous hitbox padding around the pixel goose body/feet
+              const padX = 7;
+              const padTop = 14;
+              const padBottom = 4;
+              if (
+                player.x + padX < obs.x + obs.w - 5 &&
+                player.x + player.w - padX > obs.x + 5 &&
+                player.y + padTop < obs.y + obs.h - 3 &&
+                player.y + player.h - padBottom > obs.y + 8
+              ) {
+                isGameOver = true;
+                if (score > highScore) {
+                  highScore = Math.floor(score);
+                  localStorage.setItem('taiwanTopDuckHigh', String(highScore));
+                }
+              }
+
+              if (obs.x + obs.w < -30) {
+                obstacles.splice(i, 1);
+              }
+            }
+
+            score += 0.16;
+            speed = Math.min(7.8, 4.2 + score * 0.0025);
+            if (frameTick % 4 === 0) updateScoreUI();
+          }
+
+          obstacles.forEach((obs) => drawFlamingHotPot(obs, frameTick, monoColor, surfaceColor));
+          drawGoose(player.x, player.y, frameTick, monoColor, surfaceColor);
+
+          if (isGameOver) {
+            ctx.fillStyle = surfaceColor;
+            ctx.globalAlpha = 0.82;
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalAlpha = 1;
+
+            ctx.fillStyle = monoColor;
+            ctx.font = '700 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('G A M E   O V E R', width / 2, height / 2 - 8);
+
+            ctx.font = '500 12px monospace';
+            ctx.fillStyle = mutedColor;
+            ctx.fillText('Press Space or Tap to restart', width / 2, height / 2 + 14);
+          } else if (score < 4) {
+            ctx.fillStyle = mutedColor;
+            ctx.font = '500 12px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText('Space / Tap to jump', width - 14, 24);
+          }
+
+          dinoAnimFrameId = requestAnimationFrame(loop);
+        };
+
+        updateScoreUI();
+        dinoAnimFrameId = requestAnimationFrame(loop);
+      }
+
+      function stopDinoGame() {
+        dinoGameRunning = false;
+        if (dinoAnimFrameId) {
+          cancelAnimationFrame(dinoAnimFrameId);
+          dinoAnimFrameId = null;
+        }
+        if (gameController) {
+          gameController.cleanup();
+          gameController = null;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         CSV DATA FETCHING & INITIALIZATION
+         ---------------------------------------------------------------------- */
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderLoadingSkeletons() {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 12; i++) {
+          const div = document.createElement('div');
+          div.className = 'aspect-square rounded-2xl skeleton-pulse border';
+          div.style.borderColor = 'var(--md-sys-color-outline-variant)';
+          frag.appendChild(div);
+        }
+        els.loadingSkeleton.innerHTML = '';
+        els.loadingSkeleton.appendChild(frag);
+      }
+
+      async function loadCuratedPlaces() {
+        els.loadingSkeleton.classList.remove('hidden');
+        els.placesGrid.classList.add('hidden');
+        els.emptyState.classList.add('hidden');
+        els.loadMoreContainer.classList.add('hidden');
+        els.resultsSummary.textContent = 'Fetching curated spots from Google Sheets…';
+
+        try {
+          const response = await fetch(CSV_URL, { cache: 'no-cache' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const csvText = await response.text();
+
+          if (typeof Papa === 'undefined') {
+            throw new Error('PapaParse library unavailable');
+          }
+
+          const parsed = Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true
+          });
+
+          const normalized = [];
+          (parsed.data || []).forEach((row, idx) => {
+            const place = normalizePlaceRow(row, idx);
+            if (place) normalized.push(place);
+          });
+
+          if (normalized.length === 0) {
+            throw new Error('Parsed 0 valid rows from CSV');
+          }
+
+          // Sort descending by BigInt Flickr photo ID so newer items appear first
+          normalized.sort((a, b) => {
+            if (b.flickrId > a.flickrId) return 1;
+            if (b.flickrId < a.flickrId) return -1;
+            return a.id - b.id;
+          });
+
+          allPlaces = normalized;
+          els.headerTotalBadge.textContent = `${allPlaces.length} spots`;
+
+          buildAutocompleteIndex();
+          populateCategoryFilters();
+          filterPlaces();
+
+          // Deep-link spot modal opening if ?spot= was present in URL
+          if (pendingSpotSlug) {
+            const matchIdx = visiblePlaces.findIndex(
+              (p) => p.slug === pendingSpotSlug
+            );
+            if (matchIdx !== -1) {
+              openModal(matchIdx);
+            } else {
+              // Check allPlaces in case active filters hid the deep-linked spot
+              const globalIdx = allPlaces.findIndex(
+                (p) => p.slug === pendingSpotSlug
+              );
+              if (globalIdx !== -1) {
+                activeCategory = 'ALL';
+                searchQuery = '';
+                els.searchInput.value = '';
+                els.clearSearchBtn.classList.add('hidden');
+                populateCategoryFilters();
+                filterPlaces();
+                openModal(globalIdx);
+              }
+            }
+            pendingSpotSlug = null;
+          }
+        } catch (err) {
+          console.error('Failed to load or parse Taiwan Top CSV:', err);
+          els.loadingSkeleton.classList.add('hidden');
+          els.headerTotalBadge.textContent = 'Offline';
+          els.resultsSummary.textContent = 'Unable to load directory feed.';
+          showEmptyState(true);
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         THEME MANAGEMENT & EVENT WIRING
+         ---------------------------------------------------------------------- */
+
+      function initTheme() {
+        const saved = localStorage.getItem('taiwanTopTheme');
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const activeTheme = saved || (prefersDark ? 'dark' : 'light');
+        applyTheme(activeTheme);
+      }
+
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        els.themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+      }
+
+      function resetAllFilters() {
+        activeCategory = 'ALL';
+        searchQuery = '';
+        els.searchInput.value = '';
+        els.clearSearchBtn.classList.add('hidden');
+        hideAutocomplete();
+        populateCategoryFilters();
+        filterPlaces();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function bindEventListeners() {
+        // Scroll elevation for Top App Bar
+        window.addEventListener(
+          'scroll',
+          () => {
+            els.topAppBar.classList.toggle('scrolled', window.scrollY > 8);
+          },
+          { passive: true }
+        );
+
+        // Theme toggle
+        els.themeToggleBtn.addEventListener('click', () => {
+          const current =
+            document.documentElement.getAttribute('data-theme') || 'light';
+          const next = current === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('taiwanTopTheme', next);
+          applyTheme(next);
+        });
+
+        // Brand / Reset actions
+        els.brandResetBtn.addEventListener('click', resetAllFilters);
+        els.resetFiltersInlineBtn.addEventListener('click', resetAllFilters);
+        els.emptyResetBtn.addEventListener('click', resetAllFilters);
+        els.retryFetchBtn.addEventListener('click', loadCuratedPlaces);
+
+        // Search Input (150ms debounce) & Autocomplete Keyboard Navigation
+        els.searchInput.addEventListener('input', (e) => {
+          const val = e.target.value;
+          els.clearSearchBtn.classList.toggle('hidden', val.length === 0);
+          updateAutocompleteSuggestions(val);
+
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+            searchQuery = val;
+            filterPlaces();
+          }, 150);
+        });
+
+        els.searchInput.addEventListener('focus', () => {
+          if (els.searchInput.value.trim()) {
+            updateAutocompleteSuggestions(els.searchInput.value);
+          }
+        });
+
+        els.searchInput.addEventListener('keydown', (e) => {
+          const isDropdownOpen = !els.autocompleteDropdown.classList.contains('hidden');
+
+          if (e.key === 'ArrowDown' && isDropdownOpen) {
+            e.preventDefault();
+            highlightAutocompleteItem(highlightedSuggestionIdx + 1);
+          } else if (e.key === 'ArrowUp' && isDropdownOpen) {
+            e.preventDefault();
+            highlightAutocompleteItem(highlightedSuggestionIdx - 1);
+          } else if (e.key === 'Enter') {
+            if (isDropdownOpen && highlightedSuggestionIdx >= 0) {
+              e.preventDefault();
+              selectAutocompleteSuggestion(
+                currentSuggestions[highlightedSuggestionIdx]
+              );
+            } else {
+              hideAutocomplete();
+              clearTimeout(searchDebounceTimer);
+              searchQuery = els.searchInput.value;
+              filterPlaces();
+            }
+          } else if (e.key === 'Escape') {
+            if (isDropdownOpen) {
+              e.stopPropagation();
+              hideAutocomplete();
+            } else if (els.searchInput.value) {
+              els.searchInput.value = '';
+              searchQuery = '';
+              els.clearSearchBtn.classList.add('hidden');
+              filterPlaces();
+            }
+          }
+        });
+
+        // Close autocomplete on outside click
+        document.addEventListener('pointerdown', (e) => {
+          if (
+            !els.autocompleteDropdown.contains(e.target) &&
+            e.target !== els.searchInput
+          ) {
+            hideAutocomplete();
+          }
+        });
+
+        // Clear search button
+        els.clearSearchBtn.addEventListener('click', () => {
+          els.searchInput.value = '';
+          searchQuery = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+          filterPlaces();
+          els.searchInput.focus();
+        });
+
+        // Pagination Load More button
+        els.loadMoreBtn.addEventListener('click', appendNextBatch);
+
+        // Modal controls
+        els.modalCloseBtn.addEventListener('click', closeModal);
+        els.modalPrevBtn.addEventListener('click', () => stepModal(-1));
+        els.modalNextBtn.addEventListener('click', () => stepModal(1));
+        els.modalShareBtn.addEventListener('click', shareCurrentSpot);
+
+        // Close modal on backdrop click
+        els.placeModal.addEventListener('click', (e) => {
+          if (e.target === els.placeModal) {
+            closeModal();
+          }
+        });
+
+        // Horizontal Touch Swipes (> 50px) inside Modal
+        let touchStartX = 0;
+        let touchStartY = 0;
+        els.modalDialogCard.addEventListener(
+          'touchstart',
+          (e) => {
+            if (e.touches.length === 1) {
+              touchStartX = e.touches[0].clientX;
+              touchStartY = e.touches[0].clientY;
+            }
+          },
+          { passive: true }
+        );
+
+        els.modalDialogCard.addEventListener(
+          'touchend',
+          (e) => {
+            if (activeModalIndex === -1 || e.changedTouches.length !== 1) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+              if (dx < 0) {
+                stepModal(1); // Swipe left -> next spot
+              } else {
+                stepModal(-1); // Swipe right -> previous spot
+              }
+            }
+          },
+          { passive: true }
+        );
+
+        // Global keyboard shortcuts (Modal navigation & '/' quick search focus)
+        document.addEventListener('keydown', (e) => {
+          if (activeModalIndex !== -1) {
+            if (e.key === 'Escape') {
+              e.preventDefault();
+              closeModal();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              stepModal(-1);
+            } else if (e.key === 'ArrowRight') {
+              e.preventDefault();
+              stepModal(1);
+            }
+            return;
+          }
+
+          if (
+            e.key === '/' &&
+            document.activeElement !== els.searchInput &&
+            !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)
+          ) {
+            e.preventDefault();
+            els.searchInput.focus();
+          }
+        });
+      }
+
+      /* ----------------------------------------------------------------------
+         BOOTSTRAP APPLICATION
+         ---------------------------------------------------------------------- */
       initTheme();
-      fetchPlaces();
-    });
+      renderLoadingSkeletons();
+      parseUrlState();
+      bindEventListeners();
+      loadCuratedPlaces();
+    })();
   </script>
 </body>
 </html>
