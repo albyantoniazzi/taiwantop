@@ -608,7 +608,7 @@
                 </span>
               </div>
               <p class="text-xs sm:text-sm" style="color: var(--md-sys-color-on-surface-variant);">
-                Curated directory by
+                Curated by
                 <a
                   href="https://www.instagram.com/alby.food/"
                   target="_blank"
@@ -729,7 +729,7 @@
     </div>
 
     <!-- Loading Skeleton Grid (shown during initial CSV fetch) -->
-    <div id="loading-skeleton" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <!-- 12 placeholder cards generated via JS or static markup -->
     </div>
 
@@ -737,15 +737,14 @@
     <section
       id="places-grid"
       aria-label="Curated places in Taiwan"
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
     ></section>
 
     <!-- Pagination Load More Container -->
-    <div id="load-more-container" class="hidden mt-10 mb-6 flex flex-col items-center gap-3">
-      <p id="pagination-progress" class="text-xs font-medium" style="color: var(--md-sys-color-on-surface-variant);"></p>
+    <div id="load-more-container" class="hidden mt-8 mb-2 flex flex-col items-center">
       <button id="load-more-btn" type="button" class="md3-btn-filled">
         <span class="material-symbols-outlined text-xl">expand_more</span>
-        <span id="load-more-label">Load more places</span>
+        <span id="load-more-label">Load More</span>
       </button>
     </div>
 
@@ -799,11 +798,11 @@
   <!-- ========================================================================
        FOOTER
        ======================================================================== -->
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-8 border-t text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-4"
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 border-t text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-4"
     style="border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);">
     <div class="flex items-center gap-2">
       <span class="material-symbols-outlined filled text-lg" style="color: var(--md-sys-color-primary);">folder</span>
-      <span><strong>TAIWAN TOP</strong> - curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="font-semibold underline" style="color: var(--md-sys-color-primary);">@alby.food</a></span>
+      <span><strong>TAIWAN TOP</strong> - Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="font-semibold underline" style="color: var(--md-sys-color-primary);">@alby.food</a></span>
     </div>
     <div class="flex items-center gap-4">
       <span>Keyboard: <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">/</kbd> to search · <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">←</kbd> <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">→</kbd> in modal</span>
@@ -989,7 +988,6 @@
         loadingSkeleton: document.getElementById('loading-skeleton'),
         placesGrid: document.getElementById('places-grid'),
         loadMoreContainer: document.getElementById('load-more-container'),
-        paginationProgress: document.getElementById('pagination-progress'),
         loadMoreBtn: document.getElementById('load-more-btn'),
         loadMoreLabel: document.getElementById('load-more-label'),
         emptyState: document.getElementById('empty-state'),
@@ -1590,9 +1588,9 @@
           <!-- Top City Pill -->
           ${
             place.city
-              ? `<div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 pointer-events-none">
-                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md bg-black/50 text-white border border-white/15 truncate max-w-full">
-                    <span class="material-symbols-outlined filled text-[13px] text-emerald-300">location_on</span>
+              ? `<div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-1 pointer-events-none">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md bg-black/50 text-white border border-white/15 truncate max-w-full">
+                    <span class="material-symbols-outlined filled text-sm text-emerald-300">location_on</span>
                     <span class="truncate">${escapeHtml(place.city)}</span>
                   </span>
                 </div>`
@@ -1600,15 +1598,15 @@
           }
 
           <!-- Bottom Title & Primary Category -->
-          <div class="absolute bottom-0 left-0 right-0 p-3 flex flex-col justify-end pointer-events-none">
+          <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
             ${
               primaryCat
-                ? `<span class="text-[10px] uppercase tracking-wider font-bold text-emerald-300 mb-0.5 truncate">
+                ? `<span class="text-xs uppercase tracking-wider font-bold text-emerald-300 mb-1 truncate">
                     ${escapeHtml(primaryCat)}
                   </span>`
                 : ''
             }
-            <h3 class="text-white font-bold text-sm sm:text-[15px] leading-snug line-clamp-2 drop-shadow">
+            <h3 class="text-white font-bold text-lg sm:text-xl leading-snug line-clamp-2 drop-shadow">
               ${escapeHtml(place.title)}
             </h3>
           </div>
@@ -1689,10 +1687,8 @@
 
         if (currentlyShown < totalVisible) {
           const remaining = totalVisible - currentlyShown;
-          const nextBatchCount = Math.min(PAGE_SIZE, remaining);
           els.loadMoreContainer.classList.remove('hidden');
-          els.paginationProgress.textContent = `Showing ${currentlyShown} of ${totalVisible} places`;
-          els.loadMoreLabel.textContent = `Load ${nextBatchCount} more (${remaining} remaining)`;
+          els.loadMoreLabel.textContent = `Load More (${remaining} remaining)`;
         } else {
           els.loadMoreContainer.classList.add('hidden');
         }
