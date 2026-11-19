@@ -129,12 +129,15 @@
       <!-- Controls Group: Search, City Filter, and Yin-Yang Toggle inline -->
       <div class="flex items-center gap-3 sm:gap-4 flex-1 justify-end">
         
-        <!-- Search Input -->
-        <div class="relative flex-1 max-w-xs sm:max-w-sm">
+        <!-- Search Input with Autocomplete Dropdown -->
+        <div class="relative flex-1 max-w-xs sm:max-w-sm" id="search-wrapper">
           <input 
             type="text" 
             id="search-input" 
             placeholder="Search..." 
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-controls="search-autocomplete"
             class="w-full bg-transparent dark:bg-[#333333] border border-[#292929] dark:border-white rounded-full px-4 py-1 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white placeholder-[#292929] dark:placeholder-white focus:outline-none transition"
           />
           <button 
@@ -144,6 +147,13 @@
           >
             ×
           </button>
+
+          <!-- Autocomplete Suggestions List -->
+          <ul 
+            id="search-autocomplete" 
+            role="listbox"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 z-40 max-h-64 overflow-y-auto bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white shadow-xl divide-y divide-[#292929]/15 dark:divide-white/15 scrollbar-none"
+          ></ul>
         </div>
 
         <!-- City Dropdown -->
@@ -468,6 +478,8 @@
     let searchDebounceTimer = null;
     let rotationDeg = 0;
     let activeModalIndex = -1;
+    let autocompleteIndex = [];
+    let activeSuggestionIdx = -1;
 
     // DOM Elements
     const gridEl = document.getElementById("places-grid");
@@ -479,7 +491,9 @@
     const categoryContainer = document.getElementById("category-filters");
     const categoryScrollContainer = document.getElementById("category-scroll-container");
     const cityFilterSelect = document.getElementById("city-filter");
+    const searchWrapper = document.getElementById("search-wrapper");
     const searchInput = document.getElementById("search-input");
+    const searchAutocompleteEl = document.getElementById("search-autocomplete");
     const clearSearchBtn = document.getElementById("clear-search-btn");
     const themeToggleBtn = document.getElementById("theme-toggle");
     const yinYangIcon = document.getElementById("yin-yang-icon");
@@ -1192,6 +1206,7 @@
         return 0;
       });
 
+      buildAutocompleteIndex();
       populateCityFilter();
       populateCategoryFilters();
       renderStatsOverview();
@@ -1502,27 +1517,11 @@
         }
       }
 
-      // Draw Big Long-Necked Goose
-      drawPixelMap(dinoCtx, GOOSE_SPRITE, dino.x, dino.y, 1, themeColor);
-      // Prominent Goose Beak
-      dinoCtx.fillStyle = themeColor;
-      dinoCtx.fillRect(dino.x + 20, dino.y + 2, 7, 3);
-      dinoCtx.fillRect(dino.x + 22, dino.y + 5, 4, 1);
+      // Draw Goose
+      drawPixelMap(dinoCtx, GOOSE_SPRITE, dino.x, dino.y, 1.1, themeColor);
 
-      // Running Feet Animation with Long Goose Legs
-      if (!dino.isJumping && !dinoState.isGameOver) {
-        dinoCtx.fillStyle = themeColor;
-        if (dino.legToggle) {
-          dinoCtx.fillRect(dino.x + 7, dino.y + 28, 6, 3);
-        } else {
-          dinoCtx.fillRect(dino.x + 15, dino.y + 28, 6, 3);
-        }
-      }
-
-      // Tick flame animation
-      dinoState.flameTick++;
-
-      // Draw & Update Obstacles
+      // Update & Draw Obstacles
+      dinoState.flameTick = (dinoState.flameTick + 1) % 12;
       for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
         const obs = dinoState.obstacles[i];
         if (!dinoState.isGameOver) {
@@ -1530,107 +1529,64 @@
         }
 
         if (obs.type === 'hotpot') {
-          // Hot Pot Sprite
-          drawPixelMap(dinoCtx, HOTPOT_SPRITE, obs.x, obs.y + 1, 1, themeColor);
-
-          // Animated Hot Pot Steam & Flame on top
-          const flamePhase = Math.floor((dinoState.flameTick + i * 4) / 5) % 3;
-          const flameCenterX = obs.x + 12;
-          const flameBaseY = obs.y;
-
-          dinoCtx.fillStyle = themeColor;
-          if (flamePhase === 0) {
-            dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 6, 6, 5);
-            dinoCtx.fillRect(flameCenterX - 1, flameBaseY - 10, 3, 4);
-            dinoCtx.fillRect(flameCenterX + 4, flameBaseY - 5, 2, 4);
-          } else if (flamePhase === 1) {
-            dinoCtx.fillRect(flameCenterX - 4, flameBaseY - 5, 7, 4);
-            dinoCtx.fillRect(flameCenterX, flameBaseY - 9, 3, 5);
-            dinoCtx.fillRect(flameCenterX - 3, flameBaseY - 8, 2, 3);
-          } else {
-            dinoCtx.fillRect(flameCenterX - 2, flameBaseY - 8, 4, 7);
-            dinoCtx.fillRect(flameCenterX + 2, flameBaseY - 11, 2, 4);
-            dinoCtx.fillRect(flameCenterX - 4, flameBaseY - 5, 3, 3);
+          drawPixelMap(dinoCtx, HOTPOT_SPRITE, obs.x, obs.y, 1.1, themeColor);
+          if (dinoState.flameTick < 6) {
+            dinoCtx.fillStyle = '#ef4444';
+            dinoCtx.fillRect(obs.x + 8, obs.y + 18, 8, 3);
           }
         } else if (obs.type === 'flame') {
-          // Simple Roaring Flame
-          drawPixelMap(dinoCtx, SIMPLE_FLAME_SPRITE, obs.x, obs.y, 1, themeColor);
-          
-          // Dancing flame sparks at the top tip
-          const sparkPhase = Math.floor((dinoState.flameTick + i * 3) / 4) % 3;
-          dinoCtx.fillStyle = themeColor;
-          if (sparkPhase === 0) {
-            dinoCtx.fillRect(obs.x + 8, obs.y - 4, 3, 3);
-            dinoCtx.fillRect(obs.x + 3, obs.y - 2, 2, 2);
-          } else if (sparkPhase === 1) {
-            dinoCtx.fillRect(obs.x + 10, obs.y - 6, 2, 3);
-            dinoCtx.fillRect(obs.x + 12, obs.y - 3, 2, 2);
-          } else {
-            dinoCtx.fillRect(obs.x + 7, obs.y - 5, 4, 2);
-            dinoCtx.fillRect(obs.x + 13, obs.y - 2, 2, 2);
-          }
-        } else if (obs.type === 'oven') {
-          // Dome Clay Oven Sprite
-          drawPixelMap(dinoCtx, CLAY_OVEN_SPRITE, obs.x, obs.y, 1, themeColor);
-
-          // Glowing flickering ember inside oven opening
-          const emberPhase = Math.floor((dinoState.flameTick + i * 2) / 4) % 2;
-          dinoCtx.fillStyle = themeColor;
-          if (emberPhase === 0) {
-            dinoCtx.fillRect(obs.x + 8, obs.y + 13, 4, 3);
-          } else {
-            dinoCtx.fillRect(obs.x + 7, obs.y + 12, 6, 4);
+          drawPixelMap(dinoCtx, SIMPLE_FLAME_SPRITE, obs.x, obs.y, 1.0, dinoState.flameTick < 6 ? '#f97316' : themeColor);
+        } else {
+          drawPixelMap(dinoCtx, CLAY_OVEN_SPRITE, obs.x, obs.y, 1.05, themeColor);
+          if (dinoState.flameTick < 6) {
+            dinoCtx.fillStyle = '#f97316';
+            dinoCtx.fillRect(obs.x + 8, obs.y + 13, 6, 5);
           }
         }
 
-        // Collision Check (AABB with fair hitboxes)
-        const dBox = { x: dino.x + 4, y: dino.y + 2, w: dino.width - 8, h: dino.height - 3 };
-        const oBox = { x: obs.x + 2, y: obs.y - 2, w: obs.width - 4, h: obs.height + 2 };
-
+        // Collision Detection (with forgiving hitbox padding)
+        const pad = 4;
         if (
-          dBox.x < oBox.x + oBox.w &&
-          dBox.x + dBox.w > oBox.x &&
-          dBox.y < oBox.y + oBox.h &&
-          dBox.y + dBox.h > oBox.y
+          dino.x + pad < obs.x + obs.width - pad &&
+          dino.x + dino.width - pad > obs.x + pad &&
+          dino.y + pad < obs.y + obs.height - pad &&
+          dino.y + dino.height - pad > obs.y + pad
         ) {
           dinoState.isGameOver = true;
-          // Show the text again once game is over
           if (emptyTitleEl) {
             emptyTitleEl.classList.remove('opacity-0', 'pointer-events-none');
             emptyTitleEl.classList.add('opacity-100');
           }
         }
 
-        if (obs.x < -40) {
+        if (obs.x + obs.width < -20) {
           dinoState.obstacles.splice(i, 1);
         }
       }
 
-      // Draw HUD (Scores)
+      // Draw Score & Game Over Banner
       dinoCtx.fillStyle = themeColor;
-      dinoCtx.font = "bold 11px 'Google Sans Code', monospace";
-      dinoCtx.textAlign = "right";
-      const curScoreStr = String(Math.floor(dinoState.score)).padStart(5, '0');
-      const hiScoreStr = String(dinoState.highScore).padStart(5, '0');
-      dinoCtx.fillText(`HI ${hiScoreStr}  ${curScoreStr}`, canvasW - 8, 20);
+      dinoCtx.font = 'bold 11px "Google Sans Code", monospace';
+      dinoCtx.textAlign = 'right';
+      const hiStr = dinoState.highScore > 0 ? `HI ${String(dinoState.highScore).padStart(4, '0')}  ` : '';
+      dinoCtx.fillText(`${hiStr}${String(Math.floor(dinoState.score)).padStart(4, '0')}`, canvasW - 10, 18);
 
-      // Game Over Message
       if (dinoState.isGameOver) {
-        dinoCtx.textAlign = "center";
-        dinoCtx.font = "bold 14px 'Google Sans Code', monospace";
-        dinoCtx.fillText("G A M E   O V E R", canvasW / 2, 68);
-        dinoCtx.font = "11px 'Google Sans Code', monospace";
-        dinoCtx.fillText("TAP OR PRESS SPACE TO RESTART", canvasW / 2, 90);
+        dinoCtx.textAlign = 'center';
+        dinoCtx.font = 'bold 13px "Google Sans Code", monospace';
+        dinoCtx.fillText('GAME OVER — TAP OR SPACE TO RETRY', canvasW / 2, 68);
       }
 
       dinoAnimId = requestAnimationFrame(updateDinoGame);
     }
 
     function startDinoGame() {
-      if (dinoGameActive) return;
+      if (!dinoCanvas || !dinoCtx) return;
+      stopDinoGame();
       dinoGameActive = true;
-      dinoState = initDinoState();
-      if (dinoAnimId) cancelAnimationFrame(dinoAnimId);
+      if (!dinoState || dinoState.isGameOver) {
+        dinoState = initDinoState();
+      }
       dinoAnimId = requestAnimationFrame(updateDinoGame);
     }
 
@@ -1642,18 +1598,6 @@
       }
     }
 
-    // Cancel animation loop if user leaves page/tab to save mobile battery
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && dinoGameActive) {
-        if (dinoAnimId) {
-          cancelAnimationFrame(dinoAnimId);
-          dinoAnimId = null;
-        }
-      } else if (!document.hidden && dinoGameActive && !dinoAnimId) {
-        dinoAnimId = requestAnimationFrame(updateDinoGame);
-      }
-    });
-
     if (dinoCanvas) {
       dinoCanvas.addEventListener('pointerdown', (e) => {
         e.preventDefault();
@@ -1662,43 +1606,221 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (dinoGameActive && !emptyEl.classList.contains('hidden')) {
-        if (e.code === 'Space' || e.code === 'ArrowUp') {
-          e.preventDefault();
-          jumpDino();
-        }
+      if (e.code === 'Space' && !emptyEl.classList.contains('hidden') && document.activeElement !== searchInput) {
+        e.preventDefault();
+        jumpDino();
       }
     });
 
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopDinoGame();
+      } else if (!emptyEl.classList.contains('hidden')) {
+        startDinoGame();
+      }
+    });
+
+    // Theme Initialization & Yin-Yang Toggle
     function initTheme() {
-      const savedTheme = localStorage.getItem("tot-theme");
-      const isDark = savedTheme !== null ? savedTheme === "dark" : false;
-      document.documentElement.classList.toggle("dark", isDark);
+      const savedTheme = localStorage.getItem('taiwan-top-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
 
-      themeToggleBtn.addEventListener("click", () => {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        rotationDeg = 180;
+        if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+      } else {
+        document.documentElement.classList.remove('dark');
+        rotationDeg = 0;
+        if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+      }
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        document.documentElement.classList.add('theme-transition');
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('taiwan-top-theme', isDark ? 'dark' : 'light');
+
         rotationDeg += 180;
-        yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+        if (yinYangIcon) {
+          yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+        }
 
-        const toggleThemeLogic = () => {
-          const currentlyDark = document.documentElement.classList.toggle("dark");
-          localStorage.setItem("tot-theme", currentlyDark ? "dark" : "light");
-          updateToolbarStyles();
-        };
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transition');
+        }, 320);
+      });
+    }
 
-        if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          document.startViewTransition(() => toggleThemeLogic());
-        } else {
-          document.documentElement.classList.add("theme-transition");
-          toggleThemeLogic();
-          setTimeout(() => document.documentElement.classList.remove("theme-transition"), 300);
+    // Autocomplete Indexer & UI Controller
+    function buildAutocompleteIndex() {
+      const entryMap = new Map();
+      const stopWords = new Set(['the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was', 'were', 'have', 'has', 'had', 'but', 'not', 'you', 'all', 'can', 'her', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'its', 'may', 'new', 'now', 'old', 'see', 'two', 'way', 'who', 'did', 'into', 'just', 'like', 'over', 'such', 'than', 'them', 'then', 'they', 'very', 'when', 'will', 'your', 'also', 'been', 'more', 'some', 'what', 'which', 'their', 'there', 'these', 'would', 'about', 'after', 'other', 'where', 'while']);
+
+      const addTerm = (rawTerm, type, priority) => {
+        const clean = (rawTerm || '').trim();
+        if (!clean || clean.length < 2) return;
+        const key = clean.toLowerCase();
+        if (stopWords.has(key)) return;
+
+        const existing = entryMap.get(key);
+        if (!existing || priority < existing.priority) {
+          entryMap.set(key, {
+            label: clean,
+            key,
+            type,
+            priority
+          });
+        }
+      };
+
+      allPlaces.forEach(place => {
+        // 1. Cities (Highest priority)
+        if (place.city) {
+          addTerm(formatCityName(place.city), 'city', 1);
+          place.city.split(/[\s,/-]+/).forEach(w => addTerm(formatCityName(w), 'city', 2));
+        }
+
+        // 2. Categories
+        place.categories.forEach(cat => {
+          addTerm(cat.toLowerCase(), 'category', 1);
+          cat.split(/[\s,/-]+/).forEach(w => addTerm(w.toLowerCase(), 'category', 2));
+        });
+
+        // 3. Titles & individual title words
+        if (place.title) {
+          addTerm(place.title, 'title', 2);
+          place.title
+            .replace(/[^\p{L}\p{N}\s'-]/gu, ' ')
+            .split(/\s+/)
+            .forEach(w => {
+              if (w.length >= 3) addTerm(w, 'word', 3);
+            });
+        }
+
+        // 4. Individual words from descriptions
+        if (place.description) {
+          place.description
+            .replace(/[^\p{L}\p{N}\s'-]/gu, ' ')
+            .split(/\s+/)
+            .forEach(w => {
+              if (w.length >= 3) addTerm(w.toLowerCase(), 'word', 4);
+            });
         }
       });
+
+      autocompleteIndex = Array.from(entryMap.values());
+    }
+
+    function hideAutocomplete() {
+      searchAutocompleteEl.classList.add('hidden');
+      searchAutocompleteEl.innerHTML = '';
+      activeSuggestionIdx = -1;
+    }
+
+    function applyAutocompleteSuggestion(suggestionText) {
+      const rawVal = searchInput.value;
+      const lastSpaceIdx = rawVal.lastIndexOf(' ');
+
+      // If typing multiple words and selecting a single-word match, complete the current token
+      if (lastSpaceIdx !== -1 && !suggestionText.includes(' ')) {
+        const prefix = rawVal.slice(0, lastSpaceIdx + 1);
+        searchInput.value = `${prefix}${suggestionText}`;
+      } else {
+        searchInput.value = suggestionText;
+      }
+
+      searchQuery = searchInput.value;
+      clearSearchBtn.classList.toggle('hidden', !searchQuery);
+      hideAutocomplete();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    function updateAutocompleteHighlight() {
+      const items = searchAutocompleteEl.querySelectorAll('li[role="option"]');
+      items.forEach((item, idx) => {
+        if (idx === activeSuggestionIdx) {
+          item.classList.add('bg-[#292929]', 'text-[#EBF1E5]', 'dark:bg-white', 'dark:text-[#292929]');
+          item.scrollIntoView({ block: 'nearest' });
+        } else {
+          item.classList.remove('bg-[#292929]', 'text-[#EBF1E5]', 'dark:bg-white', 'dark:text-[#292929]');
+        }
+      });
+    }
+
+    function renderAutocomplete(rawInput) {
+      const trimmed = rawInput.trim().toLowerCase();
+      if (!trimmed) {
+        hideAutocomplete();
+        return;
+      }
+
+      // Match against the full query OR the last word currently being typed
+      const tokens = trimmed.split(/\s+/);
+      const currentToken = tokens[tokens.length - 1];
+      if (currentToken.length < 1) {
+        hideAutocomplete();
+        return;
+      }
+
+      const matches = [];
+      for (let i = 0; i < autocompleteIndex.length; i++) {
+        const item = autocompleteIndex[i];
+        if (item.key === trimmed || item.key === currentToken) continue;
+
+        const startsWithFull = item.key.startsWith(trimmed);
+        const startsWithToken = item.key.startsWith(currentToken);
+        const includesQuery = item.key.includes(trimmed) || (currentToken.length >= 2 && item.key.includes(currentToken));
+
+        if (startsWithFull || startsWithToken || includesQuery) {
+          let score = item.priority * 10;
+          if (startsWithFull) score -= 25;
+          else if (startsWithToken) score -= 15;
+          matches.push({ ...item, score });
+        }
+      }
+
+      matches.sort((a, b) => a.score - b.score || a.label.localeCompare(b.label));
+      const topMatches = matches.slice(0, 8);
+
+      if (topMatches.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.innerHTML = '';
+
+      topMatches.forEach((match, idx) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.className = "px-3.5 py-2 text-xs font-semibold text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer flex items-center justify-between gap-2 transition-colors";
+
+        const badgeLabel = match.type === 'word' ? '' : `<span class="text-[9px] uppercase tracking-wider opacity-65 font-bold flex-shrink-0">${escapeHtml(match.type)}</span>`;
+        li.innerHTML = `
+          <span class="truncate">${escapeHtml(match.label)}</span>
+          ${badgeLabel}
+        `;
+
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault(); // Keep focus from blurring before click finishes
+          applyAutocompleteSuggestion(match.label);
+        });
+
+        searchAutocompleteEl.appendChild(li);
+      });
+
+      searchAutocompleteEl.classList.remove('hidden');
     }
 
     // Debounced Search Input Events to avoid layout thrashing while typing
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
       clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      renderAutocomplete(searchQuery);
       
       if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
       searchDebounceTimer = setTimeout(() => {
@@ -1707,10 +1829,45 @@
       }, 150);
     });
 
+    searchInput.addEventListener("focus", () => {
+      if (searchInput.value.trim()) {
+        renderAutocomplete(searchInput.value);
+      }
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (searchAutocompleteEl.classList.contains("hidden")) return;
+      const items = searchAutocompleteEl.querySelectorAll('li[role="option"]');
+      if (!items.length) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
+        updateAutocompleteHighlight();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
+        updateAutocompleteHighlight();
+      } else if (e.key === "Enter" && activeSuggestionIdx >= 0) {
+        e.preventDefault();
+        const chosenText = items[activeSuggestionIdx].querySelector('span').textContent;
+        applyAutocompleteSuggestion(chosenText);
+      } else if (e.key === "Escape") {
+        hideAutocomplete();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (searchWrapper && !searchWrapper.contains(e.target)) {
+        hideAutocomplete();
+      }
+    });
+
     clearSearchBtn.addEventListener("click", () => {
       searchInput.value = "";
       searchQuery = "";
       clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
       if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
       updateUrlState();
       filterPlaces();
