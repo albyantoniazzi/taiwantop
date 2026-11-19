@@ -96,10 +96,10 @@
 <body class="font-mono bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white selection:bg-[#292929] selection:text-[#EBF1E5] dark:selection:bg-white dark:selection:text-[#333333]">
 
   <!-- Header: Centered Title, Subtitle & Unified Rich Search -->
-  <header class="w-full max-w-[1920px] mx-auto pt-4 sm:pt-6 pb-5 px-4 sm:px-[10vw] flex flex-col items-center text-center relative">
+  <header class="w-full max-w-[1920px] mx-auto pt-4 sm:pt-6 pb-5 px-3 sm:px-[10vw] flex flex-col items-center text-center relative">
     
     <!-- Theme Toggle positioned cleanly at top right aligned with title -->
-    <div class="absolute right-4 sm:right-[10vw] top-4 sm:top-6">
+    <div class="absolute right-3 sm:right-[10vw] top-4 sm:top-6">
       <button 
         id="theme-toggle" 
         type="button" 
@@ -168,8 +168,8 @@
 
   </header>
 
-  <!-- Main Grid with 10% browser margin on left and right -->
-  <main class="w-full max-w-[1920px] mx-auto px-4 sm:px-[10vw] pt-2 pb-16">
+  <!-- Main Grid with mobile side margins matching thumbnail spacing (12px / gap-3) -->
+  <main class="w-full max-w-[1920px] mx-auto px-3 sm:px-[10vw] pt-2 pb-16">
 
     <!-- Loading State -->
     <div id="loading-state" class="py-24 flex items-center justify-center">
@@ -274,6 +274,19 @@
         id="modal-card" 
         class="relative w-full max-h-[92vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-md shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
+        <!-- Small Top-Right Close Button -->
+        <button 
+          id="modal-close-btn" 
+          type="button" 
+          title="Close (Esc)" 
+          aria-label="Close modal"
+          class="absolute top-2.5 right-2.5 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-[#292929]/75 hover:bg-[#292929] text-white backdrop-blur-sm transition-colors cursor-pointer focus:outline-none"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <div class="overflow-y-auto flex-1 scrollbar-none">
           <!-- Hero Photo (1:1 square crop) -->
           <div class="relative w-full aspect-square bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
@@ -420,6 +433,7 @@
     const modalShareCheckIcon = document.getElementById("modal-share-check-icon");
     const modalPrevBtn = document.getElementById("modal-prev-btn");
     const modalNextBtn = document.getElementById("modal-next-btn");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
     let shareResetTimeout = null;
@@ -1022,6 +1036,7 @@
 
     if (modalPrevBtn) modalPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(-1); });
     if (modalNextBtn) modalNextBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(1); });
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
 
     if (modalShareBtn) {
       modalShareBtn.addEventListener("click", () => {
