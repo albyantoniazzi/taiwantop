@@ -126,7 +126,7 @@
     </a>
     <p class="mt-0.5 text-[11px] sm:text-xs text-[#292929]/80 dark:text-white/80 font-normal">
       by <a 
-        href="https://albyantoniazzi.github.io/" 
+        href="https://www.instagram.com/alby.food/" 
         target="_blank" 
         rel="noopener noreferrer" 
         class="underline font-normal hover:opacity-75 transition-opacity"
@@ -135,24 +135,24 @@
 
     <!-- Rich Search Input (Integrates Cities, Categories, Titles & Descriptions) -->
     <div class="relative w-full max-w-md mt-4 text-left" id="search-wrapper">
-      <div class="relative flex items-center">
-        <svg class="w-4 h-4 absolute left-4 text-[#292929]/60 dark:text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="relative flex items-center border-b border-[#292929] dark:border-white">
+        <svg class="w-4 h-4 absolute left-0 text-[#292929]/60 dark:text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
         </svg>
         <input 
           type="text" 
           id="search-input" 
-          placeholder="Search places, cities, categories..." 
+          placeholder="Search places, cities, food..." 
           autocomplete="off"
           aria-autocomplete="list"
           aria-controls="search-autocomplete"
-          class="w-full bg-transparent dark:bg-[#333333] border border-[#292929] dark:border-white rounded-full pl-10 pr-9 py-2 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white placeholder-[#292929]/60 dark:placeholder-white/60 focus:outline-none transition shadow-sm"
+          class="w-full bg-transparent border-0 rounded-none pl-6 pr-7 py-1.5 text-[11px] sm:text-xs font-semibold text-[#292929] dark:text-white placeholder:italic placeholder:font-normal placeholder:text-[11px] sm:placeholder:text-xs placeholder-[#292929]/60 dark:placeholder-white/60 focus:outline-none transition"
         />
         <button 
           id="clear-search-btn" 
           type="button" 
           aria-label="Clear search"
-          class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#292929] dark:text-white hover:opacity-70 cursor-pointer"
+          class="hidden absolute right-0.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#292929] dark:text-white hover:opacity-70 cursor-pointer"
         >
           ×
         </button>
@@ -162,7 +162,7 @@
       <ul 
         id="search-autocomplete" 
         role="listbox"
-        class="hidden absolute left-0 right-0 top-full mt-1.5 z-40 max-h-64 overflow-y-auto rounded-xl bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white shadow-xl divide-y divide-[#292929]/15 dark:divide-white/15 scrollbar-none"
+        class="hidden absolute left-0 right-0 top-full mt-0 z-40 max-h-64 overflow-y-auto rounded-none bg-[#EBF1E5] dark:bg-[#333333] border border-t-0 border-[#292929] dark:border-white shadow-xl divide-y divide-[#292929]/15 dark:divide-white/15 scrollbar-none"
       ></ul>
     </div>
 
@@ -205,10 +205,9 @@
     <button 
       id="load-more-btn" 
       type="button" 
-      class="h-9 inline-flex items-center gap-2 px-5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal transition shadow-sm cursor-pointer focus:outline-none"
+      class="py-1 text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal hover:underline underline-offset-4 transition cursor-pointer focus:outline-none"
     >
-      <span>LOAD MORE</span>
-      <span class="text-xs">↓</span>
+      LOAD MORE&nbsp;<span class="text-xs">↓</span>
     </button>
   </div>
 
@@ -236,13 +235,13 @@
 
   <div 
     id="detail-modal" 
-    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 lg:p-12 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 lg:p-8 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
     role="dialog"
     aria-modal="true"
     aria-hidden="true"
   >
     <!-- Modal Wrapper with Centered Outside Navigation Arrows -->
-    <div id="modal-container" class="relative w-full max-w-2xl flex items-center justify-center">
+    <div id="modal-container" class="relative w-full max-w-lg flex items-center justify-center">
 
       <!-- Previous Arrow (Hidden on phone, shown on desktop browser) -->
       <button 
@@ -270,14 +269,14 @@
         </svg>
       </button>
 
-      <!-- Modal Card Box (Sharp rectangular corners) -->
+      <!-- Modal Card Box (Same border radius as home photos) -->
       <div 
         id="modal-card" 
-        class="relative w-full max-h-[90vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-none shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+        class="relative w-full max-h-[92vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-md shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
       >
         <div class="overflow-y-auto flex-1 scrollbar-none">
-          <!-- Hero Photo -->
-          <div class="relative w-full aspect-[16/10] bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
+          <!-- Hero Photo (1:1 square crop) -->
+          <div class="relative w-full aspect-square bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
             <img 
               id="modal-image" 
               src="" 
@@ -287,32 +286,19 @@
           </div>
 
           <!-- Body Details -->
-          <div class="p-5 sm:p-6 space-y-4">
+          <div class="p-3.5 sm:p-4 space-y-2">
             <div>
-              <div class="flex items-center gap-1 mb-2 flex-wrap">
+              <div class="flex items-center gap-1 mb-3 flex-wrap">
                 <button type="button" id="modal-city-badge" class="cursor-pointer"></button>
                 <div id="modal-tags" class="flex flex-wrap items-center gap-1"></div>
               </div>
-              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white pt-1"></h2>
+              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white"></h2>
             </div>
 
-            <p id="modal-description" class="text-[11px] sm:text-xs leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
+            <p id="modal-description" class="text-[11px] sm:text-xs italic leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
 
-            <!-- External Action Button Bar: full rounded badges with transparent outline -->
-            <div class="pt-2 flex flex-wrap items-center gap-2.5">
-              <button 
-                id="modal-share-btn" 
-                type="button" 
-                title="Copy direct link to this spot" 
-                aria-label="Copy direct link"
-                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none cursor-pointer"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span>Copy link</span>
-              </button>
-
+            <!-- External Action Button Bar: View on Google Maps left, Share Place right -->
+            <div class="pt-1 pb-0 flex flex-wrap items-center justify-between gap-2">
               <a 
                 id="modal-map-link" 
                 href="#" 
@@ -323,6 +309,20 @@
                 <span>View on Google Maps</span>
                 <span class="text-xs">↗</span>
               </a>
+
+              <button 
+                id="modal-share-btn" 
+                type="button" 
+                title="Copy direct link to this spot" 
+                aria-label="Share Place"
+                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none cursor-pointer"
+              >
+                <svg id="modal-share-copy-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span id="modal-share-check-icon" class="hidden text-xs leading-none font-bold">✔</span>
+                <span id="modal-share-label">Share Place</span>
+              </button>
             </div>
           </div>
         </div>
@@ -415,10 +415,14 @@
     const modalTags = document.getElementById("modal-tags");
     const modalMapLink = document.getElementById("modal-map-link");
     const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalShareLabel = document.getElementById("modal-share-label");
+    const modalShareCopyIcon = document.getElementById("modal-share-copy-icon");
+    const modalShareCheckIcon = document.getElementById("modal-share-check-icon");
     const modalPrevBtn = document.getElementById("modal-prev-btn");
     const modalNextBtn = document.getElementById("modal-next-btn");
     const toastEl = document.getElementById("toast-notification");
     const toastMsg = document.getElementById("toast-message");
+    let shareResetTimeout = null;
 
     // Extract Flickr numerical photo ID safely as BigInt
     function extractFlickrPhotoId(url) {
@@ -685,6 +689,12 @@
       activeModalIndex = index;
       const place = visiblePlaces[index];
 
+      // Reset Share button state when opening a spot
+      if (shareResetTimeout) clearTimeout(shareResetTimeout);
+      if (modalShareLabel) modalShareLabel.textContent = "Share Place";
+      if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
+      if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
+
       // Lock body scroll to prevent background scroll bleed
       document.body.style.overflow = 'hidden';
 
@@ -696,12 +706,12 @@
 
       // City Badge in Modal (clickable to filter via rich search)
       if (place.city) {
-        modalCityBadge.className = "badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold capitalize tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
+        modalCityBadge.className = "badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold uppercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
         modalCityBadge.innerHTML = `
           <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
           </svg>
-          <span>${escapeHtml(formatCityName(place.city))}</span>
+          <span>${escapeHtml(place.city.toUpperCase())}</span>
         `;
         modalCityBadge.onclick = (e) => {
           e.stopPropagation();
@@ -723,8 +733,8 @@
       place.categories.forEach(cat => {
         const tagBtn = document.createElement("button");
         tagBtn.type = "button";
-        tagBtn.className = "badge-pill px-3 py-1 rounded-full lowercase font-bold border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer";
-        tagBtn.textContent = cat.toLowerCase();
+        tagBtn.className = "badge-pill px-3 py-1 rounded-full uppercase font-bold border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer";
+        tagBtn.textContent = cat.toUpperCase();
         tagBtn.onclick = (e) => {
           e.stopPropagation();
           closeModal();
@@ -860,8 +870,8 @@
 
       allPlaces.forEach(p => {
         if (p.city) addTerm(formatCityName(p.city), "city", 1);
-        p.categories.forEach(c => addTerm(c.toLowerCase(), "category", 2));
-        if (p.title) addTerm(p.title, "title", 3);
+        p.categories.forEach(c => addTerm(c.toLowerCase(), "food", 2));
+        if (p.title) addTerm(p.title, "place", 3);
 
         const words = `${p.title} ${p.description}`.toLowerCase().match(/[a-z0-9\u4e00-\u9fa5]{3,}/g) || [];
         words.forEach(w => {
@@ -1021,9 +1031,17 @@
         tempInput.select();
         try {
           document.execCommand("copy");
-          showToast("Link copied to clipboard!");
+          if (modalShareLabel) modalShareLabel.textContent = "Copied";
+          if (modalShareCopyIcon) modalShareCopyIcon.classList.add("hidden");
+          if (modalShareCheckIcon) modalShareCheckIcon.classList.remove("hidden");
+          if (shareResetTimeout) clearTimeout(shareResetTimeout);
+          shareResetTimeout = setTimeout(() => {
+            if (modalShareLabel) modalShareLabel.textContent = "Share Place";
+            if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
+            if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
+          }, 2200);
         } catch {
-          showToast("Unable to copy link");
+          // Silently ignore if copy command fails
         }
         document.body.removeChild(tempInput);
       });
