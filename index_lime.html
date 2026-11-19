@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taiwan Top — Lime</title>
+
+  <!-- Open Graph & SEO Metadata -->
+  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:title" content="Taiwan Top" />
+  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Taiwan Top" />
+  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+
+  <!-- Lime Typography: Plus Jakarta Sans for display/headings, Inter for UI & prose, JetBrains Mono for figures & keys -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PapaParse for Google Sheets CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        borderRadius: {
+          none: '0px',
+          sm: '8px',
+          DEFAULT: '12px',
+          md: '12px',
+          lg: '16px',
+          xl: '20px',
+          full: '9999px'
+        },
+        extend: {
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+            sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            canvas: 'var(--lm-bg-canvas)',
+            surface: 'var(--lm-bg-surface)',
+            'surface-subtle': 'var(--lm-bg-surface-subtle)',
+            'surface-hover': 'var(--lm-bg-surface-hover)',
+            'ink-1': 'var(--lm-fg-primary)',
+            'ink-2': 'var(--lm-fg-secondary)',
+            'ink-3': 'var(--lm-fg-muted)',
+            hairline: 'var(--lm-border)',
+            'hairline-strong': 'var(--lm-border-strong)',
+            'lime-fill': 'var(--lm-accent)',
+            'lime-ink': 'var(--lm-accent-fg)',
+            'lime-soft': 'var(--lm-accent-soft)',
+            'lime-text': 'var(--lm-accent-text)',
+            'forest-fill': 'var(--lm-forest)',
+            'forest-ink': 'var(--lm-forest-fg)',
+            'status-ok': 'var(--lm-status-ok)',
+            'status-warn': 'var(--lm-status-warn)',
+            'status-err': 'var(--lm-status-err)',
+            'ring-focus': 'var(--lm-ring)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Lime Design Tokens: Warm Mineral Off-White & Deep Forest Charcoal, Electric Lime Action Slab, High-Clarity Pill & Card Radii */
+    .lime {
+      --lm-bg-canvas: #f6f7f4;
+      --lm-bg-surface: #ffffff;
+      --lm-bg-surface-subtle: #eef1ea;
+      --lm-bg-surface-hover: #e3e8dc;
+      --lm-fg-primary: #142218;
+      --lm-fg-secondary: #48584d;
+      --lm-fg-muted: #6f8074;
+      --lm-border: #dfe4d8;
+      --lm-border-strong: #c6d0bc;
+      --lm-accent: #9fe870;
+      --lm-accent-fg: #142218;
+      --lm-accent-soft: #e9f8de;
+      --lm-accent-text: #275e14;
+      --lm-forest: #163320;
+      --lm-forest-fg: #f6f7f4;
+      --lm-status-ok: #1b7a38;
+      --lm-status-warn: #b4690e;
+      --lm-status-err: #c9342b;
+      --lm-ring: #2d7a22;
+      --lm-scrim: rgba(16, 28, 20, 0.52);
+    }
+
+    html.dark .lime {
+      --lm-bg-canvas: #0f1511;
+      --lm-bg-surface: #161f19;
+      --lm-bg-surface-subtle: #1d2821;
+      --lm-bg-surface-hover: #26342b;
+      --lm-fg-primary: #f1f5ef;
+      --lm-fg-secondary: #a7b6ab;
+      --lm-fg-muted: #76877b;
+      --lm-border: #25332a;
+      --lm-border-strong: #35483c;
+      --lm-accent: #9fe870;
+      --lm-accent-fg: #111e15;
+      --lm-accent-soft: rgba(159, 232, 112, 0.14);
+      --lm-accent-text: #a8ee7b;
+      --lm-forest: #e9f5e4;
+      --lm-forest-fg: #111e15;
+      --lm-status-ok: #6ee79b;
+      --lm-status-warn: #fbbf24;
+      --lm-status-err: #f87171;
+      --lm-ring: #9fe870;
+      --lm-scrim: rgba(7, 11, 8, 0.74);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100dvh;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lime Typography Roles */
+    .lm-display {
+      font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+      font-size: 20px;
+      line-height: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .lm-heading {
+      font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .lm-body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 400;
+    }
+
+    .lm-caption {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500;
+    }
+
+    .lm-mono {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 16px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lm-mono-xs {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      line-height: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Lime Surface Cards & Pill Controls */
+    .lm-card {
+      background-color: var(--lm-bg-surface);
+      border: 1px solid var(--lm-border);
+      border-radius: 16px;
+    }
+
+    .lm-btn-primary {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background-color: var(--lm-accent);
+      color: var(--lm-accent-fg);
+      border: 1px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 16px;
+      transition: transform 0.12s ease, filter 0.15s ease;
+      cursor: pointer;
+    }
+    .lm-btn-primary:hover {
+      filter: brightness(0.96);
+    }
+    .lm-btn-primary:active {
+      transform: scale(0.985);
+    }
+
+    .lm-btn-secondary {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: var(--lm-bg-surface);
+      color: var(--lm-fg-primary);
+      border: 1px solid var(--lm-border-strong);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 16px;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+    .lm-btn-secondary:hover {
+      background-color: var(--lm-bg-surface-subtle);
+    }
+
+    .lm-btn-ghost {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: transparent;
+      color: var(--lm-fg-secondary);
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+    }
+    .lm-btn-ghost:hover {
+      background-color: var(--lm-bg-surface-subtle);
+      color: var(--lm-fg-primary);
+    }
+
+    .lm-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 6px;
+      background-color: var(--lm-bg-surface-subtle);
+      border: 1px solid var(--lm-border);
+      color: var(--lm-fg-muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .lm-focus:focus-visible {
+      outline: 2px solid var(--lm-ring);
+      outline-offset: 2px;
+    }
+
+    /* Scrollbar utility */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="lime bg-canvas text-ink-1 font-sans selection:bg-lime-fill selection:text-lime-ink">
+
+  <!-- Lime Top Navigation Header -->
+  <header class="sticky top-0 z-30 w-full bg-surface/95 backdrop-blur-md border-b border-hairline">
+    <div class="max-w-[1480px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-8 h-8 rounded-full bg-lime-fill text-lime-ink flex items-center justify-center flex-shrink-0 font-display font-bold text-xs" aria-hidden="true">
+          TW
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <a href="index.html" class="lm-display text-ink-1 hover:text-lime-text transition-colors truncate lm-focus rounded-sm">
+              Taiwan Top
+            </a>
+            <span id="sync-badge" class="hidden sm:inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full bg-surface-subtle border border-hairline lm-mono-xs text-ink-2">
+              <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-status-warn"></span>
+              <span id="sync-status-label">Syncing</span>
+            </span>
+          </div>
+          <p class="lm-caption text-ink-2 truncate">
+            Curated food &amp; city guide by
+            <a
+              href="https://www.instagram.com/alby.food/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-lime-text underline decoration-hairline-strong underline-offset-2 hover:opacity-80 transition-opacity lm-focus rounded-sm"
+            >@albyantoniazzi</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button
+          id="theme-toggle"
+          type="button"
+          aria-label="Toggle color mode"
+          class="lm-btn-secondary !h-9 !px-3.5 lm-focus"
+        >
+          <svg class="w-3.5 h-3.5 text-ink-2" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <circle cx="8" cy="8" r="5.5" />
+            <path d="M8 2.5A5.5 5.5 0 0 1 8 13.5V2.5Z" fill="currentColor" />
+          </svg>
+          <span id="theme-toggle-label">Dark</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Directory Workspace -->
+  <main class="max-w-[1480px] mx-auto px-4 sm:px-6 py-5 pb-24 space-y-5">
+
+    <!-- Directory Summary & Search Card -->
+    <section class="lm-card p-4 sm:p-5 space-y-4" aria-label="Directory summary and search">
+      <!-- 4-Card Summary Strip -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="rounded-md bg-canvas border border-hairline p-3.5">
+          <div class="lm-caption text-ink-3">Curated spots</div>
+          <div id="stat-total-places" class="lm-mono text-lg font-semibold text-ink-1 mt-1">--</div>
+        </div>
+        <div class="rounded-md bg-canvas border border-hairline p-3.5">
+          <div class="lm-caption text-ink-3">Matching view</div>
+          <div id="stat-visible-places" class="lm-mono text-lg font-semibold text-ink-1 mt-1">--</div>
+        </div>
+        <div class="rounded-md bg-canvas border border-hairline p-3.5">
+          <div class="lm-caption text-ink-3">Taiwan cities</div>
+          <div id="stat-total-cities" class="lm-mono text-lg font-semibold text-ink-1 mt-1">--</div>
+        </div>
+        <div class="rounded-md bg-lime-soft border border-hairline p-3.5">
+          <div class="lm-caption text-lime-text">Active filter</div>
+          <div id="stat-active-filter" class="lm-mono text-sm font-semibold text-ink-1 mt-1.5 truncate">All spots</div>
+        </div>
+      </div>
+
+      <!-- Search Input & Primary Action Row -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div class="relative flex-1 max-w-2xl" id="search-wrapper">
+          <div class="flex items-center h-10 rounded-full border border-hairline-strong bg-canvas focus-within:bg-surface focus-within:border-ring-focus transition-colors px-3.5">
+            <span class="pr-2.5 text-ink-3 flex items-center" aria-hidden="true">
+              <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="7" cy="7" r="4.5" />
+                <path d="M10.5 10.5L14 14" stroke-linecap="round" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search spots, cities, dishes, or notes..."
+              autocomplete="off"
+              aria-label="Search directory places"
+              aria-autocomplete="list"
+              aria-controls="search-autocomplete"
+              class="w-full h-full bg-transparent text-ink-1 placeholder:text-ink-3 lm-body pr-2 focus:outline-none"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              aria-label="Clear search query"
+              class="hidden mr-1.5 px-2.5 h-6 rounded-full bg-surface-subtle hover:bg-surface-hover text-ink-2 lm-caption cursor-pointer lm-focus"
+            >
+              Clear
+            </button>
+            <span class="hidden sm:inline-flex lm-kbd" aria-hidden="true">/</span>
+          </div>
+
+          <!-- Autocomplete Popover -->
+          <ul
+            id="search-autocomplete"
+            role="listbox"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 z-40 max-h-64 overflow-y-auto rounded-lg bg-surface border border-hairline-strong divide-y divide-hairline shadow-md scrollbar-none"
+          ></ul>
+        </div>
+
+        <div class="flex items-center gap-2 justify-end">
+          <button
+            id="reset-filters-btn"
+            type="button"
+            class="lm-btn-secondary lm-focus"
+          >
+            Reset filters
+          </button>
+          <button
+            id="open-random-btn"
+            type="button"
+            class="lm-btn-primary lm-focus"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M2 5h3l2 3m4 3h3m0 0l-2-2m2 2l-2 2M2 11h3l5-6h4m0 0l-2-2m2 2l-2 2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>Pick a random spot</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Skeleton Grid -->
+    <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="lm-card overflow-hidden animate-pulse">
+        <div class="aspect-[4/3] bg-surface-subtle border-b border-hairline"></div>
+        <div class="p-4 space-y-2.5">
+          <div class="h-4 w-2/3 bg-surface-subtle rounded-sm"></div>
+          <div class="h-3 w-full bg-surface-subtle rounded-sm"></div>
+        </div>
+      </div>
+      <div class="lm-card overflow-hidden animate-pulse hidden sm:block">
+        <div class="aspect-[4/3] bg-surface-subtle border-b border-hairline"></div>
+        <div class="p-4 space-y-2.5">
+          <div class="h-4 w-1/2 bg-surface-subtle rounded-sm"></div>
+          <div class="h-3 w-5/6 bg-surface-subtle rounded-sm"></div>
+        </div>
+      </div>
+      <div class="lm-card overflow-hidden animate-pulse hidden lg:block">
+        <div class="aspect-[4/3] bg-surface-subtle border-b border-hairline"></div>
+        <div class="p-4 space-y-2.5">
+          <div class="h-4 w-3/4 bg-surface-subtle rounded-sm"></div>
+          <div class="h-3 w-2/3 bg-surface-subtle rounded-sm"></div>
+        </div>
+      </div>
+      <div class="lm-card overflow-hidden animate-pulse hidden xl:block">
+        <div class="aspect-[4/3] bg-surface-subtle border-b border-hairline"></div>
+        <div class="p-4 space-y-2.5">
+          <div class="h-4 w-1/2 bg-surface-subtle rounded-sm"></div>
+          <div class="h-3 w-4/5 bg-surface-subtle rounded-sm"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State with Goose Runner Mini-Game -->
+    <section id="empty-state" class="hidden lm-card py-10 px-4 flex flex-col items-center justify-center text-center">
+      <div class="w-10 h-10 rounded-full bg-lime-soft border border-hairline flex items-center justify-center text-lime-text mb-3">
+        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5" />
+          <path d="M10.5 10.5L14 14M5.5 7h3" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h2 id="empty-state-title" class="lm-heading text-ink-1 mb-1">No spots match your filter</h2>
+      <p class="lm-caption text-ink-2 mb-5">Clear your filters or press Space to jump with the Taiwan goose.</p>
+
+      <div class="w-full max-w-xl rounded-lg border border-hairline bg-canvas p-3.5">
+        <canvas
+          id="dino-canvas"
+          width="600"
+          height="160"
+          class="w-full h-[160px] bg-surface rounded-md cursor-pointer border border-hairline select-none touch-none"
+        ></canvas>
+        <div class="mt-3 flex items-center justify-between lm-caption text-ink-2">
+          <span class="inline-flex items-center gap-1.5">
+            <span>Jump:</span>
+            <kbd class="lm-kbd">Space</kbd>
+            <span>or tap canvas</span>
+          </span>
+          <button
+            type="button"
+            id="empty-reset-btn"
+            class="text-lime-text hover:underline font-semibold cursor-pointer lm-focus rounded-sm"
+          >
+            Clear all filters
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Places Card Grid -->
+    <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+
+    <!-- Load More Bar -->
+    <div id="load-more-container" class="hidden lm-card p-3.5 flex items-center justify-between gap-3">
+      <span id="pagination-progress" class="lm-caption text-ink-2">Showing 0 of 0 spots</span>
+      <button
+        id="load-more-btn"
+        type="button"
+        class="lm-btn-secondary lm-focus"
+      >
+        Load more spots
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Fixed Bottom Category Filter Pill Bar -->
+  <nav
+    aria-label="Category filter bar"
+    class="fixed bottom-0 left-0 right-0 z-30 w-full bg-surface/95 backdrop-blur-md border-t border-hairline h-14 flex items-center"
+  >
+    <div
+      id="category-scroll-container"
+      class="w-full max-w-[1480px] mx-auto overflow-x-auto scrollbar-none px-4 sm:px-6"
+    >
+      <div class="flex items-center gap-2 flex-nowrap min-w-max" id="category-filters">
+        <button
+          data-category="ALL"
+          type="button"
+          class="cat-filter-btn h-8 px-3.5 rounded-full inline-flex items-center gap-1.5 border border-transparent bg-forest-fill text-forest-ink lm-caption font-semibold cursor-pointer lm-focus"
+        >
+          <span>All</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Spot Detail Dialog -->
+  <div
+    id="detail-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 backdrop-blur-xs"
+    style="background-color: var(--lm-scrim);"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="modal-title"
+  >
+    <div id="modal-container" class="relative w-full max-w-xl">
+      <div
+        id="modal-card"
+        class="w-full max-h-[90dvh] flex flex-col bg-surface border border-hairline-strong rounded-xl shadow-xl overflow-hidden"
+      >
+        <!-- Dialog Header -->
+        <div class="px-4 py-3 bg-surface-subtle border-b border-hairline flex items-center justify-between gap-2 flex-shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="modal-index-indicator" class="lm-mono-xs px-2 py-0.5 rounded-full bg-surface border border-hairline text-ink-2">01 / 01</span>
+            <span class="lm-caption text-ink-3 truncate">Spot details</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button
+              id="modal-prev-btn"
+              type="button"
+              aria-label="Previous spot"
+              class="lm-btn-secondary !h-8 !px-3 lm-focus disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <span>Prev</span>
+              <kbd class="lm-kbd hidden sm:inline-flex">←</kbd>
+            </button>
+            <button
+              id="modal-next-btn"
+              type="button"
+              aria-label="Next spot"
+              class="lm-btn-secondary !h-8 !px-3 lm-focus disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <span>Next</span>
+              <kbd class="lm-kbd hidden sm:inline-flex">→</kbd>
+            </button>
+            <button
+              id="modal-close-btn"
+              type="button"
+              aria-label="Close spot details"
+              class="lm-btn-ghost !h-8 !w-8 !p-0 lm-focus"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dialog Body -->
+        <div class="overflow-y-auto flex-1 scrollbar-none">
+          <div class="w-full aspect-[4/3] bg-surface-subtle border-b border-hairline overflow-hidden">
+            <img
+              id="modal-image"
+              src=""
+              alt=""
+              class="w-full h-full object-cover object-center"
+            />
+          </div>
+
+          <div class="p-4 sm:p-5 space-y-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-1.5 mb-2.5">
+                <button type="button" id="modal-city-badge" class="lm-focus"></button>
+                <div id="modal-tags" class="flex flex-wrap items-center gap-1.5"></div>
+              </div>
+              <h2 id="modal-title" class="lm-display text-ink-1"></h2>
+            </div>
+
+            <div class="rounded-lg bg-canvas border border-hairline p-4">
+              <div class="lm-caption text-ink-3 mb-1">Field notes</div>
+              <p id="modal-description" class="lm-body text-ink-2 whitespace-pre-line"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dialog Footer -->
+        <div class="px-4 py-3.5 bg-surface-subtle border-t border-hairline flex items-center justify-between gap-2 flex-shrink-0">
+          <button
+            id="modal-share-btn"
+            type="button"
+            class="lm-btn-secondary lm-focus"
+          >
+            <svg class="w-3.5 h-3.5 text-ink-2" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <rect x="5" y="5" width="9" height="9" rx="1.5" />
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" />
+            </svg>
+            <span id="modal-share-label">Copy link</span>
+          </button>
+
+          <a
+            id="modal-map-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="lm-btn-primary lm-focus"
+          >
+            <span>Open in Google Maps</span>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M4.5 11.5l7-7M11.5 4.5H6m5.5 0V10" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lime Toast Notification -->
+  <div
+    id="toast-notification"
+    role="status"
+    aria-live="polite"
+    class="hidden fixed bottom-16 right-4 z-50 px-3.5 py-2 rounded-full bg-forest-fill text-forest-ink shadow-md flex items-center gap-2"
+  >
+    <span class="w-2 h-2 rounded-full bg-lime-fill inline-block" aria-hidden="true"></span>
+    <span id="toast-message" class="lm-caption font-semibold">Link copied to clipboard</span>
+  </div>
+
+  <script>
+    // CSV URL & Fallback Image
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatCityName(str) {
+      if (!str) return '';
+      return str
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    // State Variables
+    let allPlaces = [];
+    let visiblePlaces = [];
+    let displayedCount = 24;
+    const PAGE_SIZE = 24;
+    let activeCategory = "ALL";
+    let searchQuery = "";
+    let searchDebounceTimer = null;
+    let activeModalIndex = -1;
+    let autocompleteIndex = [];
+    let activeSuggestionIdx = -1;
+
+    // DOM Elements
+    const gridEl = document.getElementById("places-grid");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const paginationProgressEl = document.getElementById("pagination-progress");
+    const loadingEl = document.getElementById("loading-state");
+    const emptyEl = document.getElementById("empty-state");
+    const emptyTitleEl = document.getElementById("empty-state-title");
+    const emptyResetBtn = document.getElementById("empty-reset-btn");
+    const categoryContainer = document.getElementById("category-filters");
+    const searchWrapper = document.getElementById("search-wrapper");
+    const searchInput = document.getElementById("search-input");
+    const searchAutocompleteEl = document.getElementById("search-autocomplete");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const resetFiltersBtn = document.getElementById("reset-filters-btn");
+    const openRandomBtn = document.getElementById("open-random-btn");
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+
+    // Telemetry Elements
+    const syncDot = document.getElementById("sync-dot");
+    const syncStatusLabel = document.getElementById("sync-status-label");
+    const statTotalPlaces = document.getElementById("stat-total-places");
+    const statVisiblePlaces = document.getElementById("stat-visible-places");
+    const statTotalCities = document.getElementById("stat-total-cities");
+    const statActiveFilter = document.getElementById("stat-active-filter");
+
+    // Modal & Toast Elements
+    const modalEl = document.getElementById("detail-modal");
+    const modalCardEl = document.getElementById("modal-card");
+    const modalIndexIndicator = document.getElementById("modal-index-indicator");
+    const modalImageEl = document.getElementById("modal-image");
+    const modalTitleEl = document.getElementById("modal-title");
+    const modalDescEl = document.getElementById("modal-description");
+    const modalCityBadge = document.getElementById("modal-city-badge");
+    const modalTags = document.getElementById("modal-tags");
+    const modalMapLink = document.getElementById("modal-map-link");
+    const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalShareLabel = document.getElementById("modal-share-label");
+    const modalPrevBtn = document.getElementById("modal-prev-btn");
+    const modalNextBtn = document.getElementById("modal-next-btn");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
+    const toastEl = document.getElementById("toast-notification");
+    const toastMsg = document.getElementById("toast-message");
+    let shareResetTimeout = null;
+
+    function extractFlickrPhotoId(url) {
+      if (!url || typeof url !== 'string') return 0n;
+      const match = url.match(/\/(\d+)_/);
+      try {
+        return match ? BigInt(match[1]) : 0n;
+      } catch {
+        return 0n;
+      }
+    }
+
+    function slugify(str) {
+      return String(str || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function showToast(message) {
+      if (!toastEl || !toastMsg) return;
+      toastMsg.textContent = message;
+      toastEl.classList.remove("hidden");
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toastEl.classList.add("hidden");
+      }, 2400);
+    }
+
+    function updateStatusStrip() {
+      const uniqueCities = new Set(allPlaces.map(p => p.city.toLowerCase()).filter(Boolean));
+      if (statTotalPlaces) statTotalPlaces.textContent = String(allPlaces.length);
+      if (statVisiblePlaces) statVisiblePlaces.textContent = String(visiblePlaces.length);
+      if (statTotalCities) statTotalCities.textContent = String(uniqueCities.size);
+
+      const activeParts = [];
+      if (activeCategory !== "ALL") activeParts.push(activeCategory);
+      if (searchQuery.trim()) activeParts.push(`"${searchQuery.trim()}"`);
+      if (statActiveFilter) {
+        statActiveFilter.textContent = activeParts.length > 0 ? activeParts.join(" · ") : "All spots";
+      }
+
+      const shown = Math.min(displayedCount, visiblePlaces.length);
+      if (paginationProgressEl) {
+        paginationProgressEl.textContent = `Showing ${shown} of ${visiblePlaces.length} curated spots`;
+      }
+    }
+
+    function createCardElement(place, index) {
+      const card = document.createElement('article');
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Inspect ${place.title}`);
+      card.className = "lm-card overflow-hidden flex flex-col cursor-pointer select-none lm-focus group hover:border-hairline-strong transition-colors";
+
+      const fullImageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+      const safeTitle = escapeHtml(place.title);
+      const safeDesc = escapeHtml(place.description);
+      const safeCity = escapeHtml(place.city || 'Taiwan');
+      const primaryCat = place.categories[0] ? escapeHtml(place.categories[0]) : 'Spot';
+
+      card.innerHTML = `
+        <div class="relative aspect-[4/3] w-full bg-surface-subtle border-b border-hairline overflow-hidden">
+          <img
+            src="${escapeHtml(fullImageSource)}"
+            alt="${safeTitle}"
+            loading="lazy"
+            decoding="async"
+            onerror="if(this.dataset.triedOriginal!=='true'){this.dataset.triedOriginal='true';this.src='${escapeHtml(place.photo || DEFAULT_FALLBACK_IMAGE)}';}else{this.onerror=null;this.src='${DEFAULT_FALLBACK_IMAGE}';}"
+            class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+          />
+          <span class="lm-caption absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface/95 border border-hairline text-ink-1 backdrop-blur-xs">
+            ${safeCity}
+          </span>
+        </div>
+
+        <div class="p-4 flex-1 flex flex-col justify-between gap-3.5">
+          <div>
+            <div class="flex items-start justify-between gap-2">
+              <h2 class="lm-heading text-ink-1 group-hover:text-lime-text transition-colors line-clamp-1">
+                ${safeTitle}
+              </h2>
+              <span class="lm-mono-xs text-ink-3 flex-shrink-0 pt-0.5">#${String(index + 1).padStart(3, '0')}</span>
+            </div>
+            ${safeDesc ? `
+              <p class="lm-body text-ink-2 mt-1.5 line-clamp-2">
+                ${safeDesc}
+              </p>
+            ` : `
+              <p class="lm-body text-ink-3 mt-1.5">
+                No field notes recorded.
+              </p>
+            `}
+          </div>
+
+          <div class="pt-3 border-t border-hairline flex items-center justify-between gap-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-lime-soft text-lime-text lm-caption truncate">
+              ${primaryCat}
+            </span>
+            <span class="lm-caption text-ink-2 group-hover:text-ink-1 transition-colors flex-shrink-0">
+              View spot →
+            </span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => openModal(index));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(index);
+        }
+      });
+
+      return card;
+    }
+
+    function renderCards() {
+      gridEl.innerHTML = "";
+      updateStatusStrip();
+
+      if (visiblePlaces.length === 0) {
+        gridEl.classList.add("hidden");
+        emptyEl.classList.remove("hidden");
+        loadMoreContainer.classList.add("hidden");
+        startDinoGame();
+        return;
+      }
+
+      gridEl.classList.remove("hidden");
+      emptyEl.classList.add("hidden");
+      stopDinoGame();
+
+      const slice = visiblePlaces.slice(0, displayedCount);
+      const fragment = document.createDocumentFragment();
+      slice.forEach((place, idx) => {
+        fragment.appendChild(createCardElement(place, idx));
+      });
+      gridEl.appendChild(fragment);
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function appendNextBatch() {
+      const start = displayedCount;
+      const end = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+      if (start >= end) return;
+
+      const fragment = document.createDocumentFragment();
+      for (let i = start; i < end; i++) {
+        fragment.appendChild(createCardElement(visiblePlaces[i], i));
+      }
+      gridEl.appendChild(fragment);
+      displayedCount = end;
+      updateStatusStrip();
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function filterPlaces() {
+      const q = searchQuery.toLowerCase().trim();
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+
+      visiblePlaces = allPlaces.filter(place => {
+        const matchesCategory = (activeCategory === "ALL") || place.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase());
+        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
+        return matchesCategory && matchesSearch;
+      });
+
+      displayedCount = PAGE_SIZE;
+      renderCards();
+    }
+
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const btnCat = btn.getAttribute("data-category");
+        const isActive = btnCat.toLowerCase() === activeCategory.toLowerCase();
+
+        if (isActive) {
+          btn.className = "cat-filter-btn h-8 px-3.5 rounded-full inline-flex items-center gap-1.5 border border-transparent bg-forest-fill text-forest-ink lm-caption font-semibold cursor-pointer lm-focus transition-colors";
+        } else {
+          btn.className = "cat-filter-btn h-8 px-3.5 rounded-full inline-flex items-center gap-1.5 border border-hairline bg-canvas text-ink-2 hover:text-ink-1 hover:bg-surface-subtle hover:border-hairline-strong lm-caption cursor-pointer lm-focus transition-colors";
+        }
+      });
+    }
+
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory.toLowerCase() === cat.toLowerCase() && cat.toLowerCase() !== "all") ? "ALL" : cat;
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    };
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      const catDisplay = {};
+
+      allPlaces.forEach(p => {
+        const seenInPlace = new Set();
+        p.categories.forEach(c => {
+          const clean = c.trim().replace(/\s+/g, ' ');
+          const key = clean.toLowerCase();
+          if (key && !seenInPlace.has(key)) {
+            seenInPlace.add(key);
+            catCount[key] = (catCount[key] || 0) + 1;
+            if (!catDisplay[key]) catDisplay[key] = clean;
+          }
+        });
+      });
+
+      const sortedKeys = Object.keys(catCount).sort((a, b) => a.localeCompare(b));
+
+      const allBtn = categoryContainer.querySelector('[data-category="ALL"]');
+      categoryContainer.innerHTML = "";
+      if (allBtn) {
+        allBtn.innerHTML = `<span>All</span><span class="lm-mono-xs opacity-75">${allPlaces.length}</span>`;
+        allBtn.onclick = () => setCategory("ALL");
+        categoryContainer.appendChild(allBtn);
+      }
+
+      sortedKeys.forEach(key => {
+        const count = catCount[key] || 0;
+        const displayLabel = catDisplay[key];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-category", displayLabel);
+        btn.className = "cat-filter-btn h-8 px-3.5 rounded-full inline-flex items-center gap-1.5 border border-hairline bg-canvas text-ink-2 hover:text-ink-1 hover:bg-surface-subtle hover:border-hairline-strong lm-caption cursor-pointer lm-focus transition-colors";
+        btn.innerHTML = `<span>${escapeHtml(displayLabel)}</span><span class="lm-mono-xs opacity-75">${count}</span>`;
+        btn.onclick = () => setCategory(displayLabel);
+        categoryContainer.appendChild(btn);
+      });
+    }
+
+    function parseUrlState() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("cat")) activeCategory = params.get("cat");
+        const initialCity = params.get("city");
+        const initialQ = params.get("q");
+        if (initialQ || initialCity) {
+          searchQuery = [initialCity, initialQ].filter(Boolean).join(" ").trim();
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateUrlState(targetSpotSlug = null) {
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
+      try {
+        const params = new URLSearchParams();
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      } catch (err) {
+        // Ignore history API errors in constrained iframes
+      }
+    }
+
+    window.openModal = function(index) {
+      if (!visiblePlaces[index]) return;
+      activeModalIndex = index;
+      const place = visiblePlaces[index];
+
+      if (shareResetTimeout) clearTimeout(shareResetTimeout);
+      if (modalShareLabel) modalShareLabel.textContent = "Copy link";
+
+      document.body.style.overflow = 'hidden';
+
+      if (modalIndexIndicator) {
+        modalIndexIndicator.textContent = `${String(index + 1).padStart(2, '0')} / ${String(visiblePlaces.length).padStart(2, '0')}`;
+      }
+
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
+      modalImageEl.alt = place.title;
+      modalTitleEl.textContent = place.title;
+      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
+
+      if (place.city) {
+        modalCityBadge.className = "h-7 px-3 rounded-full inline-flex items-center gap-1 bg-forest-fill text-forest-ink lm-caption font-semibold cursor-pointer lm-focus";
+        modalCityBadge.innerHTML = `<span>${escapeHtml(place.city)}</span>`;
+        modalCityBadge.onclick = (e) => {
+          e.stopPropagation();
+          searchQuery = formatCityName(place.city);
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.remove("hidden");
+          closeModal();
+          updateUrlState();
+          filterPlaces();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        modalCityBadge.classList.remove("hidden");
+      } else {
+        modalCityBadge.classList.add("hidden");
+      }
+
+      modalTags.innerHTML = "";
+      place.categories.forEach(cat => {
+        const tagBtn = document.createElement("button");
+        tagBtn.type = "button";
+        tagBtn.className = "h-7 px-3 rounded-full inline-flex items-center bg-lime-soft text-lime-text hover:brightness-95 lm-caption cursor-pointer lm-focus transition-all";
+        tagBtn.textContent = cat;
+        tagBtn.onclick = (e) => {
+          e.stopPropagation();
+          closeModal();
+          setCategory(cat);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        modalTags.appendChild(tagBtn);
+      });
+
+      const queryMap = encodeURIComponent(`${place.title} ${place.city || 'Taiwan'}`);
+      modalMapLink.href = place.link || `https://www.google.com/maps/search/?api=1&query=${queryMap}`;
+
+      if (modalPrevBtn) modalPrevBtn.disabled = index <= 0;
+      if (modalNextBtn) modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      updateUrlState(place.slug);
+
+      modalEl.classList.remove("hidden");
+      modalEl.classList.add("flex");
+      modalEl.setAttribute("aria-hidden", "false");
+    };
+
+    window.closeModal = function() {
+      activeModalIndex = -1;
+      document.body.style.overflow = '';
+      modalEl.classList.add("hidden");
+      modalEl.classList.remove("flex");
+      modalEl.setAttribute("aria-hidden", "true");
+      updateUrlState();
+    };
+
+    function navigateModal(delta) {
+      if (activeModalIndex === -1) return;
+      const nextIdx = activeModalIndex + delta;
+      if (nextIdx >= 0 && nextIdx < visiblePlaces.length) {
+        openModal(nextIdx);
+      }
+    }
+
+    function processPlacesData(rows) {
+      const parsedPlaces = [];
+
+      rows.forEach((row, idx) => {
+        const title = (row.Title || row.title || row.Name || row.name || "").trim();
+        if (!title) return;
+
+        const city = (row.City || row.city || row.Location || row.location || "").trim();
+        const rawCats = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || "").trim();
+        const seenCats = new Set();
+        const categories = [];
+        if (rawCats) {
+          rawCats.split(/[,;|]+/).forEach(c => {
+            const clean = c.trim().replace(/\s+/g, ' ');
+            const key = clean.toLowerCase();
+            if (clean && !seenCats.has(key)) {
+              seenCats.add(key);
+              categories.push(clean);
+            }
+          });
+        }
+        const description = (row.Description || row.description || row.Notes || row.notes || "").trim();
+        const photo = (row.Photo || row.photo || row.Image || row.image || row.URL || "").trim();
+        const link = (row.Link || row.link || row.Maps || row.maps || row["Google Maps"] || "").trim();
+
+        parsedPlaces.push({
+          id: idx,
+          slug: slugify(title),
+          title,
+          city,
+          categories,
+          description,
+          photo,
+          link,
+          flickrId: extractFlickrPhotoId(photo)
+        });
+      });
+
+      allPlaces = parsedPlaces.sort((a, b) => {
+        if (b.flickrId > a.flickrId) return 1;
+        if (b.flickrId < a.flickrId) return -1;
+        return 0;
+      });
+
+      buildAutocompleteIndex();
+      populateCategoryFilters();
+
+      const deepLinkedSpotSlug = parseUrlState();
+      updateToolbarStyles();
+      filterPlaces();
+
+      if (deepLinkedSpotSlug) {
+        const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
+        if (targetIndex !== -1) openModal(targetIndex);
+      }
+
+      loadingEl.classList.add("hidden");
+      if (syncDot) {
+        syncDot.classList.remove("bg-status-warn");
+        syncDot.classList.add("bg-status-ok");
+      }
+      if (syncStatusLabel) syncStatusLabel.textContent = "Synced";
+    }
+
+    async function fetchPlaces() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: results => processPlacesData(results.data || []),
+          error: err => {
+            console.error("CSV Parse Error:", err);
+            loadingEl.classList.add("hidden");
+            if (syncDot) {
+              syncDot.classList.remove("bg-status-warn");
+              syncDot.classList.add("bg-status-err");
+            }
+            if (syncStatusLabel) syncStatusLabel.textContent = "Error";
+            emptyEl.classList.remove("hidden");
+            startDinoGame();
+          }
+        });
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        loadingEl.classList.add("hidden");
+        if (syncDot) {
+          syncDot.classList.remove("bg-status-warn");
+          syncDot.classList.add("bg-status-err");
+        }
+        if (syncStatusLabel) syncStatusLabel.textContent = "Error";
+        emptyEl.classList.remove("hidden");
+        startDinoGame();
+      }
+    }
+
+    // Search Autocomplete
+    function buildAutocompleteIndex() {
+      const seen = new Map();
+      const stopWords = new Set(["the", "and", "for", "with", "from", "that", "this", "are", "was", "have", "has", "not", "but", "you", "your", "all", "can", "into", "very", "just", "one", "out", "about"]);
+
+      const addTerm = (label, type, priority) => {
+        const clean = label.trim();
+        if (!clean || clean.length < 2) return;
+        const key = clean.toLowerCase();
+        const existing = seen.get(key);
+        if (!existing || priority < existing.priority) {
+          seen.set(key, { label: clean, type, priority });
+        }
+      };
+
+      allPlaces.forEach(p => {
+        if (p.city) addTerm(formatCityName(p.city), "city", 1);
+        p.categories.forEach(c => addTerm(c.toLowerCase(), "category", 2));
+        if (p.title) addTerm(p.title, "spot", 3);
+
+        const words = `${p.title} ${p.description}`.toLowerCase().match(/[a-z0-9\u4e00-\u9fa5]{3,}/g) || [];
+        words.forEach(w => {
+          if (!stopWords.has(w)) addTerm(w, "term", 4);
+        });
+      });
+
+      autocompleteIndex = Array.from(seen.values()).sort((a, b) => a.priority - b.priority || a.label.localeCompare(b.label));
+    }
+
+    function hideAutocomplete() {
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.classList.add("hidden");
+      searchAutocompleteEl.innerHTML = "";
+    }
+
+    function applyAutocompleteSuggestion(suggestionLabel) {
+      const currentVal = searchInput.value;
+      const parts = currentVal.split(/\s+/);
+      if (parts.length > 1 && currentVal.slice(-1) !== " ") {
+        parts[parts.length - 1] = suggestionLabel;
+        searchInput.value = parts.join(" ");
+      } else {
+        searchInput.value = suggestionLabel;
+      }
+      searchQuery = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      hideAutocomplete();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    function renderAutocompleteSuggestions(val) {
+      const raw = val.trim().toLowerCase();
+      if (!raw) {
+        hideAutocomplete();
+        return;
+      }
+
+      const tokens = raw.split(/\s+/);
+      const lastToken = tokens[tokens.length - 1];
+
+      const topMatches = autocompleteIndex
+        .filter(item => {
+          const lower = item.label.toLowerCase();
+          return lower.includes(raw) || (lastToken.length >= 2 && lower.startsWith(lastToken));
+        })
+        .slice(0, 8);
+
+      if (topMatches.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.innerHTML = "";
+
+      topMatches.forEach((match) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.className = "px-3.5 py-2.5 lm-body text-ink-1 hover:bg-surface-subtle cursor-pointer flex items-center justify-between gap-2 transition-colors";
+
+        li.innerHTML = `
+          <span class="truncate">${escapeHtml(match.label)}</span>
+          <span class="lm-mono-xs px-2 py-0.5 rounded-full bg-surface-subtle border border-hairline text-ink-3 flex-shrink-0">${escapeHtml(match.type)}</span>
+        `;
+
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          applyAutocompleteSuggestion(match.label);
+        });
+
+        searchAutocompleteEl.appendChild(li);
+      });
+
+      searchAutocompleteEl.classList.remove('hidden');
+    }
+
+    searchInput.addEventListener("input", () => {
+      const val = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !val);
+      renderAutocompleteSuggestions(val);
+
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        searchQuery = val;
+        updateUrlState();
+        filterPlaces();
+      }, 150);
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      const items = searchAutocompleteEl.querySelectorAll("li");
+      if (searchAutocompleteEl.classList.contains("hidden") || items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
+      } else if (e.key === "Enter" && activeSuggestionIdx >= 0) {
+        e.preventDefault();
+        const label = items[activeSuggestionIdx].querySelector("span").textContent;
+        applyAutocompleteSuggestion(label);
+        return;
+      } else if (e.key === "Escape") {
+        hideAutocomplete();
+        return;
+      } else {
+        return;
+      }
+
+      items.forEach((el, i) => {
+        el.classList.toggle("bg-surface-subtle", i === activeSuggestionIdx);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (searchWrapper && !searchWrapper.contains(e.target)) {
+        hideAutocomplete();
+      }
+    });
+
+    function clearAllFilters() {
+      searchInput.value = "";
+      searchQuery = "";
+      activeCategory = "ALL";
+      clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      updateUrlState();
+      filterPlaces();
+    });
+
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", clearAllFilters);
+    if (emptyResetBtn) emptyResetBtn.addEventListener("click", clearAllFilters);
+
+    if (openRandomBtn) {
+      openRandomBtn.addEventListener("click", () => {
+        if (visiblePlaces.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * visiblePlaces.length);
+        openModal(randomIndex);
+      });
+    }
+
+    // Modal & Global Keyboard Shortcuts
+    modalEl.addEventListener("click", (e) => {
+      if (e.target === modalEl || e.target.id === "modal-container") {
+        closeModal();
+      }
+    });
+
+    if (modalPrevBtn) modalPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(-1); });
+    if (modalNextBtn) modalNextBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(1); });
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
+
+    if (modalShareBtn) {
+      modalShareBtn.addEventListener("click", () => {
+        const tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand("copy");
+          if (modalShareLabel) modalShareLabel.textContent = "Copied";
+          showToast("Spot link copied to clipboard");
+          if (shareResetTimeout) clearTimeout(shareResetTimeout);
+          shareResetTimeout = setTimeout(() => {
+            if (modalShareLabel) modalShareLabel.textContent = "Copy link";
+          }, 2200);
+        } catch {
+          // Ignore clipboard error
+        }
+        document.body.removeChild(tempInput);
+      });
+    }
+
+    let touchStartX = 0;
+    modalCardEl.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalCardEl.addEventListener("touchend", (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        navigateModal(diff < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/" && document.activeElement !== searchInput && activeModalIndex === -1) {
+        e.preventDefault();
+        searchInput.focus();
+        return;
+      }
+      if (activeModalIndex !== -1) {
+        if (e.key === "Escape") closeModal();
+        else if (e.key === "ArrowLeft") navigateModal(-1);
+        else if (e.key === "ArrowRight") navigateModal(1);
+      }
+    });
+
+    // Empty-State Goose Runner (Lime Forest Ink & Electric Lime Accent)
+    const dinoCanvas = document.getElementById("dino-canvas");
+    const dinoCtx = dinoCanvas ? dinoCanvas.getContext("2d") : null;
+    let gameLoopId = null;
+    let gameRunning = false;
+    let gameOver = false;
+    let gameScore = 0;
+    let gameSpeed = 4.2;
+    let frameTick = 0;
+    let audioCtx = null;
+
+    const goose = {
+      x: 48,
+      y: 112,
+      w: 28,
+      h: 34,
+      vy: 0,
+      gravity: 0.58,
+      jumpPower: -8.8,
+      grounded: true
+    };
+    let obstacles = [];
+
+    function playQuackSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(210, now + 0.14);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(950, now);
+        filter.Q.setValueAtTime(3.2, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.17);
+      } catch {
+        // Ignore audio errors
+      }
+    }
+
+    function resetDinoGame() {
+      goose.y = 112;
+      goose.vy = 0;
+      goose.grounded = true;
+      obstacles = [];
+      gameScore = 0;
+      gameSpeed = 4.2;
+      gameOver = false;
+      gameRunning = true;
+      if (emptyTitleEl) emptyTitleEl.classList.add("opacity-40");
+    }
+
+    function jumpGoose() {
+      if (emptyEl.classList.contains("hidden")) return;
+      if (!gameRunning || gameOver) {
+        resetDinoGame();
+      }
+      if (goose.grounded) {
+        goose.vy = goose.jumpPower;
+        goose.grounded = false;
+        playQuackSound();
+      }
+    }
+
+    function spawnObstacle() {
+      const types = ["hotpot", "flame", "oven"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const specs = {
+        hotpot: { w: 28, h: 24 },
+        flame: { w: 20, h: 28 },
+        oven: { w: 30, h: 30 }
+      };
+      const spec = specs[type];
+      obstacles.push({
+        x: 620,
+        y: 146 - spec.h,
+        w: spec.w,
+        h: spec.h,
+        type
+      });
+    }
+
+    function drawGoose(ctx, ink, bg, accent) {
+      const x = Math.round(goose.x);
+      const y = Math.round(goose.y);
+      ctx.fillStyle = ink;
+
+      ctx.fillRect(x, y + 14, 18, 11);
+      ctx.fillRect(x - 3, y + 12, 5, 5);
+      ctx.fillRect(x + 13, y + 2, 5, 14);
+      ctx.fillRect(x + 13, y, 9, 6);
+
+      ctx.fillStyle = accent;
+      ctx.fillRect(x + 22, y + 2, 6, 3);
+
+      ctx.fillStyle = bg;
+      ctx.fillRect(x + 18, y + 1, 2, 2);
+
+      ctx.fillStyle = ink;
+      const step = goose.grounded ? Math.floor(frameTick / 5) % 2 : 0;
+      if (step === 0) {
+        ctx.fillRect(x + 5, y + 25, 2, 9);
+        ctx.fillRect(x + 12, y + 25, 2, 6);
+      } else {
+        ctx.fillRect(x + 5, y + 25, 2, 6);
+        ctx.fillRect(x + 12, y + 25, 2, 9);
+      }
+    }
+
+    function drawObstacle(ctx, obs, ink, accent) {
+      const x = Math.round(obs.x);
+      const y = Math.round(obs.y);
+      const flicker = Math.floor(frameTick / 4) % 2 === 0;
+
+      if (obs.type === "hotpot") {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 3, y + 5, 22, 13);
+        ctx.fillRect(x, y + 7, 3, 4);
+        ctx.fillRect(x + 25, y + 7, 3, 4);
+        ctx.fillStyle = accent;
+        ctx.fillRect(x + 7, y + 19, 14, flicker ? 5 : 3);
+      } else if (obs.type === "flame") {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 2, y + 23, 16, 5);
+        ctx.fillStyle = accent;
+        ctx.fillRect(x + 4, y + 8, 12, 15);
+        ctx.fillRect(x + 7, y + (flicker ? 1 : 4), 6, 8);
+      } else {
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 4, y, 22, 6);
+        ctx.fillRect(x, y + 6, 30, 24);
+        ctx.fillStyle = accent;
+        ctx.fillRect(x + 9, y + 16, 12, flicker ? 14 : 12);
+      }
+    }
+
+    function updateDinoGame() {
+      if (!dinoCtx || emptyEl.classList.contains("hidden")) {
+        gameLoopId = null;
+        return;
+      }
+
+      const isDark = document.documentElement.classList.contains("dark");
+      const ink = isDark ? "#f1f5ef" : "#142218";
+      const bg = isDark ? "#161f19" : "#ffffff";
+      const rule = isDark ? "#25332a" : "#dfe4d8";
+      const accent = isDark ? "#9fe870" : "#2d7a22";
+      dinoCtx.clearRect(0, 0, dinoCanvas.width, dinoCanvas.height);
+
+      dinoCtx.fillStyle = rule;
+      dinoCtx.fillRect(0, 146, dinoCanvas.width, 1);
+
+      if (gameRunning && !gameOver) {
+        frameTick++;
+        goose.vy += goose.gravity;
+        goose.y += goose.vy;
+
+        if (goose.y >= 112) {
+          goose.y = 112;
+          goose.vy = 0;
+          goose.grounded = true;
+        }
+
+        if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 360 - Math.random() * 140) {
+          spawnObstacle();
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          const obs = obstacles[i];
+          obs.x -= gameSpeed;
+          if (obs.x + obs.w < 0) {
+            obstacles.splice(i, 1);
+            gameScore++;
+            gameSpeed = Math.min(8.2, 4.2 + gameScore * 0.12);
+            continue;
+          }
+
+          if (
+            goose.x + 4 < obs.x + obs.w - 4 &&
+            goose.x + goose.w - 6 > obs.x + 4 &&
+            goose.y + 4 < obs.y + obs.h - 2 &&
+            goose.y + goose.h - 2 > obs.y + 4
+          ) {
+            gameOver = true;
+            gameRunning = false;
+            if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-40");
+          }
+        }
+      }
+
+      drawGoose(dinoCtx, ink, bg, accent);
+      obstacles.forEach(obs => drawObstacle(dinoCtx, obs, ink, accent));
+
+      dinoCtx.fillStyle = ink;
+      dinoCtx.font = "500 11px 'JetBrains Mono', monospace";
+      dinoCtx.textAlign = "right";
+      dinoCtx.fillText(`SCORE ${String(gameScore).padStart(3, "0")}`, dinoCanvas.width - 12, 20);
+
+      if (gameOver) {
+        dinoCtx.textAlign = "center";
+        dinoCtx.fillText("Game over — press Space or tap to retry", dinoCanvas.width / 2, 74);
+      }
+
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function startDinoGame() {
+      if (!dinoCanvas || gameLoopId) return;
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function stopDinoGame() {
+      if (gameLoopId) {
+        cancelAnimationFrame(gameLoopId);
+        gameLoopId = null;
+      }
+      gameRunning = false;
+      if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-40");
+    }
+
+    if (dinoCanvas) {
+      dinoCanvas.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        jumpGoose();
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.activeElement !== searchInput && !emptyEl.classList.contains("hidden")) {
+        e.preventDefault();
+        jumpGoose();
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        stopDinoGame();
+      } else if (!emptyEl.classList.contains("hidden")) {
+        startDinoGame();
+      }
+    });
+
+    // Theme Initialization & Switcher
+    function updateThemeUI(isDark) {
+      if (themeToggleLabel) {
+        themeToggleLabel.textContent = isDark ? "Light" : "Dark";
+      }
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem("taiwantop-theme");
+      const isDark = savedTheme === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      updateThemeUI(isDark);
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("taiwantop-theme", isDark ? "dark" : "light");
+        updateThemeUI(isDark);
+      });
+    }
+
+    loadMoreBtn.addEventListener("click", () => {
+      appendNextBatch();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      fetchPlaces();
+    });
+  </script>
+</body>
+</html>
