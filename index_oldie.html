@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAIWAN TOP</title>
+
+  <!-- Open Graph & SEO Metadata -->
+  <meta name="description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:title" content="TAIWAN TOP" />
+  <meta property="og:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TAIWAN TOP" />
+  <meta name="twitter:description" content="A curated directory of places in Taiwan by @albyantoniazzi" />
+  <meta name="twitter:image" content="https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg" />
+
+  <!-- Google Sans Code Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PapaParse for Google Sheets CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Google Sans Code"', 'monospace']
+          },
+          colors: {
+            brand: {
+              bg: '#EBF1E5',
+              black: '#292929',
+              badge: '#292929'
+            },
+            surface: {
+              DEFAULT: '#0f131a',
+              card: '#161b24',
+              border: '#232b3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    /* Scrollbar utility */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Smooth theme transitions */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out;
+    }
+    .theme-transition,
+    .theme-transition *,
+    .theme-transition *::before,
+    .theme-transition *::after {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+    }
+
+    /* Unified badge styling across all sections */
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1rem;
+      letter-spacing: 0.01em;
+    }
+  </style>
+</head>
+
+<body class="font-mono bg-[#EBF1E5] dark:bg-[#333333] text-[#292929] dark:text-white selection:bg-[#292929] selection:text-[#EBF1E5] dark:selection:bg-white dark:selection:text-[#333333]">
+
+  <!-- Header: Centered Title, Subtitle & Unified Rich Search -->
+  <header class="w-full max-w-[1920px] mx-auto pt-4 sm:pt-6 pb-5 px-3 sm:px-[10vw] flex flex-col items-center text-center relative">
+    
+    <!-- Theme Toggle positioned cleanly at top right aligned with title -->
+    <div class="absolute right-3 sm:right-[10vw] top-4 sm:top-6">
+      <button 
+        id="theme-toggle" 
+        type="button" 
+        title="Toggle Light / Dark Mode"
+        aria-label="Toggle Light and Dark Mode" 
+        class="p-1 flex items-center justify-center focus:outline-none transition-transform hover:scale-105"
+      >
+        <svg 
+          id="yin-yang-icon" 
+          class="w-6 h-6 transition-transform duration-500 ease-in-out cursor-pointer drop-shadow-sm select-none" 
+          viewBox="0 0 100 100"
+        >
+          <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#292929" stroke-width="2.5"/>
+          <path d="M 50 3 A 47 47 0 0 1 50 97 A 23.5 23.5 0 0 1 50 50 A 23.5 23.5 0 0 0 50 3 Z" fill="#292929"/>
+          <circle cx="50" cy="26.5" r="7" fill="#292929"/>
+          <circle cx="50" cy="73.5" r="7" fill="#ffffff"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Brand Text & Creator Credit -->
+    <a href="index.html" class="text-xl sm:text-2xl italic font-medium tracking-tight leading-8 text-[#292929] dark:text-white hover:opacity-80 transition-opacity">
+      Taiwan Top
+    </a>
+    <p class="mt-0.5 text-[11px] sm:text-xs text-[#292929]/80 dark:text-white/80 font-normal">
+      by <a 
+        href="https://www.instagram.com/alby.food/" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="underline font-normal hover:opacity-75 transition-opacity"
+      >@albyantoniazzi</a>
+    </p>
+
+    <!-- Rich Search Input (Integrates Cities, Categories, Titles & Descriptions) -->
+    <div class="relative w-full max-w-md mt-4 text-left" id="search-wrapper">
+      <div class="relative flex items-center border-b border-[#292929] dark:border-white">
+        <svg class="w-4 h-4 absolute left-0 text-[#292929]/60 dark:text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search places, cities, food..." 
+          autocomplete="off"
+          aria-autocomplete="list"
+          aria-controls="search-autocomplete"
+          class="w-full bg-transparent border-0 rounded-none pl-6 pr-7 py-1.5 text-[11px] sm:text-xs font-semibold text-[#292929] dark:text-white placeholder:italic placeholder:font-normal placeholder:text-[11px] sm:placeholder:text-xs placeholder-[#292929]/60 dark:placeholder-white/60 focus:outline-none transition"
+        />
+        <button 
+          id="clear-search-btn" 
+          type="button" 
+          aria-label="Clear search"
+          class="hidden absolute right-0.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#292929] dark:text-white hover:opacity-70 cursor-pointer"
+        >
+          ×
+        </button>
+      </div>
+
+      <!-- Autocomplete Suggestions List (Cities, Categories, Titles, Words) -->
+      <ul 
+        id="search-autocomplete" 
+        role="listbox"
+        class="hidden absolute left-0 right-0 top-full mt-0 z-40 max-h-64 overflow-y-auto rounded-none bg-[#EBF1E5] dark:bg-[#333333] border border-t-0 border-[#292929] dark:border-white shadow-xl divide-y divide-[#292929]/15 dark:divide-white/15 scrollbar-none"
+      ></ul>
+    </div>
+
+  </header>
+
+  <!-- Main Grid with mobile side margins matching thumbnail spacing (12px / gap-3) -->
+  <main class="w-full max-w-[1920px] mx-auto px-3 sm:px-[10vw] pt-2 pb-16">
+
+    <!-- Loading State -->
+    <div id="loading-state" class="py-24 flex items-center justify-center">
+      <div class="flex items-center gap-3 text-xs sm:text-sm font-semibold text-[#292929] dark:text-white">
+        <span class="w-3 h-3 rounded-full bg-[#292929] dark:bg-white animate-ping"></span>
+        <span>Loading places...</span>
+      </div>
+    </div>
+
+    <!-- Empty State with Dino Game -->
+    <div id="empty-state" class="hidden py-12 flex flex-col items-center justify-center text-center">
+      <p id="empty-state-title" class="text-base sm:text-lg font-bold text-[#292929] dark:text-white mb-2 transition-opacity duration-200">Sorry, nothing here...</p>
+      
+      <!-- Dino Game Container -->
+    <div class="relative w-full max-w-xl mx-auto flex flex-col items-center">
+      <canvas 
+        id="dino-canvas" 
+        width="600" 
+        height="160" 
+        class="w-full h-[160px] bg-transparent cursor-pointer border-b border-[#292929] dark:border-white select-none touch-none"
+      ></canvas>
+      <div class="mt-3 flex items-center justify-center w-full text-[11px] font-semibold text-[#292929] dark:text-white px-1">
+        <span>Press [SPACE] or Tap to Jump</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsive Adaptive Grid: Single column on mobile, multi-column on larger screens -->
+  <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"></div>
+
+  <!-- Load More Button Container -->
+  <div id="load-more-container" class="hidden pt-6 pb-1 flex justify-center items-center">
+    <button 
+      id="load-more-btn" 
+      type="button" 
+      class="py-1 text-[#292929] dark:text-white font-bold text-xs uppercase tracking-normal hover:underline underline-offset-4 transition cursor-pointer focus:outline-none"
+    >
+      LOAD MORE&nbsp;<span class="text-xs">↓</span>
+    </button>
+  </div>
+
+</main>
+
+  <!-- Full-Width Bottom Categories Toolbar -->
+  <nav 
+    aria-label="Category Filters"
+    class="fixed bottom-0 left-0 right-0 z-30 w-full bg-[#EBF1E5]/95 dark:bg-[#333333]/95 backdrop-blur-md border-t border-[#292929] dark:border-white py-2.5"
+  >
+    <div 
+      id="category-scroll-container"
+      class="w-full overflow-x-auto scrollbar-none px-4 sm:px-6"
+    >
+      <div class="flex items-center justify-start sm:justify-center gap-1.5 flex-nowrap min-w-max mx-auto" id="category-filters">
+        <button 
+          data-category="ALL"
+          class="cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer"
+        >
+          ALL
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div 
+    id="detail-modal" 
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 lg:p-8 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+  >
+    <!-- Modal Wrapper with Centered Outside Navigation Arrows -->
+    <div id="modal-container" class="relative w-full max-w-lg flex items-center justify-center">
+
+      <!-- Previous Arrow (Hidden on phone, shown on desktop browser) -->
+      <button 
+        id="modal-prev-btn" 
+        type="button" 
+        title="Previous spot (←)"
+        aria-label="Previous spot"
+        class="hidden md:block absolute md:-left-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
+      >
+        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Next Arrow (Hidden on phone, shown on desktop browser) -->
+      <button 
+        id="modal-next-btn" 
+        type="button" 
+        title="Next spot (→)"
+        aria-label="Next spot"
+        class="hidden md:block absolute md:-right-14 top-1/2 -translate-y-1/2 z-30 p-2 text-white hover:opacity-70 transition disabled:opacity-20 disabled:pointer-events-none focus:outline-none cursor-pointer"
+      >
+        <svg class="w-7 h-7 sm:w-9 sm:h-9 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <!-- Modal Card Box (Same border radius as home photos) -->
+      <div 
+        id="modal-card" 
+        class="relative w-full max-h-[92vh] flex flex-col bg-[#EBF1E5] dark:bg-[#333333] border border-[#292929] dark:border-white rounded-md shadow-2xl overflow-hidden transform scale-95 transition-all duration-200"
+      >
+        <!-- Small Top-Right Close Button -->
+        <button 
+          id="modal-close-btn" 
+          type="button" 
+          title="Close (Esc)" 
+          aria-label="Close modal"
+          class="absolute top-2.5 right-2.5 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-[#292929]/75 hover:bg-[#292929] text-white backdrop-blur-sm transition-colors cursor-pointer focus:outline-none"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="overflow-y-auto flex-1 scrollbar-none">
+          <!-- Hero Photo (1:1 square crop) -->
+          <div class="relative w-full aspect-square bg-stone-300 dark:bg-stone-800 overflow-hidden border-b border-[#292929] dark:border-white">
+            <img 
+              id="modal-image" 
+              src="" 
+              alt="" 
+              class="w-full h-full object-cover object-center" 
+            />
+          </div>
+
+          <!-- Body Details -->
+          <div class="p-3.5 sm:p-4 space-y-2">
+            <div>
+              <div class="flex items-center gap-1 mb-3 flex-wrap">
+                <button type="button" id="modal-city-badge" class="cursor-pointer"></button>
+                <div id="modal-tags" class="flex flex-wrap items-center gap-1"></div>
+              </div>
+              <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-[#292929] dark:text-white"></h2>
+            </div>
+
+            <p id="modal-description" class="text-[11px] sm:text-xs italic leading-relaxed text-[#292929] dark:text-white font-semibold whitespace-pre-line"></p>
+
+            <!-- External Action Button Bar: View on Google Maps left, Share Place right -->
+            <div class="pt-1 pb-0 flex flex-wrap items-center justify-between gap-2">
+              <a 
+                id="modal-map-link" 
+                href="#" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm cursor-pointer"
+              >
+                <span>View on Google Maps</span>
+                <span class="text-xs">↗</span>
+              </a>
+
+              <button 
+                id="modal-share-btn" 
+                type="button" 
+                title="Copy direct link to this spot" 
+                aria-label="Share Place"
+                class="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-full border border-[#292929] dark:border-white bg-transparent hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] text-[#292929] dark:text-white font-medium text-xs normal-case tracking-normal transition shadow-sm focus:outline-none cursor-pointer"
+              >
+                <svg id="modal-share-copy-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span id="modal-share-check-icon" class="hidden text-xs leading-none font-bold">✔</span>
+                <span id="modal-share-label">Share Place</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div 
+    id="toast-notification" 
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#292929] text-[#EBF1E5] dark:bg-white dark:text-[#292929] text-xs font-semibold rounded-full shadow-xl backdrop-blur-md opacity-0 translate-y-3 pointer-events-none transition-all duration-200 flex items-center gap-2"
+  >
+    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-message">Link copied to clipboard!</span>
+  </div>
+
+  <script>
+    // CSV URL & Fallback Image
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv";
+    const DEFAULT_FALLBACK_IMAGE = "https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg";
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function capitalizeFirstLetter(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function formatCityName(str) {
+      if (!str) return '';
+      return str
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    // Safely get photo URL: keep the original source as primary/fallback to avoid Flickr 404 on missing _z sizes
+    function getGridThumbnailUrl(url) {
+      if (!url) return DEFAULT_FALLBACK_IMAGE;
+      return url;
+    }
+
+    // State Variables
+    let allPlaces = [];
+    let visiblePlaces = [];
+    let displayedCount = 24;
+    const PAGE_SIZE = 24;
+    let activeCategory = "ALL";
+    let searchQuery = "";
+    let searchDebounceTimer = null;
+    let rotationDeg = 0;
+    let activeModalIndex = -1;
+    let autocompleteIndex = [];
+    let activeSuggestionIdx = -1;
+
+    // DOM Elements
+    const gridEl = document.getElementById("places-grid");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const loadingEl = document.getElementById("loading-state");
+    const emptyEl = document.getElementById("empty-state");
+    const emptyTitleEl = document.getElementById("empty-state-title");
+    const categoryContainer = document.getElementById("category-filters");
+    const categoryScrollContainer = document.getElementById("category-scroll-container");
+    const searchWrapper = document.getElementById("search-wrapper");
+    const searchInput = document.getElementById("search-input");
+    const searchAutocompleteEl = document.getElementById("search-autocomplete");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const yinYangIcon = document.getElementById("yin-yang-icon");
+
+    // Modal & Toast Elements
+    const modalEl = document.getElementById("detail-modal");
+    const modalCardEl = document.getElementById("modal-card");
+    const modalImageEl = document.getElementById("modal-image");
+    const modalTitleEl = document.getElementById("modal-title");
+    const modalDescEl = document.getElementById("modal-description");
+    const modalCityBadge = document.getElementById("modal-city-badge");
+    const modalTags = document.getElementById("modal-tags");
+    const modalMapLink = document.getElementById("modal-map-link");
+    const modalShareBtn = document.getElementById("modal-share-btn");
+    const modalShareLabel = document.getElementById("modal-share-label");
+    const modalShareCopyIcon = document.getElementById("modal-share-copy-icon");
+    const modalShareCheckIcon = document.getElementById("modal-share-check-icon");
+    const modalPrevBtn = document.getElementById("modal-prev-btn");
+    const modalNextBtn = document.getElementById("modal-next-btn");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
+    const toastEl = document.getElementById("toast-notification");
+    const toastMsg = document.getElementById("toast-message");
+    let shareResetTimeout = null;
+
+    // Extract Flickr numerical photo ID safely as BigInt
+    function extractFlickrPhotoId(url) {
+      if (!url || typeof url !== 'string') return 0n;
+      const match = url.match(/\/(\d+)_/);
+      try {
+        return match ? BigInt(match[1]) : 0n;
+      } catch {
+        return 0n;
+      }
+    }
+
+    function slugify(str) {
+      return String(str || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function showToast(message) {
+      if (!toastEl || !toastMsg) return;
+      toastMsg.textContent = message;
+      toastEl.classList.remove("opacity-0", "translate-y-3", "pointer-events-none");
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toastEl.classList.add("opacity-0", "translate-y-3", "pointer-events-none");
+      }, 2400);
+    }
+
+    function createCardElement(place, index) {
+      const card = document.createElement('article');
+      card.className = "relative aspect-square w-full rounded-md overflow-hidden bg-stone-300 dark:bg-stone-800 group cursor-pointer select-none shadow-sm";
+
+      const fullImageSource = place.photo || DEFAULT_FALLBACK_IMAGE;
+      const safeTitle = escapeHtml(place.title);
+      const safeDesc = escapeHtml(place.description);
+
+      card.innerHTML = `
+        <!-- 1:1 Square Photo -->
+        <img 
+          src="${escapeHtml(fullImageSource)}" 
+          alt="${safeTitle}" 
+          loading="lazy"
+          decoding="async"
+          onerror="if(this.dataset.triedOriginal!=='true'){this.dataset.triedOriginal='true';this.src='${escapeHtml(place.photo || DEFAULT_FALLBACK_IMAGE)}';}else{this.onerror=null;this.src='${DEFAULT_FALLBACK_IMAGE}';}"
+          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+        />
+
+        <!-- Smooth Dark Gradient Overlay for Legibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
+
+        <!-- Overlaid Title & Subtitle (Categories hidden until modal open) -->
+        <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 flex flex-col justify-end text-left pointer-events-none">
+          <h2 class="text-sm sm:text-base font-bold text-white tracking-tight leading-snug line-clamp-1 drop-shadow-sm">
+            ${safeTitle}
+          </h2>
+          ${safeDesc ? `
+            <p class="text-[11px] sm:text-xs text-white/85 font-medium mt-0.5 line-clamp-1 leading-snug">
+              ${safeDesc}
+            </p>
+          ` : ''}
+        </div>
+      `;
+
+      // Card click opens modal
+      card.addEventListener('click', () => openModal(index));
+
+      return card;
+    }
+
+    function renderCards() {
+      gridEl.innerHTML = "";
+      if (visiblePlaces.length === 0) {
+        emptyEl.classList.remove("hidden");
+        loadMoreContainer.classList.add("hidden");
+        startDinoGame();
+        return;
+      }
+
+      emptyEl.classList.add("hidden");
+      stopDinoGame();
+
+      const slice = visiblePlaces.slice(0, displayedCount);
+      const fragment = document.createDocumentFragment();
+      slice.forEach((place, idx) => {
+        fragment.appendChild(createCardElement(place, idx));
+      });
+      gridEl.appendChild(fragment);
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function appendNextBatch() {
+      const start = displayedCount;
+      const end = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+      if (start >= end) return;
+
+      const fragment = document.createDocumentFragment();
+      for (let i = start; i < end; i++) {
+        fragment.appendChild(createCardElement(visiblePlaces[i], i));
+      }
+      gridEl.appendChild(fragment);
+      displayedCount = end;
+
+      loadMoreContainer.classList.toggle("hidden", displayedCount >= visiblePlaces.length);
+    }
+
+    function filterPlaces() {
+      const q = searchQuery.toLowerCase().trim();
+      const rawTokens = q.split(/\s+/).filter(Boolean);
+
+      visiblePlaces = allPlaces.filter(place => {
+        const matchesCategory = (activeCategory === "ALL") || place.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase());
+        const searchable = `${place.title} ${place.description} ${place.categories.join(' ')} ${place.city}`.toLowerCase();
+        const matchesSearch = rawTokens.length === 0 || rawTokens.every(tok => searchable.includes(tok));
+        return matchesCategory && matchesSearch;
+      });
+
+      displayedCount = PAGE_SIZE;
+      renderCards();
+    }
+
+    function updateToolbarStyles() {
+      const buttons = categoryContainer.querySelectorAll(".cat-filter-btn");
+      buttons.forEach(btn => {
+        const btnCat = btn.getAttribute("data-category");
+        const isActive = btnCat.toLowerCase() === activeCategory.toLowerCase();
+
+        if (isActive) {
+          btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-transparent text-[#292929] dark:border-white dark:bg-transparent dark:text-white shadow-sm cursor-pointer";
+        } else {
+          btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer";
+        }
+      });
+    }
+
+    window.setCategory = function(cat) {
+      activeCategory = (activeCategory.toLowerCase() === cat.toLowerCase() && cat.toLowerCase() !== "all") ? "ALL" : cat;
+      updateToolbarStyles();
+      updateUrlState();
+      filterPlaces();
+    };
+
+    function populateCategoryFilters() {
+      const catCount = {};
+      const catDisplay = {};
+
+      allPlaces.forEach(p => {
+        const seenInPlace = new Set();
+        p.categories.forEach(c => {
+          const clean = c.trim().replace(/\s+/g, ' ');
+          const key = clean.toLowerCase();
+          if (key && !seenInPlace.has(key)) {
+            seenInPlace.add(key);
+            catCount[key] = (catCount[key] || 0) + 1;
+            if (!catDisplay[key]) catDisplay[key] = clean;
+          }
+        });
+      });
+
+      // Sort categories alphabetically
+      const sortedKeys = Object.keys(catCount).sort((a, b) => a.localeCompare(b));
+
+      // Keep "ALL" button with total count and append sorted categories
+      const allBtn = categoryContainer.querySelector('[data-category="ALL"]');
+      categoryContainer.innerHTML = "";
+      if (allBtn) {
+        allBtn.innerHTML = `<span>ALL</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${allPlaces.length}</span>`;
+        allBtn.onclick = () => setCategory("ALL");
+        categoryContainer.appendChild(allBtn);
+      }
+
+      sortedKeys.forEach(key => {
+        const count = catCount[key] || 0;
+        const displayLabel = catDisplay[key];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-category", displayLabel);
+        btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer";
+        btn.innerHTML = `<span>${escapeHtml(displayLabel.toUpperCase())}</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${count}</span>`;
+        btn.onclick = () => setCategory(displayLabel);
+        categoryContainer.appendChild(btn);
+      });
+    }
+
+    function renderStatsOverview() {
+      const uniqueCities = new Set(allPlaces.map(p => p.city.toLowerCase()).filter(Boolean));
+      const catCounts = {};
+      allPlaces.forEach(p => {
+        p.categories.forEach(c => {
+          const clean = c.trim();
+          if (clean) catCounts[clean] = (catCounts[clean] || 0) + 1;
+        });
+      });
+
+      const totalPlacesEl = document.getElementById("footer-total-places");
+      const totalCitiesEl = document.getElementById("footer-total-cities");
+      const totalCatsEl = document.getElementById("footer-total-cats");
+      const topCatsContainer = document.getElementById("footer-top-categories");
+
+      if (totalPlacesEl) totalPlacesEl.textContent = allPlaces.length;
+      if (totalCitiesEl) totalCitiesEl.textContent = uniqueCities.size;
+      if (totalCatsEl) totalCatsEl.textContent = Object.keys(catCounts).length;
+
+      if (topCatsContainer) {
+        topCatsContainer.innerHTML = "";
+        const sorted = Object.entries(catCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+
+        sorted.forEach(([cat, count]) => {
+          const pct = Math.max(8, Math.round((count / maxCount) * 100));
+          const row = document.createElement("div");
+          row.className = "flex items-center gap-3";
+          row.innerHTML = `
+            <button 
+              type="button"
+              class="badge-pill px-3 py-0.5 rounded-full lowercase border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-colors cursor-pointer flex-shrink-0 w-28 truncate text-center"
+            >
+              ${escapeHtml(cat.toLowerCase())}
+            </button>
+            <div class="flex-1 h-2 rounded-full bg-[#292929]/15 dark:bg-white/15 overflow-hidden">
+              <div class="h-full bg-[#292929] dark:bg-white rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+            <span class="text-xs font-bold tabular-nums w-7 text-right">${count}</span>
+          `;
+          row.querySelector("button").addEventListener("click", () => {
+            setCategory(cat);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          topCatsContainer.appendChild(row);
+        });
+      }
+    }
+
+    function parseUrlState() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("cat")) activeCategory = params.get("cat");
+        const initialCity = params.get("city");
+        const initialQ = params.get("q");
+        if (initialQ || initialCity) {
+          searchQuery = [initialCity, initialQ].filter(Boolean).join(" ").trim();
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        }
+        return params.get("spot");
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateUrlState(targetSpotSlug = null) {
+      if (window.location.protocol === 'blob:' || !window.location.origin || window.location.origin === 'null') {
+        return;
+      }
+      try {
+        const params = new URLSearchParams();
+        if (activeCategory !== "ALL") params.set("cat", activeCategory);
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (targetSpotSlug) params.set("spot", targetSpotSlug);
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      } catch (err) {
+        // Silently catch history API access errors in constrained iframes
+      }
+    }
+
+    // Modal Operations with Scroll-Lock Prevention
+    window.openModal = function(index) {
+      if (!visiblePlaces[index]) return;
+      activeModalIndex = index;
+      const place = visiblePlaces[index];
+
+      // Reset Share button state when opening a spot
+      if (shareResetTimeout) clearTimeout(shareResetTimeout);
+      if (modalShareLabel) modalShareLabel.textContent = "Share Place";
+      if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
+      if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
+
+      // Lock body scroll to prevent background scroll bleed
+      document.body.style.overflow = 'hidden';
+
+      // Full resolution for modal hero
+      modalImageEl.src = place.photo || DEFAULT_FALLBACK_IMAGE;
+      modalImageEl.alt = place.title;
+      modalTitleEl.textContent = place.title;
+      modalDescEl.textContent = place.description || "No description provided for this curated spot.";
+
+      // City Badge in Modal (clickable to filter via rich search)
+      if (place.city) {
+        modalCityBadge.className = "badge-pill inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold uppercase tracking-normal border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white transition-all duration-150 cursor-pointer shadow-sm";
+        modalCityBadge.innerHTML = `
+          <svg class="w-3 h-3 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+          <span>${escapeHtml(place.city.toUpperCase())}</span>
+        `;
+        modalCityBadge.onclick = (e) => {
+          e.stopPropagation();
+          searchQuery = formatCityName(place.city);
+          searchInput.value = searchQuery;
+          clearSearchBtn.classList.remove("hidden");
+          closeModal();
+          updateUrlState();
+          filterPlaces();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        modalCityBadge.classList.remove("hidden");
+      } else {
+        modalCityBadge.classList.add("hidden");
+      }
+
+      // Categories in Modal (clickable to filter by category)
+      modalTags.innerHTML = "";
+      place.categories.forEach(cat => {
+        const tagBtn = document.createElement("button");
+        tagBtn.type = "button";
+        tagBtn.className = "badge-pill px-3 py-1 rounded-full uppercase font-bold border border-[#292929] dark:border-white bg-transparent text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] transition-all duration-150 cursor-pointer";
+        tagBtn.textContent = cat.toUpperCase();
+        tagBtn.onclick = (e) => {
+          e.stopPropagation();
+          closeModal();
+          setCategory(cat);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        modalTags.appendChild(tagBtn);
+      });
+
+      // Google Maps Link
+      const queryMap = encodeURIComponent(`${place.title} ${place.city || 'Taiwan'}`);
+      modalMapLink.href = place.link || `https://www.google.com/maps/search/?api=1&query=${queryMap}`;
+
+      // Prev / Next arrow states
+      if (modalPrevBtn) modalPrevBtn.disabled = index <= 0;
+      if (modalNextBtn) modalNextBtn.disabled = index >= visiblePlaces.length - 1;
+
+      updateUrlState(place.slug);
+
+      modalEl.classList.remove("opacity-0", "pointer-events-none");
+      modalEl.setAttribute("aria-hidden", "false");
+      modalCardEl.classList.remove("scale-95");
+      modalCardEl.classList.add("scale-100");
+    };
+
+    window.closeModal = function() {
+      activeModalIndex = -1;
+      document.body.style.overflow = '';
+      modalEl.classList.add("opacity-0", "pointer-events-none");
+      modalEl.setAttribute("aria-hidden", "true");
+      modalCardEl.classList.remove("scale-100");
+      modalCardEl.classList.add("scale-95");
+      updateUrlState();
+    };
+
+    function navigateModal(delta) {
+      if (activeModalIndex === -1) return;
+      const nextIdx = activeModalIndex + delta;
+      if (nextIdx >= 0 && nextIdx < visiblePlaces.length) {
+        openModal(nextIdx);
+      }
+    }
+
+    // Parse CSV Data & Hydrate UI
+    function processPlacesData(rows) {
+      const parsedPlaces = [];
+
+      rows.forEach((row, idx) => {
+        const title = (row.Title || row.title || row.Name || row.name || "").trim();
+        if (!title) return;
+
+        const city = (row.City || row.city || row.Location || row.location || "").trim();
+        const rawCats = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || "").trim();
+        const seenCats = new Set();
+        const categories = [];
+        if (rawCats) {
+          rawCats.split(/[,;|]+/).forEach(c => {
+            const clean = c.trim().replace(/\s+/g, ' ');
+            const key = clean.toLowerCase();
+            if (clean && !seenCats.has(key)) {
+              seenCats.add(key);
+              categories.push(clean);
+            }
+          });
+        }
+        const description = (row.Description || row.description || row.Notes || row.notes || "").trim();
+        const photo = (row.Photo || row.photo || row.Image || row.image || row.URL || "").trim();
+        const link = (row.Link || row.link || row.Maps || row.maps || row["Google Maps"] || "").trim();
+
+        parsedPlaces.push({
+          id: idx,
+          slug: slugify(title),
+          title,
+          city,
+          categories,
+          description,
+          photo,
+          link,
+          flickrId: extractFlickrPhotoId(photo)
+        });
+      });
+
+      // Sort in descending order by Flickr photo ID (highest ID / newest first)
+      allPlaces = parsedPlaces.sort((a, b) => {
+        if (b.flickrId > a.flickrId) return 1;
+        if (b.flickrId < a.flickrId) return -1;
+        return 0;
+      });
+
+      buildAutocompleteIndex();
+      populateCategoryFilters();
+
+      const deepLinkedSpotSlug = parseUrlState();
+      updateToolbarStyles();
+      filterPlaces();
+
+      if (deepLinkedSpotSlug) {
+        const targetIndex = visiblePlaces.findIndex(p => p.slug === deepLinkedSpotSlug);
+        if (targetIndex !== -1) openModal(targetIndex);
+      }
+
+      loadingEl.classList.add("hidden");
+    }
+
+    async function fetchPlaces() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: results => processPlacesData(results.data || []),
+          error: err => {
+            console.error("CSV Parse Error:", err);
+            loadingEl.classList.add("hidden");
+            emptyEl.classList.remove("hidden");
+            startDinoGame();
+          }
+        });
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        loadingEl.classList.add("hidden");
+        emptyEl.classList.remove("hidden");
+        startDinoGame();
+      }
+    }
+
+    // Rich Search Autocomplete Indexing & Rendering
+    function buildAutocompleteIndex() {
+      const seen = new Map();
+      const stopWords = new Set(["the", "and", "for", "with", "from", "that", "this", "are", "was", "have", "has", "not", "but", "you", "your", "all", "can", "into", "very", "just", "one", "out", "about"]);
+
+      const addTerm = (label, type, priority) => {
+        const clean = label.trim();
+        if (!clean || clean.length < 2) return;
+        const key = clean.toLowerCase();
+        const existing = seen.get(key);
+        if (!existing || priority < existing.priority) {
+          seen.set(key, { label: clean, type, priority });
+        }
+      };
+
+      allPlaces.forEach(p => {
+        if (p.city) addTerm(formatCityName(p.city), "city", 1);
+        p.categories.forEach(c => addTerm(c.toLowerCase(), "food", 2));
+        if (p.title) addTerm(p.title, "place", 3);
+
+        const words = `${p.title} ${p.description}`.toLowerCase().match(/[a-z0-9\u4e00-\u9fa5]{3,}/g) || [];
+        words.forEach(w => {
+          if (!stopWords.has(w)) addTerm(w, "word", 4);
+        });
+      });
+
+      autocompleteIndex = Array.from(seen.values()).sort((a, b) => a.priority - b.priority || a.label.localeCompare(b.label));
+    }
+
+    function hideAutocomplete() {
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.classList.add("hidden");
+      searchAutocompleteEl.innerHTML = "";
+    }
+
+    function applyAutocompleteSuggestion(suggestionLabel) {
+      const currentVal = searchInput.value;
+      const parts = currentVal.split(/\s+/);
+      if (parts.length > 1 && currentVal.slice(-1) !== " ") {
+        parts[parts.length - 1] = suggestionLabel;
+        searchInput.value = parts.join(" ");
+      } else {
+        searchInput.value = suggestionLabel;
+      }
+      searchQuery = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      hideAutocomplete();
+      updateUrlState();
+      filterPlaces();
+    }
+
+    function renderAutocompleteSuggestions(val) {
+      const raw = val.trim().toLowerCase();
+      if (!raw) {
+        hideAutocomplete();
+        return;
+      }
+
+      const tokens = raw.split(/\s+/);
+      const lastToken = tokens[tokens.length - 1];
+
+      const topMatches = autocompleteIndex
+        .filter(item => {
+          const lower = item.label.toLowerCase();
+          return lower.includes(raw) || (lastToken.length >= 2 && lower.startsWith(lastToken));
+        })
+        .slice(0, 8);
+
+      if (topMatches.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      activeSuggestionIdx = -1;
+      searchAutocompleteEl.innerHTML = "";
+
+      topMatches.forEach((match, idx) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.className = "px-3.5 py-2 text-xs font-semibold text-[#292929] dark:text-white hover:bg-[#292929] hover:text-[#EBF1E5] dark:hover:bg-white dark:hover:text-[#292929] cursor-pointer flex items-center justify-between gap-2 transition-colors";
+
+        const badgeLabel = match.type === 'word'
+          ? ''
+          : match.type === 'city'
+            ? `<span class="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider opacity-75 font-bold flex-shrink-0"><svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>city</span>`
+            : `<span class="text-[9px] uppercase tracking-wider opacity-65 font-bold flex-shrink-0">${escapeHtml(match.type)}</span>`;
+        li.innerHTML = `
+          <span class="truncate">${escapeHtml(match.label)}</span>
+          ${badgeLabel}
+        `;
+
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault(); // Keep focus from blurring before click finishes
+          applyAutocompleteSuggestion(match.label);
+        });
+
+        searchAutocompleteEl.appendChild(li);
+      });
+
+      searchAutocompleteEl.classList.remove('hidden');
+    }
+
+    // Debounced Search Input Events to avoid layout thrashing while typing
+    searchInput.addEventListener("input", () => {
+      const val = searchInput.value;
+      clearSearchBtn.classList.toggle("hidden", !val);
+      renderAutocompleteSuggestions(val);
+
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        searchQuery = val;
+        updateUrlState();
+        filterPlaces();
+      }, 150);
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      const items = searchAutocompleteEl.querySelectorAll("li");
+      if (searchAutocompleteEl.classList.contains("hidden") || items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
+      } else if (e.key === "Enter" && activeSuggestionIdx >= 0) {
+        e.preventDefault();
+        const label = items[activeSuggestionIdx].querySelector("span").textContent;
+        applyAutocompleteSuggestion(label);
+        return;
+      } else if (e.key === "Escape") {
+        hideAutocomplete();
+        return;
+      } else {
+        return;
+      }
+
+      items.forEach((el, i) => {
+        el.classList.toggle("bg-[#292929]", i === activeSuggestionIdx);
+        el.classList.toggle("text-[#EBF1E5]", i === activeSuggestionIdx);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (searchWrapper && !searchWrapper.contains(e.target)) {
+        hideAutocomplete();
+      }
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      hideAutocomplete();
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      updateUrlState();
+      filterPlaces();
+    });
+
+    // Modal & Global Keyboard / Touch Listeners
+    modalEl.addEventListener("click", (e) => {
+      if (e.target === modalEl || e.target.id === "modal-container") {
+        closeModal();
+      }
+    });
+
+    if (modalPrevBtn) modalPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(-1); });
+    if (modalNextBtn) modalNextBtn.addEventListener("click", (e) => { e.stopPropagation(); navigateModal(1); });
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
+
+    if (modalShareBtn) {
+      modalShareBtn.addEventListener("click", () => {
+        const tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand("copy");
+          if (modalShareLabel) modalShareLabel.textContent = "Copied";
+          if (modalShareCopyIcon) modalShareCopyIcon.classList.add("hidden");
+          if (modalShareCheckIcon) modalShareCheckIcon.classList.remove("hidden");
+          if (shareResetTimeout) clearTimeout(shareResetTimeout);
+          shareResetTimeout = setTimeout(() => {
+            if (modalShareLabel) modalShareLabel.textContent = "Share Place";
+            if (modalShareCopyIcon) modalShareCopyIcon.classList.remove("hidden");
+            if (modalShareCheckIcon) modalShareCheckIcon.classList.add("hidden");
+          }, 2200);
+        } catch {
+          // Silently ignore if copy command fails
+        }
+        document.body.removeChild(tempInput);
+      });
+    }
+
+    // Touch Swipe Support inside Modal
+    let touchStartX = 0;
+    modalCardEl.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalCardEl.addEventListener("touchend", (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        navigateModal(diff < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    document.addEventListener("keydown", (e) => {
+      if (activeModalIndex !== -1) {
+        if (e.key === "Escape") closeModal();
+        else if (e.key === "ArrowLeft") navigateModal(-1);
+        else if (e.key === "ArrowRight") navigateModal(1);
+      }
+    });
+
+    // 404 Mini-Game: Long-Necked Goose Runner with Web Audio Quack
+    const dinoCanvas = document.getElementById("dino-canvas");
+    const dinoCtx = dinoCanvas ? dinoCanvas.getContext("2d") : null;
+    let gameLoopId = null;
+    let gameRunning = false;
+    let gameOver = false;
+    let gameScore = 0;
+    let gameSpeed = 4.2;
+    let frameTick = 0;
+    let audioCtx = null;
+
+    const goose = {
+      x: 48,
+      y: 112,
+      w: 28,
+      h: 34,
+      vy: 0,
+      gravity: 0.58,
+      jumpPower: -8.8,
+      grounded: true
+    };
+    let obstacles = [];
+
+    function playQuackSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(210, now + 0.14);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(950, now);
+        filter.Q.setValueAtTime(3.2, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.17);
+      } catch {
+        // Ignore audio errors if blocked
+      }
+    }
+
+    function resetDinoGame() {
+      goose.y = 112;
+      goose.vy = 0;
+      goose.grounded = true;
+      obstacles = [];
+      gameScore = 0;
+      gameSpeed = 4.2;
+      gameOver = false;
+      gameRunning = true;
+      if (emptyTitleEl) emptyTitleEl.classList.add("opacity-0");
+    }
+
+    function jumpGoose() {
+      if (emptyEl.classList.contains("hidden")) return;
+      if (!gameRunning || gameOver) {
+        resetDinoGame();
+      }
+      if (goose.grounded) {
+        goose.vy = goose.jumpPower;
+        goose.grounded = false;
+        playQuackSound();
+      }
+    }
+
+    function spawnObstacle() {
+      const types = ["hotpot", "flame", "oven"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const specs = {
+        hotpot: { w: 28, h: 24 },
+        flame: { w: 20, h: 28 },
+        oven: { w: 30, h: 30 }
+      };
+      const spec = specs[type];
+      obstacles.push({
+        x: 620,
+        y: 146 - spec.h,
+        w: spec.w,
+        h: spec.h,
+        type
+      });
+    }
+
+    function drawGoose(ctx, ink) {
+      const x = Math.round(goose.x);
+      const y = Math.round(goose.y);
+      ctx.fillStyle = ink;
+
+      // Body
+      ctx.fillRect(x, y + 14, 18, 11);
+      ctx.fillRect(x - 3, y + 12, 5, 5); // tail
+
+      // Long Upright Neck & Head
+      ctx.fillRect(x + 13, y + 2, 5, 14);
+      ctx.fillRect(x + 13, y, 9, 6);
+
+      // Beak
+      ctx.fillStyle = "#f97316";
+      ctx.fillRect(x + 22, y + 2, 6, 3);
+
+      // Eye
+      ctx.fillStyle = document.documentElement.classList.contains("dark") ? "#333333" : "#EBF1E5";
+      ctx.fillRect(x + 18, y + 1, 2, 2);
+
+      // Animated Legs
+      ctx.fillStyle = "#f97316";
+      const step = goose.grounded ? Math.floor(frameTick / 5) % 2 : 0;
+      if (step === 0) {
+        ctx.fillRect(x + 5, y + 25, 2, 9);
+        ctx.fillRect(x + 12, y + 25, 2, 6);
+      } else {
+        ctx.fillRect(x + 5, y + 25, 2, 6);
+        ctx.fillRect(x + 12, y + 25, 2, 9);
+      }
+    }
+
+    function drawObstacle(ctx, obs, ink) {
+      const x = Math.round(obs.x);
+      const y = Math.round(obs.y);
+      const flicker = Math.floor(frameTick / 4) % 2 === 0;
+
+      if (obs.type === "hotpot") {
+        // Pot body & handles
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 3, y + 5, 22, 13);
+        ctx.fillRect(x, y + 7, 3, 4);
+        ctx.fillRect(x + 25, y + 7, 3, 4);
+        // Flame underneath
+        ctx.fillStyle = "#f97316";
+        ctx.fillRect(x + 7, y + 19, 14, flicker ? 5 : 3);
+      } else if (obs.type === "flame") {
+        // Campfire logs
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 2, y + 23, 16, 5);
+        // Roaring flame
+        ctx.fillStyle = "#f97316";
+        ctx.fillRect(x + 4, y + 8, 12, 15);
+        ctx.fillRect(x + 7, y + (flicker ? 1 : 4), 6, 8);
+      } else {
+        // Clay oven dome
+        ctx.fillStyle = ink;
+        ctx.fillRect(x + 4, y, 22, 6);
+        ctx.fillRect(x, y + 6, 30, 24);
+        // Glowing oven mouth
+        ctx.fillStyle = "#f97316";
+        ctx.fillRect(x + 9, y + 16, 12, flicker ? 14 : 12);
+      }
+    }
+
+    function updateDinoGame() {
+      if (!dinoCtx || emptyEl.classList.contains("hidden")) {
+        gameLoopId = null;
+        return;
+      }
+
+      const isDark = document.documentElement.classList.contains("dark");
+      const ink = isDark ? "#ffffff" : "#292929";
+      dinoCtx.clearRect(0, 0, dinoCanvas.width, dinoCanvas.height);
+
+      // Ground line
+      dinoCtx.fillStyle = ink;
+      dinoCtx.fillRect(0, 146, dinoCanvas.width, 1);
+
+      if (gameRunning && !gameOver) {
+        frameTick++;
+        goose.vy += goose.gravity;
+        goose.y += goose.vy;
+
+        if (goose.y >= 112) {
+          goose.y = 112;
+          goose.vy = 0;
+          goose.grounded = true;
+        }
+
+        if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 360 - Math.random() * 140) {
+          spawnObstacle();
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          const obs = obstacles[i];
+          obs.x -= gameSpeed;
+          if (obs.x + obs.w < 0) {
+            obstacles.splice(i, 1);
+            gameScore++;
+            gameSpeed = Math.min(8.2, 4.2 + gameScore * 0.12);
+            continue;
+          }
+
+          // Forgiving hitbox collision check
+          if (
+            goose.x + 4 < obs.x + obs.w - 4 &&
+            goose.x + goose.w - 6 > obs.x + 4 &&
+            goose.y + 4 < obs.y + obs.h - 2 &&
+            goose.y + goose.h - 2 > obs.y + 4
+          ) {
+            gameOver = true;
+            gameRunning = false;
+            if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
+          }
+        }
+      }
+
+      drawGoose(dinoCtx, ink);
+      obstacles.forEach(obs => drawObstacle(dinoCtx, obs, ink));
+
+      // HUD Score
+      dinoCtx.fillStyle = ink;
+      dinoCtx.font = "bold 11px 'Google Sans Code', monospace";
+      dinoCtx.textAlign = "right";
+      dinoCtx.fillText(`SCORE ${String(gameScore).padStart(3, "0")}`, dinoCanvas.width - 12, 20);
+
+      if (gameOver) {
+        dinoCtx.textAlign = "center";
+        dinoCtx.fillText("GAME OVER — TAP OR SPACE TO RETRY", dinoCanvas.width / 2, 74);
+      }
+
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function startDinoGame() {
+      if (!dinoCanvas || gameLoopId) return;
+      gameLoopId = requestAnimationFrame(updateDinoGame);
+    }
+
+    function stopDinoGame() {
+      if (gameLoopId) {
+        cancelAnimationFrame(gameLoopId);
+        gameLoopId = null;
+      }
+      gameRunning = false;
+      if (emptyTitleEl) emptyTitleEl.classList.remove("opacity-0");
+    }
+
+    if (dinoCanvas) {
+      dinoCanvas.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        jumpGoose();
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.activeElement !== searchInput && !emptyEl.classList.contains("hidden")) {
+        e.preventDefault();
+        jumpGoose();
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        stopDinoGame();
+      } else if (!emptyEl.classList.contains("hidden")) {
+        startDinoGame();
+      }
+    });
+
+    // Theme Initialization & Yin-Yang Toggle
+    // Theme Initialization & Yin-Yang Toggle (Defaults to Light Mode)
+    function initTheme() {
+      const savedTheme = localStorage.getItem("taiwantop-theme");
+      const isDark = savedTheme === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      rotationDeg = isDark ? 180 : 0;
+      if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("taiwantop-theme", isDark ? "dark" : "light");
+        rotationDeg += 180;
+        if (yinYangIcon) yinYangIcon.style.transform = `rotate(${rotationDeg}deg)`;
+      });
+    }
+
+    loadMoreBtn.addEventListener("click", () => {
+      appendNextBatch();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      fetchPlaces();
+    });
+  </script>
+</body>
+</html>
