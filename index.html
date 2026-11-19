@@ -583,14 +583,23 @@
 
     function populateCategoryFilters() {
       const catCount = {};
+      const catDisplay = {};
+
       allPlaces.forEach(p => {
+        const seenInPlace = new Set();
         p.categories.forEach(c => {
-          const norm = c.trim();
-          if (norm) catCount[norm] = (catCount[norm] || 0) + 1;
+          const clean = c.trim().replace(/\s+/g, ' ');
+          const key = clean.toLowerCase();
+          if (key && !seenInPlace.has(key)) {
+            seenInPlace.add(key);
+            catCount[key] = (catCount[key] || 0) + 1;
+            if (!catDisplay[key]) catDisplay[key] = clean;
+          }
         });
       });
 
-      const sortedCats = Object.keys(catCount).sort((a, b) => catCount[b] - catCount[a]);
+      // Sort categories alphabetically
+      const sortedKeys = Object.keys(catCount).sort((a, b) => a.localeCompare(b));
 
       // Keep "ALL" button with total count and append sorted categories
       const allBtn = categoryContainer.querySelector('[data-category="ALL"]');
@@ -601,14 +610,15 @@
         categoryContainer.appendChild(allBtn);
       }
 
-      sortedCats.forEach(cat => {
-        const count = catCount[cat] || 0;
+      sortedKeys.forEach(key => {
+        const count = catCount[key] || 0;
+        const displayLabel = catDisplay[key];
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.setAttribute("data-category", cat);
+        btn.setAttribute("data-category", displayLabel);
         btn.className = "cat-filter-btn badge-pill inline-flex items-center justify-center flex-shrink-0 px-3.5 py-1 font-bold rounded-full uppercase tracking-normal transition-all duration-150 border border-[#292929] bg-[#292929] text-[#EBF1E5] hover:bg-transparent hover:text-[#292929] dark:border-white dark:bg-white dark:text-[#292929] dark:hover:bg-transparent dark:hover:text-white shadow-sm cursor-pointer";
-        btn.innerHTML = `<span>${escapeHtml(cat.toUpperCase())}</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${count}</span>`;
-        btn.onclick = () => setCategory(cat);
+        btn.innerHTML = `<span>${escapeHtml(displayLabel.toUpperCase())}</span><span class="ml-1 text-[8px] leading-none font-semibold opacity-80">${count}</span>`;
+        btn.onclick = () => setCategory(displayLabel);
         categoryContainer.appendChild(btn);
       });
     }
@@ -802,7 +812,18 @@
 
         const city = (row.City || row.city || row.Location || row.location || "").trim();
         const rawCats = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || "").trim();
-        const categories = rawCats ? rawCats.split(/[,;|]+/).map(c => c.trim()).filter(Boolean) : [];
+        const seenCats = new Set();
+        const categories = [];
+        if (rawCats) {
+          rawCats.split(/[,;|]+/).forEach(c => {
+            const clean = c.trim().replace(/\s+/g, ' ');
+            const key = clean.toLowerCase();
+            if (clean && !seenCats.has(key)) {
+              seenCats.add(key);
+              categories.push(clean);
+            }
+          });
+        }
         const description = (row.Description || row.description || row.Notes || row.notes || "").trim();
         const photo = (row.Photo || row.photo || row.Image || row.image || row.URL || "").trim();
         const link = (row.Link || row.link || row.Maps || row.maps || row["Google Maps"] || "").trim();
