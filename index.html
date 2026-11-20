@@ -562,12 +562,20 @@
     #dino-canvas {
       display: block;
       width: 100%;
-      height: 180px;
+      aspect-ratio: 16 / 9;
       border-radius: var(--md-sys-shape-corner-large);
       background-color: var(--md-sys-color-surface-container-lowest);
       border: 1px solid var(--md-sys-color-outline-variant);
+      outline: none;
       cursor: pointer;
       touch-action: manipulation;
+    }
+
+    #dino-canvas:focus,
+    #dino-canvas:focus-visible {
+      outline: none;
+      box-shadow: none;
+      border-color: var(--md-sys-color-outline-variant);
     }
   </style>
 </head>
@@ -727,12 +735,12 @@
       <button
         id="sort-toggle-btn"
         type="button"
-        class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors hover:opacity-90 active:scale-95"
-        style="background-color: var(--md-sys-color-surface-container-low); border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);"
+        class="inline-flex items-center gap-1 text-xs font-medium bg-transparent border-0 p-0 cursor-pointer transition-opacity hover:opacity-75"
+        style="color: var(--md-sys-color-on-surface-variant);"
         title="Switch sort order"
       >
         <span id="sort-toggle-icon" class="material-symbols-outlined text-base">sort</span>
-        <span id="sort-toggle-label">Sorted newest first</span>
+        <span id="sort-toggle-label" class="underline underline-offset-4 decoration-dotted">Sorted newest first</span>
       </button>
     </div>
 
@@ -759,18 +767,12 @@
     <!-- Empty State & Interactive HTML5 Runner Game Fallback -->
     <section
       id="empty-state"
-      class="hidden my-6 p-6 sm:p-8 rounded-3xl border max-w-2xl mx-auto text-center"
+      class="hidden my-6 p-5 sm:p-6 rounded-3xl border max-w-2xl mx-auto text-center"
       style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
       aria-live="polite"
     >
-      <div
-        class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center"
-        style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
-      >
-        <span id="empty-state-icon" class="material-symbols-outlined text-3xl">search_off</span>
-      </div>
-      <h2 id="empty-state-title" class="text-xl sm:text-2xl font-bold mb-4" style="color: var(--md-sys-color-on-surface);">
-        No matching spots found
+      <h2 id="empty-state-title" class="text-xl sm:text-2xl font-bold mb-5" style="color: var(--md-sys-color-on-surface);">
+        Nothing here...
       </h2>
       <p id="empty-state-subtitle" class="hidden text-sm sm:text-base mb-5 max-w-md mx-auto" style="color: var(--md-sys-color-on-surface-variant);"></p>
 
@@ -999,7 +1001,6 @@
         loadMoreBtn: document.getElementById('load-more-btn'),
         loadMoreLabel: document.getElementById('load-more-label'),
         emptyState: document.getElementById('empty-state'),
-        emptyStateIcon: document.getElementById('empty-state-icon'),
         emptyStateTitle: document.getElementById('empty-state-title'),
         emptyStateSubtitle: document.getElementById('empty-state-subtitle'),
         emptyResetBtn: document.getElementById('empty-reset-btn'),
@@ -1030,77 +1031,95 @@
          NORMALIZATION & UTILITY HELPERS
          ---------------------------------------------------------------------- */
 
-      function slugify(text) {
-        return String(text || '')
+      function slugify(str) {
+        return String(str || '')
           .toLowerCase()
-          .normalize('NFD')
+          .normalize('NFKD')
           .replace(/[\u0300-\u036f]/g, '')
-          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
           .replace(/^-+|-+$/g, '') || 'spot';
       }
 
-      function formatCityName(rawCity) {
-        const cleaned = String(rawCity || '').trim().replace(/\s+/g, ' ');
-        if (!cleaned) return '';
-        return cleaned
+      function formatCityName(raw) {
+        const clean = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (!clean) return '';
+        return clean
           .split(' ')
           .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
           .join(' ');
       }
 
       function extractFlickrPhotoId(photoUrl) {
-        if (!photoUrl) return 0n;
-        const match = String(photoUrl).match(/\/(\d{8,})_[a-zA-Z0-9]+/);
-        if (match && match[1]) {
-          try {
-            return BigInt(match[1]);
-          } catch {
-            return 0n;
-          }
+        const url = String(photoUrl || '');
+        const match = url.match(/\/(\d{8,})_[a-z0-9]+/i) || url.match(/(\d{9,})/);
+        if (!match) return 0n;
+        try {
+          return BigInt(match[1]);
+        } catch {
+          return 0n;
         }
-        return 0n;
       }
 
-      function pickColumn(row, keys) {
-        for (const key of keys) {
-          if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
-            return String(row[key]).trim();
-          }
-        }
-        return '';
-      }
-
-      function normalizePlaceRow(row, idx) {
-        const title = pickColumn(row, ['Title', 'title', 'Name', 'name']);
-        if (!title) return null;
-
-        const city = formatCityName(pickColumn(row, ['City', 'city', 'Location', 'location']));
-        const rawCats = pickColumn(row, ['Category', 'category', 'Categories', 'categories', 'Tags', 'tags']);
-
-        const seenCats = new Set();
-        const categories = [];
-        if (rawCats) {
-          rawCats.split(/[,;|]/).forEach((part) => {
-            const clean = part.trim().replace(/\s+/g, ' ');
-            const lower = clean.toLowerCase();
-            if (clean && !seenCats.has(lower)) {
-              seenCats.add(lower);
-              categories.push(clean);
+      function parseCategories(rawCat) {
+        if (!rawCat) return [];
+        const seen = new Set();
+        const result = [];
+        String(rawCat)
+          .split(/[,;|]/)
+          .forEach((token) => {
+            const clean = token.trim().replace(/\s+/g, ' ');
+            if (!clean) return;
+            const key = clean.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              result.push(clean);
             }
           });
-        }
+        return result;
+      }
 
-        const description = pickColumn(row, ['Description', 'description', 'Notes', 'notes']);
-        const rawPhoto = pickColumn(row, ['Photo', 'photo', 'Image', 'image', 'URL', 'url']);
+      function normalizePlaceRow(row, index) {
+        if (!row || typeof row !== 'object') return null;
+
+        const title = String(
+          row.Title ?? row.title ?? row.Name ?? row.name ?? ''
+        )
+          .trim()
+          .replace(/\s+/g, ' ');
+        if (!title) return null;
+
+        const city = formatCityName(
+          row.City ?? row.city ?? row.Location ?? row.location ?? ''
+        );
+
+        const rawCategories =
+          row.Category ??
+          row.category ??
+          row.Categories ??
+          row.categories ??
+          row.Tags ??
+          row.tags ??
+          '';
+        const categories = parseCategories(rawCategories);
+
+        const description = String(
+          row.Description ?? row.description ?? row.Notes ?? row.notes ?? ''
+        ).trim();
+
+        const rawPhoto = String(
+          row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
+        ).trim();
         const photo = rawPhoto || FALLBACK_PHOTO;
         const flickrId = extractFlickrPhotoId(rawPhoto);
-        const link = pickColumn(row, ['Link', 'link', 'Maps', 'maps', 'Google Maps', 'google maps']);
-        const slug = `${slugify(title)}-${idx + 1}`;
+
+        const link = String(
+          row.Link ?? row.link ?? row.Maps ?? row.maps ?? row['Google Maps'] ?? ''
+        ).trim();
 
         return {
-          id: idx,
-          slug,
+          id: index,
           title,
+          slug: slugify(title),
           city,
           categories,
           description,
@@ -1756,7 +1775,6 @@
         els.emptyState.classList.remove('hidden');
 
         if (isFetchError) {
-          els.emptyStateIcon.textContent = 'cloud_off';
           els.emptyStateTitle.textContent = 'Could not reach the Google Sheets feed';
           els.emptyStateSubtitle.textContent =
             'Check your connection or retry fetching the live directory — in the meantime, play Hot Pot Goose Run!';
@@ -1764,8 +1782,7 @@
           els.retryFetchBtn.classList.remove('hidden');
           els.emptyResetBtn.classList.add('hidden');
         } else {
-          els.emptyStateIcon.textContent = 'search_off';
-          els.emptyStateTitle.textContent = 'No matching spots found';
+          els.emptyStateTitle.textContent = 'Nothing here...';
           els.emptyStateSubtitle.textContent = '';
           els.emptyStateSubtitle.classList.add('hidden');
           els.retryFetchBtn.classList.add('hidden');
@@ -1835,21 +1852,8 @@
         const ctx = canvas.getContext('2d');
 
         let width = 600;
-        let height = 180;
-        const groundY = 148;
-
-        const resizeCanvas = () => {
-          const rect = canvas.getBoundingClientRect();
-          const dpr = Math.min(window.devicePixelRatio || 1, 2);
-          width = Math.max(280, Math.floor(rect.width || 600));
-          height = 180;
-          canvas.width = width * dpr;
-          canvas.height = height * dpr;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        };
-
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        let height = 338;
+        let groundY = Math.round(height * 0.82);
 
         // Long-necked goose player with forgiving floaty jump physics
         const player = {
@@ -1865,10 +1869,35 @@
         };
 
         let obstacles = [];
+
+        const resizeCanvas = () => {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const prevGroundY = groundY;
+          width = Math.max(280, Math.floor(rect.width || 600));
+          height = Math.max(158, Math.round(width * (9 / 16)));
+          groundY = Math.round(height * 0.82);
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const deltaY = groundY - prevGroundY;
+          player.y += deltaY;
+          if (player.grounded) {
+            player.y = groundY - player.h;
+          }
+          obstacles.forEach((obs) => {
+            obs.y = groundY - obs.h;
+          });
+        };
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
         let clouds = [
-          { x: 140, y: 34, s: 0.9 },
-          { x: 380, y: 24, s: 1.1 },
-          { x: 540, y: 42, s: 0.8 }
+          { x: 140, y: Math.round(height * 0.2), s: 0.9 },
+          { x: 380, y: Math.round(height * 0.14), s: 1.1 },
+          { x: 540, y: Math.round(height * 0.24), s: 0.8 }
         ];
         let score = 0;
         let highScore = Number(localStorage.getItem('taiwanTopDuckHigh') || 0);
@@ -1952,15 +1981,17 @@
             ctx.fillRect(px + gx * p, py + gy * p, gw * p, gh * p);
           };
 
-          // Pixel Goose Head & Beak (top-right, long-necked silhouette)
+          // Pixel Goose Head
           rect(7, 0, 3, 3);   // Head
+
+          // Goose Beak (#FFDAD4)
+          ctx.fillStyle = '#FFDAD4';
           rect(10, 1, 3, 1);  // Upper beak
           rect(10, 2, 2, 1);  // Lower beak
 
-          // Long Pixel Neck
+          // Long Pixel Neck, Body & Tail
+          ctx.fillStyle = monoColor;
           rect(7, 3, 2, 5);
-
-          // Goose Body & Tail
           rect(0, 7, 2, 1);   // Tail tip
           rect(1, 8, 8, 3);   // Upper torso
           rect(2, 11, 6, 1);  // Lower belly
@@ -1968,9 +1999,9 @@
           // Eye cutout (single-color negative pixel like Chrome Dino)
           ctx.fillStyle = bgColor;
           rect(8, 1, 1, 1);
-          ctx.fillStyle = monoColor;
 
-          // Animated Pixel Legs
+          // Animated Pixel Legs (#FFDAD4)
+          ctx.fillStyle = '#FFDAD4';
           if (!player.grounded) {
             rect(3, 12, 1, 2);
             rect(6, 12, 1, 2);
@@ -1991,12 +2022,12 @@
           const py = Math.round(obs.y);
           const flamePhase = Math.floor(tick / 7) % 2;
 
-          ctx.fillStyle = monoColor;
           const rect = (gx, gy, gw, gh) => {
             ctx.fillRect(px + gx * p, py + gy * p, gw * p, gh * p);
           };
 
-          // Pixel Flames / Steam rising from pot
+          // Pixel Flames / Steam rising from pot (#FFDAD4)
+          ctx.fillStyle = '#FFDAD4';
           if (flamePhase === 0) {
             rect(2, 0, 1, 2);
             rect(5, 1, 1, 2);
@@ -2008,6 +2039,7 @@
           }
 
           // Hot Pot Rim & Side Handles
+          ctx.fillStyle = monoColor;
           rect(0, 4, 1, 1);   // Left handle
           rect(1, 3, 8, 1);   // Top rim
           rect(9, 4, 1, 1);   // Right handle
@@ -2020,9 +2052,9 @@
           ctx.fillStyle = bgColor;
           rect(3, 5, 1, 1);
           rect(6, 5, 1, 1);
-          ctx.fillStyle = monoColor;
 
-          // Base Burner & Flickering Bottom Flames
+          // Base Burner & Flickering Bottom Flames (#FFDAD4)
+          ctx.fillStyle = '#FFDAD4';
           rect(2, 8, 1, 1);
           rect(4, 8, 2, 1);
           rect(7, 8, 1, 1);
@@ -2030,7 +2062,9 @@
 
         const loop = () => {
           if (!dinoGameRunning) return;
-          frameTick++;
+          if (!isGameOver) {
+            frameTick++;
+          }
 
           const styles = getComputedStyle(document.documentElement);
           const surfaceColor = styles.getPropertyValue('--md-sys-color-surface-container-lowest').trim() || '#FFFFFF';
@@ -2119,9 +2153,11 @@
               }
             }
 
-            score += 0.16;
-            speed = Math.min(7.8, 4.2 + score * 0.0025);
-            if (frameTick % 4 === 0) updateScoreUI();
+            if (!isGameOver) {
+              score += 0.16;
+              speed = Math.min(7.8, 4.2 + score * 0.0025);
+              if (frameTick % 4 === 0) updateScoreUI();
+            }
           }
 
           obstacles.forEach((obs) => drawFlamingHotPot(obs, frameTick, monoColor, surfaceColor));
