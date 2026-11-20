@@ -2249,6 +2249,7 @@
         vy: 0,
         grounded: true,
         obstacles: [],
+        clouds: [],
         score: 0,
         best: Number(localStorage.getItem('taiwanTopGooseBest') || 0),
         speed: 4.5,
@@ -2281,6 +2282,30 @@
         }
       }
 
+      function playGameOverTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.24);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.24);
+        } catch {
+          // Audio optional
+        }
+      }
+
       function triggerDinoJump() {
         if (!dinoGameRunning) return;
         if (dinoState.gameOver) {
@@ -2299,10 +2324,108 @@
         dinoState.vy = 0;
         dinoState.grounded = true;
         dinoState.obstacles = [];
+        dinoState.clouds = [
+          { x: 140, y: 38, s: 1 },
+          { x: 380, y: 26, s: 0.8 },
+          { x: 540, y: 46, s: 1.1 }
+        ];
         dinoState.score = 0;
         dinoState.speed = 4.5;
         dinoState.spawnTimer = 60;
         dinoState.gameOver = false;
+      }
+
+      /**
+       * Renders the pixel goose matching the brand logo silhouette on canvas
+       */
+      function drawPixelGoose(ctx, x, y, scale, strideFrame, isDead, fg, accent) {
+        const u = scale; // 1 unit = 1/16 of 240px grid
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Body & Neck (matches SVG 240x240 pixel grid scaled down)
+        ctx.fillStyle = fg;
+        // Neck & head: x=8..11, y=0..12
+        ctx.fillRect(8 * u, 0, 3 * u, 3 * u);
+        ctx.fillRect(8 * u, 3 * u, 2 * u, 9 * u);
+        // Torso: x=1..9, y=8..13
+        ctx.fillRect(0, 8 * u, 3 * u, 1 * u);
+        ctx.fillRect(1 * u, 9 * u, 8 * u, 3 * u);
+        ctx.fillRect(2 * u, 12 * u, 7 * u, 1 * u);
+
+        // Eye (cutout or X when bonked)
+        if (isDead) {
+          ctx.fillStyle = accent;
+          ctx.fillRect(9 * u, 1 * u, 1.2 * u, 1.2 * u);
+        } else {
+          ctx.clearRect(9 * u, 1 * u, 1 * u, 1 * u);
+        }
+
+        // Beak
+        ctx.fillStyle = accent;
+        ctx.fillRect(11 * u, 1 * u, 3 * u, 1 * u);
+        ctx.fillRect(11 * u, 2 * u, 2 * u, 1 * u);
+
+        // Animated Pixel Legs
+        const leftLift = !dinoState.grounded ? 1 * u : strideFrame === 0 ? 1 * u : 0;
+        const rightLift = !dinoState.grounded ? 0.5 * u : strideFrame === 1 ? 1 * u : 0;
+
+        // Left Leg
+        ctx.fillRect(3 * u, 13 * u, 1 * u, 3 * u - leftLift);
+        ctx.fillRect(4 * u, 15 * u - leftLift, 1 * u, 1 * u);
+
+        // Right Leg
+        ctx.fillRect(7 * u, 13 * u, 1 * u, 3 * u - rightLift);
+        ctx.fillRect(8 * u, 15 * u - rightLift, 1 * u, 1 * u);
+
+        ctx.restore();
+      }
+
+      /**
+       * Renders a steaming Taiwanese hot pot obstacle with broth, handles, chopsticks & steam
+       */
+      function drawHotPotObstacle(ctx, ob, groundY, tick, fg, accent, primary) {
+        const x = Math.round(ob.x);
+        const w = Math.round(ob.w);
+        const h = Math.round(ob.h);
+        const topY = Math.round(groundY - h);
+
+        // Chopsticks sticking out diagonally
+        ctx.strokeStyle = fg;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.35, topY + 6);
+        ctx.lineTo(x + w * 0.1, topY - 8);
+        ctx.moveTo(x + w * 0.65, topY + 6);
+        ctx.lineTo(x + w * 0.9, topY - 7);
+        ctx.stroke();
+
+        // Pot side handles
+        ctx.fillStyle = fg;
+        ctx.fillRect(x - 3, topY + 9, 3, 4);
+        ctx.fillRect(x + w, topY + 9, 3, 4);
+
+        // Pot body
+        ctx.fillStyle = accent;
+        ctx.fillRect(x, topY + 6, w, h - 8);
+        // Base foot
+        ctx.fillStyle = fg;
+        ctx.fillRect(x + 3, groundY - 2, w - 6, 2);
+
+        // Simmering broth & toppings rim
+        ctx.fillStyle = primary;
+        ctx.fillRect(x + 2, topY + 3, w - 4, 4);
+        ctx.fillStyle = '#F59E0B';
+        ctx.fillRect(x + 5, topY + 2, 4, 3);
+        ctx.fillRect(x + w - 9, topY + 2, 4, 3);
+
+        // Animated rising pixel steam wisps
+        const phase = Math.floor((tick + x) / 10) % 2;
+        ctx.fillStyle = fg;
+        ctx.globalAlpha = 0.45;
+        ctx.fillRect(x + Math.floor(w * 0.3), topY - 5 - phase * 3, 2, 4);
+        ctx.fillRect(x + Math.floor(w * 0.68), topY - 7 + phase * 3, 2, 4);
+        ctx.globalAlpha = 1;
       }
 
       function startDinoGame() {
@@ -2345,26 +2468,36 @@
               dinoState.grounded = true;
             }
 
+            // Drift background clouds
+            dinoState.clouds.forEach((c) => {
+              c.x -= dinoState.speed * 0.25;
+              if (c.x < -50) {
+                c.x = w + 30 + Math.random() * 60;
+                c.y = 20 + Math.random() * 40;
+              }
+            });
+
             dinoState.spawnTimer--;
             if (dinoState.spawnTimer <= 0) {
+              const isDouble = dinoState.score > 60 && Math.random() < 0.35;
               dinoState.obstacles.push({
                 x: w + 20,
-                w: 22 + Math.random() * 10,
-                h: 22 + Math.random() * 10
+                w: isDouble ? 36 : 22 + Math.random() * 8,
+                h: 22 + Math.random() * 8
               });
               dinoState.spawnTimer = Math.floor(65 + Math.random() * 55);
             }
 
-            const gooseBox = { x: 46, y: groundY - 32 + dinoState.y, w: 26, h: 30 };
+            const gooseBox = { x: 46, y: groundY - 36 + dinoState.y, w: 28, h: 34 };
 
             for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
               const ob = dinoState.obstacles[i];
               ob.x -= dinoState.speed;
-              if (ob.x + ob.w < -10) {
+              if (ob.x + ob.w < -15) {
                 dinoState.obstacles.splice(i, 1);
                 continue;
               }
-              const obBox = { x: ob.x + 3, y: groundY - ob.h + 3, w: ob.w - 6, h: ob.h - 3 };
+              const obBox = { x: ob.x + 3, y: groundY - ob.h + 4, w: ob.w - 6, h: ob.h - 4 };
               if (
                 gooseBox.x < obBox.x + obBox.w &&
                 gooseBox.x + gooseBox.w > obBox.x &&
@@ -2372,6 +2505,7 @@
                 gooseBox.y + gooseBox.h > obBox.y
               ) {
                 dinoState.gameOver = true;
+                playGameOverTone();
                 const finalInt = Math.floor(dinoState.score);
                 if (finalInt > dinoState.best) {
                   dinoState.best = finalInt;
@@ -2383,7 +2517,18 @@
 
           ctx.clearRect(0, 0, w, h);
 
-          // Ground line
+          // Pixel Clouds
+          ctx.fillStyle = lineCol;
+          ctx.globalAlpha = 0.55;
+          dinoState.clouds.forEach((c) => {
+            const cx = Math.round(c.x);
+            const cy = Math.round(c.y);
+            ctx.fillRect(cx + 6, cy, 20, 5);
+            ctx.fillRect(cx, cy + 4, 32, 6);
+          });
+          ctx.globalAlpha = 1;
+
+          // Ground line & scrolling pebbles
           ctx.strokeStyle = lineCol;
           ctx.lineWidth = 2;
           ctx.beginPath();
@@ -2391,25 +2536,32 @@
           ctx.lineTo(w - 16, groundY);
           ctx.stroke();
 
-          // Pixel Goose
-          const gx = 44;
-          const gy = groundY - 34 + dinoState.y;
-          ctx.fillStyle = fg;
-          ctx.fillRect(gx + 16, gy, 8, 22); // Neck & head
-          ctx.fillRect(gx + 4, gy + 16, 20, 10); // Body
-          ctx.fillStyle = accent;
-          ctx.fillRect(gx + 24, gy + 3, 7, 4); // Beak
-          const stride = Math.floor(dinoState.frameTick / 6) % 2 === 0;
-          ctx.fillRect(gx + 9, gy + 26, 3, stride ? 8 : 5);
-          ctx.fillRect(gx + 17, gy + 26, 3, stride ? 5 : 8);
+          ctx.fillStyle = lineCol;
+          for (let px = 24; px < w - 24; px += 48) {
+            const offset = Math.floor((dinoState.frameTick * dinoState.speed) % 48);
+            const drawX = px - offset;
+            if (drawX > 18 && drawX < w - 22) {
+              ctx.fillRect(drawX, groundY + 6, 6, 2);
+              ctx.fillRect(drawX + 18, groundY + 11, 3, 2);
+            }
+          }
 
-          // Hot Pot Obstacles
+          // Pixel Goose
+          const strideFrame = Math.floor(dinoState.frameTick / 5) % 2;
+          drawPixelGoose(
+            ctx,
+            42,
+            groundY - 38 + dinoState.y,
+            2.4,
+            strideFrame,
+            dinoState.gameOver,
+            fg,
+            accent
+          );
+
+          // Steaming Hot Pot Obstacles
           dinoState.obstacles.forEach((ob) => {
-            const oy = groundY - ob.h;
-            ctx.fillStyle = accent;
-            ctx.fillRect(ob.x, oy + 6, ob.w, ob.h - 6);
-            ctx.fillStyle = primary;
-            ctx.fillRect(ob.x + 3, oy + 2, ob.w - 6, 4);
+            drawHotPotObstacle(ctx, ob, groundY, dinoState.frameTick, fg, accent, primary);
           });
 
           if (dinoState.gameOver) {
