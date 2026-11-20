@@ -388,6 +388,15 @@
       display: none;
     }
 
+    /* Hide vertical scrollbar inside modal while keeping scrolling enabled */
+    #modal-scroll-body {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #modal-scroll-body::-webkit-scrollbar {
+      display: none;
+    }
+
     /* MD3 Place Card (Square aspect-ratio visual card) */
     .md3-place-card {
       position: relative;
@@ -541,12 +550,21 @@
       background-color: var(--md-sys-color-scrim);
       backdrop-filter: blur(4px);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 16px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 6vh 16px 32px;
       opacity: 0;
       pointer-events: none;
       transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    @media (min-width: 768px) {
+      .md3-modal-backdrop {
+        padding-top: 7vh;
+        padding-bottom: 48px;
+      }
     }
 
     .md3-modal-backdrop.open {
@@ -557,7 +575,6 @@
     .md3-modal-dialog {
       width: 100%;
       max-width: 735px;
-      max-height: 78.75vh;
       background-color: var(--md-sys-color-surface-container-low);
       color: var(--md-sys-color-on-surface);
       border-radius: var(--md-sys-shape-corner-extra-large);
@@ -565,6 +582,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
       transform: scale(0.94) translateY(12px);
       transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized-decelerate);
       box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
@@ -573,7 +591,6 @@
     @media (min-width: 1024px) {
       .md3-modal-dialog {
         max-width: 958px;
-        max-height: 77vh;
       }
     }
 
@@ -965,9 +982,9 @@
       </div>
 
       <!-- Modal Scrollable Content -->
-      <div class="overflow-y-auto grid grid-cols-1 md:grid-cols-[1fr_0.85fr] flex-1">
-        <!-- Photo Showcase -->
-        <div class="relative aspect-square md:aspect-auto md:min-h-[359px] lg:min-h-[479px] bg-black/10 flex items-center justify-center overflow-hidden">
+      <div id="modal-scroll-body" class="block md:grid md:grid-cols-[3fr_2fr] md:items-stretch">
+        <!-- Photo Showcase (Always 1:1 square) -->
+        <div class="relative w-full aspect-square bg-black/10 flex items-center justify-center overflow-hidden shrink-0">
           <img
             id="modal-image"
             src=""
@@ -977,7 +994,7 @@
         </div>
 
         <!-- Metadata, Categories, Description & Google Maps Action -->
-        <div class="p-4 sm:p-6 lg:p-9 flex flex-col justify-between gap-5">
+        <div class="p-4 sm:p-6 lg:p-8 flex flex-col justify-between gap-5 min-w-0">
           <div>
             <!-- City Badge (Clickable filter) -->
             <div class="mb-3 lg:mb-4 flex flex-wrap items-center gap-2">
@@ -2024,6 +2041,7 @@
         activeModalIndex = index;
         const place = visiblePlaces[index];
 
+        els.placeModal.scrollTop = 0;
         els.modalCounter.textContent = `${index + 1} / ${visiblePlaces.length}`;
         els.modalPrevBtn.disabled = visiblePlaces.length <= 1;
         els.modalNextBtn.disabled = visiblePlaces.length <= 1;
