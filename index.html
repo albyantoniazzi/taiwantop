@@ -9,8 +9,22 @@
   <!-- Fonts: Roboto Flex & Material Symbols Outlined per Material Design 3 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400..800&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..500,0..1,0&icon_names=casino,check_circle,chevron_left,chevron_right,close,dark_mode,done,expand_more,light_mode,location_on,map,open_in_new,refresh,restart_alt,restaurant,search,share,sort,sort_by_alpha,sports_esports,storefront,tag&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400..800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..500,0..1,0&icon_names=casino,check_circle,chevron_left,chevron_right,close,dark_mode,done,expand_more,light_mode,location_on,map,open_in_new,refresh,restart_alt,restaurant,search,share,sort,sort_by_alpha,sports_esports,storefront,tag&display=swap" rel="stylesheet" />
+  </noscript>
 
   <!-- Tailwind CSS for responsive layout utilities -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -499,8 +513,8 @@
 
     .md3-modal-dialog {
       width: 100%;
-      max-width: 860px;
-      max-height: 92vh;
+      max-width: 817px;
+      max-height: 87.5vh;
       background-color: var(--md-sys-color-surface-container-low);
       color: var(--md-sys-color-on-surface);
       border-radius: var(--md-sys-shape-corner-extra-large);
@@ -515,14 +529,14 @@
 
     @media (min-width: 1024px) {
       .md3-modal-dialog {
-        max-width: 1120px;
-        max-height: 90vh;
+        max-width: 1064px;
+        max-height: 85.5vh;
       }
     }
 
     @media (min-width: 1440px) {
       .md3-modal-dialog {
-        max-width: 1240px;
+        max-width: 1178px;
       }
     }
 
@@ -602,11 +616,11 @@
        MD3 TOP APP BAR & INTEGRATED SEARCH / FILTER HEADER
        ======================================================================== -->
   <header id="top-app-bar" class="md3-top-app-bar">
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-3">
-      <!-- Top Row: Brand Identity, Social Attribution & Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="w-full px-4 sm:px-[10%] pt-3 pb-3">
+      <!-- Top Row: Brand Identity, Centered Search Bar & Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3 md:grid md:grid-cols-[1fr_minmax(320px,460px)_1fr] md:items-center md:gap-4">
         <!-- Brand Logo & Title -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 justify-self-start">
           <button
             id="brand-reset-btn"
             type="button"
@@ -648,8 +662,8 @@
           </button>
         </div>
 
-        <!-- Search Input & Autocomplete Container -->
-        <div class="relative w-full md:w-96 lg:w-[440px] order-3 md:order-2">
+        <!-- Search Input & Autocomplete Container (Centered Horizontally) -->
+        <div class="relative w-full order-3 md:order-2 md:justify-self-center">
           <div class="md3-search-bar flex items-center px-4 h-12">
             <span class="material-symbols-outlined mr-3 text-xl" style="color: var(--md-sys-color-on-surface-variant);">
               search
@@ -690,7 +704,7 @@
         </div>
 
         <!-- Right Utility Actions: Theme Toggle & Instagram Link -->
-        <div class="flex items-center gap-2 order-2 md:order-3">
+        <div class="flex items-center gap-2 order-2 md:order-3 justify-self-end">
           <a
             href="https://www.instagram.com/alby.food/"
             target="_blank"
@@ -720,7 +734,7 @@
   <!-- ========================================================================
        MAIN CONTENT AREA: STATUS BAR, PLACES GRID, PAGINATION & EMPTY STATE
        ======================================================================== -->
-  <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-3">
+  <main class="w-full px-4 sm:px-[10%] pt-6 pb-3">
     <!-- Active Filter Status & Result Counter -->
     <div id="results-toolbar" class="flex flex-wrap items-center justify-between gap-2 mb-5">
       <div class="flex items-center gap-2 flex-wrap">
@@ -815,7 +829,7 @@
   >
     <div
       id="category-filters"
-      class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full py-2.5 px-4 sm:px-6 lg:px-8"
+      class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full py-2.5 px-4 sm:px-[10%]"
       role="toolbar"
       aria-label="Filter places by category"
     >
@@ -864,9 +878,9 @@
       </div>
 
       <!-- Modal Scrollable Content -->
-      <div class="overflow-y-auto grid grid-cols-1 md:grid-cols-2 flex-1">
+      <div class="overflow-y-auto grid grid-cols-1 md:grid-cols-[1fr_0.85fr] flex-1">
         <!-- Photo Showcase -->
-        <div class="relative aspect-square md:aspect-auto md:min-h-[420px] lg:min-h-[560px] bg-black/10 flex items-center justify-center overflow-hidden">
+        <div class="relative aspect-square md:aspect-auto md:min-h-[399px] lg:min-h-[532px] bg-black/10 flex items-center justify-center overflow-hidden">
           <img
             id="modal-image"
             src=""
@@ -876,7 +890,7 @@
         </div>
 
         <!-- Metadata, Categories, Description & Google Maps Action -->
-        <div class="p-5 sm:p-7 lg:p-10 flex flex-col justify-between gap-6">
+        <div class="p-4 sm:p-6 lg:p-9 flex flex-col justify-between gap-5">
           <div>
             <!-- City Badge (Clickable filter) -->
             <div class="mb-3 lg:mb-4 flex flex-wrap items-center gap-2">
@@ -1070,13 +1084,141 @@
       }
 
       /**
-       * Rewrites live.staticflickr.com image URLs to a specific size suffix
-       * (e.g., 'z' for 640px grid thumbnails, 'b' for 1024px detail modal).
+       * Extracts and normalizes the first valid image URL from a CSV cell
+       * (handles HTML <img> tags, multi-line cells, http://, and Flickr variants).
        */
+      function normalizePhotoUrl(rawUrl) {
+        let raw = String(rawUrl || '').trim();
+        if (!raw) return '';
+
+        // Extract the first clean http(s) URL (stops at whitespace, quotes, angle brackets, or commas)
+        const urlMatch = raw.match(/https?:\/\/[^\s"'<>,]+/i);
+        let url = urlMatch ? urlMatch[0] : raw.split(/[\s,]+/)[0];
+
+        if (url.startsWith('http://')) {
+          url = 'https://' + url.slice(7);
+        }
+
+        // Convert Google Drive share links to direct viewable image links if present
+        const gdriveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/i);
+        if (gdriveMatch) {
+          return `https://lh3.googleusercontent.com/d/${gdriveMatch[1]}=s1200`;
+        }
+
+        return url;
+      }
+
       function getFlickrVariantUrl(photoUrl, sizeSuffix) {
-        const url = String(photoUrl || '');
-        if (!url.includes('staticflickr.com/')) return url;
-        return url.replace(/(_[a-z0-9])?(\.(?:jpe?g|png|webp))(?=$|\?)/i, `_${sizeSuffix}$2`);
+        const url = normalizePhotoUrl(photoUrl);
+        if (!/staticflickr\.com\//i.test(url)) return url;
+        // Standard shared-secret suffixes (_s, _q, _t, _m, _n, _w, _z, _c, _b, _h, _k)
+        const standardSuffixRegex = /_(s|q|t|m|n|w|z|c|b|h|k)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (standardSuffixRegex.test(url)) {
+          return url.replace(standardSuffixRegex, `_${sizeSuffix}$2`);
+        }
+        // Flickr medium-500 URL without size suffix: /{id}_{secret}.jpg
+        const unsuffixedRegex = /(\/\d+_[a-f0-9]+)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (unsuffixedRegex.test(url)) {
+          return url.replace(unsuffixedRegex, `$1_${sizeSuffix}$2`);
+        }
+        return url;
+      }
+
+      function buildPhotoCandidates(rawPhoto, preferLarge = false) {
+        const original = normalizePhotoUrl(rawPhoto);
+        if (!original) return [FALLBACK_PHOTO];
+
+        const candidates = [];
+        const add = (u) => {
+          if (u && !candidates.includes(u)) candidates.push(u);
+        };
+
+        if (/staticflickr\.com\//i.test(original)) {
+          // Always try exact original first if it's a custom/original (_o) secret URL
+          const isOriginalSecret = /_o\.(?:jpe?g|png|webp|gif)(?=$|\?)/i.test(original);
+          if (isOriginalSecret) {
+            add(original);
+          }
+
+          if (preferLarge) {
+            add(getFlickrVariantUrl(original, 'b'));
+            add(getFlickrVariantUrl(original, 'h'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'z'));
+            add(original);
+          } else {
+            add(getFlickrVariantUrl(original, 'z'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'b'));
+            add(original);
+          }
+          // Also try unsuffixed 500px standard Flickr format if suffix failed
+          const unsuffixed = original.replace(
+            /_(s|q|t|m|n|w|z|c|b|h|k|o)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i,
+            '$2'
+          );
+          add(unsuffixed);
+        } else {
+          add(original);
+        }
+
+        add(FALLBACK_PHOTO);
+        return candidates;
+      }
+
+      async function resolveFlickrPagePhoto(pageUrl, imgEl, preferLarge) {
+        try {
+          const oembedUrl = `https://www.flickr.com/services/oembed/?format=json&url=${encodeURIComponent(pageUrl)}`;
+          const res = await fetch(oembedUrl);
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (data && data.url) {
+            const resolved = preferLarge
+              ? getFlickrVariantUrl(data.url, 'b')
+              : getFlickrVariantUrl(data.url, 'z');
+            imgEl.src = resolved || data.url;
+            return true;
+          }
+        } catch {
+          // Ignore oEmbed failure and proceed to fallback
+        }
+        return false;
+      }
+
+      function attachImageFallbackChain(imgEl, candidates) {
+        let attemptIndex = 0;
+
+        const applySrc = (url) => {
+          // Only omit referrer for staticflickr.com; keep default referrer for other CDNs
+          imgEl.referrerPolicy = /staticflickr\.com/i.test(url)
+            ? 'no-referrer'
+            : 'strict-origin-when-cross-origin';
+          imgEl.src = url;
+        };
+
+        const firstUrl = candidates[0] || FALLBACK_PHOTO;
+
+        // If the cell contains a flickr.com/photos/... page link instead of a direct staticflickr image URL, resolve via oEmbed
+        if (/flickr\.com\/photos\//i.test(firstUrl) || /flic\.kr\/p\//i.test(firstUrl)) {
+          imgEl.onerror = () => {
+            imgEl.onerror = null;
+            imgEl.src = FALLBACK_PHOTO;
+          };
+          resolveFlickrPagePhoto(firstUrl, imgEl, candidates.length > 2).then((ok) => {
+            if (!ok) imgEl.src = FALLBACK_PHOTO;
+          });
+          return;
+        }
+
+        imgEl.onerror = function () {
+          attemptIndex += 1;
+          if (attemptIndex < candidates.length) {
+            applySrc(candidates[attemptIndex]);
+          } else {
+            this.onerror = null;
+          }
+        };
+        applySrc(firstUrl);
       }
 
       function parseCategories(rawCat) {
@@ -1128,10 +1270,12 @@
         const rawPhoto = String(
           row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
         ).trim();
-        const basePhoto = rawPhoto || FALLBACK_PHOTO;
-        const photo = getFlickrVariantUrl(basePhoto, 'z');
-        const photoLarge = getFlickrVariantUrl(basePhoto, 'b');
-        const flickrId = extractFlickrPhotoId(rawPhoto);
+        const basePhoto = normalizePhotoUrl(rawPhoto) || FALLBACK_PHOTO;
+        const thumbCandidates = buildPhotoCandidates(basePhoto, false);
+        const largeCandidates = buildPhotoCandidates(basePhoto, true);
+        const photo = thumbCandidates[0];
+        const photoLarge = largeCandidates[0];
+        const flickrId = extractFlickrPhotoId(basePhoto);
 
         const link = String(
           row.Link ?? row.link ?? row.Maps ?? row.maps ?? row['Google Maps'] ?? ''
@@ -1147,6 +1291,8 @@
           photo,
           photoLarge,
           photoOriginal: basePhoto,
+          thumbCandidates,
+          largeCandidates,
           flickrId,
           link
         };
@@ -1544,7 +1690,6 @@
 
         card.innerHTML = `
           <img
-            src="${escapeHtml(place.photo)}"
             alt="${escapeHtml(place.title)}"
             loading="${loadingAttr}"
             decoding="async"${priorityAttr}
@@ -1578,19 +1723,9 @@
           </div>
         `;
 
-        // Fallback image on load error (try _b, then exact original CSV URL, before generic fallback)
+        // Attach multi-candidate Flickr fallback chain before assigning src
         const imgEl = card.querySelector('img');
-        imgEl.addEventListener('error', function onImgError() {
-          if (place.photoLarge && this.src !== place.photoLarge && !this.dataset.triedLarge) {
-            this.dataset.triedLarge = '1';
-            this.src = place.photoLarge;
-          } else if (place.photoOriginal && this.src !== place.photoOriginal && !this.dataset.triedOriginal) {
-            this.dataset.triedOriginal = '1';
-            this.src = place.photoOriginal;
-          } else if (this.src !== FALLBACK_PHOTO) {
-            this.src = FALLBACK_PHOTO;
-          }
-        });
+        attachImageFallbackChain(imgEl, place.thumbCandidates || [place.photo, FALLBACK_PHOTO]);
 
         card.addEventListener('click', () => openModal(index));
         card.addEventListener('keydown', (e) => {
@@ -1674,24 +1809,12 @@
         activeModalIndex = index;
         const place = visiblePlaces[index];
 
-        // Ensure card batch is loaded up to this index if navigated via arrow keys
-        // High-res 1024px (_b) image for detail modal with graceful fallback to original URL
-        const modalSrc = place.photoLarge || place.photoOriginal || place.photo || FALLBACK_PHOTO;
-        els.modalImage.dataset.triedOriginal = '';
-        els.modalImage.dataset.triedThumb = '';
-        els.modalImage.src = modalSrc;
+        // High-res Flickr image with multi-candidate fallback chain attached before setting src
+        attachImageFallbackChain(
+          els.modalImage,
+          place.largeCandidates || [place.photoLarge, place.photoOriginal, place.photo, FALLBACK_PHOTO]
+        );
         els.modalImage.alt = place.title;
-        els.modalImage.onerror = function () {
-          if (place.photoOriginal && this.src !== place.photoOriginal && !this.dataset.triedOriginal) {
-            this.dataset.triedOriginal = '1';
-            this.src = place.photoOriginal;
-          } else if (place.photo && this.src !== place.photo && !this.dataset.triedThumb) {
-            this.dataset.triedThumb = '1';
-            this.src = place.photo;
-          } else if (this.src !== FALLBACK_PHOTO) {
-            this.src = FALLBACK_PHOTO;
-          }
-        };
 
         // Title & Counter
         els.modalTitle.textContent = place.title;
