@@ -1893,10 +1893,10 @@
           : '';
 
         const catBadges = place.categories
-          .slice(0, 2)
+          .slice(0, 1)
           .map(
             (cat) =>
-              `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-white/20 text-white backdrop-blur-sm">${escapeHtml(cat)}</span>`
+              `<span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 drop-shadow-sm">${escapeHtml(cat)}</span>`
           )
           .join('');
 
