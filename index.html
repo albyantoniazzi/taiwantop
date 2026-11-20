@@ -68,6 +68,7 @@
       --md-sys-color-outline: #707973;
       --md-sys-color-outline-variant: #BFC9C2;
       --md-sys-color-scrim: rgba(0, 0, 0, 0.48);
+      --goose-accent-color: #9C4233;
 
       /* Typography Tokens */
       --md-sys-typescale-font-family: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -131,6 +132,7 @@
         --md-sys-color-outline: #89938D;
         --md-sys-color-outline-variant: #3F4944;
         --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+        --goose-accent-color: #FFDAD4;
       }
     }
 
@@ -167,6 +169,7 @@
       --md-sys-color-outline: #89938D;
       --md-sys-color-outline-variant: #3F4944;
       --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+      --goose-accent-color: #FFDAD4;
     }
 
     /* Spots Badge: Consistent #FFDAD4 / #410000 in both light and dark modes */
@@ -185,7 +188,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding-bottom: 68px;
+      padding-bottom: 58px;
       background-color: var(--md-sys-color-surface);
       color: var(--md-sys-color-on-surface);
       transition: background-color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard),
@@ -209,7 +212,7 @@
       top: 0;
       z-index: 40;
       background-color: var(--md-sys-color-surface);
-      border-bottom: 1px solid transparent;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
       transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
                   border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
     }
@@ -602,7 +605,7 @@
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block" aria-hidden="true">
                 <path style="fill: var(--md-sys-color-on-surface);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
-                <path fill="#fadad4" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240ZM75 240L45 240L45 195L60 195L60 225L75 225L75 240ZM165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
+                <path style="fill: var(--goose-accent-color);" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240ZM75 240L45 240L45 195L60 195L60 225L75 225L75 240ZM165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
               </svg>
             </div>
             <div>
@@ -704,7 +707,7 @@
   <!-- ========================================================================
        MAIN CONTENT AREA: STATUS BAR, PLACES GRID, PAGINATION & EMPTY STATE
        ======================================================================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-3">
     <!-- Active Filter Status & Result Counter -->
     <div id="results-toolbar" class="flex flex-wrap items-center justify-between gap-2 mb-5">
       <div class="flex items-center gap-2 flex-wrap">
@@ -745,7 +748,7 @@
     ></section>
 
     <!-- Pagination Load More Container -->
-    <div id="load-more-container" class="hidden mt-8 mb-2 flex flex-col items-center">
+    <div id="load-more-container" class="hidden mt-6 mb-0 flex flex-col items-center">
       <button id="load-more-btn" type="button" class="md3-btn-filled">
         <span class="material-symbols-outlined text-xl">expand_more</span>
         <span id="load-more-label">Load More</span>
@@ -797,15 +800,13 @@
     class="fixed bottom-0 left-0 right-0 z-40 w-full border-t backdrop-blur-md"
     style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
   >
-    <div class="w-full px-4 sm:px-6 lg:px-8 py-2.5">
-      <div
-        id="category-filters"
-        class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full"
-        role="toolbar"
-        aria-label="Filter places by category"
-      >
-        <!-- Populated dynamically by populateCategoryFilters() -->
-      </div>
+    <div
+      id="category-filters"
+      class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full py-2.5 px-4 sm:px-6 lg:px-8"
+      role="toolbar"
+      aria-label="Filter places by category"
+    >
+      <!-- Populated dynamically by populateCategoryFilters() -->
     </div>
   </footer>
 
@@ -1977,8 +1978,7 @@
             canvas.removeEventListener('pointerdown', onPointerDown);
           }
         };
-
-        const drawGoose = (x, y, tick, monoColor, bgColor) => {
+        const drawGoose = (x, y, tick, monoColor, bgColor, accentColor) => {
           const p = 3; // 3px crisp pixel grid
           const px = Math.round(x);
           const py = Math.round(y);
@@ -1992,8 +1992,8 @@
           // Pixel Goose Head
           rect(7, 0, 3, 3);   // Head
 
-          // Goose Beak (#FFDAD4)
-          ctx.fillStyle = '#FFDAD4';
+          // Goose Beak (dark red in light mode, #FFDAD4 in dark mode)
+          ctx.fillStyle = accentColor;
           rect(10, 1, 3, 1);  // Upper beak
           rect(10, 2, 2, 1);  // Lower beak
 
@@ -2008,8 +2008,8 @@
           ctx.fillStyle = bgColor;
           rect(8, 1, 1, 1);
 
-          // Animated Pixel Legs (#FFDAD4)
-          ctx.fillStyle = '#FFDAD4';
+          // Animated Pixel Legs (dark red in light mode, #FFDAD4 in dark mode)
+          ctx.fillStyle = accentColor;
           if (!player.grounded) {
             rect(3, 12, 1, 2);
             rect(6, 12, 1, 2);
@@ -2024,7 +2024,7 @@
           }
         };
 
-        const drawFlamingHotPot = (obs, tick, monoColor, bgColor) => {
+        const drawFlamingHotPot = (obs, tick, monoColor, bgColor, accentColor) => {
           const p = 3; // 3px crisp pixel grid
           const px = Math.round(obs.x);
           const py = Math.round(obs.y);
@@ -2034,8 +2034,8 @@
             ctx.fillRect(px + gx * p, py + gy * p, gw * p, gh * p);
           };
 
-          // Pixel Flames / Steam rising from pot (#FFDAD4)
-          ctx.fillStyle = '#FFDAD4';
+          // Pixel Flames / Steam rising from pot
+          ctx.fillStyle = accentColor;
           if (flamePhase === 0) {
             rect(2, 0, 1, 2);
             rect(5, 1, 1, 2);
@@ -2061,8 +2061,8 @@
           rect(3, 5, 1, 1);
           rect(6, 5, 1, 1);
 
-          // Base Burner & Flickering Bottom Flames (#FFDAD4)
-          ctx.fillStyle = '#FFDAD4';
+          // Base Burner & Flickering Bottom Flames
+          ctx.fillStyle = accentColor;
           rect(2, 8, 1, 1);
           rect(4, 8, 2, 1);
           rect(7, 8, 1, 1);
@@ -2079,6 +2079,7 @@
           const outlineColor = styles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#BFC9C2';
           const monoColor = styles.getPropertyValue('--md-sys-color-on-surface').trim() || '#171D1A';
           const mutedColor = styles.getPropertyValue('--md-sys-color-on-surface-variant').trim() || '#3F4944';
+          const accentColor = styles.getPropertyValue('--goose-accent-color').trim() || '#9C4233';
 
           ctx.fillStyle = surfaceColor;
           ctx.fillRect(0, 0, width, height);
@@ -2168,8 +2169,8 @@
             }
           }
 
-          obstacles.forEach((obs) => drawFlamingHotPot(obs, frameTick, monoColor, surfaceColor));
-          drawGoose(player.x, player.y, frameTick, monoColor, surfaceColor);
+          obstacles.forEach((obs) => drawFlamingHotPot(obs, frameTick, monoColor, surfaceColor, accentColor));
+          drawGoose(player.x, player.y, frameTick, monoColor, surfaceColor, accentColor);
 
           if (isGameOver) {
             ctx.fillStyle = surfaceColor;
