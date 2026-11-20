@@ -185,6 +185,7 @@
     body {
       margin: 0;
       min-height: 100vh;
+      padding-bottom: 68px;
       background-color: var(--md-sys-color-surface);
       color: var(--md-sys-color-on-surface);
       transition: background-color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard),
@@ -597,11 +598,12 @@
             title="Reset all filters and return to top"
           >
             <div
-              class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
-              style="background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);"
+              class="w-12 h-12 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
             >
-              <span class="material-symbols-outlined filled text-2xl group-hover:hidden">folder</span>
-              <span class="material-symbols-outlined filled text-2xl hidden group-hover:inline">folder_open</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block" aria-hidden="true">
+                <path style="fill: var(--md-sys-color-on-surface);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
+                <path fill="#fadad4" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240ZM75 240L45 240L45 195L60 195L60 225L75 225L75 240ZM165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
+              </svg>
             </div>
             <div>
               <div class="flex items-center gap-2">
@@ -696,20 +698,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Category Filter Chips Bar -->
-      <nav aria-label="Category filters" class="mt-3 pt-2 border-t" style="border-color: var(--md-sys-color-outline-variant);">
-        <div class="flex items-center gap-2">
-          <div
-            id="category-filters"
-            class="chip-scroll-strip flex items-center gap-2 overflow-x-auto py-1 flex-1"
-            role="toolbar"
-            aria-label="Filter places by category"
-          >
-            <!-- Populated dynamically by populateCategoryFilters() -->
-          </div>
-        </div>
-      </nav>
     </div>
   </header>
 
@@ -802,16 +790,22 @@
   </main>
 
   <!-- ========================================================================
-       FOOTER
+       FIXED FULL-WIDTH CATEGORY FILTER FOOTER BAR
        ======================================================================== -->
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 border-t text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-4"
-    style="border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined filled text-lg" style="color: #A5F2D3;">folder</span>
-      <span><strong>TAIWAN TOP</strong> - Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="font-semibold underline" style="color: var(--md-sys-color-primary);">@alby.food</a></span>
-    </div>
-    <div class="flex items-center gap-4">
-      <span>Keyboard: <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">/</kbd> to search · <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">←</kbd> <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">→</kbd> in modal</span>
+  <footer
+    aria-label="Category filters"
+    class="fixed bottom-0 left-0 right-0 z-40 w-full border-t backdrop-blur-md"
+    style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
+  >
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-2.5">
+      <div
+        id="category-filters"
+        class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full"
+        role="toolbar"
+        aria-label="Filter places by category"
+      >
+        <!-- Populated dynamically by populateCategoryFilters() -->
+      </div>
     </div>
   </footer>
 
@@ -1323,18 +1317,28 @@
       function buildAutocompleteIndex() {
         const seen = new Set();
         const entries = [];
+        const cityCounts = new Map();
 
-        const addTerm = (term, type, priority) => {
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            const key = p.city.toLowerCase();
+            cityCounts.set(key, (cityCounts.get(key) || 0) + 1);
+          }
+        });
+
+        const addTerm = (term, type, priority, count) => {
           const clean = String(term || '').trim().replace(/\s+/g, ' ');
           const lower = clean.toLowerCase();
           if (!clean || seen.has(lower)) return;
           seen.add(lower);
-          entries.push({ term: clean, lower, type, priority });
+          entries.push({ term: clean, lower, type, priority, count });
         };
 
-        // Priority 1: Cities
+        // Priority 1: Cities (with spot counts)
         allPlaces.forEach((p) => {
-          if (p.city) addTerm(p.city, 'city', 1);
+          if (p.city) {
+            addTerm(p.city, 'city', 1, cityCounts.get(p.city.toLowerCase()) || 0);
+          }
         });
 
         // Priority 2: Categories
@@ -1425,13 +1429,17 @@
           li.className = 'md3-autocomplete-item';
           li.setAttribute('role', 'option');
           const isLucky = item.type === 'lucky';
+          const countHtml =
+            item.type === 'city' && typeof item.count === 'number'
+              ? ` <span class="font-semibold" style="color: var(--md-sys-color-primary);">(${item.count})</span>`
+              : '';
 
           li.innerHTML = `
             <span class="flex items-center gap-2.5 min-w-0">
               <span class="material-symbols-outlined ${isLucky ? 'filled' : ''} text-lg shrink-0" style="color: ${isLucky ? 'var(--md-sys-color-tertiary)' : 'var(--md-sys-color-primary)'};">
                 ${iconMap[item.type] || 'search'}
               </span>
-              <span class="text-sm ${isLucky ? 'font-bold' : 'font-medium'} truncate">${escapeHtml(item.term)}</span>
+              <span class="text-sm ${isLucky ? 'font-bold' : 'font-medium'} truncate">${escapeHtml(item.term)}${countHtml}</span>
             </span>
             <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ml-2"
               style="background-color: ${isLucky ? 'var(--md-sys-color-tertiary-container)' : 'var(--md-sys-color-surface-container)'}; color: ${isLucky ? 'var(--md-sys-color-on-tertiary-container)' : 'var(--md-sys-color-on-surface-variant)'};">
