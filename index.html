@@ -169,10 +169,10 @@
       --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
     }
 
-    /* Base & Typography Setup */
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+    /* Spots Badge: Consistent #FFDAD4 / #410000 in both light and dark modes */
+    #header-total-badge {
+      background-color: #FFDAD4;
+      color: #410000;
     }
 
     html {
@@ -278,7 +278,8 @@
       border-radius: var(--md-sys-shape-corner-full);
       font-size: 0.875rem;
       font-weight: 500;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
@@ -368,9 +369,8 @@
       background: linear-gradient(
         to top,
         rgba(10, 16, 13, 0.88) 0%,
-        rgba(10, 16, 13, 0.42) 45%,
-        rgba(10, 16, 13, 0.08) 75%,
-        rgba(10, 16, 13, 0.25) 100%
+        rgba(10, 16, 13, 0.45) 26%,
+        rgba(10, 16, 13, 0) 42%
       );
       pointer-events: none;
     }
@@ -592,7 +592,8 @@
               class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
               style="background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);"
             >
-              <span class="material-symbols-outlined filled text-2xl">folder</span>
+              <span class="material-symbols-outlined filled text-2xl group-hover:hidden">folder</span>
+              <span class="material-symbols-outlined filled text-2xl hidden group-hover:inline">folder_open</span>
             </div>
             <div>
               <div class="flex items-center gap-2">
@@ -602,7 +603,6 @@
                 <span
                   id="header-total-badge"
                   class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
                 >
                   Loading…
                 </span>
@@ -633,7 +633,7 @@
               type="text"
               autocomplete="off"
               spellcheck="false"
-              placeholder="Search spots, cities, beef noodle, coffee…"
+              placeholder="Search places, food or cities..."
               aria-label="Search curated Taiwan places"
               aria-autocomplete="list"
               aria-controls="autocomplete-list"
@@ -672,7 +672,9 @@
             class="md3-btn-tonal !px-3.5 !min-h-[40px] text-xs sm:text-sm"
             title="Follow @alby.food on Instagram"
           >
-            <span class="material-symbols-outlined text-lg">photo_camera</span>
+            <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
             <span class="hidden sm:inline">@alby.food</span>
           </a>
           <button
@@ -722,10 +724,16 @@
           Clear active filters
         </button>
       </div>
-      <div class="text-xs hidden sm:flex items-center gap-1.5" style="color: var(--md-sys-color-on-surface-variant);">
-        <span class="material-symbols-outlined text-base">sort</span>
-        <span>Sorted newest first</span>
-      </div>
+      <button
+        id="sort-toggle-btn"
+        type="button"
+        class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors hover:opacity-90 active:scale-95"
+        style="background-color: var(--md-sys-color-surface-container-low); border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);"
+        title="Switch sort order"
+      >
+        <span id="sort-toggle-icon" class="material-symbols-outlined text-base">sort</span>
+        <span id="sort-toggle-label">Sorted newest first</span>
+      </button>
     </div>
 
     <!-- Loading Skeleton Grid (shown during initial CSV fetch) -->
@@ -797,7 +805,7 @@
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 border-t text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-4"
     style="border-color: var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant);">
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined filled text-lg" style="color: var(--md-sys-color-primary);">folder</span>
+      <span class="material-symbols-outlined filled text-lg" style="color: #A5F2D3;">folder</span>
       <span><strong>TAIWAN TOP</strong> - Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="font-semibold underline" style="color: var(--md-sys-color-primary);">@alby.food</a></span>
     </div>
     <div class="flex items-center gap-4">
@@ -836,8 +844,8 @@
 
         <div class="flex items-center gap-2">
           <button id="modal-share-btn" type="button" class="md3-btn-tonal !min-h-[40px] !px-4 text-xs sm:text-sm" title="Copy direct link to this spot">
-            <span class="material-symbols-outlined text-lg">share</span>
-            <span>Share</span>
+            <span id="modal-share-icon" class="material-symbols-outlined text-lg">share</span>
+            <span id="modal-share-label">Share</span>
           </button>
           <button id="modal-close-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Close modal" title="Close (Escape)">
             <span class="material-symbols-outlined">close</span>
@@ -951,6 +959,7 @@
 
       let activeCategory = 'ALL';
       let searchQuery = '';
+      let sortOrder = 'newest'; // 'newest' | 'alpha'
       let activeModalIndex = -1;
       let pendingSpotSlug = null;
 
@@ -981,6 +990,9 @@
         categoryFilters: document.getElementById('category-filters'),
         resultsSummary: document.getElementById('results-summary'),
         resetFiltersInlineBtn: document.getElementById('reset-filters-inline-btn'),
+        sortToggleBtn: document.getElementById('sort-toggle-btn'),
+        sortToggleIcon: document.getElementById('sort-toggle-icon'),
+        sortToggleLabel: document.getElementById('sort-toggle-label'),
         loadingSkeleton: document.getElementById('loading-skeleton'),
         placesGrid: document.getElementById('places-grid'),
         loadMoreContainer: document.getElementById('load-more-container'),
@@ -1000,6 +1012,8 @@
         modalNextBtn: document.getElementById('modal-next-btn'),
         modalCounter: document.getElementById('modal-counter'),
         modalShareBtn: document.getElementById('modal-share-btn'),
+        modalShareIcon: document.getElementById('modal-share-icon'),
+        modalShareLabel: document.getElementById('modal-share-label'),
         modalCloseBtn: document.getElementById('modal-close-btn'),
         modalImage: document.getElementById('modal-image'),
         modalCityBtn: document.getElementById('modal-city-btn'),
@@ -1016,42 +1030,27 @@
          NORMALIZATION & UTILITY HELPERS
          ---------------------------------------------------------------------- */
 
-      /**
-       * Converts a place title into a clean URL-safe slug.
-       */
-      function slugify(str) {
-        return String(str || '')
-          .normalize('NFKD')
-          .replace(/[\u0300-\u036f]/g, '')
+      function slugify(text) {
+        return String(text || '')
           .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-+|-+$/g, '') || 'spot';
       }
 
-      /**
-       * Normalizes city names (trims, collapses spaces, title-cases ASCII words).
-       */
       function formatCityName(rawCity) {
         const cleaned = String(rawCity || '').trim().replace(/\s+/g, ' ');
         if (!cleaned) return '';
         return cleaned
           .split(' ')
-          .map((word) =>
-            /^[a-zA-Z]/.test(word)
-              ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-              : word
-          )
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
           .join(' ');
       }
 
-      /**
-       * Extracts numeric Flickr photo ID as BigInt so records can be sorted descending.
-       * Example Flickr URL: https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg
-       */
       function extractFlickrPhotoId(photoUrl) {
         if (!photoUrl) return 0n;
-        const match = String(photoUrl).match(/\/(\d{8,20})_[a-zA-Z0-9]+/);
+        const match = String(photoUrl).match(/\/(\d{8,})_[a-zA-Z0-9]+/);
         if (match && match[1]) {
           try {
             return BigInt(match[1]);
@@ -1059,117 +1058,62 @@
             return 0n;
           }
         }
-        const fallbackDigits = String(photoUrl).match(/(\d{9,20})/);
-        if (fallbackDigits && fallbackDigits[1]) {
-          try {
-            return BigInt(fallbackDigits[1]);
-          } catch {
-            return 0n;
-          }
-        }
         return 0n;
       }
 
-      /**
-       * Picks the first non-empty field among candidate column names.
-       */
-      function pickField(row, keys) {
+      function pickColumn(row, keys) {
         for (const key of keys) {
-          if (row[key] !== undefined && row[key] !== null) {
-            const val = String(row[key]).trim();
-            if (val.length > 0) return val;
+          if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
+            return String(row[key]).trim();
           }
         }
         return '';
       }
 
-      /**
-       * Normalizes a raw CSV row into a structured place object.
-       */
-      function normalizePlaceRow(row, index) {
-        const title = pickField(row, ['Title', 'title', 'Name', 'name']);
+      function normalizePlaceRow(row, idx) {
+        const title = pickColumn(row, ['Title', 'title', 'Name', 'name']);
         if (!title) return null;
 
-        const rawCity = pickField(row, ['City', 'city', 'Location', 'location']);
-        const city = formatCityName(rawCity);
+        const city = formatCityName(pickColumn(row, ['City', 'city', 'Location', 'location']));
+        const rawCats = pickColumn(row, ['Category', 'category', 'Categories', 'categories', 'Tags', 'tags']);
 
-        const rawCat = pickField(row, [
-          'Category',
-          'category',
-          'Categories',
-          'categories',
-          'Tags',
-          'tags'
-        ]);
-
-        // Split on ,, ;, or |, trim, collapse spaces, deduplicate case-insensitively per place
-        const seenCatLower = new Set();
+        const seenCats = new Set();
         const categories = [];
-        if (rawCat) {
-          rawCat.split(/[,;|]+/).forEach((part) => {
-            const normalized = part.trim().replace(/\s+/g, ' ');
-            if (!normalized) return;
-            const lower = normalized.toLowerCase();
-            if (!seenCatLower.has(lower)) {
-              seenCatLower.add(lower);
-              categories.push(normalized);
+        if (rawCats) {
+          rawCats.split(/[,;|]/).forEach((part) => {
+            const clean = part.trim().replace(/\s+/g, ' ');
+            const lower = clean.toLowerCase();
+            if (clean && !seenCats.has(lower)) {
+              seenCats.add(lower);
+              categories.push(clean);
             }
           });
         }
 
-        const description = pickField(row, [
-          'Description',
-          'description',
-          'Notes',
-          'notes'
-        ]);
-
-        const rawPhoto = pickField(row, ['Photo', 'photo', 'Image', 'image', 'URL']);
+        const description = pickColumn(row, ['Description', 'description', 'Notes', 'notes']);
+        const rawPhoto = pickColumn(row, ['Photo', 'photo', 'Image', 'image', 'URL', 'url']);
         const photo = rawPhoto || FALLBACK_PHOTO;
-        const flickrId = extractFlickrPhotoId(photo);
-
-        const link = pickField(row, ['Link', 'link', 'Maps', 'maps', 'Google Maps']);
-
-        const slug = slugify(title);
-        const searchable = [title, description, categories.join(' '), city]
-          .join(' ')
-          .toLowerCase();
+        const flickrId = extractFlickrPhotoId(rawPhoto);
+        const link = pickColumn(row, ['Link', 'link', 'Maps', 'maps', 'Google Maps', 'google maps']);
+        const slug = `${slugify(title)}-${idx + 1}`;
 
         return {
-          id: index,
+          id: idx,
           slug,
           title,
           city,
           categories,
-          categoriesLower: categories.map((c) => c.toLowerCase()),
           description,
           photo,
           flickrId,
-          link,
-          searchable
+          link
         };
-      }
-
-      /**
-       * Displays a brief Material Design 3 snackbar toast.
-       */
-      let snackbarTimeout = null;
-      function showSnackbar(message) {
-        els.snackbarText.textContent = message;
-        els.snackbar.classList.add('show');
-        clearTimeout(snackbarTimeout);
-        snackbarTimeout = setTimeout(() => {
-          els.snackbar.classList.remove('show');
-        }, 2800);
       }
 
       /* ----------------------------------------------------------------------
          1. STATE MANAGEMENT & URL SYNCHRONIZATION
          ---------------------------------------------------------------------- */
 
-      /**
-       * Reads cat, city, q, and spot query parameters from window.location.search on load.
-       */
       function parseUrlState() {
         try {
           const params = new URLSearchParams(window.location.search);
@@ -1178,78 +1122,58 @@
           const qParam = params.get('q');
           const spotParam = params.get('spot');
 
-          if (catParam && catParam.trim()) {
+          if (catParam) {
             activeCategory = catParam.trim().toLowerCase();
           }
 
-          if (qParam && qParam.trim()) {
+          if (qParam) {
             searchQuery = qParam.trim();
-          } else if (cityParam && cityParam.trim()) {
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          } else if (cityParam) {
             searchQuery = cityParam.trim();
-          }
-
-          if (searchQuery) {
             els.searchInput.value = searchQuery;
             els.clearSearchBtn.classList.remove('hidden');
           }
 
-          if (spotParam && spotParam.trim()) {
-            pendingSpotSlug = spotParam.trim().toLowerCase();
+          if (spotParam) {
+            pendingSpotSlug = spotParam.trim();
           }
-        } catch (err) {
-          console.warn('Unable to parse URL parameters:', err);
+        } catch {
+          // Ignore URL parsing issues in restricted environments
         }
       }
 
-      /**
-       * Synchronizes active filters and inspected spot slug back to the URL via history.replaceState.
-       * Skips blob: or null origins to avoid SecurityError in sandboxed frames.
-       */
-      function updateUrlState(targetSpotSlug = null) {
+      function updateUrlState(targetSpotSlug) {
         try {
-          if (
-            window.location.protocol === 'blob:' ||
-            window.location.origin === 'null' ||
-            !window.history ||
-            typeof window.history.replaceState !== 'function'
-          ) {
+          const origin = window.location.origin;
+          if (!origin || origin === 'null' || window.location.protocol === 'blob:') {
             return;
           }
 
           const url = new URL(window.location.href);
-          const params = url.searchParams;
-
           if (activeCategory && activeCategory !== 'ALL') {
-            params.set('cat', activeCategory);
+            url.searchParams.set('cat', activeCategory);
           } else {
-            params.delete('cat');
+            url.searchParams.delete('cat');
           }
 
           if (searchQuery && searchQuery.trim()) {
-            params.set('q', searchQuery.trim());
+            url.searchParams.set('q', searchQuery.trim());
           } else {
-            params.delete('q');
+            url.searchParams.delete('q');
           }
-          params.delete('city');
+          url.searchParams.delete('city');
 
-          const activeSlug =
-            targetSpotSlug !== null
-              ? targetSpotSlug
-              : activeModalIndex >= 0 && visiblePlaces[activeModalIndex]
-              ? visiblePlaces[activeModalIndex].slug
-              : null;
-
-          if (activeSlug) {
-            params.set('spot', activeSlug);
+          if (targetSpotSlug) {
+            url.searchParams.set('spot', targetSpotSlug);
           } else {
-            params.delete('spot');
+            url.searchParams.delete('spot');
           }
 
-          const newSearch = params.toString();
-          const newRelativeUrl = `${url.pathname}${newSearch ? '?' + newSearch : ''}${url.hash}`;
-          window.history.replaceState(null, '', newRelativeUrl);
-        } catch (err) {
-          // Silently ignore history errors in restricted origins
+          window.history.replaceState({}, '', url.toString());
+        } catch {
+          // Skip history updates when running inside sandboxed/blob origins
         }
       }
 
@@ -1257,75 +1181,44 @@
          2. FILTERING, SEARCH & AUTOCOMPLETE ENGINE
          ---------------------------------------------------------------------- */
 
-      /**
-       * Aggregates unique lowercase category keys across allPlaces, counts occurrences,
-       * sorts keys alphabetically, and renders category filter buttons + ALL button.
-       */
       function populateCategoryFilters() {
-        const categoryMap = new Map(); // lowerKey -> { label, count }
+        const counts = new Map();
+        const labels = new Map();
 
         allPlaces.forEach((place) => {
           place.categories.forEach((cat) => {
             const key = cat.toLowerCase();
-            if (!categoryMap.has(key)) {
-              categoryMap.set(key, { label: cat, count: 0 });
-            }
-            categoryMap.get(key).count += 1;
+            counts.set(key, (counts.get(key) || 0) + 1);
+            if (!labels.has(key)) labels.set(key, cat);
           });
         });
 
-        // Validate activeCategory from URL against existing categories
-        if (activeCategory !== 'ALL' && !categoryMap.has(activeCategory.toLowerCase())) {
-          activeCategory = 'ALL';
-        } else if (activeCategory !== 'ALL') {
-          activeCategory = activeCategory.toLowerCase();
-        }
+        const sortedKeys = Array.from(counts.keys()).sort((a, b) => a.localeCompare(b));
+        const frag = document.createDocumentFragment();
 
-        const sortedKeys = Array.from(categoryMap.keys()).sort((a, b) =>
-          a.localeCompare(b)
-        );
-
-        const fragment = document.createDocumentFragment();
-
-        // ALL Button
+        // ALL button
         const allBtn = document.createElement('button');
         allBtn.type = 'button';
         allBtn.className = 'md3-filter-chip';
-        allBtn.dataset.category = 'ALL';
         allBtn.setAttribute('aria-pressed', activeCategory === 'ALL' ? 'true' : 'false');
-        allBtn.innerHTML = `
-          <span>ALL</span>
-          <span class="chip-count">${allPlaces.length}</span>
-        `;
+        allBtn.innerHTML = `<span>ALL</span><span class="chip-count">${allPlaces.length}</span>`;
         allBtn.addEventListener('click', () => setCategory('ALL'));
-        fragment.appendChild(allBtn);
+        frag.appendChild(allBtn);
 
-        // Individual Category Buttons
         sortedKeys.forEach((key) => {
-          const item = categoryMap.get(key);
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'md3-filter-chip';
-          btn.dataset.category = key;
           btn.setAttribute('aria-pressed', activeCategory === key ? 'true' : 'false');
-          btn.innerHTML = `
-            <span>${escapeHtml(item.label)}</span>
-            <span class="chip-count">${item.count}</span>
-          `;
+          btn.innerHTML = `<span>${escapeHtml(labels.get(key))}</span><span class="chip-count">${counts.get(key)}</span>`;
           btn.addEventListener('click', () => setCategory(key));
-          fragment.appendChild(btn);
+          frag.appendChild(btn);
         });
 
         els.categoryFilters.innerHTML = '';
-        els.categoryFilters.appendChild(fragment);
+        els.categoryFilters.appendChild(frag);
       }
 
-      /**
-       * Toggles activeCategory (reverts to "ALL" if active non-ALL category is clicked again)
-       * and re-runs filterPlaces(). If the empty-state game is running and the search query
-       * is hiding spots in the newly chosen category, clears the search query so the user
-       * immediately navigates to that category.
-       */
       function setCategory(cat) {
         const normalized = cat === 'ALL' ? 'ALL' : String(cat).toLowerCase();
         if (normalized !== 'ALL' && activeCategory === normalized) {
@@ -1333,213 +1226,231 @@
         } else {
           activeCategory = normalized;
         }
-
-        // If the runner game is active (no visible results), clear stale search query
-        // when switching categories so clicking a category immediately shows its places
-        if (dinoGameRunning && searchQuery.trim().length > 0) {
-          searchQuery = '';
-          els.searchInput.value = '';
-          els.clearSearchBtn.classList.add('hidden');
-          hideAutocomplete();
-        }
-
-        // Update aria-pressed state on chip buttons
-        const buttons = els.categoryFilters.querySelectorAll('.md3-filter-chip');
-        buttons.forEach((btn) => {
-          const isMatch = btn.dataset.category === activeCategory;
-          btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
-        });
-
+        populateCategoryFilters();
         filterPlaces();
       }
 
-      /**
-       * Filters allPlaces by activeCategory and whitespace-separated search tokens,
-       * resets pagination to PAGE_SIZE, updates URL state, and renders cards.
-       */
+      function updateResultsSummary() {
+        const total = visiblePlaces.length;
+        const hasFilters = activeCategory !== 'ALL' || Boolean(searchQuery.trim());
+        els.resetFiltersInlineBtn.classList.toggle('hidden', !hasFilters);
+
+        if (total === 0) {
+          els.resultsSummary.textContent = '0 places found';
+        } else if (hasFilters) {
+          els.resultsSummary.textContent = `${total} matching ${total === 1 ? 'place' : 'places'}`;
+        } else {
+          els.resultsSummary.textContent = `${total} curated places across Taiwan`;
+        }
+      }
+
       function filterPlaces() {
         const rawTokens = searchQuery
-          .toLowerCase()
           .trim()
+          .toLowerCase()
           .split(/\s+/)
           .filter(Boolean);
 
         visiblePlaces = allPlaces.filter((place) => {
-          // Category filter check
-          if (
-            activeCategory !== 'ALL' &&
-            !place.categoriesLower.includes(activeCategory)
-          ) {
-            return false;
+          if (activeCategory !== 'ALL') {
+            const matchesCat = place.categories.some(
+              (c) => c.toLowerCase() === activeCategory
+            );
+            if (!matchesCat) return false;
           }
 
-          // Multi-token search check
           if (rawTokens.length > 0) {
-            return rawTokens.every((tok) => place.searchable.includes(tok));
+            const searchable = [
+              place.title,
+              place.description,
+              place.categories.join(' '),
+              place.city
+            ]
+              .join(' ')
+              .toLowerCase();
+
+            if (!rawTokens.every((tok) => searchable.includes(tok))) {
+              return false;
+            }
           }
 
           return true;
         });
 
+        if (sortOrder === 'alpha') {
+          visiblePlaces.sort((a, b) =>
+            a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
+          );
+        }
+
         displayedCount = PAGE_SIZE;
         updateResultsSummary();
-        updateUrlState();
+        updateUrlState(activeModalIndex !== -1 && visiblePlaces[activeModalIndex] ? visiblePlaces[activeModalIndex].slug : null);
         renderCards();
       }
 
-      /**
-       * Updates the result counter and inline filter reset visibility.
-       */
-      function updateResultsSummary() {
-        const total = allPlaces.length;
-        const shown = visiblePlaces.length;
-        const hasFilters = activeCategory !== 'ALL' || searchQuery.trim().length > 0;
-
-        if (hasFilters) {
-          els.resetFiltersInlineBtn.classList.remove('hidden');
+      function toggleSortOrder() {
+        sortOrder = sortOrder === 'newest' ? 'alpha' : 'newest';
+        if (sortOrder === 'alpha') {
+          els.sortToggleIcon.textContent = 'sort_by_alpha';
+          els.sortToggleLabel.textContent = 'Sorted A–Z';
         } else {
-          els.resetFiltersInlineBtn.classList.add('hidden');
+          els.sortToggleIcon.textContent = 'sort';
+          els.sortToggleLabel.textContent = 'Sorted newest first';
         }
-
-        if (total === 0) {
-          els.resultsSummary.textContent = 'No places loaded.';
-          return;
-        }
-
-        if (!hasFilters) {
-          els.resultsSummary.textContent = `Showing ${Math.min(displayedCount, shown)} of ${total} curated spots across Taiwan`;
-        } else {
-          els.resultsSummary.textContent = `Found ${shown} matching ${shown === 1 ? 'spot' : 'spots'} out of ${total}`;
-        }
+        filterPlaces();
       }
 
-      /**
-       * Builds the weighted autocomplete index from cities (priority 1),
-       * categories (priority 2), place titles (priority 3), and non-stop words 3+ chars (priority 4).
-       */
       function buildAutocompleteIndex() {
-        const seen = new Map(); // lowerTerm -> { term, type, priority, icon }
+        const seen = new Set();
+        const entries = [];
 
-        const addEntry = (term, type, priority, icon) => {
-          const clean = String(term || '').trim();
-          if (!clean) return;
+        const addTerm = (term, type, priority) => {
+          const clean = String(term || '').trim().replace(/\s+/g, ' ');
           const lower = clean.toLowerCase();
-          if (!seen.has(lower) || seen.get(lower).priority > priority) {
-            seen.set(lower, { term: clean, lower, type, priority, icon });
-          }
+          if (!clean || seen.has(lower)) return;
+          seen.add(lower);
+          entries.push({ term: clean, lower, type, priority });
         };
 
-        allPlaces.forEach((place) => {
-          // Priority 1: Cities
-          if (place.city) {
-            addEntry(place.city, 'city', 1, 'location_on');
-          }
-          // Priority 2: Categories
-          place.categories.forEach((cat) => {
-            addEntry(cat, 'food', 2, 'restaurant');
-          });
-          // Priority 3: Place titles
-          addEntry(place.title, 'place', 3, 'storefront');
-          // Priority 4: Non-stop words length >= 3 from title and description
-          const words = `${place.title} ${place.description}`
-            .toLowerCase()
-            .replace(/[^a-z0-9\u4e00-\u9fff\s]/g, ' ')
-            .split(/\s+/);
+        // Priority 1: Cities
+        allPlaces.forEach((p) => {
+          if (p.city) addTerm(p.city, 'city', 1);
+        });
+
+        // Priority 2: Categories
+        allPlaces.forEach((p) => {
+          p.categories.forEach((cat) => addTerm(cat, 'food', 2));
+        });
+
+        // Priority 3: Place Titles
+        allPlaces.forEach((p) => {
+          addTerm(p.title, 'place', 3);
+        });
+
+        // Priority 4: Non-stop words of length 3+ from titles and descriptions
+        allPlaces.forEach((p) => {
+          const blob = `${p.title} ${p.description}`;
+          const words = blob.match(/[a-zA-Z0-9\u4e00-\u9fff]{3,}/g) || [];
           words.forEach((w) => {
-            if (w.length >= 3 && !STOP_WORDS.has(w) && !/^\d+$/.test(w)) {
-              addEntry(w, 'word', 4, 'tag');
+            if (!STOP_WORDS.has(w.toLowerCase())) {
+              addTerm(w, 'word', 4);
             }
           });
         });
 
-        autocompleteIndex = Array.from(seen.values()).sort((a, b) => {
-          if (a.priority !== b.priority) return a.priority - b.priority;
-          return a.term.localeCompare(b.term);
-        });
+        entries.sort((a, b) => a.priority - b.priority || a.term.localeCompare(b.term));
+        autocompleteIndex = entries;
       }
 
-      /**
-       * Updates and displays up to 8 autocomplete suggestions for the current input value.
-       */
-      function updateAutocompleteSuggestions(rawVal) {
-        const query = rawVal.trim().toLowerCase();
-        if (!query) {
-          hideAutocomplete();
-          return;
+      function triggerFeelingLucky() {
+        hideAutocomplete();
+        if (!allPlaces.length) return;
+        const randomPlace = allPlaces[Math.floor(Math.random() * allPlaces.length)];
+        activeCategory = 'ALL';
+        populateCategoryFilters();
+        searchQuery = randomPlace.title;
+        els.searchInput.value = randomPlace.title;
+        els.clearSearchBtn.classList.remove('hidden');
+        filterPlaces();
+        const idx = visiblePlaces.findIndex((p) => p.slug === randomPlace.slug);
+        if (idx !== -1) {
+          openModal(idx);
         }
+      }
 
-        // Prefix matches first, then substring matches, ordered by priority
-        const prefixMatches = [];
-        const substringMatches = [];
-
-        for (const item of autocompleteIndex) {
-          if (item.lower === query) continue;
-          if (item.lower.startsWith(query)) {
-            prefixMatches.push(item);
-          } else if (item.lower.includes(query)) {
-            substringMatches.push(item);
-          }
-          if (prefixMatches.length >= 8) break;
-        }
-
-        currentSuggestions = [...prefixMatches, ...substringMatches].slice(0, 8);
+      function updateAutocompleteSuggestions(rawInput) {
+        const query = String(rawInput || '').trim().toLowerCase();
         highlightedSuggestionIdx = -1;
 
-        if (currentSuggestions.length === 0) {
-          hideAutocomplete();
-          return;
+        let matches = [];
+        if (!query) {
+          // On click/focus with empty query: list cities in reverse alphabetical order (starting from Taipei)
+          matches = autocompleteIndex
+            .filter((item) => item.type === 'city')
+            .sort((a, b) => b.term.localeCompare(a.term));
+        } else {
+          matches = autocompleteIndex
+            .filter((item) => item.lower.includes(query))
+            .slice(0, 8);
         }
 
-        els.autocompleteList.innerHTML = '';
+        // Always append "I Feel Lucky" at the end of the dropdown list
+        const luckyItem = {
+          term: 'I Feel Lucky',
+          lower: 'i feel lucky',
+          type: 'lucky',
+          priority: 99
+        };
+        currentSuggestions = [...matches, luckyItem];
+
+        const iconMap = {
+          city: 'location_on',
+          food: 'restaurant',
+          place: 'storefront',
+          word: 'tag',
+          lucky: 'casino'
+        };
+
+        const badgeMap = {
+          city: 'City',
+          food: 'Category',
+          place: 'Spot',
+          word: 'Keyword',
+          lucky: 'Random'
+        };
+
+        const frag = document.createDocumentFragment();
         currentSuggestions.forEach((item, idx) => {
           const li = document.createElement('li');
           li.className = 'md3-autocomplete-item';
           li.setAttribute('role', 'option');
-          li.id = `ac-option-${idx}`;
+          const isLucky = item.type === 'lucky';
+
           li.innerHTML = `
-            <div class="flex items-center gap-3 min-w-0">
-              <span class="material-symbols-outlined text-lg shrink-0" style="color: var(--md-sys-color-primary);">${item.icon}</span>
-              <span class="truncate text-sm font-medium">${escapeHtml(item.term)}</span>
-            </div>
-            <span class="text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full shrink-0 ml-2"
-              style="background-color: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface-variant);">
-              ${item.type}
+            <span class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined ${isLucky ? 'filled' : ''} text-lg shrink-0" style="color: ${isLucky ? 'var(--md-sys-color-tertiary)' : 'var(--md-sys-color-primary)'};">
+                ${iconMap[item.type] || 'search'}
+              </span>
+              <span class="text-sm ${isLucky ? 'font-bold' : 'font-medium'} truncate">${escapeHtml(item.term)}</span>
+            </span>
+            <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ml-2"
+              style="background-color: ${isLucky ? 'var(--md-sys-color-tertiary-container)' : 'var(--md-sys-color-surface-container)'}; color: ${isLucky ? 'var(--md-sys-color-on-tertiary-container)' : 'var(--md-sys-color-on-surface-variant)'};">
+              ${badgeMap[item.type] || ''}
             </span>
           `;
+
           li.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             selectAutocompleteSuggestion(item);
           });
-          els.autocompleteList.appendChild(li);
+
+          frag.appendChild(li);
         });
 
+        els.autocompleteList.innerHTML = '';
+        els.autocompleteList.appendChild(frag);
         els.autocompleteDropdown.classList.remove('hidden');
         els.searchInput.setAttribute('aria-expanded', 'true');
+      }
+
+      function selectAutocompleteSuggestion(item) {
+        if (!item) return;
+        if (item.type === 'lucky') {
+          triggerFeelingLucky();
+          return;
+        }
+        els.searchInput.value = item.term;
+        searchQuery = item.term;
+        els.clearSearchBtn.classList.remove('hidden');
+        hideAutocomplete();
+        filterPlaces();
       }
 
       function hideAutocomplete() {
         els.autocompleteDropdown.classList.add('hidden');
         els.searchInput.setAttribute('aria-expanded', 'false');
-        currentSuggestions = [];
         highlightedSuggestionIdx = -1;
-      }
-
-      function selectAutocompleteSuggestion(item) {
-        if (item.type === 'food') {
-          // Apply category filter directly if it matches a known category
-          els.searchInput.value = '';
-          searchQuery = '';
-          els.clearSearchBtn.classList.add('hidden');
-          hideAutocomplete();
-          setCategory(item.lower);
-          return;
-        }
-
-        searchQuery = item.term;
-        els.searchInput.value = item.term;
-        els.clearSearchBtn.classList.remove('hidden');
-        hideAutocomplete();
-        filterPlaces();
       }
 
       function highlightAutocompleteItem(newIdx) {
@@ -1776,6 +1687,7 @@
         els.modalMapsLink.href = mapsUrl;
 
         // Show Modal
+        resetShareButtonState();
         els.placeModal.classList.add('open');
         els.placeModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
@@ -1786,6 +1698,7 @@
       function closeModal() {
         if (activeModalIndex === -1) return;
         activeModalIndex = -1;
+        resetShareButtonState();
         els.placeModal.classList.remove('open');
         els.placeModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -1799,8 +1712,16 @@
         openModal(nextIdx);
       }
 
+      let shareResetTimeout = null;
+      function resetShareButtonState() {
+        clearTimeout(shareResetTimeout);
+        if (els.modalShareIcon) els.modalShareIcon.textContent = 'share';
+        if (els.modalShareLabel) els.modalShareLabel.textContent = 'Share';
+      }
+
       /**
-       * Copies window.location.href to clipboard using document.execCommand('copy') fallback.
+       * Copies window.location.href to clipboard using document.execCommand('copy') fallback
+       * and updates the Share button inline to 'Copied' with a 'done' icon.
        */
       function shareCurrentSpot() {
         const shareUrl = window.location.href;
@@ -1813,10 +1734,15 @@
         textArea.select();
 
         try {
-          document.execCommand('copy');
-          showSnackbar('Spot link copied to clipboard!');
+          const ok = document.execCommand('copy');
+          if (ok) {
+            els.modalShareIcon.textContent = 'done';
+            els.modalShareLabel.textContent = 'Copied';
+            clearTimeout(shareResetTimeout);
+            shareResetTimeout = setTimeout(resetShareButtonState, 2200);
+          }
         } catch {
-          showSnackbar('Unable to copy link');
+          // Silently fail if clipboard access is blocked
         } finally {
           document.body.removeChild(textArea);
         }
@@ -2399,6 +2325,7 @@
         els.resetFiltersInlineBtn.addEventListener('click', resetAllFilters);
         els.emptyResetBtn.addEventListener('click', resetAllFilters);
         els.retryFetchBtn.addEventListener('click', loadCuratedPlaces);
+        els.sortToggleBtn.addEventListener('click', toggleSortOrder);
 
         // Search Input (150ms debounce) & Autocomplete Keyboard Navigation
         els.searchInput.addEventListener('input', (e) => {
@@ -2414,9 +2341,7 @@
         });
 
         els.searchInput.addEventListener('focus', () => {
-          if (els.searchInput.value.trim()) {
-            updateAutocompleteSuggestions(els.searchInput.value);
-          }
+          updateAutocompleteSuggestions(els.searchInput.value);
         });
 
         els.searchInput.addEventListener('keydown', (e) => {
