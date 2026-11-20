@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TAIWAN TOP — Curated Places by @albyantoniazzi</title>
   <meta name="description" content="A curated directory of top places, eats, and hidden gems across Taiwan compiled by @albyantoniazzi (@alby.food)." />
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath fill='%23FFFFFF' d='M120 0h45v45h-15v135h-15v15H30v-15H15v-45H0v-15h45v15h75V0zm30 15h-15v15h15V15zm15 0h45v15h-15v15h-30V15zM75 240H45v-45h15v30h15v15zm60 0h-30v-45h15v30h15v15z'/%3E%3C/svg%3E"
+  />
 
   <!-- Fonts: Roboto Flex & Material Symbols Outlined per Material Design 3 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -271,6 +276,7 @@
     }
 
     .md3-autocomplete-item {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -280,8 +286,15 @@
       transition: background-color 150ms ease;
     }
 
-    .md3-autocomplete-item + .md3-autocomplete-item {
-      border-top: 1px solid var(--md-sys-color-outline-variant);
+    .md3-autocomplete-item + .md3-autocomplete-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 16px;
+      right: 16px;
+      height: 1px;
+      background-color: var(--md-sys-color-outline-variant);
+      pointer-events: none;
     }
 
     .md3-autocomplete-item:hover,
@@ -663,17 +676,17 @@
   <header id="top-app-bar" class="md3-top-app-bar">
     <div class="w-full px-4 sm:px-[10%] pt-3 pb-3">
       <!-- Top Row: Brand Identity, Centered Search Bar & Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-3 md:grid md:grid-cols-[1fr_minmax(320px,460px)_1fr] md:items-center md:gap-4">
+      <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 lg:grid lg:grid-cols-[1fr_minmax(252px,400px)_1fr] lg:items-center lg:gap-4">
         <!-- Brand Logo & Title -->
-        <div class="flex items-center gap-3 justify-self-start">
+        <div class="flex items-center gap-2 sm:gap-3 justify-self-start min-w-0 shrink-0">
           <button
             id="brand-reset-btn"
             type="button"
-            class="flex items-center gap-3 text-left group focus:outline-none"
+            class="flex items-center gap-2.5 sm:gap-3 text-left group focus:outline-none min-w-0"
             title="Reset all filters and return to top"
           >
             <div
-              class="w-12 h-12 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
+              class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block overflow-visible" aria-hidden="true">
                 <path class="goose-body" style="fill: var(--md-sys-color-on-surface);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
@@ -682,19 +695,19 @@
                 <path class="goose-leg-right" style="fill: var(--goose-accent-color);" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240Z"/>
               </svg>
             </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--md-sys-color-on-surface);">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold tracking-tight whitespace-nowrap" style="color: var(--md-sys-color-on-surface);">
                   TAIWAN TOP
                 </h1>
                 <span
                   id="header-total-badge"
-                  class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                  class="text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0"
                 >
                   Loading…
                 </span>
               </div>
-              <p class="text-xs sm:text-sm" style="color: var(--md-sys-color-on-surface-variant);">
+              <p class="text-xs sm:text-sm truncate" style="color: var(--md-sys-color-on-surface-variant);">
                 Curated by
                 <a
                   href="https://www.instagram.com/alby.food/"
@@ -709,10 +722,10 @@
           </button>
         </div>
 
-        <!-- Search Input & Autocomplete Container (Centered Horizontally) -->
-        <div class="relative w-full order-3 md:order-2 md:justify-self-center">
-          <div class="md3-search-bar flex items-center px-4 h-12">
-            <span class="material-symbols-outlined mr-3 text-xl" style="color: var(--md-sys-color-on-surface-variant);">
+        <!-- Search Input & Autocomplete Container (Same line on sm+, stacked on mobile) -->
+        <div class="relative w-[92%] mx-auto sm:w-full sm:flex-1 sm:max-w-[222px] md:max-w-[295px] lg:max-w-none order-3 sm:order-2 lg:justify-self-center min-w-0">
+          <div class="md3-search-bar flex items-center px-3 sm:px-3.5 h-10">
+            <span class="material-symbols-outlined mr-1.5 sm:mr-2 text-lg sm:text-xl shrink-0" style="color: var(--md-sys-color-on-surface-variant);">
               search
             </span>
             <input
@@ -725,24 +738,24 @@
               aria-autocomplete="list"
               aria-controls="autocomplete-list"
               aria-expanded="false"
-              class="w-full bg-transparent border-none outline-none text-sm sm:text-base placeholder:opacity-65"
+              class="w-full min-w-0 bg-transparent border-none outline-none text-sm placeholder:opacity-65"
               style="color: var(--md-sys-color-on-surface);"
             />
             <button
               id="clear-search-btn"
               type="button"
               aria-label="Clear search query"
-              class="hidden ml-1 w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              class="hidden ml-1 w-7 h-7 rounded-full flex items-center justify-center shrink-0 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
               style="color: var(--md-sys-color-on-surface-variant);"
             >
-              <span class="material-symbols-outlined text-lg">close</span>
+              <span class="material-symbols-outlined text-base sm:text-lg">close</span>
             </button>
           </div>
 
           <!-- Autocomplete Suggestions Dropdown -->
           <div
             id="autocomplete-dropdown"
-            class="md3-autocomplete-menu hidden absolute left-0 right-0 mt-2 z-50"
+            class="md3-autocomplete-menu hidden absolute left-0 right-0 sm:min-w-[270px] sm:left-1/2 sm:-translate-x-1/2 mt-2 z-50"
             role="listbox"
             aria-label="Search suggestions"
           >
@@ -751,18 +764,19 @@
         </div>
 
         <!-- Right Utility Actions: Theme Toggle & Instagram Link -->
-        <div class="flex items-center gap-2 order-2 md:order-3 justify-self-end">
+        <div class="flex items-center gap-2 order-2 sm:order-3 justify-self-end shrink-0">
           <a
             href="https://www.instagram.com/alby.food/"
             target="_blank"
             rel="noopener noreferrer"
-            class="md3-btn-tonal !px-3.5 !min-h-[40px] text-xs sm:text-sm"
+            class="md3-btn-tonal !w-10 !px-0 lg:!w-auto lg:!px-3.5 !min-h-[40px] !h-10 text-xs sm:text-sm"
             title="Follow @alby.food on Instagram"
+            aria-label="Follow @alby.food on Instagram"
           >
             <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
-            <span class="hidden sm:inline">@alby.food</span>
+            <span class="hidden lg:inline">@alby.food</span>
           </a>
           <button
             id="theme-toggle-btn"
