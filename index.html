@@ -513,6 +513,19 @@
       box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
     }
 
+    @media (min-width: 1024px) {
+      .md3-modal-dialog {
+        max-width: 1120px;
+        max-height: 90vh;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .md3-modal-dialog {
+        max-width: 1240px;
+      }
+    }
+
     .md3-modal-backdrop.open .md3-modal-dialog {
       transform: scale(1) translateY(0);
     }
@@ -853,7 +866,7 @@
       <!-- Modal Scrollable Content -->
       <div class="overflow-y-auto grid grid-cols-1 md:grid-cols-2 flex-1">
         <!-- Photo Showcase -->
-        <div class="relative aspect-square md:aspect-auto md:min-h-[380px] bg-black/10 flex items-center justify-center overflow-hidden">
+        <div class="relative aspect-square md:aspect-auto md:min-h-[420px] lg:min-h-[560px] bg-black/10 flex items-center justify-center overflow-hidden">
           <img
             id="modal-image"
             src=""
@@ -863,10 +876,10 @@
         </div>
 
         <!-- Metadata, Categories, Description & Google Maps Action -->
-        <div class="p-5 sm:p-7 flex flex-col justify-between gap-5">
+        <div class="p-5 sm:p-7 lg:p-10 flex flex-col justify-between gap-6">
           <div>
             <!-- City Badge (Clickable filter) -->
-            <div class="mb-3 flex flex-wrap items-center gap-2">
+            <div class="mb-3 lg:mb-4 flex flex-wrap items-center gap-2">
               <button
                 id="modal-city-btn"
                 type="button"
@@ -880,17 +893,17 @@
             </div>
 
             <!-- Place Title -->
-            <h2 id="modal-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug mb-3" style="color: var(--md-sys-color-on-surface);">
+            <h2 id="modal-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug mb-3 lg:mb-4" style="color: var(--md-sys-color-on-surface);">
               Place Title
             </h2>
 
             <!-- Category Tags (Clickable filters) -->
-            <div id="modal-categories" class="flex flex-wrap gap-1.5 mb-4"></div>
+            <div id="modal-categories" class="flex flex-wrap gap-1.5 lg:gap-2 mb-4 lg:mb-6"></div>
 
             <!-- Description -->
             <p
               id="modal-description"
-              class="text-sm sm:text-base leading-relaxed whitespace-pre-line"
+              class="text-sm sm:text-base lg:text-lg leading-relaxed whitespace-pre-line"
               style="color: var(--md-sys-color-on-surface-variant);"
             ></p>
           </div>
