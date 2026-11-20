@@ -749,7 +749,7 @@
     </div>
 
     <!-- Loading Skeleton Grid (shown during initial CSV fetch) -->
-    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
       <!-- 12 placeholder cards generated via JS or static markup -->
     </div>
 
@@ -757,7 +757,7 @@
     <section
       id="places-grid"
       aria-label="Curated places in Taiwan"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
     ></section>
 
     <!-- Pagination Load More Container -->
@@ -947,6 +947,7 @@
          ---------------------------------------------------------------------- */
       const CSV_URL =
         'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+      const CACHE_STORAGE_KEY = 'taiwanTopCsvCache_v1';
       const FALLBACK_PHOTO =
         'https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg';
       const PAGE_SIZE = 24;
@@ -1068,6 +1069,16 @@
         }
       }
 
+      /**
+       * Rewrites live.staticflickr.com image URLs to a specific size suffix
+       * (e.g., 'z' for 640px grid thumbnails, 'b' for 1024px detail modal).
+       */
+      function getFlickrVariantUrl(photoUrl, sizeSuffix) {
+        const url = String(photoUrl || '');
+        if (!url.includes('staticflickr.com/')) return url;
+        return url.replace(/(_[a-z0-9])?(\.(?:jpe?g|png|webp))(?=$|\?)/i, `_${sizeSuffix}$2`);
+      }
+
       function parseCategories(rawCat) {
         if (!rawCat) return [];
         const seen = new Set();
@@ -1117,7 +1128,9 @@
         const rawPhoto = String(
           row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
         ).trim();
-        const photo = rawPhoto || FALLBACK_PHOTO;
+        const basePhoto = rawPhoto || FALLBACK_PHOTO;
+        const photo = getFlickrVariantUrl(basePhoto, 'z');
+        const photoLarge = getFlickrVariantUrl(basePhoto, 'b');
         const flickrId = extractFlickrPhotoId(rawPhoto);
 
         const link = String(
@@ -1132,6 +1145,8 @@
           categories,
           description,
           photo,
+          photoLarge,
+          photoOriginal: basePhoto,
           flickrId,
           link
         };
@@ -1523,13 +1538,16 @@
         card.setAttribute('aria-label', `${place.title}${place.city ? ', ' + place.city : ''}`);
 
         const primaryCat = place.categories[0] || '';
+        const isAboveFold = index < 6;
+        const loadingAttr = isAboveFold ? 'eager' : 'lazy';
+        const priorityAttr = index === 0 ? ' fetchpriority="high"' : '';
 
         card.innerHTML = `
           <img
             src="${escapeHtml(place.photo)}"
             alt="${escapeHtml(place.title)}"
-            loading="lazy"
-            decoding="async"
+            loading="${loadingAttr}"
+            decoding="async"${priorityAttr}
           />
           <div class="md3-card-scrim"></div>
 
@@ -1560,10 +1578,16 @@
           </div>
         `;
 
-        // Fallback image on load error
+        // Fallback image on load error (try _b, then exact original CSV URL, before generic fallback)
         const imgEl = card.querySelector('img');
         imgEl.addEventListener('error', function onImgError() {
-          if (this.src !== FALLBACK_PHOTO) {
+          if (place.photoLarge && this.src !== place.photoLarge && !this.dataset.triedLarge) {
+            this.dataset.triedLarge = '1';
+            this.src = place.photoLarge;
+          } else if (place.photoOriginal && this.src !== place.photoOriginal && !this.dataset.triedOriginal) {
+            this.dataset.triedOriginal = '1';
+            this.src = place.photoOriginal;
+          } else if (this.src !== FALLBACK_PHOTO) {
             this.src = FALLBACK_PHOTO;
           }
         });
@@ -1651,17 +1675,20 @@
         const place = visiblePlaces[index];
 
         // Ensure card batch is loaded up to this index if navigated via arrow keys
-        if (index >= displayedCount) {
-          while (displayedCount <= index && displayedCount < visiblePlaces.length) {
-            appendNextBatch();
-          }
-        }
-
-        // Image with fallback
-        els.modalImage.src = place.photo || FALLBACK_PHOTO;
+        // High-res 1024px (_b) image for detail modal with graceful fallback to original URL
+        const modalSrc = place.photoLarge || place.photoOriginal || place.photo || FALLBACK_PHOTO;
+        els.modalImage.dataset.triedOriginal = '';
+        els.modalImage.dataset.triedThumb = '';
+        els.modalImage.src = modalSrc;
         els.modalImage.alt = place.title;
         els.modalImage.onerror = function () {
-          if (this.src !== FALLBACK_PHOTO) {
+          if (place.photoOriginal && this.src !== place.photoOriginal && !this.dataset.triedOriginal) {
+            this.dataset.triedOriginal = '1';
+            this.src = place.photoOriginal;
+          } else if (place.photo && this.src !== place.photo && !this.dataset.triedThumb) {
+            this.dataset.triedThumb = '1';
+            this.src = place.photo;
+          } else if (this.src !== FALLBACK_PHOTO) {
             this.src = FALLBACK_PHOTO;
           }
         };
@@ -2250,83 +2277,154 @@
         els.loadingSkeleton.appendChild(frag);
       }
 
+      /**
+       * Parses raw CSV text into normalized, sorted place objects.
+       * Throws if PapaParse is unavailable or 0 valid rows are found.
+       */
+      function parseAndNormalizeCsv(csvText) {
+        if (typeof Papa === 'undefined') {
+          throw new Error('PapaParse library unavailable');
+        }
+
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true
+        });
+
+        const normalized = [];
+        (parsed.data || []).forEach((row, idx) => {
+          const place = normalizePlaceRow(row, idx);
+          if (place) normalized.push(place);
+        });
+
+        if (normalized.length === 0) {
+          throw new Error('Parsed 0 valid rows from CSV');
+        }
+
+        // Sort descending by BigInt Flickr photo ID so newer items appear first
+        normalized.sort((a, b) => {
+          if (b.flickrId > a.flickrId) return 1;
+          if (b.flickrId < a.flickrId) return -1;
+          return a.id - b.id;
+        });
+
+        return normalized;
+      }
+
+      /**
+       * Applies normalized places to application state and updates UI/filters.
+       */
+      function applyPlacesData(normalized) {
+        allPlaces = normalized;
+        els.headerTotalBadge.textContent = `${allPlaces.length} spots`;
+
+        buildAutocompleteIndex();
+        populateCategoryFilters();
+        filterPlaces();
+
+        // Deep-link spot modal opening if ?spot= was present in URL
+        if (pendingSpotSlug) {
+          const matchIdx = visiblePlaces.findIndex(
+            (p) => p.slug === pendingSpotSlug
+          );
+          if (matchIdx !== -1) {
+            openModal(matchIdx);
+          } else {
+            // Check allPlaces in case active filters hid the deep-linked spot
+            const globalIdx = allPlaces.findIndex(
+              (p) => p.slug === pendingSpotSlug
+            );
+            if (globalIdx !== -1) {
+              activeCategory = 'ALL';
+              searchQuery = '';
+              els.searchInput.value = '';
+              els.clearSearchBtn.classList.add('hidden');
+              populateCategoryFilters();
+              filterPlaces();
+              openModal(globalIdx);
+            }
+          }
+          pendingSpotSlug = null;
+        }
+      }
+
+      /**
+       * Stale-While-Revalidate loader:
+       * 1. Renders cached CSV from localStorage immediately (0ms wait) if available.
+       * 2. Fetches live cache-busted CSV in the background and swaps UI only if modified.
+       */
       async function loadCuratedPlaces() {
-        els.loadingSkeleton.classList.remove('hidden');
-        els.placesGrid.classList.add('hidden');
-        els.emptyState.classList.add('hidden');
-        els.loadMoreContainer.classList.add('hidden');
-        els.resultsSummary.textContent = 'Fetching curated spots from Google Sheets…';
+        let cachedCsv = null;
+        let hasRenderedFromCache = false;
 
         try {
-          const response = await fetch(CSV_URL, { cache: 'no-cache' });
+          cachedCsv = localStorage.getItem(CACHE_STORAGE_KEY);
+          if (cachedCsv) {
+            const cachedPlaces = parseAndNormalizeCsv(cachedCsv);
+            applyPlacesData(cachedPlaces);
+            hasRenderedFromCache = true;
+          }
+        } catch {
+          // Ignore corrupted cache and fall back to live network fetch
+          cachedCsv = null;
+        }
+
+        if (!hasRenderedFromCache) {
+          els.loadingSkeleton.classList.remove('hidden');
+          els.placesGrid.classList.add('hidden');
+          els.emptyState.classList.add('hidden');
+          els.loadMoreContainer.classList.add('hidden');
+          els.resultsSummary.textContent = 'Fetching curated spots from Google Sheets…';
+        }
+
+        try {
+          const bustSeparator = CSV_URL.includes('?') ? '&' : '?';
+          const liveUrl = `${CSV_URL}${bustSeparator}_t=${Date.now()}`;
+          const response = await fetch(liveUrl, { cache: 'no-store' });
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
           }
-          const csvText = await response.text();
+          const freshCsvText = await response.text();
 
-          if (typeof Papa === 'undefined') {
-            throw new Error('PapaParse library unavailable');
+          // Skip DOM re-render if Google Sheet contents are identical to cached version
+          if (hasRenderedFromCache && freshCsvText === cachedCsv) {
+            return;
           }
 
-          const parsed = Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true
-          });
+          const freshPlaces = parseAndNormalizeCsv(freshCsvText);
 
-          const normalized = [];
-          (parsed.data || []).forEach((row, idx) => {
-            const place = normalizePlaceRow(row, idx);
-            if (place) normalized.push(place);
-          });
-
-          if (normalized.length === 0) {
-            throw new Error('Parsed 0 valid rows from CSV');
+          try {
+            localStorage.setItem(CACHE_STORAGE_KEY, freshCsvText);
+          } catch {
+            // Ignore localStorage quota errors
           }
 
-          // Sort descending by BigInt Flickr photo ID so newer items appear first
-          normalized.sort((a, b) => {
-            if (b.flickrId > a.flickrId) return 1;
-            if (b.flickrId < a.flickrId) return -1;
-            return a.id - b.id;
-          });
+          const previouslyOpenSlug =
+            activeModalIndex !== -1 && visiblePlaces[activeModalIndex]
+              ? visiblePlaces[activeModalIndex].slug
+              : null;
 
-          allPlaces = normalized;
-          els.headerTotalBadge.textContent = `${allPlaces.length} spots`;
+          applyPlacesData(freshPlaces);
 
-          buildAutocompleteIndex();
-          populateCategoryFilters();
-          filterPlaces();
-
-          // Deep-link spot modal opening if ?spot= was present in URL
-          if (pendingSpotSlug) {
-            const matchIdx = visiblePlaces.findIndex(
-              (p) => p.slug === pendingSpotSlug
+          // Keep open modal synced if data refreshed in the background
+          if (previouslyOpenSlug) {
+            const refreshedIdx = visiblePlaces.findIndex(
+              (p) => p.slug === previouslyOpenSlug
             );
-            if (matchIdx !== -1) {
-              openModal(matchIdx);
+            if (refreshedIdx !== -1) {
+              openModal(refreshedIdx);
             } else {
-              // Check allPlaces in case active filters hid the deep-linked spot
-              const globalIdx = allPlaces.findIndex(
-                (p) => p.slug === pendingSpotSlug
-              );
-              if (globalIdx !== -1) {
-                activeCategory = 'ALL';
-                searchQuery = '';
-                els.searchInput.value = '';
-                els.clearSearchBtn.classList.add('hidden');
-                populateCategoryFilters();
-                filterPlaces();
-                openModal(globalIdx);
-              }
+              closeModal();
             }
-            pendingSpotSlug = null;
           }
         } catch (err) {
           console.error('Failed to load or parse Taiwan Top CSV:', err);
-          els.loadingSkeleton.classList.add('hidden');
-          els.headerTotalBadge.textContent = 'Offline';
-          els.resultsSummary.textContent = 'Unable to load directory feed.';
-          showEmptyState(true);
+          if (!hasRenderedFromCache) {
+            els.loadingSkeleton.classList.add('hidden');
+            els.headerTotalBadge.textContent = 'Offline';
+            els.resultsSummary.textContent = 'Unable to load directory feed.';
+            showEmptyState(true);
+          }
         }
       }
 
