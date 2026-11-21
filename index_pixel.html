@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAIWAN TOP — Curated Places by @albyantoniazzi</title>
+  <meta name="description" content="A curated directory of top places, eats, and hidden gems across Taiwan compiled by @albyantoniazzi (@alby.food)." />
+
+  <!-- Fonts: Hellovetica & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..500,0..1,0&icon_names=casino,check_circle,chevron_left,chevron_right,close,dark_mode,done,expand_more,light_mode,location_on,map,open_in_new,refresh,restart_alt,restaurant,search,share,sort,sort_by_alpha,sports_esports,storefront,tag&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS for responsive layout utilities -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Hellovetica"', '"Silkscreen"', 'monospace'],
+            mono: ['"Hellovetica"', '"Silkscreen"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- PapaParse for client-side CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaTfpa48djpNbZ18legh+9h+9h6Q1A1jYx81Y1b+9h6Q1A1jYx81Y1b+9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Fallback CDN for PapaParse if integrity hash differs across mirrors -->
+  <script>
+    if (typeof Papa === 'undefined') {
+      document.write('<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       CUSTOM FONT FACE: HELLOVETICA (Cal Henderson, 2003)
+       ========================================================================== */
+    @font-face {
+      font-family: 'Hellovetica';
+      src: local('Hellovetica'),
+           local('Hellovetica Regular'),
+           url('./hellovetica.ttf') format('truetype'),
+           url('hellovetica.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ==========================================================================
+       MATERIAL DESIGN 3 (MD3) DESIGN TOKENS
+       Dynamic Taiwan-inspired seed palette (Alishan Jade & Night Market Lantern Terracotta)
+       ========================================================================== */
+    :root {
+      /* Light Scheme Color Tokens */
+      --md-sys-color-primary: #1B6B52;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #A5F2D3;
+      --md-sys-color-on-primary-container: #002116;
+
+      --md-sys-color-secondary: #4C6358;
+      --md-sys-color-on-secondary: #FFFFFF;
+      --md-sys-color-secondary-container: #CEE9DA;
+      --md-sys-color-on-secondary-container: #092017;
+
+      --md-sys-color-tertiary: #9C4233;
+      --md-sys-color-on-tertiary: #FFFFFF;
+      --md-sys-color-tertiary-container: #FFDAD4;
+      --md-sys-color-on-tertiary-container: #410000;
+
+      --md-sys-color-error: #BA1A1A;
+      --md-sys-color-on-error: #FFFFFF;
+      --md-sys-color-error-container: #FFDAD6;
+      --md-sys-color-on-error-container: #410002;
+
+      --md-sys-color-surface: #F6FBF7;
+      --md-sys-color-on-surface: #171D1A;
+      --md-sys-color-on-surface-variant: #3F4944;
+
+      --md-sys-color-surface-container-lowest: #FFFFFF;
+      --md-sys-color-surface-container-low: #F0F5F1;
+      --md-sys-color-surface-container: #EAEFEB;
+      --md-sys-color-surface-container-high: #E4EAE5;
+      --md-sys-color-surface-container-highest: #DFE4E0;
+
+      --md-sys-color-inverse-surface: #2C322F;
+      --md-sys-color-inverse-on-surface: #EDF2EE;
+      --md-sys-color-inverse-primary: #8AD6B8;
+
+      --md-sys-color-outline: #707973;
+      --md-sys-color-outline-variant: #BFC9C2;
+      --md-sys-color-scrim: rgba(0, 0, 0, 0.48);
+      --goose-accent-color: #9C4233;
+
+      /* Typography Tokens */
+      --md-sys-typescale-font-family: 'Hellovetica', 'Silkscreen', monospace;
+
+      /* Shape Tokens */
+      --md-sys-shape-corner-extra-small: 4px;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-large-increased: 20px;
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-full: 9999px;
+
+      /* Motion Tokens */
+      --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+      --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+      --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+      --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+      --md-sys-motion-duration-short: 200ms;
+      --md-sys-motion-duration-medium: 300ms;
+      --md-sys-motion-duration-long: 450ms;
+    }
+
+    /* Dark Mode Theme Tokens */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --md-sys-color-primary: #8AD6B8;
+        --md-sys-color-on-primary: #003828;
+        --md-sys-color-primary-container: #00513C;
+        --md-sys-color-on-primary-container: #A5F2D3;
+
+        --md-sys-color-secondary: #B3CCBE;
+        --md-sys-color-on-secondary: #1E352B;
+        --md-sys-color-secondary-container: #354B41;
+        --md-sys-color-on-secondary-container: #CEE9DA;
+
+        --md-sys-color-tertiary: #FFB4A7;
+        --md-sys-color-on-tertiary: #5F150B;
+        --md-sys-color-tertiary-container: #7D2B1F;
+        --md-sys-color-on-tertiary-container: #FFDAD4;
+
+        --md-sys-color-error: #FFB4AB;
+        --md-sys-color-on-error: #690005;
+        --md-sys-color-error-container: #93000A;
+        --md-sys-color-on-error-container: #FFDAD6;
+
+        --md-sys-color-surface: #0F1512;
+        --md-sys-color-on-surface: #DFE4E0;
+        --md-sys-color-on-surface-variant: #BFC9C2;
+
+        --md-sys-color-surface-container-lowest: #0A0F0D;
+        --md-sys-color-surface-container-low: #171D1A;
+        --md-sys-color-surface-container: #1B211E;
+        --md-sys-color-surface-container-high: #262B28;
+        --md-sys-color-surface-container-highest: #303633;
+
+        --md-sys-color-inverse-surface: #DFE4E0;
+        --md-sys-color-inverse-on-surface: #2C322F;
+        --md-sys-color-inverse-primary: #1B6B52;
+
+        --md-sys-color-outline: #89938D;
+        --md-sys-color-outline-variant: #3F4944;
+        --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+        --goose-accent-color: #FFDAD4;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --md-sys-color-primary: #8AD6B8;
+      --md-sys-color-on-primary: #003828;
+      --md-sys-color-primary-container: #00513C;
+      --md-sys-color-on-primary-container: #A5F2D3;
+
+      --md-sys-color-secondary: #B3CCBE;
+      --md-sys-color-on-secondary: #1E352B;
+      --md-sys-color-secondary-container: #354B41;
+      --md-sys-color-on-secondary-container: #CEE9DA;
+
+      --md-sys-color-tertiary: #FFB4A7;
+      --md-sys-color-on-tertiary: #5F150B;
+      --md-sys-color-tertiary-container: #7D2B1F;
+      --md-sys-color-on-tertiary-container: #FFDAD4;
+
+      --md-sys-color-surface: #0F1512;
+      --md-sys-color-on-surface: #DFE4E0;
+      --md-sys-color-on-surface-variant: #BFC9C2;
+
+      --md-sys-color-surface-container-lowest: #0A0F0D;
+      --md-sys-color-surface-container-low: #171D1A;
+      --md-sys-color-surface-container: #1B211E;
+      --md-sys-color-surface-container-high: #262B28;
+      --md-sys-color-surface-container-highest: #303633;
+
+      --md-sys-color-inverse-surface: #DFE4E0;
+      --md-sys-color-inverse-on-surface: #2C322F;
+      --md-sys-color-inverse-primary: #1B6B52;
+
+      --md-sys-color-outline: #89938D;
+      --md-sys-color-outline-variant: #3F4944;
+      --md-sys-color-scrim: rgba(0, 0, 0, 0.68);
+      --goose-accent-color: #FFDAD4;
+    }
+
+    /* Spots Badge: Consistent #FFDAD4 / #410000 in both light and dark modes */
+    #header-total-badge {
+      background-color: #FFDAD4;
+      color: #410000;
+    }
+
+    html {
+      font-family: 'Hellovetica', 'Silkscreen', monospace;
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    *:not(.material-symbols-outlined) {
+      font-family: 'Hellovetica', 'Silkscreen', monospace !important;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 58px;
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      transition: background-color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard),
+                  color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+      overflow-x: hidden;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
+    }
+
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* MD3 Top App Bar */
+    .md3-top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--md-sys-color-surface);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+      transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    .md3-top-app-bar.scrolled {
+      background-color: var(--md-sys-color-surface-container);
+      border-bottom-color: var(--md-sys-color-outline-variant);
+    }
+
+    /* MD3 Search Bar (Docked Pill) */
+    .md3-search-bar {
+      background-color: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-full);
+      border: 1px solid transparent;
+      transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    .md3-search-bar:focus-within {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Autocomplete Dropdown Menu (MD3 Menu) */
+    .md3-autocomplete-menu {
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+      overflow: hidden;
+      transform-origin: top center;
+      animation: menuEnter var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+
+    @keyframes menuEnter {
+      from { opacity: 0; transform: translateY(-6px) scaleY(0.96); }
+      to { opacity: 1; transform: translateY(0) scaleY(1); }
+    }
+
+    .md3-autocomplete-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      min-height: 48px;
+      cursor: pointer;
+      transition: background-color 150ms ease;
+    }
+
+    .md3-autocomplete-item + .md3-autocomplete-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 16px;
+      right: 16px;
+      height: 1px;
+      background-color: var(--md-sys-color-outline-variant);
+      pointer-events: none;
+    }
+
+    .md3-autocomplete-item:hover,
+    .md3-autocomplete-item.active {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+
+    /* MD3 Filter Chips */
+    .md3-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background-color: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface-variant);
+      transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-filter-chip:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+      border-color: var(--md-sys-color-outline);
+    }
+
+    .md3-filter-chip:active {
+      transform: scale(0.97);
+    }
+
+    .md3-filter-chip[aria-pressed="true"] {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .md3-filter-chip .chip-count {
+      font-size: 0.75rem;
+      padding: 1px 7px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .md3-filter-chip[aria-pressed="true"] .chip-count {
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+    }
+
+    /* Modal Category Tag (matches footer filter badge hover & press states) */
+    .md3-modal-cat-tag {
+      padding: 4px 12px;
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background-color: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface-variant);
+      transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-modal-cat-tag:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+      border-color: var(--md-sys-color-outline);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .md3-modal-cat-tag:active {
+      transform: scale(0.97);
+    }
+
+    /* Horizontal chip scroll container with subtle scrollbar hiding */
+    .chip-scroll-strip {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide vertical scrollbar inside modal while keeping scrolling enabled */
+    #modal-scroll-body {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #modal-scroll-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* MD3 Place Card (Square aspect-ratio visual card) */
+    .md3-place-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: var(--md-sys-shape-corner-large);
+      background-color: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized),
+                  border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+                  box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-place-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    }
+
+    .md3-place-card:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
+
+    .md3-place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms var(--md-sys-motion-easing-emphasized);
+    }
+
+    .md3-place-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .md3-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(10, 16, 13, 0.88) 0%,
+        rgba(10, 16, 13, 0.45) 26%,
+        rgba(10, 16, 13, 0) 42%
+      );
+      pointer-events: none;
+    }
+
+    /* MD3 Buttons */
+    .md3-btn-filled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 24px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      border: none;
+      transition: filter 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-filled:hover {
+      filter: brightness(1.06);
+    }
+
+    .md3-btn-filled:active {
+      transform: scale(0.98);
+    }
+
+    .md3-btn-tonal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      border: none;
+      transition: filter 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-tonal:hover {
+      filter: brightness(0.96);
+    }
+
+    .md3-btn-tonal:active {
+      transform: scale(0.98);
+    }
+
+    .md3-btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+      border: 1px solid var(--md-sys-color-outline);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .md3-btn-outlined:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+    }
+
+    .md3-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .md3-icon-btn:hover {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+
+    .md3-icon-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* MD3 Dialog / Detail Modal */
+    .md3-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: var(--md-sys-color-scrim);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 16px 16px 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    }
+
+    @media (min-width: 768px) {
+      .md3-modal-backdrop {
+        padding-top: 24px;
+        padding-bottom: 48px;
+      }
+    }
+
+    .md3-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .md3-modal-dialog {
+      width: 100%;
+      max-width: 735px;
+      background-color: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--md-sys-shape-corner-extra-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transform: scale(0.94) translateY(12px);
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized-decelerate);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    @media (min-width: 1024px) {
+      .md3-modal-dialog {
+        max-width: 958px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .md3-modal-dialog {
+        max-width: 1060px;
+      }
+    }
+
+    .md3-modal-backdrop.open .md3-modal-dialog {
+      transform: scale(1) translateY(0);
+    }
+
+    /* MD3 Snackbar */
+    .md3-snackbar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      z-index: 80;
+      background-color: var(--md-sys-color-inverse-surface);
+      color: var(--md-sys-color-inverse-on-surface);
+      padding: 12px 20px;
+      border-radius: var(--md-sys-shape-corner-small);
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized),
+                  opacity var(--md-sys-motion-duration-short) ease;
+    }
+
+    .md3-snackbar.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Skeleton Shimmer for Loading State */
+    .skeleton-pulse {
+      background: linear-gradient(
+        90deg,
+        var(--md-sys-color-surface-container) 25%,
+        var(--md-sys-color-surface-container-highest) 50%,
+        var(--md-sys-color-surface-container) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Fast Pixel Goose Walk Animation on Header Hover (matches mini-game stride) */
+    @keyframes gooseLegLeft {
+      0%, 49.9% {
+        transform: translateY(-15px);
+      }
+      50%, 100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes gooseLegRight {
+      0%, 49.9% {
+        transform: translateY(0);
+      }
+      50%, 100% {
+        transform: translateY(-15px);
+      }
+    }
+
+    @keyframes gooseBodyBob {
+      0%, 49.9% {
+        transform: translateY(0);
+      }
+      50%, 100% {
+        transform: translateY(-6px);
+      }
+    }
+
+    #brand-reset-btn:hover .goose-body,
+    #brand-reset-btn:hover .goose-beak {
+      animation: gooseBodyBob 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-left {
+      animation: gooseLegLeft 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-right {
+      animation: gooseLegRight 0.16s steps(1, end) infinite;
+    }
+
+    /* Dino / Duck Runner Canvas */
+    #dino-canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--md-sys-shape-corner-large);
+      background-color: var(--md-sys-color-surface-container-lowest);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      outline: none;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #dino-canvas:focus,
+    #dino-canvas:focus-visible {
+      outline: none;
+      box-shadow: none;
+      border-color: var(--md-sys-color-outline-variant);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500/20">
+
+  <!-- ========================================================================
+       MD3 TOP APP BAR & INTEGRATED SEARCH / FILTER HEADER
+       ======================================================================== -->
+  <header id="top-app-bar" class="md3-top-app-bar">
+    <div class="w-full px-4 sm:px-[10%] pt-3 pb-3">
+      <!-- Top Row: Brand Identity, Centered Search Bar & Controls -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 lg:grid lg:grid-cols-[1fr_minmax(252px,400px)_1fr] lg:items-center lg:gap-4">
+        <!-- Brand Logo & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 justify-self-start min-w-0 shrink-0">
+          <button
+            id="brand-reset-btn"
+            type="button"
+            class="flex items-center gap-2.5 sm:gap-3 text-left group focus:outline-none min-w-0"
+            title="Reset all filters and return to top"
+          >
+            <div
+              class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block overflow-visible" aria-hidden="true">
+                <path class="goose-body" style="fill: var(--md-sys-color-on-surface);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
+                <path class="goose-beak" style="fill: var(--goose-accent-color);" d="M165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
+                <path class="goose-leg-left" style="fill: var(--goose-accent-color);" d="M75 240L45 240L45 195L60 195L60 225L75 225L75 240Z"/>
+                <path class="goose-leg-right" style="fill: var(--goose-accent-color);" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240Z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold tracking-tight whitespace-nowrap" style="color: var(--md-sys-color-on-surface);">
+                  TAIWAN TOP
+                </h1>
+                <span
+                  id="header-total-badge"
+                  class="text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0"
+                >
+                  Loading…
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm truncate" style="color: var(--md-sys-color-on-surface-variant);">
+                Curated by
+                <a
+                  href="https://www.instagram.com/alby.food/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-semibold underline decoration-dotted underline-offset-2 hover:opacity-80"
+                  style="color: var(--md-sys-color-primary);"
+                  onclick="event.stopPropagation()"
+                >@alby.food</a>
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Search Input & Autocomplete Container (Same line on sm+, stacked on mobile) -->
+        <div class="relative w-[92%] mx-auto sm:w-full sm:flex-1 sm:max-w-[222px] md:max-w-[295px] lg:max-w-none order-3 sm:order-2 lg:justify-self-center min-w-0">
+          <div class="md3-search-bar flex items-center px-3 sm:px-3.5 h-10">
+            <span class="material-symbols-outlined mr-1.5 sm:mr-2 text-lg sm:text-xl shrink-0" style="color: var(--md-sys-color-on-surface-variant);">
+              search
+            </span>
+            <input
+              id="search-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search places, food or cities..."
+              aria-label="Search curated Taiwan places"
+              aria-autocomplete="list"
+              aria-controls="autocomplete-list"
+              aria-expanded="false"
+              class="w-full min-w-0 bg-transparent border-none outline-none text-sm placeholder:opacity-65"
+              style="color: var(--md-sys-color-on-surface);"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              aria-label="Clear search query"
+              class="hidden ml-1 w-7 h-7 rounded-full flex items-center justify-center shrink-0 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              style="color: var(--md-sys-color-on-surface-variant);"
+            >
+              <span class="material-symbols-outlined text-base sm:text-lg">close</span>
+            </button>
+          </div>
+
+          <!-- Autocomplete Suggestions Dropdown -->
+          <div
+            id="autocomplete-dropdown"
+            class="md3-autocomplete-menu hidden absolute left-0 right-0 w-full mt-2 z-50"
+            role="listbox"
+            aria-label="Search suggestions"
+          >
+            <ul id="autocomplete-list" class="py-1 max-h-80 overflow-y-auto"></ul>
+          </div>
+        </div>
+
+        <!-- Right Utility Actions: Theme Toggle & Instagram Link -->
+        <div class="flex items-center gap-2 order-2 sm:order-3 justify-self-end shrink-0">
+          <a
+            href="https://www.instagram.com/alby.food/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md3-btn-tonal !w-10 !px-0 lg:!w-auto lg:!px-3.5 !min-h-[40px] !h-10 text-xs sm:text-sm"
+            title="Follow @alby.food on Instagram"
+            aria-label="Follow @alby.food on Instagram"
+          >
+            <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span class="hidden lg:inline">@alby.food</span>
+          </a>
+          <button
+            id="theme-toggle-btn"
+            type="button"
+            class="md3-icon-btn !w-10 !h-10"
+            aria-label="Toggle light or dark theme"
+            title="Toggle color theme"
+          >
+            <span id="theme-icon" class="material-symbols-outlined text-xl">dark_mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN CONTENT AREA: STATUS BAR, PLACES GRID, PAGINATION & EMPTY STATE
+       ======================================================================== -->
+  <main class="w-full px-4 sm:px-[10%] pt-6 pb-3">
+    <!-- Active Filter Status & Result Counter -->
+    <div id="results-toolbar" class="flex flex-wrap items-center justify-between gap-2 mb-5">
+      <div class="flex items-center gap-2 flex-wrap">
+        <p id="results-summary" class="text-sm font-medium" style="color: var(--md-sys-color-on-surface-variant);">
+          Fetching curated spots from Google Sheets…
+        </p>
+        <button
+          id="reset-filters-inline-btn"
+          type="button"
+          class="hidden text-xs font-semibold px-3 py-1 rounded-full transition-colors"
+          style="background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);"
+        >
+          Clear active filters
+        </button>
+      </div>
+      <button
+        id="sort-toggle-btn"
+        type="button"
+        class="inline-flex items-center gap-1 text-xs font-medium bg-transparent border-0 p-0 cursor-pointer transition-opacity hover:opacity-75"
+        style="color: var(--md-sys-color-on-surface-variant);"
+        title="Switch sort order"
+      >
+        <span id="sort-toggle-icon" class="material-symbols-outlined text-base">sort</span>
+        <span id="sort-toggle-label" class="underline underline-offset-4 decoration-dotted">Sorted newest first</span>
+      </button>
+    </div>
+
+    <!-- Loading Skeleton Grid (shown during initial CSV fetch) -->
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+      <!-- 12 placeholder cards generated via JS or static markup -->
+    </div>
+
+    <!-- Curated Places Square Card Grid -->
+    <section
+      id="places-grid"
+      aria-label="Curated places in Taiwan"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
+    ></section>
+
+    <!-- Pagination Load More Container -->
+    <div id="load-more-container" class="hidden mt-6 mb-0 flex flex-col items-center">
+      <button id="load-more-btn" type="button" class="md3-btn-filled">
+        <span class="material-symbols-outlined text-xl">expand_more</span>
+        <span id="load-more-label">Load More</span>
+      </button>
+    </div>
+
+    <!-- Empty State & Interactive HTML5 Runner Game Fallback -->
+    <section
+      id="empty-state"
+      class="hidden my-6 p-5 sm:p-6 rounded-3xl border max-w-2xl mx-auto text-center"
+      style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
+      aria-live="polite"
+    >
+      <h2 id="empty-state-title" class="text-xl sm:text-2xl font-bold mb-5" style="color: var(--md-sys-color-on-surface);">
+        Nothing here...
+      </h2>
+      <p id="empty-state-subtitle" class="hidden text-sm sm:text-base mb-5 max-w-md mx-auto" style="color: var(--md-sys-color-on-surface-variant);"></p>
+
+      <!-- Interactive Canvas Runner Game -->
+      <div class="mb-5 text-left">
+        <div class="flex items-center justify-between text-xs font-semibold mb-1.5 px-1" style="color: var(--md-sys-color-on-surface-variant);">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">sports_esports</span>
+            <span>HOT POT GOOSE RUN — Press <kbd class="px-1.5 py-0.5 rounded border text-[11px]" style="border-color: var(--md-sys-color-outline);">Space</kbd> or Tap to Jump</span>
+          </span>
+          <span id="game-score-readout">SCORE: 0000 · BEST: 0000</span>
+        </div>
+        <canvas id="dino-canvas" tabindex="0" aria-label="Hot Pot Goose Runner mini-game"></canvas>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="empty-reset-btn" type="button" class="md3-btn-filled">
+          <span class="material-symbols-outlined text-xl">restart_alt</span>
+          <span>Show all places</span>
+        </button>
+        <button id="retry-fetch-btn" type="button" class="md3-btn-outlined hidden">
+          <span class="material-symbols-outlined text-xl">refresh</span>
+          <span>Retry loading CSV</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       FIXED FULL-WIDTH CATEGORY FILTER FOOTER BAR
+       ======================================================================== -->
+  <footer
+    aria-label="Category filters"
+    class="fixed bottom-0 left-0 right-0 z-40 w-full border-t backdrop-blur-md"
+    style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
+  >
+    <div
+      id="category-filters"
+      class="chip-scroll-strip flex items-center gap-2 overflow-x-auto w-full py-2.5 px-4 sm:px-[10%]"
+      role="toolbar"
+      aria-label="Filter places by category"
+    >
+      <!-- Populated dynamically by populateCategoryFilters() -->
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       MD3 DETAIL MODAL (SPOT INSPECTOR)
+       ======================================================================== -->
+  <div
+    id="place-modal"
+    class="md3-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-hidden="true"
+  >
+    <div id="modal-dialog-card" class="md3-modal-dialog">
+      <!-- Top Modal Bar -->
+      <div
+        class="flex items-center justify-between px-4 sm:px-6 py-3 border-b shrink-0"
+        style="background-color: var(--md-sys-color-surface-container); border-color: var(--md-sys-color-outline-variant);"
+      >
+        <div class="flex items-center gap-2">
+          <button id="modal-prev-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Previous place" title="Previous spot (Left Arrow)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button id="modal-next-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Next place" title="Next spot (Right Arrow)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          <span id="modal-counter" class="text-xs font-semibold ml-1" style="color: var(--md-sys-color-on-surface-variant);">
+            1 / 1
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="modal-share-btn" type="button" class="md3-btn-tonal !min-h-[40px] !px-4 text-xs sm:text-sm" title="Copy direct link to this spot">
+            <span id="modal-share-icon" class="material-symbols-outlined text-lg">share</span>
+            <span id="modal-share-label">Share</span>
+          </button>
+          <button id="modal-close-btn" type="button" class="md3-icon-btn !w-10 !h-10" aria-label="Close modal" title="Close (Escape)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Scrollable Content -->
+      <div id="modal-scroll-body" class="block md:grid md:grid-cols-[3fr_2fr] md:items-stretch">
+        <!-- Photo Showcase (Always 1:1 square) -->
+        <div class="relative w-full aspect-square bg-black/10 flex items-center justify-center overflow-hidden shrink-0">
+          <img
+            id="modal-image"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Metadata, Categories, Description & Google Maps Action -->
+        <div class="p-4 sm:p-6 lg:p-8 flex flex-col justify-between gap-5 min-w-0">
+          <div>
+            <!-- City Badge (Clickable filter) -->
+            <div class="mb-3 lg:mb-4 flex flex-wrap items-center gap-2">
+              <button
+                id="modal-city-btn"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-transform active:scale-95"
+                style="background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);"
+                title="Filter by this city"
+              >
+                <span class="material-symbols-outlined filled text-base">location_on</span>
+                <span id="modal-city-text">Taiwan</span>
+              </button>
+            </div>
+
+            <!-- Place Title -->
+            <h2 id="modal-title" class="text-2xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-snug mb-3 lg:mb-4" style="color: var(--md-sys-color-on-surface);">
+              Place Title
+            </h2>
+
+            <!-- Category Tags (Clickable filters) -->
+            <div id="modal-categories" class="flex flex-wrap gap-1.5 lg:gap-2 mb-4 lg:mb-6"></div>
+
+            <!-- Description -->
+            <p
+              id="modal-description"
+              class="text-sm sm:text-base lg:text-lg leading-relaxed whitespace-pre-line"
+              style="color: var(--md-sys-color-on-surface-variant);"
+            ></p>
+          </div>
+
+          <!-- Bottom Primary Action: Google Maps -->
+          <div class="pt-4 border-t flex flex-col sm:flex-row items-stretch sm:items-center gap-3" style="border-color: var(--md-sys-color-outline-variant);">
+            <a
+              id="modal-maps-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="md3-btn-filled flex-1 text-center"
+            >
+              <span class="material-symbols-outlined text-xl">map</span>
+              <span>Open in Google Maps</span>
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MD3 SNACKBAR FEEDBACK TOAST
+       ======================================================================== -->
+  <div id="snackbar" class="md3-snackbar" role="status" aria-live="polite">
+    <span class="material-symbols-outlined text-lg" style="color: var(--md-sys-color-inverse-primary);">check_circle</span>
+    <span id="snackbar-text">Link copied to clipboard</span>
+  </div>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC
+       ======================================================================== -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* ----------------------------------------------------------------------
+         CONSTANTS & CONFIGURATION
+         ---------------------------------------------------------------------- */
+      const CSV_URL =
+        'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+      const CACHE_STORAGE_KEY = 'taiwanTopCsvCache_v1';
+      const FALLBACK_PHOTO =
+        'https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg';
+      const PAGE_SIZE = 24;
+
+      const STOP_WORDS = new Set([
+        'the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was',
+        'were', 'have', 'has', 'had', 'not', 'but', 'what', 'all', 'when',
+        'can', 'there', 'use', 'each', 'which', 'their', 'if', 'will', 'way',
+        'about', 'many', 'then', 'them', 'would', 'like', 'into', 'has', 'more',
+        'two', 'see', 'out', 'very', 'just', 'one', 'also', 'its', 'you', 'your',
+        'taiwan', 'place', 'spot', 'great', 'good', 'best', 'really'
+      ]);
+
+      /* ----------------------------------------------------------------------
+         APPLICATION STATE
+         ---------------------------------------------------------------------- */
+      let allPlaces = [];
+      let visiblePlaces = [];
+      let displayedCount = PAGE_SIZE;
+
+      let activeCategory = 'ALL';
+      let searchQuery = '';
+      let sortOrder = 'newest'; // 'newest' | 'alpha'
+      let activeModalIndex = -1;
+      let pendingSpotSlug = null;
+
+      // Autocomplete state
+      let autocompleteIndex = [];
+      let currentSuggestions = [];
+      let highlightedSuggestionIdx = -1;
+      let searchDebounceTimer = null;
+
+      // Runner game state
+      let dinoAnimFrameId = null;
+      let dinoGameRunning = false;
+      let audioCtx = null;
+
+      /* ----------------------------------------------------------------------
+         DOM ELEMENT REFERENCES
+         ---------------------------------------------------------------------- */
+      const els = {
+        topAppBar: document.getElementById('top-app-bar'),
+        brandResetBtn: document.getElementById('brand-reset-btn'),
+        headerTotalBadge: document.getElementById('header-total-badge'),
+        searchInput: document.getElementById('search-input'),
+        clearSearchBtn: document.getElementById('clear-search-btn'),
+        autocompleteDropdown: document.getElementById('autocomplete-dropdown'),
+        autocompleteList: document.getElementById('autocomplete-list'),
+        themeToggleBtn: document.getElementById('theme-toggle-btn'),
+        themeIcon: document.getElementById('theme-icon'),
+        categoryFilters: document.getElementById('category-filters'),
+        resultsSummary: document.getElementById('results-summary'),
+        resultsToolbar: document.getElementById('results-toolbar'),
+        resetFiltersInlineBtn: document.getElementById('reset-filters-inline-btn'),
+        sortToggleBtn: document.getElementById('sort-toggle-btn'),
+        sortToggleIcon: document.getElementById('sort-toggle-icon'),
+        sortToggleLabel: document.getElementById('sort-toggle-label'),
+        loadingSkeleton: document.getElementById('loading-skeleton'),
+        placesGrid: document.getElementById('places-grid'),
+        loadMoreContainer: document.getElementById('load-more-container'),
+        loadMoreBtn: document.getElementById('load-more-btn'),
+        loadMoreLabel: document.getElementById('load-more-label'),
+        emptyState: document.getElementById('empty-state'),
+        emptyStateTitle: document.getElementById('empty-state-title'),
+        emptyStateSubtitle: document.getElementById('empty-state-subtitle'),
+        emptyResetBtn: document.getElementById('empty-reset-btn'),
+        retryFetchBtn: document.getElementById('retry-fetch-btn'),
+        dinoCanvas: document.getElementById('dino-canvas'),
+        gameScoreReadout: document.getElementById('game-score-readout'),
+        placeModal: document.getElementById('place-modal'),
+        modalDialogCard: document.getElementById('modal-dialog-card'),
+        modalPrevBtn: document.getElementById('modal-prev-btn'),
+        modalNextBtn: document.getElementById('modal-next-btn'),
+        modalCounter: document.getElementById('modal-counter'),
+        modalShareBtn: document.getElementById('modal-share-btn'),
+        modalShareIcon: document.getElementById('modal-share-icon'),
+        modalShareLabel: document.getElementById('modal-share-label'),
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+        modalImage: document.getElementById('modal-image'),
+        modalCityBtn: document.getElementById('modal-city-btn'),
+        modalCityText: document.getElementById('modal-city-text'),
+        modalTitle: document.getElementById('modal-title'),
+        modalCategories: document.getElementById('modal-categories'),
+        modalDescription: document.getElementById('modal-description'),
+        modalMapsLink: document.getElementById('modal-maps-link'),
+        snackbar: document.getElementById('snackbar'),
+        snackbarText: document.getElementById('snackbar-text')
+      };
+
+      /* ----------------------------------------------------------------------
+         NORMALIZATION & UTILITY HELPERS
+         ---------------------------------------------------------------------- */
+
+      function slugify(str) {
+        return String(str || '')
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'spot';
+      }
+
+      function formatCityName(raw) {
+        const clean = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (!clean) return '';
+        return clean
+          .split(' ')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ');
+      }
+
+      function extractFlickrPhotoId(photoUrl) {
+        const url = String(photoUrl || '');
+        const match = url.match(/\/(\d{8,})_[a-z0-9]+/i) || url.match(/(\d{9,})/);
+        if (!match) return 0n;
+        try {
+          return BigInt(match[1]);
+        } catch {
+          return 0n;
+        }
+      }
+
+      /**
+       * Extracts and normalizes the first valid image URL from a CSV cell
+       * (handles HTML <img> tags, multi-line cells, http://, and Flickr variants).
+       */
+      function normalizePhotoUrl(rawUrl) {
+        let raw = String(rawUrl || '').trim();
+        if (!raw) return '';
+
+        // Extract the first clean http(s) URL (stops at whitespace, quotes, angle brackets, or commas)
+        const urlMatch = raw.match(/https?:\/\/[^\s"'<>,]+/i);
+        let url = urlMatch ? urlMatch[0] : raw.split(/[\s,]+/)[0];
+
+        if (url.startsWith('http://')) {
+          url = 'https://' + url.slice(7);
+        }
+
+        // Convert Google Drive share links to direct viewable image links if present
+        const gdriveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/i);
+        if (gdriveMatch) {
+          return `https://lh3.googleusercontent.com/d/${gdriveMatch[1]}=s1200`;
+        }
+
+        return url;
+      }
+
+      function getFlickrVariantUrl(photoUrl, sizeSuffix) {
+        const url = normalizePhotoUrl(photoUrl);
+        if (!/staticflickr\.com\//i.test(url)) return url;
+        // Standard shared-secret suffixes (_s, _q, _t, _m, _n, _w, _z, _c, _b, _h, _k)
+        const standardSuffixRegex = /_(s|q|t|m|n|w|z|c|b|h|k)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (standardSuffixRegex.test(url)) {
+          return url.replace(standardSuffixRegex, `_${sizeSuffix}$2`);
+        }
+        // Flickr medium-500 URL without size suffix: /{id}_{secret}.jpg
+        const unsuffixedRegex = /(\/\d+_[a-f0-9]+)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (unsuffixedRegex.test(url)) {
+          return url.replace(unsuffixedRegex, `$1_${sizeSuffix}$2`);
+        }
+        return url;
+      }
+
+      function buildPhotoCandidates(rawPhoto, preferLarge = false) {
+        const original = normalizePhotoUrl(rawPhoto);
+        if (!original) return [FALLBACK_PHOTO];
+
+        const candidates = [];
+        const add = (u) => {
+          if (u && !candidates.includes(u)) candidates.push(u);
+        };
+
+        if (/staticflickr\.com\//i.test(original)) {
+          // Always try exact original first if it's a custom/original (_o) secret URL
+          const isOriginalSecret = /_o\.(?:jpe?g|png|webp|gif)(?=$|\?)/i.test(original);
+          if (isOriginalSecret) {
+            add(original);
+          }
+
+          if (preferLarge) {
+            add(getFlickrVariantUrl(original, 'b'));
+            add(getFlickrVariantUrl(original, 'h'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'z'));
+            add(original);
+          } else {
+            add(getFlickrVariantUrl(original, 'z'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'b'));
+            add(original);
+          }
+          // Also try unsuffixed 500px standard Flickr format if suffix failed
+          const unsuffixed = original.replace(
+            /_(s|q|t|m|n|w|z|c|b|h|k|o)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i,
+            '$2'
+          );
+          add(unsuffixed);
+        } else {
+          add(original);
+        }
+
+        add(FALLBACK_PHOTO);
+        return candidates;
+      }
+
+      async function resolveFlickrPagePhoto(pageUrl, imgEl, preferLarge) {
+        try {
+          const oembedUrl = `https://www.flickr.com/services/oembed/?format=json&url=${encodeURIComponent(pageUrl)}`;
+          const res = await fetch(oembedUrl);
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (data && data.url) {
+            const resolved = preferLarge
+              ? getFlickrVariantUrl(data.url, 'b')
+              : getFlickrVariantUrl(data.url, 'z');
+            imgEl.src = resolved || data.url;
+            return true;
+          }
+        } catch {
+          // Ignore oEmbed failure and proceed to fallback
+        }
+        return false;
+      }
+
+      function attachImageFallbackChain(imgEl, candidates) {
+        let attemptIndex = 0;
+
+        const applySrc = (url) => {
+          // Only omit referrer for staticflickr.com; keep default referrer for other CDNs
+          imgEl.referrerPolicy = /staticflickr\.com/i.test(url)
+            ? 'no-referrer'
+            : 'strict-origin-when-cross-origin';
+          imgEl.src = url;
+        };
+
+        const firstUrl = candidates[0] || FALLBACK_PHOTO;
+
+        // If the cell contains a flickr.com/photos/... page link instead of a direct staticflickr image URL, resolve via oEmbed
+        if (/flickr\.com\/photos\//i.test(firstUrl) || /flic\.kr\/p\//i.test(firstUrl)) {
+          imgEl.onerror = () => {
+            imgEl.onerror = null;
+            imgEl.src = FALLBACK_PHOTO;
+          };
+          resolveFlickrPagePhoto(firstUrl, imgEl, candidates.length > 2).then((ok) => {
+            if (!ok) imgEl.src = FALLBACK_PHOTO;
+          });
+          return;
+        }
+
+        imgEl.onerror = function () {
+          attemptIndex += 1;
+          if (attemptIndex < candidates.length) {
+            applySrc(candidates[attemptIndex]);
+          } else {
+            this.onerror = null;
+          }
+        };
+        applySrc(firstUrl);
+      }
+
+      function parseCategories(rawCat) {
+        if (!rawCat) return [];
+        const seen = new Set();
+        const result = [];
+        String(rawCat)
+          .split(/[,;|]/)
+          .forEach((token) => {
+            const clean = token.trim().replace(/\s+/g, ' ');
+            if (!clean) return;
+            const key = clean.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              result.push(clean);
+            }
+          });
+        return result;
+      }
+
+      function normalizePlaceRow(row, index) {
+        if (!row || typeof row !== 'object') return null;
+
+        const title = String(
+          row.Title ?? row.title ?? row.Name ?? row.name ?? ''
+        )
+          .trim()
+          .replace(/\s+/g, ' ');
+        if (!title) return null;
+
+        const city = formatCityName(
+          row.City ?? row.city ?? row.Location ?? row.location ?? ''
+        );
+
+        const rawCategories =
+          row.Category ??
+          row.category ??
+          row.Categories ??
+          row.categories ??
+          row.Tags ??
+          row.tags ??
+          '';
+        const categories = parseCategories(rawCategories);
+
+        const description = String(
+          row.Description ?? row.description ?? row.Notes ?? row.notes ?? ''
+        ).trim();
+
+        const rawPhoto = String(
+          row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
+        ).trim();
+        const basePhoto = normalizePhotoUrl(rawPhoto) || FALLBACK_PHOTO;
+        const thumbCandidates = buildPhotoCandidates(basePhoto, false);
+        const largeCandidates = buildPhotoCandidates(basePhoto, true);
+        const photo = thumbCandidates[0];
+        const photoLarge = largeCandidates[0];
+        const flickrId = extractFlickrPhotoId(basePhoto);
+
+        const link = String(
+          row.Link ?? row.link ?? row.Maps ?? row.maps ?? row['Google Maps'] ?? ''
+        ).trim();
+
+        return {
+          id: index,
+          title,
+          slug: slugify(title),
+          city,
+          categories,
+          description,
+          photo,
+          photoLarge,
+          photoOriginal: basePhoto,
+          thumbCandidates,
+          largeCandidates,
+          flickrId,
+          link
+        };
+      }
+
+      /* ----------------------------------------------------------------------
+         1. STATE MANAGEMENT & URL SYNCHRONIZATION
+         ---------------------------------------------------------------------- */
+
+      function parseUrlState() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const catParam = params.get('cat');
+          const cityParam = params.get('city');
+          const qParam = params.get('q');
+          const spotParam = params.get('spot');
+
+          if (catParam) {
+            activeCategory = catParam.trim().toLowerCase();
+          }
+
+          if (qParam) {
+            searchQuery = qParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          } else if (cityParam) {
+            searchQuery = cityParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          }
+
+          if (spotParam) {
+            pendingSpotSlug = spotParam.trim();
+          }
+        } catch {
+          // Ignore URL parsing issues in restricted environments
+        }
+      }
+
+      function updateUrlState(targetSpotSlug) {
+        try {
+          const origin = window.location.origin;
+          if (!origin || origin === 'null' || window.location.protocol === 'blob:') {
+            return;
+          }
+
+          const url = new URL(window.location.href);
+          if (activeCategory && activeCategory !== 'ALL') {
+            url.searchParams.set('cat', activeCategory);
+          } else {
+            url.searchParams.delete('cat');
+          }
+
+          if (searchQuery && searchQuery.trim()) {
+            url.searchParams.set('q', searchQuery.trim());
+          } else {
+            url.searchParams.delete('q');
+          }
+          url.searchParams.delete('city');
+
+          if (targetSpotSlug) {
+            url.searchParams.set('spot', targetSpotSlug);
+          } else {
+            url.searchParams.delete('spot');
+          }
+
+          window.history.replaceState({}, '', url.toString());
+        } catch {
+          // Skip history updates when running inside sandboxed/blob origins
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         2. FILTERING, SEARCH & AUTOCOMPLETE ENGINE
+         ---------------------------------------------------------------------- */
+
+      function populateCategoryFilters() {
+        const counts = new Map();
+        const labels = new Map();
+
+        allPlaces.forEach((place) => {
+          place.categories.forEach((cat) => {
+            const key = cat.toLowerCase();
+            counts.set(key, (counts.get(key) || 0) + 1);
+            if (!labels.has(key)) labels.set(key, cat);
+          });
+        });
+
+        const sortedKeys = Array.from(counts.keys()).sort((a, b) => a.localeCompare(b));
+        const frag = document.createDocumentFragment();
+
+        // ALL button
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'md3-filter-chip';
+        allBtn.setAttribute('aria-pressed', activeCategory === 'ALL' ? 'true' : 'false');
+        allBtn.innerHTML = `<span>ALL</span><span class="chip-count">${allPlaces.length}</span>`;
+        allBtn.addEventListener('click', () => setCategory('ALL'));
+        frag.appendChild(allBtn);
+
+        sortedKeys.forEach((key) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'md3-filter-chip';
+          btn.setAttribute('aria-pressed', activeCategory === key ? 'true' : 'false');
+          btn.innerHTML = `<span>${escapeHtml(labels.get(key))}</span><span class="chip-count">${counts.get(key)}</span>`;
+          btn.addEventListener('click', () => setCategory(key));
+          frag.appendChild(btn);
+        });
+
+        els.categoryFilters.innerHTML = '';
+        els.categoryFilters.appendChild(frag);
+      }
+
+      function setCategory(cat) {
+        const normalized = cat === 'ALL' ? 'ALL' : String(cat).toLowerCase();
+        if (normalized !== 'ALL' && activeCategory === normalized) {
+          activeCategory = 'ALL';
+        } else {
+          activeCategory = normalized;
+        }
+        populateCategoryFilters();
+        filterPlaces();
+      }
+
+      function updateResultsSummary() {
+        const total = visiblePlaces.length;
+        const hasFilters = activeCategory !== 'ALL' || Boolean(searchQuery.trim());
+        els.resetFiltersInlineBtn.classList.toggle('hidden', !hasFilters);
+
+        if (total === 0) {
+          els.resultsSummary.textContent = '0 places found';
+        } else if (hasFilters) {
+          els.resultsSummary.textContent = `${total} matching ${total === 1 ? 'place' : 'places'}`;
+        } else {
+          els.resultsSummary.textContent = `${total} curated places across Taiwan`;
+        }
+      }
+
+      function filterPlaces() {
+        const rawTokens = searchQuery
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        visiblePlaces = allPlaces.filter((place) => {
+          if (activeCategory !== 'ALL') {
+            const matchesCat = place.categories.some(
+              (c) => c.toLowerCase() === activeCategory
+            );
+            if (!matchesCat) return false;
+          }
+
+          if (rawTokens.length > 0) {
+            const searchable = [
+              place.title,
+              place.description,
+              place.categories.join(' '),
+              place.city
+            ]
+              .join(' ')
+              .toLowerCase();
+
+            if (!rawTokens.every((tok) => searchable.includes(tok))) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        if (sortOrder === 'alpha') {
+          visiblePlaces.sort((a, b) =>
+            a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
+          );
+        }
+
+        displayedCount = PAGE_SIZE;
+        updateResultsSummary();
+        updateUrlState(activeModalIndex !== -1 && visiblePlaces[activeModalIndex] ? visiblePlaces[activeModalIndex].slug : null);
+        renderCards();
+      }
+
+      function toggleSortOrder() {
+        sortOrder = sortOrder === 'newest' ? 'alpha' : 'newest';
+        if (sortOrder === 'alpha') {
+          els.sortToggleIcon.textContent = 'sort_by_alpha';
+          els.sortToggleLabel.textContent = 'Sorted A–Z';
+        } else {
+          els.sortToggleIcon.textContent = 'sort';
+          els.sortToggleLabel.textContent = 'Sorted newest first';
+        }
+        filterPlaces();
+      }
+
+      function buildAutocompleteIndex() {
+        const seen = new Set();
+        const entries = [];
+        const cityCounts = new Map();
+
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            const key = p.city.toLowerCase();
+            cityCounts.set(key, (cityCounts.get(key) || 0) + 1);
+          }
+        });
+
+        const addTerm = (term, type, priority, count) => {
+          const clean = String(term || '').trim().replace(/\s+/g, ' ');
+          const lower = clean.toLowerCase();
+          if (!clean || seen.has(lower)) return;
+          seen.add(lower);
+          entries.push({ term: clean, lower, type, priority, count });
+        };
+
+        // Priority 1: Cities (with spot counts)
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            addTerm(p.city, 'city', 1, cityCounts.get(p.city.toLowerCase()) || 0);
+          }
+        });
+
+        // Priority 2: Categories
+        allPlaces.forEach((p) => {
+          p.categories.forEach((cat) => addTerm(cat, 'food', 2));
+        });
+
+        // Priority 3: Place Titles
+        allPlaces.forEach((p) => {
+          addTerm(p.title, 'place', 3);
+        });
+
+        // Priority 4: Non-stop words of length 3+ from titles and descriptions
+        allPlaces.forEach((p) => {
+          const blob = `${p.title} ${p.description}`;
+          const words = blob.match(/[a-zA-Z0-9\u4e00-\u9fff]{3,}/g) || [];
+          words.forEach((w) => {
+            if (!STOP_WORDS.has(w.toLowerCase())) {
+              addTerm(w, 'word', 4);
+            }
+          });
+        });
+
+        entries.sort((a, b) => a.priority - b.priority || a.term.localeCompare(b.term));
+        autocompleteIndex = entries;
+      }
+
+      function triggerFeelingLucky() {
+        els.searchInput.blur();
+        hideAutocomplete();
+        if (!allPlaces.length) return;
+        const randomPlace = allPlaces[Math.floor(Math.random() * allPlaces.length)];
+        activeCategory = 'ALL';
+        populateCategoryFilters();
+        searchQuery = randomPlace.title;
+        els.searchInput.value = randomPlace.title;
+        els.clearSearchBtn.classList.remove('hidden');
+        filterPlaces();
+        const idx = visiblePlaces.findIndex((p) => p.slug === randomPlace.slug);
+        if (idx !== -1) {
+          openModal(idx);
+          launchConfettiBurst();
+        }
+      }
+
+      /**
+       * Launches a celebratory confetti animation across the viewport
+       * when a spot is chosen via "I Feel Lucky".
+       */
+      function launchConfettiBurst() {
+        const existing = document.getElementById('lucky-confetti-canvas');
+        if (existing) existing.remove();
+
+        const canvas = document.createElement('canvas');
+        canvas.id = 'lucky-confetti-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        canvas.style.cssText =
+          'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:75;';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const colors = [
+          '#1B6B52',
+          '#8AD6B8',
+          '#9C4233',
+          '#FFB4A7',
+          '#F59E0B',
+          '#FBBF24',
+          '#34D399',
+          '#FB7185'
+        ];
+
+        const particles = [];
+        const origins = [
+          { x: width * 0.25, y: height * 0.55 },
+          { x: width * 0.5, y: height * 0.45 },
+          { x: width * 0.75, y: height * 0.55 }
+        ];
+
+        origins.forEach((origin) => {
+          for (let i = 0; i < 42; i++) {
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.45;
+            const speed = 7 + Math.random() * 11;
+            particles.push({
+              x: origin.x + (Math.random() - 0.5) * 40,
+              y: origin.y + (Math.random() - 0.5) * 20,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 2,
+              w: 6 + Math.random() * 6,
+              h: 4 + Math.random() * 5,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              rotation: Math.random() * Math.PI * 2,
+              vr: (Math.random() - 0.5) * 0.28,
+              wobble: Math.random() * Math.PI * 2,
+              wobbleSpeed: 0.08 + Math.random() * 0.08,
+              alpha: 1
+            });
+          }
+        });
+
+        let startTime = null;
+        const duration = 2600;
+
+        function frame(now) {
+          if (!startTime) startTime = now;
+          const elapsed = now - startTime;
+
+          ctx.clearRect(0, 0, width, height);
+
+          let aliveCount = 0;
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.vy += 0.34; // Gravity
+            p.vx *= 0.985; // Air resistance
+            p.wobble += p.wobbleSpeed;
+            p.x += p.vx + Math.sin(p.wobble) * 1.1;
+            p.y += p.vy;
+            p.rotation += p.vr;
+
+            if (elapsed > duration - 700) {
+              p.alpha = Math.max(0, (duration - elapsed) / 700);
+            }
+
+            if (p.y < height + 30 && p.alpha > 0.01) {
+              aliveCount++;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.translate(p.x, p.y);
+              ctx.rotate(p.rotation);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+              ctx.restore();
+            }
+          }
+
+          if (elapsed < duration && aliveCount > 0) {
+            requestAnimationFrame(frame);
+          } else {
+            canvas.remove();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      function updateAutocompleteSuggestions(rawInput) {
+        const query = String(rawInput || '').trim().toLowerCase();
+        highlightedSuggestionIdx = -1;
+
+        let matches = [];
+        if (!query) {
+          // On click/focus with empty query: list cities in reverse alphabetical order (starting from Taipei)
+          matches = autocompleteIndex
+            .filter((item) => item.type === 'city')
+            .sort((a, b) => b.term.localeCompare(a.term));
+        } else {
+          matches = autocompleteIndex
+            .filter((item) => item.lower.includes(query))
+            .slice(0, 8);
+        }
+
+        // Always append "I Feel Lucky" at the end of the dropdown list
+        const luckyItem = {
+          term: 'I Feel Lucky',
+          lower: 'i feel lucky',
+          type: 'lucky',
+          priority: 99
+        };
+        currentSuggestions = [...matches, luckyItem];
+
+        const iconMap = {
+          city: 'location_on',
+          food: 'restaurant',
+          place: 'storefront',
+          word: 'tag',
+          lucky: 'casino'
+        };
+
+        const badgeMap = {
+          city: 'City',
+          food: 'Category',
+          place: 'Spot',
+          word: 'Keyword',
+          lucky: 'Random'
+        };
+
+        const frag = document.createDocumentFragment();
+        currentSuggestions.forEach((item, idx) => {
+          const li = document.createElement('li');
+          li.className = 'md3-autocomplete-item';
+          li.setAttribute('role', 'option');
+          const isLucky = item.type === 'lucky';
+          const countHtml =
+            item.type === 'city' && typeof item.count === 'number'
+              ? ` <span class="font-semibold" style="color: var(--md-sys-color-primary);">(${item.count})</span>`
+              : '';
+
+          li.innerHTML = `
+            <span class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined ${isLucky ? 'filled' : ''} text-lg shrink-0" style="color: ${isLucky ? 'var(--md-sys-color-tertiary)' : 'var(--md-sys-color-primary)'};">
+                ${iconMap[item.type] || 'search'}
+              </span>
+              <span class="text-sm ${isLucky ? 'font-bold' : 'font-medium'} truncate">${escapeHtml(item.term)}${countHtml}</span>
+            </span>
+            <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ml-2"
+              style="background-color: ${isLucky ? 'var(--md-sys-color-tertiary-container)' : 'var(--md-sys-color-surface-container)'}; color: ${isLucky ? 'var(--md-sys-color-on-tertiary-container)' : 'var(--md-sys-color-on-surface-variant)'};">
+              ${badgeMap[item.type] || ''}
+            </span>
+          `;
+
+          li.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            selectAutocompleteSuggestion(item);
+          });
+
+          frag.appendChild(li);
+        });
+
+        els.autocompleteList.innerHTML = '';
+        els.autocompleteList.appendChild(frag);
+        els.autocompleteDropdown.classList.remove('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'true');
+      }
+
+      function selectAutocompleteSuggestion(item) {
+        if (!item) return;
+        // Dismiss mobile virtual keyboard immediately
+        els.searchInput.blur();
+
+        if (item.type === 'lucky') {
+          triggerFeelingLucky();
+          return;
+        }
+        els.searchInput.value = item.term;
+        searchQuery = item.term;
+        els.clearSearchBtn.classList.remove('hidden');
+        hideAutocomplete();
+        filterPlaces();
+
+        // If the user selected a specific spot, open its detail modal immediately
+        if (item.type === 'place') {
+          const idx = visiblePlaces.findIndex(
+            (p) => p.title.toLowerCase() === item.lower
+          );
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      function hideAutocomplete() {
+        els.autocompleteDropdown.classList.add('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'false');
+        highlightedSuggestionIdx = -1;
+      }
+
+      function highlightSuggestion(index) {
+        const items = els.autocompleteList.querySelectorAll('.md3-autocomplete-item');
+        if (!items.length) return;
+        items.forEach((el) => el.classList.remove('active'));
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
+        highlightedSuggestionIdx = index;
+        items[index].classList.add('active');
+        items[index].scrollIntoView({ block: 'nearest' });
+      }
+
+      /* ----------------------------------------------------------------------
+         3. CARD GRID & PAGINATION RENDERING
+         ---------------------------------------------------------------------- */
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderLoadingSkeletons() {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 12; i++) {
+          const skel = document.createElement('div');
+          skel.className = 'aspect-square rounded-2xl skeleton-pulse border';
+          skel.style.borderColor = 'var(--md-sys-color-outline-variant)';
+          frag.appendChild(skel);
+        }
+        els.loadingSkeleton.innerHTML = '';
+        els.loadingSkeleton.appendChild(frag);
+      }
+
+      function createPlaceCardElement(place, index) {
+        const card = document.createElement('article');
+        card.className = 'md3-place-card group';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${place.title}${place.city ? ', ' + place.city : ''}`);
+
+        const isAboveFold = index < 6;
+        const loadingAttr = isAboveFold ? 'eager' : 'lazy';
+        const priorityAttr = index === 0 ? 'fetchpriority="high"' : '';
+
+        const cityPill = place.city
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md bg-black/55 text-white border border-white/15">
+              <span class="material-symbols-outlined filled text-[13px] text-emerald-300">location_on</span>
+              ${escapeHtml(place.city)}
+            </span>`
+          : '';
+
+        const catBadges = place.categories
+          .slice(0, 1)
+          .map(
+            (cat) =>
+              `<span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 drop-shadow-sm">${escapeHtml(cat)}</span>`
+          )
+          .join('');
+
+        card.innerHTML = `
+          <img
+            alt="${escapeHtml(place.title)}"
+            loading="${loadingAttr}"
+            decoding="async"
+            ${priorityAttr}
+          />
+          <div class="md3-card-scrim"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+            ${cityPill}
+          </div>
+          <div class="absolute bottom-3 left-3.5 right-3.5 text-white pointer-events-none">
+            <div class="flex flex-wrap gap-1 mb-1.5">
+              ${catBadges}
+            </div>
+            <h2 class="text-base sm:text-lg font-bold leading-snug line-clamp-2 drop-shadow-sm">
+              ${escapeHtml(place.title)}
+            </h2>
+          </div>
+        `;
+
+        const imgEl = card.querySelector('img');
+        attachImageFallbackChain(imgEl, place.thumbCandidates);
+
+        card.addEventListener('click', () => openModal(index));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(index);
+          }
+        });
+
+        return card;
+      }
+
+      function renderCards() {
+        els.loadingSkeleton.classList.add('hidden');
+
+        if (visiblePlaces.length === 0) {
+          els.placesGrid.innerHTML = '';
+          els.loadMoreContainer.classList.add('hidden');
+          els.resultsToolbar.classList.add('hidden');
+          els.emptyState.classList.remove('hidden');
+          startDinoGame();
+          return;
+        }
+
+        els.resultsToolbar.classList.remove('hidden');
+        els.emptyState.classList.add('hidden');
+        stopDinoGame();
+
+        const slice = visiblePlaces.slice(0, displayedCount);
+        const frag = document.createDocumentFragment();
+        slice.forEach((place, idx) => {
+          frag.appendChild(createPlaceCardElement(place, idx));
+        });
+
+        els.placesGrid.innerHTML = '';
+        els.placesGrid.appendChild(frag);
+
+        const remaining = visiblePlaces.length - slice.length;
+        if (remaining > 0) {
+          els.loadMoreContainer.classList.remove('hidden');
+          els.loadMoreLabel.textContent = `Load More (${remaining} remaining)`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
+      }
+
+      function handleLoadMore() {
+        const prevCount = displayedCount;
+        displayedCount = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+        const newSlice = visiblePlaces.slice(prevCount, displayedCount);
+
+        const frag = document.createDocumentFragment();
+        newSlice.forEach((place, offset) => {
+          frag.appendChild(createPlaceCardElement(place, prevCount + offset));
+        });
+        els.placesGrid.appendChild(frag);
+
+        const remaining = visiblePlaces.length - displayedCount;
+        if (remaining > 0) {
+          els.loadMoreLabel.textContent = `Load More (${remaining} remaining)`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         4. DETAIL MODAL & SHARE LINK
+         ---------------------------------------------------------------------- */
+
+      function openModal(index) {
+        if (index < 0 || index >= visiblePlaces.length) return;
+        activeModalIndex = index;
+        const place = visiblePlaces[index];
+
+        els.placeModal.scrollTop = 0;
+        els.modalCounter.textContent = `${index + 1} / ${visiblePlaces.length}`;
+        els.modalPrevBtn.disabled = visiblePlaces.length <= 1;
+        els.modalNextBtn.disabled = visiblePlaces.length <= 1;
+
+        els.modalImage.alt = place.title;
+        attachImageFallbackChain(els.modalImage, place.largeCandidates);
+
+        if (place.city) {
+          els.modalCityBtn.classList.remove('hidden');
+          els.modalCityText.textContent = place.city;
+        } else {
+          els.modalCityBtn.classList.add('hidden');
+        }
+
+        els.modalTitle.textContent = place.title;
+
+        els.modalCategories.innerHTML = '';
+        place.categories.forEach((cat) => {
+          const tag = document.createElement('button');
+          tag.type = 'button';
+          tag.className = 'md3-modal-cat-tag';
+          tag.textContent = cat;
+          tag.title = `Filter by ${cat}`;
+          tag.addEventListener('click', () => {
+            closeModal();
+            setCategory(cat);
+          });
+          els.modalCategories.appendChild(tag);
+        });
+
+        els.modalDescription.textContent =
+          place.description || 'A hand-picked spot in Taiwan curated by @alby.food.';
+
+        const mapsHref =
+          place.link ||
+          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${place.title} ${place.city} Taiwan`
+          )}`;
+        els.modalMapsLink.href = mapsHref;
+
+        els.placeModal.classList.add('open');
+        els.placeModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        updateUrlState(place.slug);
+      }
+
+      function closeModal() {
+        activeModalIndex = -1;
+        els.placeModal.classList.remove('open');
+        els.placeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        updateUrlState(null);
+      }
+
+      function navigateModal(delta) {
+        if (activeModalIndex === -1 || visiblePlaces.length <= 1) return;
+        const nextIdx =
+          (activeModalIndex + delta + visiblePlaces.length) % visiblePlaces.length;
+        if (nextIdx >= displayedCount) {
+          displayedCount = nextIdx + 1;
+          renderCards();
+        }
+        openModal(nextIdx);
+      }
+
+      function showSnackbar(message) {
+        els.snackbarText.textContent = message;
+        els.snackbar.classList.add('show');
+        clearTimeout(showSnackbar._timer);
+        showSnackbar._timer = setTimeout(() => {
+          els.snackbar.classList.remove('show');
+        }, 2800);
+      }
+
+      function copyDirectSpotLink() {
+        if (activeModalIndex === -1 || !visiblePlaces[activeModalIndex]) return;
+        const place = visiblePlaces[activeModalIndex];
+        let shareUrl = window.location.href;
+        try {
+          if (window.location.origin && window.location.origin !== 'null') {
+            const u = new URL(window.location.origin + window.location.pathname);
+            u.searchParams.set('spot', place.slug);
+            shareUrl = u.toString();
+          }
+        } catch {
+          // Fallback to current href
+        }
+
+        const tempInput = document.createElement('textarea');
+        tempInput.value = shareUrl;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand('copy');
+          els.modalShareIcon.textContent = 'done';
+          els.modalShareLabel.textContent = 'Copied';
+          showSnackbar(`Copied link for "${place.title}"`);
+          setTimeout(() => {
+            els.modalShareIcon.textContent = 'share';
+            els.modalShareLabel.textContent = 'Share';
+          }, 2000);
+        } catch {
+          showSnackbar('Unable to copy link');
+        }
+        document.body.removeChild(tempInput);
+      }
+
+      /* ----------------------------------------------------------------------
+         5. THEME TOGGLE
+         ---------------------------------------------------------------------- */
+
+      function initTheme() {
+        const saved = localStorage.getItem('taiwanTopTheme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const explicit = document.documentElement.getAttribute('data-theme');
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = explicit ? explicit === 'dark' : prefersDark;
+        els.themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      }
+
+      function toggleTheme() {
+        const explicit = document.documentElement.getAttribute('data-theme');
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const currentlyDark = explicit ? explicit === 'dark' : prefersDark;
+        const next = currentlyDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('taiwanTopTheme', next);
+        updateThemeIcon();
+      }
+
+      /* ----------------------------------------------------------------------
+         6. CSV PARSING & STALE-WHILE-REVALIDATE CACHE
+         ---------------------------------------------------------------------- */
+
+      function parseCsvTextToPlaces(csvText) {
+        if (!csvText || typeof Papa === 'undefined') return [];
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true
+        });
+        if (!parsed || !Array.isArray(parsed.data)) return [];
+
+        const normalized = [];
+        parsed.data.forEach((row, idx) => {
+          const item = normalizePlaceRow(row, idx);
+          if (item) normalized.push(item);
+        });
+
+        // Sort newest first by Flickr photo ID (or CSV row order fallback)
+        normalized.sort((a, b) => {
+          if (a.flickrId !== b.flickrId) {
+            return b.flickrId > a.flickrId ? 1 : -1;
+          }
+          return b.id - a.id;
+        });
+
+        return normalized;
+      }
+
+      function applyDataset(places) {
+        allPlaces = places;
+        els.headerTotalBadge.textContent = `${allPlaces.length} spots`;
+        buildAutocompleteIndex();
+        populateCategoryFilters();
+        filterPlaces();
+
+        if (pendingSpotSlug) {
+          const targetSlug = pendingSpotSlug;
+          pendingSpotSlug = null;
+          const idx = visiblePlaces.findIndex((p) => p.slug === targetSlug);
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      async function loadPlacesData() {
+        els.retryFetchBtn.classList.add('hidden');
+        let cachedCsv = null;
+
+        try {
+          cachedCsv = localStorage.getItem(CACHE_STORAGE_KEY);
+          if (cachedCsv) {
+            const cachedPlaces = parseCsvTextToPlaces(cachedCsv);
+            if (cachedPlaces.length > 0) {
+              applyDataset(cachedPlaces);
+            }
+          }
+        } catch {
+          // Ignore storage read errors
+        }
+
+        try {
+          const bustUrl = `${CSV_URL}&_t=${Date.now()}`;
+          const response = await fetch(bustUrl, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const freshCsv = await response.text();
+          const freshPlaces = parseCsvTextToPlaces(freshCsv);
+
+          if (freshPlaces.length > 0) {
+            if (freshCsv !== cachedCsv) {
+              try {
+                localStorage.setItem(CACHE_STORAGE_KEY, freshCsv);
+              } catch {
+                // Ignore storage quota errors
+              }
+              applyDataset(freshPlaces);
+            }
+          } else if (!allPlaces.length) {
+            throw new Error('Empty CSV dataset');
+          }
+        } catch (err) {
+          if (!allPlaces.length) {
+            els.loadingSkeleton.classList.add('hidden');
+            els.headerTotalBadge.textContent = 'Offline';
+            els.resultsSummary.textContent = 'Unable to load curated places';
+            els.emptyStateTitle.textContent = 'Could not reach Google Sheets';
+            els.emptyStateSubtitle.textContent =
+              'Play Hot Pot Goose Run while waiting, or retry fetching the sheet.';
+            els.emptyStateSubtitle.classList.remove('hidden');
+            els.retryFetchBtn.classList.remove('hidden');
+            els.emptyState.classList.remove('hidden');
+            startDinoGame();
+          }
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         7. HOT POT GOOSE RUN MINI-GAME (EMPTY STATE)
+         ---------------------------------------------------------------------- */
+
+      const dinoState = {
+        y: 0,
+        vy: 0,
+        grounded: true,
+        obstacles: [],
+        clouds: [],
+        score: 0,
+        best: Number(localStorage.getItem('taiwanTopGooseBest') || 0),
+        speed: 4.5,
+        spawnTimer: 0,
+        gameOver: false,
+        frameTick: 0
+      };
+
+      function playJumpTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(620, audioCtx.currentTime + 0.09);
+          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.1);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function playGameOverTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.24);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.24);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function triggerDinoJump() {
+        if (!dinoGameRunning) return;
+        if (dinoState.gameOver) {
+          resetDinoGame();
+          return;
+        }
+        if (dinoState.grounded) {
+          dinoState.vy = -10.5;
+          dinoState.grounded = false;
+          playJumpTone();
+        }
+      }
+
+      function resetDinoGame() {
+        dinoState.y = 0;
+        dinoState.vy = 0;
+        dinoState.grounded = true;
+        dinoState.obstacles = [];
+        dinoState.clouds = [
+          { x: 140, y: 38, s: 1 },
+          { x: 380, y: 26, s: 0.8 },
+          { x: 540, y: 46, s: 1.1 }
+        ];
+        dinoState.score = 0;
+        dinoState.speed = 4.5;
+        dinoState.spawnTimer = 60;
+        dinoState.gameOver = false;
+      }
+
+      /**
+       * Renders the pixel goose matching the brand logo silhouette on canvas
+       */
+      function drawPixelGoose(ctx, x, y, scale, strideFrame, isDead, fg, accent) {
+        const u = scale; // 1 unit = 1/16 of 240px grid
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Body & Neck (matches SVG 240x240 pixel grid scaled down)
+        ctx.fillStyle = fg;
+        // Neck & head: x=8..11, y=0..12
+        ctx.fillRect(8 * u, 0, 3 * u, 3 * u);
+        ctx.fillRect(8 * u, 3 * u, 2 * u, 9 * u);
+        // Torso: x=1..9, y=8..13
+        ctx.fillRect(0, 8 * u, 3 * u, 1 * u);
+        ctx.fillRect(1 * u, 9 * u, 8 * u, 3 * u);
+        ctx.fillRect(2 * u, 12 * u, 7 * u, 1 * u);
+
+        // Eye (cutout or X when bonked)
+        if (isDead) {
+          ctx.fillStyle = accent;
+          ctx.fillRect(9 * u, 1 * u, 1.2 * u, 1.2 * u);
+        } else {
+          ctx.clearRect(9 * u, 1 * u, 1 * u, 1 * u);
+        }
+
+        // Beak
+        ctx.fillStyle = accent;
+        ctx.fillRect(11 * u, 1 * u, 3 * u, 1 * u);
+        ctx.fillRect(11 * u, 2 * u, 2 * u, 1 * u);
+
+        // Animated Pixel Legs
+        const leftLift = !dinoState.grounded ? 1 * u : strideFrame === 0 ? 1 * u : 0;
+        const rightLift = !dinoState.grounded ? 0.5 * u : strideFrame === 1 ? 1 * u : 0;
+
+        // Left Leg
+        ctx.fillRect(3 * u, 13 * u, 1 * u, 3 * u - leftLift);
+        ctx.fillRect(4 * u, 15 * u - leftLift, 1 * u, 1 * u);
+
+        // Right Leg
+        ctx.fillRect(7 * u, 13 * u, 1 * u, 3 * u - rightLift);
+        ctx.fillRect(8 * u, 15 * u - rightLift, 1 * u, 1 * u);
+
+        ctx.restore();
+      }
+
+      /**
+       * Renders a steaming Taiwanese hot pot obstacle with broth, handles, chopsticks & steam
+       */
+      function drawHotPotObstacle(ctx, ob, groundY, tick, fg, accent, primary) {
+        const x = Math.round(ob.x);
+        const w = Math.round(ob.w);
+        const h = Math.round(ob.h);
+        const topY = Math.round(groundY - h);
+
+        // Chopsticks sticking out diagonally
+        ctx.strokeStyle = fg;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.35, topY + 6);
+        ctx.lineTo(x + w * 0.1, topY - 8);
+        ctx.moveTo(x + w * 0.65, topY + 6);
+        ctx.lineTo(x + w * 0.9, topY - 7);
+        ctx.stroke();
+
+        // Pot side handles
+        ctx.fillStyle = fg;
+        ctx.fillRect(x - 3, topY + 9, 3, 4);
+        ctx.fillRect(x + w, topY + 9, 3, 4);
+
+        // Pot body
+        ctx.fillStyle = accent;
+        ctx.fillRect(x, topY + 6, w, h - 8);
+        // Base foot
+        ctx.fillStyle = fg;
+        ctx.fillRect(x + 3, groundY - 2, w - 6, 2);
+
+        // Simmering broth & toppings rim
+        ctx.fillStyle = primary;
+        ctx.fillRect(x + 2, topY + 3, w - 4, 4);
+        ctx.fillStyle = '#F59E0B';
+        ctx.fillRect(x + 5, topY + 2, 4, 3);
+        ctx.fillRect(x + w - 9, topY + 2, 4, 3);
+
+        // Animated rising pixel steam wisps
+        const phase = Math.floor((tick + x) / 10) % 2;
+        ctx.fillStyle = fg;
+        ctx.globalAlpha = 0.45;
+        ctx.fillRect(x + Math.floor(w * 0.3), topY - 5 - phase * 3, 2, 4);
+        ctx.fillRect(x + Math.floor(w * 0.68), topY - 7 + phase * 3, 2, 4);
+        ctx.globalAlpha = 1;
+      }
+
+      function startDinoGame() {
+        if (dinoGameRunning) return;
+        dinoGameRunning = true;
+        resetDinoGame();
+        if (document.activeElement === els.searchInput) {
+          els.searchInput.blur();
+        }
+        els.dinoCanvas.focus({ preventScroll: true });
+
+        const canvas = els.dinoCanvas;
+        const ctx = canvas.getContext('2d');
+
+        function step() {
+          if (!dinoGameRunning) return;
+
+          const rect = canvas.getBoundingClientRect();
+          const w = Math.max(300, Math.floor(rect.width || 600));
+          const h = Math.max(160, Math.floor(rect.height || 337));
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+          }
+
+          const styles = getComputedStyle(document.documentElement);
+          const fg = styles.getPropertyValue('--md-sys-color-on-surface').trim() || '#171D1A';
+          const accent = styles.getPropertyValue('--md-sys-color-tertiary').trim() || '#9C4233';
+          const primary = styles.getPropertyValue('--md-sys-color-primary').trim() || '#1B6B52';
+          const lineCol = styles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#BFC9C2';
+
+          const groundY = h - 34;
+
+          if (!dinoState.gameOver) {
+            dinoState.frameTick++;
+            dinoState.score += 0.2;
+            dinoState.speed = Math.min(10.5, 4.5 + dinoState.score / 220);
+
+            dinoState.vy += 0.55;
+            dinoState.y += dinoState.vy;
+            if (dinoState.y >= 0) {
+              dinoState.y = 0;
+              dinoState.vy = 0;
+              dinoState.grounded = true;
+            }
+
+            // Drift background clouds
+            dinoState.clouds.forEach((c) => {
+              c.x -= dinoState.speed * 0.25;
+              if (c.x < -50) {
+                c.x = w + 30 + Math.random() * 60;
+                c.y = 20 + Math.random() * 40;
+              }
+            });
+
+            dinoState.spawnTimer--;
+            if (dinoState.spawnTimer <= 0) {
+              const isDouble = dinoState.score > 60 && Math.random() < 0.35;
+              dinoState.obstacles.push({
+                x: w + 20,
+                w: isDouble ? 36 : 22 + Math.random() * 8,
+                h: 22 + Math.random() * 8
+              });
+              dinoState.spawnTimer = Math.floor(65 + Math.random() * 55);
+            }
+
+            const gooseBox = { x: 46, y: groundY - 36 + dinoState.y, w: 28, h: 34 };
+
+            for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
+              const ob = dinoState.obstacles[i];
+              ob.x -= dinoState.speed;
+              if (ob.x + ob.w < -15) {
+                dinoState.obstacles.splice(i, 1);
+                continue;
+              }
+              const obBox = { x: ob.x + 3, y: groundY - ob.h + 4, w: ob.w - 6, h: ob.h - 4 };
+              if (
+                gooseBox.x < obBox.x + obBox.w &&
+                gooseBox.x + gooseBox.w > obBox.x &&
+                gooseBox.y < obBox.y + obBox.h &&
+                gooseBox.y + gooseBox.h > obBox.y
+              ) {
+                dinoState.gameOver = true;
+                playGameOverTone();
+                const finalInt = Math.floor(dinoState.score);
+                if (finalInt > dinoState.best) {
+                  dinoState.best = finalInt;
+                  localStorage.setItem('taiwanTopGooseBest', String(finalInt));
+                }
+              }
+            }
+          }
+
+          ctx.clearRect(0, 0, w, h);
+
+          // Pixel Clouds
+          ctx.fillStyle = lineCol;
+          ctx.globalAlpha = 0.55;
+          dinoState.clouds.forEach((c) => {
+            const cx = Math.round(c.x);
+            const cy = Math.round(c.y);
+            ctx.fillRect(cx + 6, cy, 20, 5);
+            ctx.fillRect(cx, cy + 4, 32, 6);
+          });
+          ctx.globalAlpha = 1;
+
+          // Ground line & scrolling pebbles
+          ctx.strokeStyle = lineCol;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(16, groundY);
+          ctx.lineTo(w - 16, groundY);
+          ctx.stroke();
+
+          ctx.fillStyle = lineCol;
+          for (let px = 24; px < w - 24; px += 48) {
+            const offset = Math.floor((dinoState.frameTick * dinoState.speed) % 48);
+            const drawX = px - offset;
+            if (drawX > 18 && drawX < w - 22) {
+              ctx.fillRect(drawX, groundY + 6, 6, 2);
+              ctx.fillRect(drawX + 18, groundY + 11, 3, 2);
+            }
+          }
+
+          // Pixel Goose
+          const strideFrame = Math.floor(dinoState.frameTick / 5) % 2;
+          drawPixelGoose(
+            ctx,
+            42,
+            groundY - 38 + dinoState.y,
+            2.4,
+            strideFrame,
+            dinoState.gameOver,
+            fg,
+            accent
+          );
+
+          // Steaming Hot Pot Obstacles
+          dinoState.obstacles.forEach((ob) => {
+            drawHotPotObstacle(ctx, ob, groundY, dinoState.frameTick, fg, accent, primary);
+          });
+
+          if (dinoState.gameOver) {
+            ctx.fillStyle = fg;
+            ctx.font = '14px "Hellovetica", "Silkscreen", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('BONK! Tap or Press Space to Run Again', w / 2, h / 2 - 6);
+          }
+
+          const sStr = String(Math.floor(dinoState.score)).padStart(4, '0');
+          const bStr = String(dinoState.best).padStart(4, '0');
+          els.gameScoreReadout.textContent = `SCORE: ${sStr} · BEST: ${bStr}`;
+
+          dinoAnimFrameId = requestAnimationFrame(step);
+        }
+
+        dinoAnimFrameId = requestAnimationFrame(step);
+      }
+
+      function stopDinoGame() {
+        dinoGameRunning = false;
+        if (dinoAnimFrameId) {
+          cancelAnimationFrame(dinoAnimFrameId);
+          dinoAnimFrameId = null;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         8. EVENT LISTENERS & INITIALIZATION
+         ---------------------------------------------------------------------- */
+
+      function resetAllFilters() {
+        activeCategory = 'ALL';
+        searchQuery = '';
+        els.searchInput.value = '';
+        els.clearSearchBtn.classList.add('hidden');
+        hideAutocomplete();
+        populateCategoryFilters();
+        filterPlaces();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function initEventListeners() {
+        window.addEventListener(
+          'scroll',
+          () => {
+            els.topAppBar.classList.toggle('scrolled', window.scrollY > 12);
+          },
+          { passive: true }
+        );
+
+        els.brandResetBtn.addEventListener('click', resetAllFilters);
+        els.resetFiltersInlineBtn.addEventListener('click', resetAllFilters);
+        els.emptyResetBtn.addEventListener('click', resetAllFilters);
+        els.retryFetchBtn.addEventListener('click', loadPlacesData);
+        els.sortToggleBtn.addEventListener('click', toggleSortOrder);
+        els.themeToggleBtn.addEventListener('click', toggleTheme);
+        els.loadMoreBtn.addEventListener('click', handleLoadMore);
+
+        // Search input & autocomplete
+        els.searchInput.addEventListener('focus', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('click', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('input', () => {
+          const val = els.searchInput.value;
+          els.clearSearchBtn.classList.toggle('hidden', !val.length);
+          updateAutocompleteSuggestions(val);
+
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+            searchQuery = val;
+            filterPlaces();
+          }, 120);
+        });
+
+        els.searchInput.addEventListener('keydown', (e) => {
+          const dropdownOpen = !els.autocompleteDropdown.classList.contains('hidden');
+          if (e.key === 'ArrowDown' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx + 1);
+          } else if (e.key === 'ArrowUp' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx - 1);
+          } else if (e.key === 'Enter') {
+            if (dropdownOpen && highlightedSuggestionIdx >= 0 && currentSuggestions[highlightedSuggestionIdx]) {
+              e.preventDefault();
+              selectAutocompleteSuggestion(currentSuggestions[highlightedSuggestionIdx]);
+            } else {
+              els.searchInput.blur();
+              hideAutocomplete();
+              searchQuery = els.searchInput.value;
+              filterPlaces();
+            }
+          } else if (e.key === 'Escape') {
+            hideAutocomplete();
+          }
+        });
+
+        els.clearSearchBtn.addEventListener('click', () => {
+          els.searchInput.value = '';
+          searchQuery = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+          filterPlaces();
+          els.searchInput.focus();
+        });
+
+        document.addEventListener('pointerdown', (e) => {
+          if (
+            !els.autocompleteDropdown.contains(e.target) &&
+            e.target !== els.searchInput
+          ) {
+            hideAutocomplete();
+          }
+        });
+
+        // Modal controls
+        els.modalCloseBtn.addEventListener('click', closeModal);
+        els.modalPrevBtn.addEventListener('click', () => navigateModal(-1));
+        els.modalNextBtn.addEventListener('click', () => navigateModal(1));
+        els.modalShareBtn.addEventListener('click', copyDirectSpotLink);
+
+        els.modalCityBtn.addEventListener('click', () => {
+          const city = els.modalCityText.textContent;
+          closeModal();
+          els.searchInput.value = city;
+          searchQuery = city;
+          els.clearSearchBtn.classList.remove('hidden');
+          filterPlaces();
+        });
+
+        els.placeModal.addEventListener('click', (e) => {
+          if (e.target === els.placeModal) {
+            closeModal();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (activeModalIndex !== -1) {
+            if (e.key === 'Escape') closeModal();
+            else if (e.key === 'ArrowLeft') navigateModal(-1);
+            else if (e.key === 'ArrowRight') navigateModal(1);
+          } else if (
+            dinoGameRunning &&
+            (e.code === 'Space' || e.code === 'ArrowUp')
+          ) {
+            if (document.activeElement === els.searchInput) {
+              els.searchInput.blur();
+            }
+            e.preventDefault();
+            triggerDinoJump();
+          }
+        });
+
+        els.dinoCanvas.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          triggerDinoJump();
+        });
+      }
+
+      // Boot sequence
+      initTheme();
+      renderLoadingSkeletons();
+      parseUrlState();
+      initEventListeners();
+      loadPlacesData();
+    })();
+  </script>
+</body>
+</html>
