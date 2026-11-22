@@ -76,6 +76,12 @@
         filter 0.25s ease;
     }
 
+    .accordion-item.is-open .accordion-header-btn {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
     .accordion-header-btn:hover {
       filter: brightness(0.97);
     }
@@ -150,6 +156,18 @@
     ::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.2);
     }
+
+    /* Vertically responsive row height: 1/7 of browser viewport height minus outer vertical padding */
+    .viewport-row {
+      height: calc((100dvh - 1rem) / 7);
+      min-height: 3.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .viewport-row {
+        height: calc((100dvh - 1.75rem) / 7);
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen px-3 sm:px-5 md:px-6 pt-1 sm:pt-2 pb-3 sm:pb-5 antialiased selection:bg-black selection:text-white">
@@ -157,8 +175,8 @@
   <!-- Main Container with subtle padding around the whole page -->
   <div class="w-full max-w-full mx-auto">
 
-    <!-- Header Section matching the height of the accordion rows -->
-    <header class="w-full flex items-center justify-between px-3 sm:px-6 h-20 sm:h-24">
+    <!-- Header Section matching 1/7 of the browser window height -->
+    <header class="w-full flex items-center justify-between px-3 sm:px-6 viewport-row">
       <div class="flex items-center gap-4 sm:gap-8 md:gap-10 overflow-hidden">
         <!-- Traditional Chinese Taiwan label -->
         <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
@@ -198,18 +216,18 @@
     <main id="citiesContainer" class="w-full flex flex-col">
       <!-- Skeleton / Loading State -->
       <div id="loadingSkeleton" class="w-full space-y-0">
-        <div class="w-full h-20 sm:h-24 bg-[#F7D249]/70 animate-pulse flex items-center px-4 sm:px-6">
+        <div class="w-full viewport-row bg-[#F7D249]/70 animate-pulse flex items-center px-4 sm:px-6">
           <span class="text-sm text-black/60">Fetching Taiwan places...</span>
         </div>
-        <div class="w-full h-20 sm:h-24 bg-[#C6BEB8]/70 animate-pulse"></div>
-        <div class="w-full h-20 sm:h-24 bg-[#F6BBF5]/70 animate-pulse"></div>
-        <div class="w-full h-20 sm:h-24 bg-[#8FA3D9]/70 animate-pulse"></div>
-        <div class="w-full h-20 sm:h-24 bg-[#65754A]/70 animate-pulse"></div>
+        <div class="w-full viewport-row bg-[#C6BEB8]/70 animate-pulse"></div>
+        <div class="w-full viewport-row bg-[#F6BBF5]/70 animate-pulse"></div>
+        <div class="w-full viewport-row bg-[#8FA3D9]/70 animate-pulse"></div>
+        <div class="w-full viewport-row bg-[#65754A]/70 animate-pulse"></div>
       </div>
     </main>
 
-    <!-- Minimalist Footer matching the height of the accordion rows -->
-    <footer class="w-full px-3 sm:px-6 h-20 sm:h-24 flex items-center justify-end text-xs sm:text-sm">
+    <!-- Minimalist Footer matching 1/7 of the browser window height -->
+    <footer class="w-full px-3 sm:px-6 viewport-row flex items-center justify-end text-xs sm:text-sm">
       <span>Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a></span>
     </footer>
 
@@ -573,7 +591,7 @@
         headerBtn.dataset.darkText = group.darkText;
         headerBtn.style.backgroundColor = isDark ? group.darkBg : group.bg;
         headerBtn.style.color = isDark ? group.darkText : group.text;
-        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 h-20 sm:h-24 flex items-center justify-between cursor-pointer focus:outline-none';
+        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 viewport-row flex items-center justify-between cursor-pointer focus:outline-none';
 
         headerBtn.innerHTML = `
           <div class="flex items-center gap-4 sm:gap-8 md:gap-10">
@@ -626,12 +644,7 @@
             // Regular Description (shifted further right horizontally)
             const descCol = document.createElement('div');
             descCol.className = 'w-full md:w-[62%] lg:w-[64%]';
-
-            descCol.innerHTML = `
-              <p class="font-normal text-sm sm:text-[16px] leading-relaxed">
-                ${escapeHtml(place.description)}
-              </p>
-            `;
+            descCol.innerHTML = `<p class="text-sm sm:text-[16px] font-normal leading-relaxed">${escapeHtml(place.description)}</p>`;
 
             li.appendChild(titleCol);
             li.appendChild(descCol);
@@ -644,11 +657,28 @@
         inner.appendChild(listContainer);
         contentWrapper.appendChild(inner);
 
-        // Toggle click interaction
+        // Toggle click interaction: single-open mode & peg active city to top
         headerBtn.addEventListener('click', () => {
           const currentlyOpen = section.classList.contains('is-open');
+
+          // Close all other open accordions
+          document.querySelectorAll('.accordion-item.is-open').forEach(item => {
+            if (item !== section) {
+              item.classList.remove('is-open');
+              const btn = item.querySelector('.accordion-header-btn');
+              if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+          });
+
           section.classList.toggle('is-open', !currentlyOpen);
           headerBtn.setAttribute('aria-expanded', !currentlyOpen ? 'true' : 'false');
+
+          // Smoothly peg the opened city header to the top of the viewport
+          if (!currentlyOpen) {
+            requestAnimationFrame(() => {
+              section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
         });
 
         section.appendChild(headerBtn);
