@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣 TAIWAN top</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Roboto Mono with Thin/Light/Regular/Medium/Bold & Italic weights -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono:ital,wght@0,200;0,300;0,400;0,500;0,700;1,200;1,300;1,400&display=swap" rel="stylesheet">
+  <!-- PapaParse for robust CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Roboto Mono"', '"Noto Sans TC"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
+    }
+
+    body {
+      background-color: #F4F3EF;
+      color: #000000;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    .place-divider {
+      border-color: #000000;
+    }
+
+    /* Smooth accordion transition with subtle opacity & vertical settle */
+    .accordion-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease;
+    }
+
+    .accordion-item.is-open .accordion-content {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .accordion-inner {
+      overflow: hidden;
+    }
+
+    .accordion-inner > div {
+      transform: translateY(-6px);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .accordion-item.is-open .accordion-inner > div {
+      transform: translateY(0);
+    }
+
+    .accordion-header-btn {
+      transition:
+        background-color 0.35s ease,
+        color 0.35s ease,
+        padding-left 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.25s ease;
+    }
+
+    .accordion-header-btn:hover {
+      filter: brightness(0.97);
+    }
+
+    body.dark-mode .accordion-header-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    /* Dark mode toggle inspired by the Yin-Yang icon in the top right */
+    body.dark-mode {
+      background-color: #121211;
+      color: #F4F3EF;
+    }
+
+    body.dark-mode .place-divider {
+      border-color: rgba(244, 243, 239, 0.45);
+    }
+
+    body.dark-mode .yin-yang-icon {
+      transform: rotate(180deg);
+    }
+
+    .yin-yang-icon {
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #themeToggle:hover .yin-yang-icon {
+      transform: scale(1.12);
+    }
+
+    body.dark-mode #themeToggle:hover .yin-yang-icon {
+      transform: rotate(180deg) scale(1.12);
+    }
+
+    /* Place Detail Modal Transitions */
+    #placeModal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    #placeModal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #placeModalCard {
+      background-color: #F4F3EF;
+      color: #000000;
+      border-color: #000000;
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    #placeModal.is-visible #placeModalCard {
+      transform: translateY(0) scale(1);
+    }
+
+    body.dark-mode #placeModalCard {
+      background-color: #1A1A19;
+      color: #F4F3EF;
+      border-color: #F4F3EF;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen p-3 sm:p-5 md:p-6 antialiased selection:bg-black selection:text-white">
+
+  <!-- Main Container with subtle padding around the whole page -->
+  <div class="w-full max-w-full mx-auto">
+
+    <!-- Header Section matching the reference screenshot -->
+    <header class="w-full flex items-center justify-between px-3 sm:px-6 py-4 sm:py-6">
+      <div class="flex items-center gap-4 sm:gap-8 md:gap-10 overflow-hidden">
+        <!-- Traditional Chinese Taiwan label -->
+        <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-tight shrink-0">
+          台灣
+        </span>
+
+        <!-- Thin geometric TAIWAN + italic top aligned with city names -->
+        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-none tracking-[0.06em] font-extralight select-none truncate">
+          TAIWAN<span class="italic font-extralight tracking-normal">top</span>
+        </h1>
+      </div>
+
+      <!-- Interactive Yin-Yang Theme Toggle Button -->
+      <button
+        id="themeToggle"
+        type="button"
+        aria-label="Toggle Light/Dark Theme"
+        title="Toggle theme"
+        class="p-2 -mr-2 rounded-full focus:outline-none shrink-0 cursor-pointer"
+      >
+        <svg class="yin-yang-icon w-7 h-7 sm:w-8 sm:h-8" xmlns="http://www.w3.org/2000/svg" viewBox="-42 -42 84 84">
+          <circle r="39" fill="#000" stroke="#000" stroke-width="4"/>
+          <path fill="#fff" d="M0,38a38,38 0 0 1 0,-76a19,19 0 0 1 0,38a19,19 0 0 0 0,38"/>
+          <circle r="5" cy="19" fill="#fff"/>
+          <circle r="5" cy="-19" fill="#000"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Status / Filter Bar (subtle, minimalist) -->
+    <div id="statusBanner" class="hidden px-3 sm:px-6 pb-3 text-xs opacity-70 flex items-center justify-between">
+      <span id="statusText">Loading places from Google Sheets...</span>
+      <button id="retryBtn" class="hidden underline hover:opacity-100 cursor-pointer">Retry</button>
+    </div>
+
+    <!-- Full-width Colorful City Accordions Container -->
+    <main id="citiesContainer" class="w-full flex flex-col">
+      <!-- Skeleton / Loading State -->
+      <div id="loadingSkeleton" class="w-full space-y-0">
+        <div class="w-full h-20 sm:h-24 bg-[#F7D249]/70 animate-pulse flex items-center px-4 sm:px-6">
+          <span class="text-sm text-black/60">Fetching Taiwan places...</span>
+        </div>
+        <div class="w-full h-20 sm:h-24 bg-[#C6BEB8]/70 animate-pulse"></div>
+        <div class="w-full h-20 sm:h-24 bg-[#F6BBF5]/70 animate-pulse"></div>
+        <div class="w-full h-20 sm:h-24 bg-[#8FA3D9]/70 animate-pulse"></div>
+        <div class="w-full h-20 sm:h-24 bg-[#65754A]/70 animate-pulse"></div>
+      </div>
+    </main>
+
+    <!-- Minimalist Footer -->
+    <footer class="w-full px-3 sm:px-6 pt-8 pb-4 text-right text-xs sm:text-sm">
+      Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a>
+    </footer>
+
+  </div>
+
+  <!-- Place Detail Modal -->
+  <div
+    id="placeModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-[2px]"
+  >
+    <div
+      id="placeModalCard"
+      class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto border-2 rounded-xl shadow-2xl"
+    >
+      <!-- Top Bar with City Tag & Close Button -->
+      <div class="flex items-center justify-between px-5 py-3.5 border-b-2 border-current/20">
+        <span id="modalCityBadge" class="text-xs sm:text-sm font-bold uppercase tracking-wider px-2.5 py-1 rounded">
+          City
+        </span>
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-lg leading-none font-bold"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Full Picture Container -->
+      <div id="modalImageWrapper" class="w-full aspect-video bg-black/5 overflow-hidden border-b-2 border-current/20">
+        <img
+          id="modalImage"
+          src=""
+          alt=""
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Details Body -->
+      <div class="p-5 sm:p-7 flex flex-col gap-4">
+        <h2 id="modalTitle" class="text-2xl sm:text-3xl font-bold leading-tight">
+          Place Title
+        </h2>
+
+        <!-- Categories as Badges -->
+        <div id="modalCategories" class="flex flex-wrap gap-2"></div>
+
+        <!-- Full Description -->
+        <p id="modalDescription" class="text-sm sm:text-base font-normal leading-relaxed opacity-90">
+          Description
+        </p>
+
+        <!-- Action Footer: Google Maps Link -->
+        <div class="pt-3 mt-1 border-t border-current/20 flex items-center justify-between gap-4">
+          <a
+            id="modalMapsLink"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+          >
+            <span>Open in Google Maps</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+
+    // City configuration matching screenshot light colors + creative dark mode palette with white text
+    const CITY_META = {
+      'taipei': {
+        en: 'Taipei',
+        zh: '台北',
+        bg: '#F7D249',
+        text: '#0A0A0A',
+        darkBg: '#8A5A19', // Deep warm amber/ochre
+        darkText: '#FFFFFF',
+        order: 1
+      },
+      'taichung': {
+        en: 'Taichung',
+        zh: '台中',
+        bg: '#C6BEB8',
+        text: '#0A0A0A',
+        darkBg: '#4E4946', // Warm charcoal taupe
+        darkText: '#FFFFFF',
+        order: 2
+      },
+      'tainan': {
+        en: 'Tainan',
+        zh: '台南',
+        bg: '#F6BBF5',
+        text: '#0A0A0A',
+        darkBg: '#7A3B6E', // Deep plum magenta
+        darkText: '#FFFFFF',
+        order: 3
+      },
+      'kaohsiung': {
+        en: 'Kaohsiung',
+        zh: '高雄',
+        bg: '#8FA3D9',
+        text: '#0A0A0A',
+        darkBg: '#2E436E', // Deep indigo harbor blue
+        darkText: '#FFFFFF',
+        order: 4
+      },
+      'hengchun': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#65754A',
+        text: '#0A0A0A',
+        darkBg: '#37472C', // Deep coastal forest moss
+        darkText: '#FFFFFF',
+        order: 5
+      },
+      'kenting': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#65754A',
+        text: '#0A0A0A',
+        darkBg: '#37472C',
+        darkText: '#FFFFFF',
+        order: 5
+      }
+    };
+
+    // Fallback curated palettes if additional cities exist in the CSV
+    const EXTRA_PALETTE = [
+      { bg: '#E59866', darkBg: '#7E4627', zh: '台灣' },
+      { bg: '#82B3A6', darkBg: '#2D594E', zh: '台灣' },
+      { bg: '#D4A373', darkBg: '#6B4C2E', zh: '台灣' },
+      { bg: '#A3B18A', darkBg: '#424F32', zh: '台灣' }
+    ];
+
+    // Fallback data (without image URLs) in case CORS/network blocks live CSV in an offline sandbox
+    const FALLBACK_ROWS = [
+      { City: 'Taipei', Title: '真珠 JIN ZHU', Description: 'Nice Taiwanese cuisine chain', Category: 'taiwanese, restaurant' },
+      { City: 'Taipei', Title: '阿石北平烤鴨店', Description: 'Beiping style roasted duck', Category: 'roast duck, takeaway' },
+      { City: 'Taipei', Title: '口福黑輪', Description: 'Taiwanese-style oden', Category: 'oden, street food' },
+      { City: 'Taichung', Title: '第二市場 Second Market', Description: 'Historic market famous for braised pork rice and radish cake', Category: 'market, local food' },
+      { City: 'Tainan', Title: '文章牛肉湯', Description: 'Classic Tainan fresh beef soup served with rice', Category: 'beef soup, breakfast' },
+      { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
+      { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
+    ];
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /**
+     * Parses raw category string into an array of clean category labels
+     */
+    function parseCategoryList(rawCategory) {
+      if (!rawCategory) return [];
+      return rawCategory
+        .replace(/^[\(\[\{]+|[\)\]\}]+$/g, '')
+        .split(/[,;|\/]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    /**
+     * Opens the place detail modal with full picture, category badges, and Google Maps link
+     */
+    function openPlaceModal(place, group) {
+      const modal = document.getElementById('placeModal');
+      const isDark = document.body.classList.contains('dark-mode');
+
+      const cityBadge = document.getElementById('modalCityBadge');
+      cityBadge.textContent = `${group.zh} ${group.en}`;
+      cityBadge.style.backgroundColor = isDark ? group.darkBg : group.bg;
+      cityBadge.style.color = isDark ? group.darkText : group.text;
+
+      document.getElementById('modalTitle').textContent = place.title || 'Untitled Place';
+      document.getElementById('modalDescription').textContent = place.description || 'No description provided.';
+
+      // Handle full picture with graceful fallback
+      const imgEl = document.getElementById('modalImage');
+      const fallbackBg = (isDark ? group.darkBg : group.bg).replace('#', '');
+      const fallbackFg = (isDark ? group.darkText : group.text).replace('#', '');
+      const fallbackUrl = `https://placehold.co/1200x675/${fallbackBg}/${fallbackFg}?text=${encodeURIComponent(place.title || group.en)}`;
+
+      imgEl.onerror = () => {
+        imgEl.onerror = null;
+        imgEl.src = fallbackUrl;
+      };
+      imgEl.src = place.image || fallbackUrl;
+      imgEl.alt = place.title || 'Place photo';
+
+      // Render categories as badges
+      const categoriesContainer = document.getElementById('modalCategories');
+      categoriesContainer.innerHTML = '';
+      const cats = parseCategoryList(place.category);
+      if (cats.length > 0) {
+        categoriesContainer.classList.remove('hidden');
+        cats.forEach(cat => {
+          const badge = document.createElement('span');
+          badge.className = 'text-xs sm:text-sm font-medium px-3 py-1 rounded-full border border-current/40';
+          badge.textContent = cat;
+          categoriesContainer.appendChild(badge);
+        });
+      } else {
+        categoriesContainer.classList.add('hidden');
+      }
+
+      // Resolve Google Maps URL (use explicit link from CSV if available, otherwise search by title + city)
+      const mapsLink = document.getElementById('modalMapsLink');
+      const isMapsOrUrl = place.link && /^https?:\/\//i.test(place.link);
+      mapsLink.href = isMapsOrUrl
+        ? place.link
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.title} ${group.en} Taiwan`)}`;
+
+      modal.classList.add('is-visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePlaceModal() {
+      const modal = document.getElementById('placeModal');
+      modal.classList.remove('is-visible');
+      document.body.style.overflow = '';
+    }
+
+    /**
+     * Flexibly resolves column values regardless of exact header naming in Google Sheets
+     */
+    function extractRowFields(row) {
+      const keys = Object.keys(row);
+      const findVal = (patterns) => {
+        for (const p of patterns) {
+          const foundKey = keys.find(k => k.trim().toLowerCase() === p || k.trim().toLowerCase().includes(p));
+          if (foundKey && row[foundKey] && String(row[foundKey]).trim() !== '') {
+            return String(row[foundKey]).trim();
+          }
+        }
+        return '';
+      };
+
+      const cityRaw = findVal(['city', '城市', 'location', 'region', 'area']) || (keys[0] ? String(row[keys[0]] || '').trim() : '');
+      const title = findVal(['title', 'name', 'place', 'spot', '店名', '名稱']) || (keys[1] ? String(row[keys[1]] || '').trim() : '');
+      const description = findVal(['description', 'desc', 'notes', 'note', 'comment', 'review', '簡介', '描述']) || (keys[2] ? String(row[keys[2]] || '').trim() : '');
+      const category = findVal(['category', 'categories', 'tags', 'tag', 'type', '分類', '類別']);
+      const image = findVal(['image', 'img', 'photo', 'thumbnail', 'thumb', 'pic', '圖片', '照片']);
+      const link = findVal(['link', 'url', 'map', 'maps', 'google maps', 'website', '連結']);
+
+      return { cityRaw, title, description, category, image, link };
+    }
+
+    /**
+     * Groups rows by city and sorts them according to the reference screenshot order
+     */
+    function groupPlacesByCity(rows) {
+      const groups = new Map();
+      let extraIdx = 0;
+
+      // Ensure the 5 core cities from the screenshot always appear in order even if empty,
+      // or get populated seamlessly from CSV
+      Object.entries(CITY_META).forEach(([key, meta]) => {
+        if (key === 'kenting') return; // alias for hengchun
+        groups.set(meta.en.toLowerCase(), {
+          key: meta.en.toLowerCase(),
+          en: meta.en,
+          zh: meta.zh,
+          bg: meta.bg,
+          text: meta.text,
+          darkBg: meta.darkBg,
+          darkText: meta.darkText,
+          order: meta.order,
+          places: []
+        });
+      });
+
+      rows.forEach(rawRow => {
+        const item = extractRowFields(rawRow);
+        if (!item.title && !item.description) return;
+
+        const cityNorm = (item.cityRaw || 'Taipei').trim();
+        const lookupKey = cityNorm.toLowerCase();
+
+        // Match known cities (supports English or Chinese in CSV)
+        let matchedMeta = CITY_META[lookupKey];
+        if (!matchedMeta) {
+          if (cityNorm.includes('台北') || cityNorm.includes('臺北') || lookupKey.includes('taipei')) matchedMeta = CITY_META['taipei'];
+          else if (cityNorm.includes('台中') || cityNorm.includes('臺中') || lookupKey.includes('taichung')) matchedMeta = CITY_META['taichung'];
+          else if (cityNorm.includes('台南') || cityNorm.includes('臺南') || lookupKey.includes('tainan')) matchedMeta = CITY_META['tainan'];
+          else if (cityNorm.includes('高雄') || lookupKey.includes('kaohsiung')) matchedMeta = CITY_META['kaohsiung'];
+          else if (cityNorm.includes('墾丁') || cityNorm.includes('恆春') || lookupKey.includes('hengchun') || lookupKey.includes('kenting')) matchedMeta = CITY_META['hengchun'];
+        }
+
+        const groupKey = matchedMeta ? matchedMeta.en.toLowerCase() : lookupKey;
+
+        if (!groups.has(groupKey)) {
+          const fallbackPalette = EXTRA_PALETTE[extraIdx % EXTRA_PALETTE.length];
+          extraIdx++;
+          groups.set(groupKey, {
+            key: groupKey,
+            en: matchedMeta ? matchedMeta.en : cityNorm,
+            zh: matchedMeta ? matchedMeta.zh : fallbackPalette.zh,
+            bg: matchedMeta ? matchedMeta.bg : fallbackPalette.bg,
+            text: '#0A0A0A',
+            darkBg: matchedMeta ? matchedMeta.darkBg : fallbackPalette.darkBg,
+            darkText: '#FFFFFF',
+            order: matchedMeta ? matchedMeta.order : 50 + extraIdx,
+            places: []
+          });
+        }
+
+        groups.get(groupKey).places.push(item);
+      });
+
+      // Filter out empty default cities only if CSV had completely different cities, otherwise keep the 5 iconic rows
+      const allGroups = Array.from(groups.values()).sort((a, b) => a.order - b.order);
+      return allGroups;
+    }
+
+    /**
+     * Applies light or dark mode colors to all city accordion header bars
+     */
+    function applyAccordionThemeColors() {
+      const isDark = document.body.classList.contains('dark-mode');
+      document.querySelectorAll('.accordion-header-btn').forEach(btn => {
+        btn.style.backgroundColor = isDark ? btn.dataset.darkBg : btn.dataset.lightBg;
+        btn.style.color = isDark ? btn.dataset.darkText : btn.dataset.lightText;
+      });
+    }
+
+    /**
+     * Renders the accordion rows and places list
+     */
+    function renderAccordions(cityGroups) {
+      const container = document.getElementById('citiesContainer');
+      container.innerHTML = '';
+
+      const isDark = document.body.classList.contains('dark-mode');
+
+      cityGroups.forEach((group) => {
+        const isOpen = false;
+        const section = document.createElement('section');
+        section.className = `accordion-item w-full`;
+
+        // Full-width colorful city header bar matching screenshot typography
+        const headerBtn = document.createElement('button');
+        headerBtn.type = 'button';
+        headerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        headerBtn.dataset.lightBg = group.bg;
+        headerBtn.dataset.lightText = group.text;
+        headerBtn.dataset.darkBg = group.darkBg;
+        headerBtn.dataset.darkText = group.darkText;
+        headerBtn.style.backgroundColor = isDark ? group.darkBg : group.bg;
+        headerBtn.style.color = isDark ? group.darkText : group.text;
+        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 py-4 sm:py-6 flex items-center justify-between cursor-pointer focus:outline-none';
+
+        headerBtn.innerHTML = `
+          <div class="flex items-center gap-4 sm:gap-8 md:gap-10">
+            <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-tight shrink-0">
+              ${escapeHtml(group.zh)}
+            </span>
+            <span class="text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-tight">
+              ${escapeHtml(group.en)}
+            </span>
+          </div>
+          <span class="text-xs sm:text-sm font-normal opacity-75 tracking-tight shrink-0 ml-2">
+            ${group.places.length > 0 ? `[${group.places.length}]` : ''}
+          </span>
+        `;
+
+        // Accordion Drawer Body
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'accordion-content w-full';
+
+        const inner = document.createElement('div');
+        inner.className = 'accordion-inner w-full';
+
+        const listContainer = document.createElement('div');
+        listContainer.className = 'w-full px-3 sm:px-6 pt-5 pb-10 sm:pt-7 sm:pb-14';
+
+        if (group.places.length === 0) {
+          listContainer.innerHTML = `
+            <p class="text-xs sm:text-sm opacity-60 py-2">No places listed yet for ${escapeHtml(group.en)}.</p>
+          `;
+        } else {
+          const ul = document.createElement('ul');
+          ul.className = 'w-full flex flex-col gap-4 sm:gap-5';
+
+          group.places.forEach(place => {
+            const li = document.createElement('li');
+            li.className = 'w-full flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 pb-4 sm:pb-5 border-b-2 place-divider';
+
+            // Title block (Clickable button to open detail modal, larger font size)
+            const titleCol = document.createElement('div');
+            titleCol.className = 'w-full md:w-[32%] lg:w-[29%] shrink-0';
+
+            const titleBtn = document.createElement('button');
+            titleBtn.type = 'button';
+            titleBtn.className = 'text-left font-bold text-lg sm:text-[20px] leading-snug hover:underline decoration-2 underline-offset-4 cursor-pointer focus:outline-none';
+            titleBtn.textContent = place.title;
+            titleBtn.addEventListener('click', () => openPlaceModal(place, group));
+
+            titleCol.appendChild(titleBtn);
+
+            // Regular Description (Larger font size)
+            const descCol = document.createElement('div');
+            descCol.className = 'w-full md:w-[68%] lg:w-[71%]';
+
+            descCol.innerHTML = `
+              <p class="font-normal text-sm sm:text-[16px] leading-relaxed">
+                ${escapeHtml(place.description)}
+              </p>
+            `;
+
+            li.appendChild(titleCol);
+            li.appendChild(descCol);
+            ul.appendChild(li);
+          });
+
+          listContainer.appendChild(ul);
+        }
+
+        inner.appendChild(listContainer);
+        contentWrapper.appendChild(inner);
+
+        // Toggle click interaction
+        headerBtn.addEventListener('click', () => {
+          const currentlyOpen = section.classList.contains('is-open');
+          section.classList.toggle('is-open', !currentlyOpen);
+          headerBtn.setAttribute('aria-expanded', !currentlyOpen ? 'true' : 'false');
+        });
+
+        section.appendChild(headerBtn);
+        section.appendChild(contentWrapper);
+        container.appendChild(section);
+      });
+    }
+
+    /**
+     * Fetches and parses the Google Sheets CSV
+     */
+    async function initDirectory() {
+      const statusBanner = document.getElementById('statusBanner');
+      const statusText = document.getElementById('statusText');
+      const retryBtn = document.getElementById('retryBtn');
+
+      try {
+        const response = await fetch(CSV_URL, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              statusBanner.classList.add('hidden');
+              const grouped = groupPlacesByCity(results.data);
+              renderAccordions(grouped);
+            } else {
+              throw new Error('CSV returned zero rows');
+            }
+          },
+          error: (err) => {
+            throw err;
+          }
+        });
+      } catch (err) {
+        console.warn('Live CSV fetch fallback triggered:', err);
+        statusBanner.classList.remove('hidden');
+        statusText.textContent = 'Showing cached preview (could not reach Google Sheets CSV directly).';
+        retryBtn.classList.remove('hidden');
+        const grouped = groupPlacesByCity(FALLBACK_ROWS);
+        renderAccordions(grouped);
+      }
+    }
+
+    // Theme toggle handler
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      applyAccordionThemeColors();
+    });
+
+    // Retry button handler
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      document.getElementById('statusText').textContent = 'Retrying CSV fetch...';
+      initDirectory();
+    });
+
+    // Modal close interactions (close button, backdrop click, Escape key)
+    document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
+    document.getElementById('placeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'placeModal') {
+        closePlaceModal();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('placeModal').classList.contains('is-visible')) {
+        closePlaceModal();
+      }
+    });
+
+    // Boot application
+    window.addEventListener('DOMContentLoaded', initDirectory);
+  </script>
+</body>
+</html>
