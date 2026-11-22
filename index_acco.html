@@ -40,13 +40,13 @@
       border-color: #000000;
     }
 
-    /* Smooth accordion transition with subtle opacity & vertical settle */
+    /* Smooth accordion transition with elastic settle */
     .accordion-content {
       display: grid;
       grid-template-rows: 0fr;
       opacity: 0;
       transition:
-        grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        grid-template-rows 0.55s cubic-bezier(0.34, 1.45, 0.64, 1),
         opacity 0.35s ease;
     }
 
@@ -60,8 +60,8 @@
     }
 
     .accordion-inner > div {
-      transform: translateY(-6px);
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateY(-10px);
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .accordion-item.is-open .accordion-inner > div {
@@ -152,22 +152,22 @@
     }
   </style>
 </head>
-<body class="min-h-screen p-3 sm:p-5 md:p-6 antialiased selection:bg-black selection:text-white">
+<body class="min-h-screen px-3 sm:px-5 md:px-6 pt-1 sm:pt-2 pb-3 sm:pb-5 antialiased selection:bg-black selection:text-white">
 
   <!-- Main Container with subtle padding around the whole page -->
   <div class="w-full max-w-full mx-auto">
 
-    <!-- Header Section matching the reference screenshot -->
-    <header class="w-full flex items-center justify-between px-3 sm:px-6 py-4 sm:py-6">
+    <!-- Header Section matching the height of the accordion rows -->
+    <header class="w-full flex items-center justify-between px-3 sm:px-6 h-20 sm:h-24">
       <div class="flex items-center gap-4 sm:gap-8 md:gap-10 overflow-hidden">
         <!-- Traditional Chinese Taiwan label -->
-        <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-tight shrink-0">
+        <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
           台灣
         </span>
 
         <!-- Thin geometric TAIWAN + italic top aligned with city names -->
-        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-none tracking-[0.06em] font-extralight select-none truncate">
-          TAIWAN<span class="italic font-extralight tracking-normal">top</span>
+        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-none tracking-normal [font-kerning:none] font-extralight select-none truncate">
+          TAIWAN<span class="italic font-extralight tracking-normal [font-kerning:none]">top</span>
         </h1>
       </div>
 
@@ -208,9 +208,9 @@
       </div>
     </main>
 
-    <!-- Minimalist Footer -->
-    <footer class="w-full px-3 sm:px-6 pt-8 pb-4 text-right text-xs sm:text-sm">
-      Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a>
+    <!-- Minimalist Footer matching the height of the accordion rows -->
+    <footer class="w-full px-3 sm:px-6 h-20 sm:h-24 flex items-center justify-end text-xs sm:text-sm">
+      <span>Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a></span>
     </footer>
 
   </div>
@@ -254,26 +254,26 @@
 
       <!-- Details Body -->
       <div class="p-5 sm:p-7 flex flex-col gap-4">
-        <h2 id="modalTitle" class="text-2xl sm:text-3xl font-bold leading-tight">
+        <h2 id="modalTitle" class="text-2xl sm:text-3xl font-bold leading-tight tracking-normal [font-kerning:none]">
           Place Title
         </h2>
-
-        <!-- Categories as Badges -->
-        <div id="modalCategories" class="flex flex-wrap gap-2"></div>
 
         <!-- Full Description -->
         <p id="modalDescription" class="text-sm sm:text-base font-normal leading-relaxed opacity-90">
           Description
         </p>
 
-        <!-- Action Footer: Google Maps Link -->
-        <div class="pt-3 mt-1 border-t border-current/20 flex items-center justify-between gap-4">
+        <!-- Action Footer: Category Badges on Left + Google Maps Link Aligned Right -->
+        <div class="pt-4 mt-1 border-t border-current/20 flex flex-wrap items-center justify-between gap-4">
+          <!-- Categories as Badges -->
+          <div id="modalCategories" class="flex flex-wrap items-center gap-2"></div>
+
           <a
             id="modalMapsLink"
             href="#"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+            class="ml-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors shrink-0"
           >
             <span>Open in Google Maps</span>
             <span aria-hidden="true">↗</span>
@@ -573,14 +573,14 @@
         headerBtn.dataset.darkText = group.darkText;
         headerBtn.style.backgroundColor = isDark ? group.darkBg : group.bg;
         headerBtn.style.color = isDark ? group.darkText : group.text;
-        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 py-4 sm:py-6 flex items-center justify-between cursor-pointer focus:outline-none';
+        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 h-20 sm:h-24 flex items-center justify-between cursor-pointer focus:outline-none';
 
         headerBtn.innerHTML = `
           <div class="flex items-center gap-4 sm:gap-8 md:gap-10">
-            <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-tight shrink-0">
+            <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
               ${escapeHtml(group.zh)}
             </span>
-            <span class="text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-tight">
+            <span class="text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none]">
               ${escapeHtml(group.en)}
             </span>
           </div>
@@ -609,23 +609,23 @@
 
           group.places.forEach(place => {
             const li = document.createElement('li');
-            li.className = 'w-full flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 pb-4 sm:pb-5 border-b-2 place-divider';
+            li.className = 'w-full flex flex-col md:flex-row md:items-baseline gap-2 md:gap-12 lg:gap-16 pb-4 sm:pb-5 border-b-2 place-divider';
 
-            // Title block (Clickable button to open detail modal, larger font size)
+            // Title block (Clickable button to open detail modal, larger font size, normal spacing & no kerning)
             const titleCol = document.createElement('div');
-            titleCol.className = 'w-full md:w-[32%] lg:w-[29%] shrink-0';
+            titleCol.className = 'w-full md:w-[38%] lg:w-[36%] shrink-0';
 
             const titleBtn = document.createElement('button');
             titleBtn.type = 'button';
-            titleBtn.className = 'text-left font-bold text-lg sm:text-[20px] leading-snug hover:underline decoration-2 underline-offset-4 cursor-pointer focus:outline-none';
+            titleBtn.className = 'text-left font-bold text-lg sm:text-[20px] leading-snug tracking-normal [font-kerning:none] hover:underline decoration-2 underline-offset-4 cursor-pointer focus:outline-none';
             titleBtn.textContent = place.title;
             titleBtn.addEventListener('click', () => openPlaceModal(place, group));
 
             titleCol.appendChild(titleBtn);
 
-            // Regular Description (Larger font size)
+            // Regular Description (shifted further right horizontally)
             const descCol = document.createElement('div');
-            descCol.className = 'w-full md:w-[68%] lg:w-[71%]';
+            descCol.className = 'w-full md:w-[62%] lg:w-[64%]';
 
             descCol.innerHTML = `
               <p class="font-normal text-sm sm:text-[16px] leading-relaxed">
