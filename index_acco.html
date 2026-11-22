@@ -26,14 +26,28 @@
   </script>
 
   <style>
+    :root {
+      --outer-gap: clamp(10px, 2vmin, 28px);
+    }
+
     * {
       font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
     }
 
     body {
-      background-color: #F4F3EF;
+      background-color: #e7e7e7;
       color: #000000;
+      padding: var(--outer-gap);
       transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    #pageWrapper {
+      background-color: #F4F3EF;
+      transition: background-color 0.35s ease;
+    }
+
+    body.dark-mode #pageWrapper {
+      background-color: #161615;
     }
 
     .place-divider {
@@ -70,16 +84,65 @@
 
     .accordion-header-btn {
       transition:
+        height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        min-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
         background-color 0.35s ease,
         color 0.35s ease,
-        padding-left 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
         filter 0.25s ease;
+    }
+
+    .accordion-header-btn .city-zh,
+    .accordion-header-btn .city-en {
+      transition: font-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Fixed-width Chinese label column so English titles always align on the exact same vertical line */
+    .city-zh-col {
+      width: 3.1rem;
+    }
+
+    @media (min-width: 640px) {
+      .city-zh-col {
+        width: 4.5rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .city-zh-col {
+        width: 5.25rem;
+      }
     }
 
     .accordion-item.is-open .accordion-header-btn {
       position: sticky;
       top: 0;
       z-index: 30;
+      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
+      min-height: 2.35rem;
+    }
+
+    @media (min-width: 640px) {
+      .accordion-item.is-open .accordion-header-btn {
+        min-height: 2.65rem;
+      }
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-zh {
+      font-size: 0.95rem;
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-en {
+      font-size: 1.45rem;
+    }
+
+    @media (min-width: 640px) {
+      .accordion-item.is-open .accordion-header-btn .city-zh {
+        font-size: 1.15rem;
+      }
+      .accordion-item.is-open .accordion-header-btn .city-en {
+        font-size: 1.85rem;
+      }
     }
 
     .accordion-header-btn:hover {
@@ -163,23 +226,23 @@
       min-height: 3.75rem;
     }
 
-    @media (min-width: 640px) {
-      .viewport-row {
-        height: calc((100dvh - 1.75rem) / 7);
-      }
+    /* Vertically responsive row height: 1/7 of browser viewport height minus symmetrical top & bottom outer padding */
+    .viewport-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 7);
+      min-height: 3.75rem;
     }
   </style>
 </head>
-<body class="min-h-screen px-3 sm:px-5 md:px-6 pt-1 sm:pt-2 pb-3 sm:pb-5 antialiased selection:bg-black selection:text-white">
+<body class="min-h-screen antialiased selection:bg-black selection:text-white">
 
   <!-- Main Container with subtle padding around the whole page -->
-  <div class="w-full max-w-full mx-auto">
+  <div id="pageWrapper" class="w-full max-w-full mx-auto">
 
     <!-- Header Section matching 1/7 of the browser window height -->
     <header class="w-full flex items-center justify-between px-3 sm:px-6 viewport-row">
-      <div class="flex items-center gap-4 sm:gap-8 md:gap-10 overflow-hidden">
+      <div class="flex items-center overflow-hidden">
         <!-- Traditional Chinese Taiwan label -->
-        <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
+        <span class="city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
           台灣
         </span>
 
@@ -594,11 +657,11 @@
         headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 viewport-row flex items-center justify-between cursor-pointer focus:outline-none';
 
         headerBtn.innerHTML = `
-          <div class="flex items-center gap-4 sm:gap-8 md:gap-10">
-            <span class="text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
+          <div class="flex items-center">
+            <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
               ${escapeHtml(group.zh)}
             </span>
-            <span class="text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none]">
+            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none]">
               ${escapeHtml(group.en)}
             </span>
           </div>
@@ -657,13 +720,15 @@
         inner.appendChild(listContainer);
         contentWrapper.appendChild(inner);
 
-        // Toggle click interaction: single-open mode & peg active city to top
+        // Toggle click interaction: single-open mode & snap active city smoothly to top
         headerBtn.addEventListener('click', () => {
           const currentlyOpen = section.classList.contains('is-open');
+          let hadOtherOpen = false;
 
           // Close all other open accordions
           document.querySelectorAll('.accordion-item.is-open').forEach(item => {
             if (item !== section) {
+              hadOtherOpen = true;
               item.classList.remove('is-open');
               const btn = item.querySelector('.accordion-header-btn');
               if (btn) btn.setAttribute('aria-expanded', 'false');
@@ -673,10 +738,20 @@
           section.classList.toggle('is-open', !currentlyOpen);
           headerBtn.setAttribute('aria-expanded', !currentlyOpen ? 'true' : 'false');
 
-          // Smoothly peg the opened city header to the top of the viewport
+          // Smoothly snap the opened city header to the top of the viewport
           if (!currentlyOpen) {
+            const snapToTop = () => {
+              const targetY = window.scrollY + section.getBoundingClientRect().top;
+              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+            };
+
             requestAnimationFrame(() => {
-              section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              snapToTop();
+              // Re-verify snap target as collapsing sibling accordions finish shrinking
+              if (hadOtherOpen) {
+                setTimeout(snapToTop, 180);
+                setTimeout(snapToTop, 420);
+              }
             });
           }
         });
