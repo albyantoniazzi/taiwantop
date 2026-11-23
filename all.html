@@ -155,6 +155,126 @@
       outline-offset: 3px;
     }
 
+    .pp-replot-btn[aria-pressed="true"] {
+      background: var(--k);
+      color: var(--paper);
+    }
+
+    /* ==========================================================================
+       LIVE PAGE PREVIEW / SCREENSHOT THUMBNAIL FRAME
+       ========================================================================== */
+    .pp-preview-floater {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 300px;
+      background: var(--paper);
+      border: 1.2px solid var(--k);
+      box-shadow: 4px 4px 0 rgb(37 36 44 / 0.16);
+      padding: 8px;
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+
+    .pp-preview-floater.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pp-preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      line-height: 14px;
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+      border-bottom: 1px dashed var(--k);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pp-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border: 1px solid var(--k);
+      background: #fff;
+    }
+
+    .pp-viewport iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 800px;
+      border: 0;
+      transform-origin: 0 0;
+      pointer-events: none;
+      background: #fff;
+    }
+
+    .pp-viewport-badge {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      background: rgb(237 241 229 / 0.88);
+      color: var(--k);
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+
+    .pp-viewport-badge.is-loaded {
+      opacity: 0;
+    }
+
+    /* Inline Thumbnails Grid Mode */
+    .pp-sheet.show-thumbs .pp-row.pp-child-row {
+      height: 86px;
+      align-items: center;
+    }
+
+    .pp-sheet.show-thumbs .pp-branch {
+      height: 86px;
+    }
+
+    .pp-inline-thumb {
+      display: none;
+      width: 96px;
+      height: 60px;
+      border: 1px solid var(--k);
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+      flex-shrink: 0;
+      margin-right: 10px;
+      box-shadow: 2px 2px 0 rgb(37 36 44 / 0.14);
+    }
+
+    .pp-sheet.show-thumbs .pp-inline-thumb {
+      display: block;
+    }
+
+    .pp-inline-thumb iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 800px;
+      border: 0;
+      transform: scale(0.075);
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+
     /* ==========================================================================
        WATERFALL / DIRECTORY TABLE GRID
        ========================================================================== */
@@ -506,6 +626,9 @@
             autocomplete="off"
           />
         </label>
+        <button type="button" id="thumbs-btn" class="pp-replot-btn" aria-pressed="false" title="Toggle inline page screenshots">
+          Thumbs
+        </button>
         <button type="button" id="replot-btn" class="pp-replot-btn" title="Re-draw plotter strokes">
           Replot
         </button>
@@ -539,6 +662,18 @@
       <!-- Directory Tree & Rows -->
       <div id="directory-body" role="rowgroup"></div>
     </section>
+
+    <!-- Floating Plotter Screenshot Inspector (appears on link hover/focus) -->
+    <aside id="preview-floater" class="pp-preview-floater" aria-hidden="true">
+      <div class="pp-preview-head pp-ink-text">
+        <span id="preview-title">PREVIEW // ---</span>
+        <span>1280×800</span>
+      </div>
+      <div class="pp-viewport" id="preview-viewport">
+        <iframe id="preview-frame" title="Page preview" sandbox="allow-scripts allow-same-origin" loading="lazy"></iframe>
+        <div id="preview-badge" class="pp-viewport-badge">CAPTURING VIEWPORT...</div>
+      </div>
+    </aside>
   </main>
 
   <script>
@@ -554,6 +689,59 @@
 
     let cachedFiles = [];
     let isExpanded = true;
+    let showInlineThumbs = false;
+    let previewHideTimer = null;
+
+    // Resolve live URL for each HTML page (supports GitHub Pages & local preview)
+    function resolvePageUrl(fileName) {
+      const pathPrefix = DIRECTORY_PATH ? `${DIRECTORY_PATH.replace(/^\/|\/$/g, '')}/` : '';
+      // If hosted on github.io or same origin with the files, relative path works directly;
+      // otherwise fall back to the public GitHub Pages URL for this repository.
+      const isSameRepoHost =
+        window.location.hostname.endsWith('github.io') ||
+        window.location.protocol === 'file:';
+      if (isSameRepoHost) {
+        return `${pathPrefix}${fileName}`;
+      }
+      return `https://${OWNER}.github.io/${REPO}/${pathPrefix}${fileName}`;
+    }
+
+    // Floating screenshot preview controller
+    function showFloatingPreview(file) {
+      if (showInlineThumbs) return;
+      clearTimeout(previewHideTimer);
+
+      const floater = document.getElementById('preview-floater');
+      const titleEl = document.getElementById('preview-title');
+      const frame = document.getElementById('preview-frame');
+      const badge = document.getElementById('preview-badge');
+      const viewport = document.getElementById('preview-viewport');
+
+      const targetUrl = resolvePageUrl(file.name);
+      titleEl.textContent = `SNAPSHOT // ${file.name}`;
+      floater.classList.add('is-visible');
+
+      // Scale 1280px desktop viewport cleanly into the 282px floater box
+      const scale = viewport.clientWidth / 1280;
+      frame.style.transform = `scale(${scale})`;
+
+      if (frame.dataset.currentSrc !== targetUrl) {
+        badge.classList.remove('is-loaded');
+        badge.textContent = 'RENDERING PAGE...';
+        frame.dataset.currentSrc = targetUrl;
+        frame.onload = () => badge.classList.add('is-loaded');
+        frame.onerror = () => {
+          badge.textContent = 'PREVIEW UNAVAILABLE';
+        };
+        frame.src = targetUrl;
+      }
+    }
+
+    function hideFloatingPreview() {
+      previewHideTimer = setTimeout(() => {
+        document.getElementById('preview-floater').classList.remove('is-visible');
+      }, 120);
+    }
 
     // Build millimeter ticks on the header scale rule
     function initScaleRule() {
@@ -727,6 +915,8 @@
       files.forEach((file, index) => {
         const at = animate ? index * STAGGER_MS + 20 : null;
         const penClass = index % 2 === 0 ? 'pp-pen-a' : 'pp-pen-b';
+        const rowH = showInlineThumbs ? 86 : 36;
+        const midY = rowH / 2;
 
         const row = document.createElement('div');
         row.className = `pp-row pp-child-row ${penClass}`;
@@ -739,7 +929,7 @@
         const branchSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         branchSvg.setAttribute('class', 'pp-branch');
         branchSvg.setAttribute('width', '36');
-        branchSvg.setAttribute('height', '36');
+        branchSvg.setAttribute('height', String(rowH));
         branchSvg.setAttribute('aria-hidden', 'true');
 
         // Vertical spine drawn on the first child row spanning all children
@@ -748,7 +938,7 @@
           vLine.setAttribute('x1', '6');
           vLine.setAttribute('y1', '-12');
           vLine.setAttribute('x2', '6');
-          vLine.setAttribute('y2', String((files.length - 1) * 36 + 18));
+          vLine.setAttribute('y2', String((files.length - 1) * rowH + midY));
           vLine.setAttribute('pathLength', '1');
           if (at !== null) {
             vLine.setAttribute('style', penStyle(at, (files.length - 1) * STAGGER_MS + 35));
@@ -759,9 +949,9 @@
         // Horizontal branch tick to each filename
         const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         hLine.setAttribute('x1', '6');
-        hLine.setAttribute('y1', '18');
+        hLine.setAttribute('y1', String(midY));
         hLine.setAttribute('x2', '36');
-        hLine.setAttribute('y2', '18');
+        hLine.setAttribute('y2', String(midY));
         hLine.setAttribute('pathLength', '1');
         if (at !== null) {
           hLine.setAttribute('style', penStyle(at + 10, 30));
@@ -769,12 +959,32 @@
         branchSvg.appendChild(hLine);
 
         // Anchor opening in a new tab safely
+        const pageUrl = resolvePageUrl(file.name);
         const link = document.createElement('a');
         link.className = 'pp-link';
-        link.href = file.name;
+        link.href = pageUrl;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         link.title = `Open ${file.name} in a new tab (${formatKB(file.size)} KB)`;
+
+        // Hover / keyboard focus triggers the live screenshot preview card
+        link.addEventListener('mouseenter', () => showFloatingPreview(file));
+        link.addEventListener('mouseleave', hideFloatingPreview);
+        link.addEventListener('focus', () => showFloatingPreview(file));
+        link.addEventListener('blur', hideFloatingPreview);
+
+        // Inline scaled thumbnail snapshot (rendered when "Thumbs" mode is active)
+        const inlineThumb = document.createElement('span');
+        inlineThumb.className = 'pp-inline-thumb';
+        inlineThumb.setAttribute('aria-hidden', 'true');
+        if (showInlineThumbs) {
+          const thumbFrame = document.createElement('iframe');
+          thumbFrame.src = pageUrl;
+          thumbFrame.loading = 'lazy';
+          thumbFrame.sandbox = 'allow-scripts allow-same-origin';
+          thumbFrame.tabIndex = -1;
+          inlineThumb.appendChild(thumbFrame);
+        }
 
         const textSpan = document.createElement('span');
         textSpan.className = 'pp-w pp-ink-text';
@@ -788,6 +998,7 @@
         arrowSpan.setAttribute('aria-hidden', 'true');
         arrowSpan.textContent = '↗';
 
+        link.appendChild(inlineThumb);
         link.appendChild(textSpan);
         link.appendChild(arrowSpan);
 
@@ -812,11 +1023,13 @@
 
         const barLink = document.createElement('a');
         barLink.className = 'pp-bar-link';
-        barLink.href = file.name;
+        barLink.href = pageUrl;
         barLink.target = '_blank';
         barLink.rel = 'noopener noreferrer';
         barLink.tabIndex = -1; // Prevent duplicate tab stops; primary link handles keyboard focus
         barLink.setAttribute('aria-hidden', 'true');
+        barLink.addEventListener('mouseenter', () => showFloatingPreview(file));
+        barLink.addEventListener('mouseleave', hideFloatingPreview);
 
         const ratio = Math.min(1, (file.size || 1024) / scaleCeiling);
         const barWidth = Math.max(22, ratio * MAX_BAR_WIDTH);
@@ -906,6 +1119,24 @@
       if (filtered.length > 0) {
         isExpanded = true;
         renderDirectory(filtered, true);
+      }
+    });
+
+    // Thumbs button toggles inline live page snapshots for all rows
+    document.getElementById('thumbs-btn').addEventListener('click', (e) => {
+      showInlineThumbs = !showInlineThumbs;
+      e.currentTarget.setAttribute('aria-pressed', String(showInlineThumbs));
+      document.querySelector('.pp-sheet').classList.toggle('show-thumbs', showInlineThumbs);
+      if (showInlineThumbs) {
+        document.getElementById('preview-floater').classList.remove('is-visible');
+      }
+      const query = document.getElementById('filter-input').value.trim().toLowerCase();
+      const filtered = query
+        ? cachedFiles.filter(f => f.name.toLowerCase().includes(query))
+        : cachedFiles;
+      if (filtered.length > 0) {
+        isExpanded = true;
+        renderDirectory(filtered, false);
       }
     });
 
