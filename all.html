@@ -3,95 +3,914 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TaiwanTop - HTML Index</title>
+  <title>TaiwanTop — Plotter Directory Index</title>
+  <!-- Load Roboto Mono Variable from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 720px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #222;
+    /* ==========================================================================
+       DESIGN TOKENS & GRAPH PAPER SURFACE
+       ========================================================================== */
+    :root {
+      --paper: #edf1e5;
+      --rule: 50 150 110;
+      --k: #25242c;
+      --pen-a: #6a3fc0;
+      --pen-b: #e2381c;
+      --row-h: 36px;
+      --sq: 6px;
     }
-    h1 {
-      font-size: 1.5rem;
-      border-bottom: 1px solid #eaecef;
-      padding-bottom: 0.3em;
+
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
-    ul {
-      padding-left: 20px;
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: var(--k);
+      font: 300 13px/36px "Roboto Mono", monospace;
+      letter-spacing: 0.02em;
+      background-color: var(--paper);
+      /* Layered millimeter graph paper + subtle fractal paper grain */
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .32 0 0 0 0 .26 0 0 0 -.45 .28'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+        repeating-linear-gradient(90deg, rgb(var(--rule) / 0.45) 0 1px, transparent 1px 60px),
+        repeating-linear-gradient(180deg, rgb(var(--rule) / 0.45) 0 1px, transparent 1px 60px),
+        repeating-linear-gradient(90deg, rgb(var(--rule) / 0.35) 0 0.5px, transparent 0.5px 30px),
+        repeating-linear-gradient(180deg, rgb(var(--rule) / 0.35) 0 0.5px, transparent 0.5px 30px),
+        repeating-linear-gradient(90deg, rgb(var(--rule) / 0.22) 0 0.5px, transparent 0.5px 6px),
+        repeating-linear-gradient(180deg, rgb(var(--rule) / 0.22) 0 0.5px, transparent 0.5px 6px);
+      background-position: 0 0, -0.5px 0, 0 -0.5px, 0 0, 0 0, 0 0, 0 0;
+      overflow-x: hidden;
     }
-    li {
-      margin: 8px 0;
+
+    /* ==========================================================================
+       PLOTTER SHEET CONTAINER
+       ========================================================================== */
+    .pp-sheet {
+      width: 100%;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 48px 24px 84px;
     }
-    a {
-      color: #0969da;
+
+    /* Ink effect on text elements */
+    .pp-ink-text {
+      -webkit-text-stroke: 0.4px currentColor;
+      mix-blend-mode: multiply;
+    }
+
+    /* ==========================================================================
+       SHEET HEADER & METADATA
+       ========================================================================== */
+    .pp-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 6px;
+      border-bottom: 1.1px solid var(--k);
+    }
+
+    .pp-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pp-subtitle {
+      font-size: 11px;
+      line-height: 18px;
+      opacity: 0.85;
+    }
+
+    .pp-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Plotter mechanical filter input */
+    .pp-filter-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .pp-filter {
+      appearance: none;
+      background: transparent;
+      border: 1px solid var(--k);
+      border-radius: 0;
+      padding: 3px 8px;
+      font: 300 12px/18px "Roboto Mono", monospace;
+      color: var(--k);
+      width: 180px;
+      outline: none;
+      transition: background-color 120ms ease;
+    }
+
+    .pp-filter::placeholder {
+      color: rgb(37 36 44 / 0.45);
+    }
+
+    .pp-filter:focus-visible {
+      outline: 1px dashed var(--k);
+      outline-offset: 3px;
+      background-color: rgb(255 255 255 / 0.25);
+    }
+
+    .pp-replot-btn {
+      appearance: none;
+      background: transparent;
+      border: 1px solid var(--k);
+      color: var(--k);
+      font: 300 11px/18px "Roboto Mono", monospace;
+      padding: 3px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pp-replot-btn:hover {
+      border-width: 1.5px;
+      padding: 2.5px 9.5px;
+    }
+
+    .pp-replot-btn:active {
+      background: var(--k);
+      color: var(--paper);
+    }
+
+    .pp-replot-btn:focus-visible {
+      outline: 1px dashed var(--k);
+      outline-offset: 3px;
+    }
+
+    /* ==========================================================================
+       WATERFALL / DIRECTORY TABLE GRID
+       ========================================================================== */
+    .pp-chart {
+      width: 100%;
+      outline: 0;
+    }
+
+    .pp-head,
+    .pp-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(190px, 1.3fr) 68px 18px minmax(140px, 1fr);
+      height: var(--row-h);
+      align-items: center;
+    }
+
+    .pp-th {
+      font-size: 11px;
+      line-height: 14px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      align-self: end;
+      padding-bottom: 6px;
+    }
+
+    .pp-th-size {
+      grid-column: 2;
+      text-align: right;
+    }
+
+    .pp-th-scale {
+      grid-column: 4;
+      position: relative;
+      height: 24px;
+    }
+
+    .pp-rule-svg {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 8px;
+      overflow: visible;
+      fill: none;
+      stroke: var(--k);
+      stroke-width: 1.1;
+    }
+
+    .pp-ticks {
+      position: absolute;
+      inset: 0 0 10px 0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      line-height: 12px;
+    }
+
+    /* ==========================================================================
+       GROUP HEADER ROW (COLLAPSIBLE DIRECTORY FOLDER)
+       ========================================================================== */
+    .pp-group-row {
+      margin-top: 6px;
+    }
+
+    .pp-name-cell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding-left: 22px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pp-child-row .pp-name-cell {
+      padding-left: 42px;
+    }
+
+    /* Plotter [+] / [-] Toggle Box */
+    .pp-toggle {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      cursor: pointer;
+      color: var(--k);
+    }
+
+    /* Expanded touch target for mobile/tablet */
+    .pp-toggle::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+    }
+
+    .pp-toggle:focus-visible {
+      outline: 1px dashed var(--k);
+      outline-offset: 4px;
+    }
+
+    .pp-box {
+      display: block;
+      width: 12px;
+      height: 12px;
+      overflow: visible;
+      fill: none;
+      stroke: var(--k);
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .pp-plus {
+      transition: opacity 90ms linear;
+    }
+
+    .pp-toggle[aria-expanded="true"] .pp-plus {
+      opacity: 0;
+    }
+
+    .pp-toggle:hover .pp-box {
+      stroke-width: 1.6;
+    }
+
+    .pp-toggle:active .pp-box rect {
+      fill: var(--k);
+    }
+
+    .pp-toggle:active .pp-box line {
+      stroke: var(--paper);
+    }
+
+    /* Orthogonal Plotter Branch Connector SVG */
+    .pp-branch {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: var(--row-h);
+      overflow: visible;
+      fill: none;
+      stroke: var(--k);
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       FILE LINK & KEYBOARD FOCUS STYLING
+       ========================================================================== */
+    .pp-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--k);
       text-decoration: none;
+      padding: 2px 4px;
+      margin-left: -4px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    a:hover {
+
+    .pp-link:hover .pp-w {
+      -webkit-text-stroke: 0.65px currentColor;
       text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
     }
-    .status {
-      color: #666;
-      font-size: 0.95rem;
+
+    .pp-link:hover .pp-ext-arrow {
+      transform: translate(2px, -2px);
+    }
+
+    .pp-link:focus-visible {
+      outline: none;
+    }
+
+    .pp-link:focus-visible::after {
+      content: "";
+      position: absolute;
+      inset: 1px -4px;
+      border: 1px dashed var(--k);
+      pointer-events: none;
+    }
+
+    .pp-ext-arrow {
+      font-size: 11px;
+      opacity: 0.7;
+      transition: transform 120ms ease;
+      flex-shrink: 0;
+    }
+
+    .pp-w {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Size Column */
+    .pp-size-cell {
+      grid-column: 2;
+      text-align: right;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    /* Cross-Hatched Bar Column */
+    .pp-bar-cell {
+      grid-column: 4;
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .pp-bar-link {
+      display: inline-flex;
+      align-items: center;
+      height: 18px;
+      text-decoration: none;
+      position: relative;
+    }
+
+    .pp-bar-link:focus-visible {
+      outline: 1px dashed var(--k);
+      outline-offset: 3px;
+    }
+
+    .pp-ink {
+      display: block;
+      overflow: visible;
+      fill: none;
+      stroke: var(--k);
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .pp-ink > * {
+      mix-blend-mode: multiply;
+    }
+
+    /* Alternating Pen Ink Colors (Purple & Vermilion) */
+    .pp-pen-a .pp-ink {
+      stroke: var(--pen-a);
+    }
+
+    .pp-pen-b .pp-ink {
+      stroke: var(--pen-b);
+    }
+
+    .pp-bar-link:hover .pp-ink {
+      stroke-width: 1.55;
+    }
+
+    /* Status / Error / Empty readout */
+    .pp-status {
+      padding: 18px 0;
+      font-size: 12px;
+      line-height: 24px;
+    }
+
+    .pp-hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       PLOTTER PEN & TYPEWRITER KEYFRAMES
+       ========================================================================== */
+    .pp-ink [pathLength],
+    .pp-branch [pathLength] {
+      stroke-dasharray: 1.02 1;
+    }
+
+    @keyframes pp-draw {
+      from {
+        stroke-dashoffset: 1;
+        visibility: hidden;
+      }
+      to {
+        stroke-dashoffset: 0;
+        visibility: visible;
+      }
+    }
+
+    @keyframes pp-write {
+      from {
+        clip-path: inset(-3px 100% -3px -3px);
+        visibility: hidden;
+      }
+      to {
+        clip-path: inset(-3px -3px -3px -3px);
+        visibility: visible;
+      }
+    }
+
+    /* ==========================================================================
+       ACCESSIBILITY: REDUCED MOTION & RESPONSIVE ADAPTATIONS
+       ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .pp-sheet {
+        padding: 28px 14px 60px;
+      }
+      .pp-head,
+      .pp-row {
+        grid-template-columns: minmax(150px, 1.5fr) 54px 10px minmax(84px, 0.8fr);
+      }
+      .pp-filter {
+        width: 140px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Directory Index</h1>
-  <p id="status" class="status">Loading HTML files...</p>
-  <ul id="file-list"></ul>
+  <main class="pp-sheet">
+    <!-- Top Architectural Plotter Header -->
+    <header class="pp-meta">
+      <div>
+        <h1 class="pp-title pp-ink-text">albyantoniazzi / taiwantop</h1>
+        <div class="pp-subtitle pp-ink-text" id="repo-summary">DIRECTORY PLOT // HTML INDEX</div>
+      </div>
+      <div class="pp-controls">
+        <label class="pp-filter-wrap" aria-label="Filter HTML files">
+          <input
+            type="search"
+            id="filter-input"
+            class="pp-filter"
+            placeholder="filter *.html..."
+            autocomplete="off"
+          />
+        </label>
+        <button type="button" id="replot-btn" class="pp-replot-btn" title="Re-draw plotter strokes">
+          Replot
+        </button>
+      </div>
+    </header>
+
+    <!-- Plotter Chart Container -->
+    <section class="pp-chart" aria-label="HTML Directory Index">
+      <div class="pp-head" role="row">
+        <div class="pp-th pp-ink-text" role="columnheader">Document</div>
+        <div class="pp-th pp-th-size pp-ink-text" role="columnheader">KB</div>
+        <div class="pp-th pp-th-scale" role="columnheader" aria-label="File size scale">
+          <div class="pp-ticks pp-ink-text" id="scale-ticks">
+            <span>0</span>
+            <span>25</span>
+            <span>50</span>
+            <span>75</span>
+            <span>100+</span>
+          </div>
+          <svg class="pp-rule-svg" id="scale-rule" viewBox="0 0 240 8" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="0" y1="8" x2="240" y2="8" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Status Indicator -->
+      <div id="status" class="pp-status pp-ink-text" role="status" aria-live="polite">
+        Initializing plotter &amp; querying GitHub repository...
+      </div>
+
+      <!-- Directory Tree & Rows -->
+      <div id="directory-body" role="rowgroup"></div>
+    </section>
+  </main>
 
   <script>
+    // =========================================================================
+    // REPOSITORY CONFIGURATION & PLOTTER CONSTANTS
+    // =========================================================================
     const OWNER = 'albyantoniazzi';
     const REPO = 'taiwantop';
-    const DIRECTORY_PATH = ''; // Leave empty for root, or set e.g. 'pages'
+    const DIRECTORY_PATH = ''; // Empty for repository root
+    const BAR_HEIGHT = 18;
+    const STAGGER_MS = 32;
+    const MAX_BAR_WIDTH = 220;
 
+    let cachedFiles = [];
+    let isExpanded = true;
+
+    // Build millimeter ticks on the header scale rule
+    function initScaleRule() {
+      const ruleSvg = document.getElementById('scale-rule');
+      for (let i = 0; i <= 40; i++) {
+        const x = i * 6;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x);
+        line.setAttribute('y1', '8');
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', i % 5 === 0 ? '1.5' : '5');
+        ruleSvg.appendChild(line);
+      }
+    }
+
+    // Format bytes to clean KB string
+    function formatKB(bytes) {
+      if (!bytes || bytes <= 0) return '0.1';
+      const kb = bytes / 1024;
+      return kb >= 100 ? Math.round(kb).toString() : kb.toFixed(1);
+    }
+
+    // Helper for SVG stroke draw animation style
+    function penStyle(at, dur) {
+      if (at === null) return '';
+      return `animation: pp-draw ${dur}ms linear ${Math.max(0, at)}ms both;`;
+    }
+
+    // Helper for typewriter reveal animation style
+    function writeStyle(text, at) {
+      if (at === null) return '';
+      const steps = Math.max(1, text.length);
+      const dur = Math.min(260, steps * 7);
+      return `animation: pp-write ${dur}ms steps(${steps}) ${Math.max(0, at)}ms both;`;
+    }
+
+    // Generates cross-hatched plotter SVG matching the architectural pen aesthetic
+    function createHatchedBarSVG(width, pitch, at) {
+      const w = Math.max(18, Math.round(width));
+      const h = BAR_HEIGHT;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'pp-ink');
+      svg.setAttribute('width', w);
+      svg.setAttribute('height', h);
+      svg.setAttribute('aria-hidden', 'true');
+
+      // Outer rectangle strokes
+      const outline = [
+        [0, 0, w, 0],
+        [w, 0, w, h],
+        [w, h, 0, h],
+        [0, h, 0, 0]
+      ];
+
+      const round = 2 * (w + h);
+      let run = 0;
+
+      outline.forEach(([x1, y1, x2, y2]) => {
+        const len = Math.abs(x2 - x1) + Math.abs(y2 - y1);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('pathLength', '1');
+        if (at !== null) {
+          const delay = at + 25 + (run / round) * 80;
+          const dur = Math.max(18, (len / round) * 80);
+          line.setAttribute('style', penStyle(delay, dur));
+        }
+        run += len;
+        svg.appendChild(line);
+      });
+
+      // Diagonal hatch lines
+      const hatch = [];
+      for (let c = pitch, k = 0; c < w + h - 1; c += pitch, k++) {
+        const a = c <= h ? [0, c] : [c - h, h];
+        const b = c <= w ? [c, 0] : [w, c - w];
+        hatch.push(k % 2 ? [...b, ...a] : [...a, ...b]);
+      }
+
+      hatch.forEach(([x1, y1, x2, y2], i) => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('pathLength', '1');
+        if (at !== null) {
+          const delay = at + 95 + (i / Math.max(1, hatch.length)) * 55;
+          line.setAttribute('style', penStyle(delay, 28));
+        }
+        svg.appendChild(line);
+      });
+
+      return svg;
+    }
+
+    // Renders the directory header row and all HTML file rows
+    function renderDirectory(files, animate = true) {
+      const container = document.getElementById('directory-body');
+      const summaryEl = document.getElementById('repo-summary');
+      container.innerHTML = '';
+
+      const totalBytes = files.reduce((acc, f) => acc + (f.size || 0), 0);
+      const maxBytes = Math.max(...files.map(f => f.size || 1024), 10240);
+      const scaleCeiling = Math.max(maxBytes, 102400); // At least 100 KB scale
+
+      // Update top scale labels dynamically if any file exceeds 100 KB
+      const maxKB = Math.round(scaleCeiling / 1024);
+      const ticksEl = document.getElementById('scale-ticks');
+      ticksEl.innerHTML = `
+        <span>0</span>
+        <span>${Math.round(maxKB * 0.25)}</span>
+        <span>${Math.round(maxKB * 0.5)}</span>
+        <span>${Math.round(maxKB * 0.75)}</span>
+        <span>${maxKB}</span>
+      `;
+
+      summaryEl.textContent = `ROOT DIRECTORY // ${files.length} HTML FILE${files.length === 1 ? '' : 'S'} (${formatKB(totalBytes)} KB)`;
+
+      // 1. Parent Folder Row (Collapsible Group Header)
+      const groupRow = document.createElement('div');
+      groupRow.className = 'pp-row pp-group-row';
+      groupRow.setAttribute('role', 'row');
+
+      const groupNameCell = document.createElement('div');
+      groupNameCell.className = 'pp-name-cell';
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'pp-toggle';
+      toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+      toggleBtn.setAttribute('aria-label', isExpanded ? 'Collapse HTML file list' : 'Expand HTML file list');
+      toggleBtn.innerHTML = `
+        <svg class="pp-box" width="12" height="12" aria-hidden="true">
+          <rect x="0" y="0" width="12" height="12" />
+          <line x1="3" y1="6" x2="9" y2="6" />
+          <line class="pp-plus" x1="6" y1="3" x2="6" y2="9" />
+        </svg>
+      `;
+
+      const folderLabel = document.createElement('span');
+      folderLabel.className = 'pp-w pp-ink-text';
+      folderLabel.textContent = DIRECTORY_PATH ? `/${DIRECTORY_PATH}` : '/ (root)';
+
+      groupNameCell.appendChild(toggleBtn);
+      groupNameCell.appendChild(folderLabel);
+
+      const groupSizeCell = document.createElement('div');
+      groupSizeCell.className = 'pp-size-cell pp-ink-text';
+      groupSizeCell.textContent = formatKB(totalBytes);
+
+      const groupBarCell = document.createElement('div');
+      groupBarCell.className = 'pp-bar-cell';
+      groupBarCell.appendChild(createHatchedBarSVG(MAX_BAR_WIDTH, 6, animate ? 0 : null));
+
+      groupRow.appendChild(groupNameCell);
+      groupRow.appendChild(groupSizeCell);
+      groupRow.appendChild(groupBarCell);
+      container.appendChild(groupRow);
+
+      // 2. Child Rows Wrapper
+      const childrenWrap = document.createElement('div');
+      childrenWrap.id = 'children-wrap';
+      if (!isExpanded) {
+        childrenWrap.classList.add('pp-hidden');
+      }
+
+      files.forEach((file, index) => {
+        const at = animate ? index * STAGGER_MS + 20 : null;
+        const penClass = index % 2 === 0 ? 'pp-pen-a' : 'pp-pen-b';
+
+        const row = document.createElement('div');
+        row.className = `pp-row pp-child-row ${penClass}`;
+        row.setAttribute('role', 'row');
+
+        // Name Cell + Orthogonal Plotter Branch Line
+        const nameCell = document.createElement('div');
+        nameCell.className = 'pp-name-cell';
+
+        const branchSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        branchSvg.setAttribute('class', 'pp-branch');
+        branchSvg.setAttribute('width', '36');
+        branchSvg.setAttribute('height', '36');
+        branchSvg.setAttribute('aria-hidden', 'true');
+
+        // Vertical spine drawn on the first child row spanning all children
+        if (index === 0) {
+          const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          vLine.setAttribute('x1', '6');
+          vLine.setAttribute('y1', '-12');
+          vLine.setAttribute('x2', '6');
+          vLine.setAttribute('y2', String((files.length - 1) * 36 + 18));
+          vLine.setAttribute('pathLength', '1');
+          if (at !== null) {
+            vLine.setAttribute('style', penStyle(at, (files.length - 1) * STAGGER_MS + 35));
+          }
+          branchSvg.appendChild(vLine);
+        }
+
+        // Horizontal branch tick to each filename
+        const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        hLine.setAttribute('x1', '6');
+        hLine.setAttribute('y1', '18');
+        hLine.setAttribute('x2', '36');
+        hLine.setAttribute('y2', '18');
+        hLine.setAttribute('pathLength', '1');
+        if (at !== null) {
+          hLine.setAttribute('style', penStyle(at + 10, 30));
+        }
+        branchSvg.appendChild(hLine);
+
+        // Anchor opening in a new tab safely
+        const link = document.createElement('a');
+        link.className = 'pp-link';
+        link.href = file.name;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.title = `Open ${file.name} in a new tab (${formatKB(file.size)} KB)`;
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'pp-w pp-ink-text';
+        textSpan.textContent = file.name;
+        if (at !== null) {
+          textSpan.setAttribute('style', writeStyle(file.name, at + 16));
+        }
+
+        const arrowSpan = document.createElement('span');
+        arrowSpan.className = 'pp-ext-arrow';
+        arrowSpan.setAttribute('aria-hidden', 'true');
+        arrowSpan.textContent = '↗';
+
+        link.appendChild(textSpan);
+        link.appendChild(arrowSpan);
+
+        nameCell.appendChild(branchSvg);
+        nameCell.appendChild(link);
+
+        // Size Cell
+        const sizeCell = document.createElement('div');
+        sizeCell.className = 'pp-size-cell pp-ink-text';
+        const sizeStr = formatKB(file.size);
+        const sizeSpan = document.createElement('span');
+        sizeSpan.className = 'pp-w';
+        sizeSpan.textContent = sizeStr;
+        if (at !== null) {
+          sizeSpan.setAttribute('style', writeStyle(sizeStr, at + 55));
+        }
+        sizeCell.appendChild(sizeSpan);
+
+        // Hatched Bar Cell (also clickable to open in a new tab)
+        const barCell = document.createElement('div');
+        barCell.className = 'pp-bar-cell';
+
+        const barLink = document.createElement('a');
+        barLink.className = 'pp-bar-link';
+        barLink.href = file.name;
+        barLink.target = '_blank';
+        barLink.rel = 'noopener noreferrer';
+        barLink.tabIndex = -1; // Prevent duplicate tab stops; primary link handles keyboard focus
+        barLink.setAttribute('aria-hidden', 'true');
+
+        const ratio = Math.min(1, (file.size || 1024) / scaleCeiling);
+        const barWidth = Math.max(22, ratio * MAX_BAR_WIDTH);
+        barLink.appendChild(createHatchedBarSVG(barWidth, 4, at));
+
+        barCell.appendChild(barLink);
+
+        row.appendChild(nameCell);
+        row.appendChild(sizeCell);
+        row.appendChild(barCell);
+        childrenWrap.appendChild(row);
+      });
+
+      container.appendChild(childrenWrap);
+
+      // Toggle Expand / Collapse handler with re-plot animation when expanding
+      toggleBtn.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+        toggleBtn.setAttribute('aria-label', isExpanded ? 'Collapse HTML file list' : 'Expand HTML file list');
+        if (isExpanded) {
+          renderDirectory(files, true);
+        } else {
+          childrenWrap.classList.add('pp-hidden');
+        }
+      });
+    }
+
+    // Fetch HTML files from GitHub API
     async function loadHtmlFiles() {
       const statusEl = document.getElementById('status');
-      const listEl = document.getElementById('file-list');
       const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${DIRECTORY_PATH}`;
 
       try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
-          throw new Error(`GitHub API error: ${response.status}`);
+          throw new Error(`GitHub API HTTP ${response.status}`);
         }
 
         const items = await response.json();
 
-        // Filter for .html files, excluding index.html itself
-        const htmlFiles = items
+        cachedFiles = items
           .filter(item =>
             item.type === 'file' &&
             item.name.toLowerCase().endsWith('.html') &&
             item.name.toLowerCase() !== 'index.html'
           )
-          .sort((a, b) => a.name.localeCompare(b.name));
+          .sort((a, b) => (a.size - b.size) || a.name.localeCompare(b.name));
 
-        if (htmlFiles.length === 0) {
-          statusEl.textContent = 'No HTML files found in this directory.';
+        if (cachedFiles.length === 0) {
+          statusEl.textContent = 'PLOT COMPLETE // No HTML documents found in this directory.';
           return;
         }
 
-        statusEl.remove();
-
-        htmlFiles.forEach(file => {
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          
-          // Uses relative path so it works seamlessly on GitHub Pages
-          a.href = file.name;
-          a.textContent = file.name;
-          
-          li.appendChild(a);
-          listEl.appendChild(li);
-        });
+        statusEl.classList.add('pp-hidden');
+        renderDirectory(cachedFiles, true);
       } catch (error) {
-        statusEl.textContent = `Failed to load file list: ${error.message}`;
+        statusEl.textContent = `PLOTTER ERROR // Unable to fetch directory: ${error.message}`;
       }
     }
 
+    // Filter input handler
+    document.getElementById('filter-input').addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      const filtered = query
+        ? cachedFiles.filter(f => f.name.toLowerCase().includes(query))
+        : cachedFiles;
+
+      const statusEl = document.getElementById('status');
+      if (filtered.length === 0 && cachedFiles.length > 0) {
+        document.getElementById('directory-body').innerHTML = '';
+        statusEl.textContent = `NO MATCH // "${e.target.value}" yielded 0 HTML files.`;
+        statusEl.classList.remove('pp-hidden');
+      } else {
+        statusEl.classList.add('pp-hidden');
+        isExpanded = true;
+        renderDirectory(filtered, false);
+      }
+    });
+
+    // Replot button replays the pen-drawing stroke animation
+    document.getElementById('replot-btn').addEventListener('click', () => {
+      const query = document.getElementById('filter-input').value.trim().toLowerCase();
+      const filtered = query
+        ? cachedFiles.filter(f => f.name.toLowerCase().includes(query))
+        : cachedFiles;
+      if (filtered.length > 0) {
+        isExpanded = true;
+        renderDirectory(filtered, true);
+      }
+    });
+
+    // Initialize page
+    initScaleRule();
     loadHtmlFiles();
   </script>
 </body>
