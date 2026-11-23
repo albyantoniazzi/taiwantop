@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAIWAN TOP — Curated Places by @albyantoniazzi</title>
+  <meta name="description" content="A curated directory of top places, eats, and hidden gems across Taiwan compiled by @albyantoniazzi (@alby.food)." />
+
+  <!-- UI SDK Web Components -->
+  <script type="module" src="https://ui-sdk.dev/web.js"></script>
+  <link rel="stylesheet" href="https://ui-sdk.dev/web.css" />
+
+  <!-- Fonts: VT323 (CRT Phosphor Display), Roboto Mono & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=VT323&family=Roboto+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..500,0..1,0&icon_names=casino,check_circle,chevron_left,chevron_right,close,dark_mode,done,expand_more,light_mode,location_on,map,open_in_new,refresh,restart_alt,restaurant,search,share,sort,sort_by_alpha,sports_esports,storefront,tag&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS for responsive layout utilities -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"VT323"', 'monospace'],
+            sans: ['"VT323"', '"Roboto Mono"', 'ui-monospace', 'monospace'],
+            mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- PapaParse for client-side CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaTfpa48djpNbZ18legh+9h+9h6Q1A1jYx81Y1b+9h6Q1A1jYx81Y1b+9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    if (typeof Papa === 'undefined') {
+      document.write('<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       P31 PHOSPHOR CRT DESIGN TOKENS
+       Inspired by CRT raster display: #010402 glass, #2f9a56 dim, #63e58c norm, #b4ffcb bright
+       ========================================================================== */
+    :root {
+      /* Default P31 Green Phosphor CRT Palette */
+      --crt-ground: #010402;
+      --crt-surface: #050d08;
+      --crt-surface-elevated: #09170f;
+      --crt-hover-band: #0d2417;
+      --crt-active-fill: #7dffa5;
+      --crt-dim: #2f9a56;
+      --crt-norm: #63e58c;
+      --crt-bright: #b4ffcb;
+      --crt-glow: rgba(70, 255, 130, 0.42);
+      --crt-glow-strong: rgba(125, 255, 165, 0.65);
+      --crt-ripple: rgba(120, 255, 160, 0.032);
+      --crt-border: rgba(99, 229, 140, 0.34);
+      --crt-border-bright: #b4ffcb;
+      --crt-scrim: rgba(1, 4, 2, 0.86);
+      --goose-accent-color: #b4ffcb;
+
+      /* Semantic Mappings */
+      --md-sys-color-primary: var(--crt-bright);
+      --md-sys-color-on-primary: var(--crt-ground);
+      --md-sys-color-primary-container: var(--crt-hover-band);
+      --md-sys-color-on-primary-container: var(--crt-bright);
+
+      --md-sys-color-secondary: var(--crt-norm);
+      --md-sys-color-on-secondary: var(--crt-ground);
+      --md-sys-color-secondary-container: var(--crt-active-fill);
+      --md-sys-color-on-secondary-container: var(--crt-ground);
+
+      --md-sys-color-tertiary: var(--crt-bright);
+      --md-sys-color-on-tertiary: var(--crt-ground);
+      --md-sys-color-tertiary-container: var(--crt-hover-band);
+      --md-sys-color-on-tertiary-container: var(--crt-bright);
+
+      --md-sys-color-surface: var(--crt-ground);
+      --md-sys-color-on-surface: var(--crt-norm);
+      --md-sys-color-on-surface-variant: var(--crt-dim);
+
+      --md-sys-color-surface-container-lowest: #000201;
+      --md-sys-color-surface-container-low: var(--crt-surface);
+      --md-sys-color-surface-container: var(--crt-surface-elevated);
+      --md-sys-color-surface-container-high: var(--crt-hover-band);
+      --md-sys-color-surface-container-highest: #112e1e;
+
+      --md-sys-color-inverse-surface: var(--crt-active-fill);
+      --md-sys-color-inverse-on-surface: var(--crt-ground);
+      --md-sys-color-inverse-primary: var(--crt-ground);
+
+      --md-sys-color-outline: var(--crt-norm);
+      --md-sys-color-outline-variant: var(--crt-border);
+      --md-sys-color-scrim: var(--crt-scrim);
+
+      /* Typography */
+      --font-crt-display: 'VT323', monospace;
+      --font-crt-body: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Motion Curves & Timings from Spec */
+      --crt-sweep-duration: 170ms;
+      --crt-ease-snap: steps(4, end);
+      --crt-ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* Alternate P3 Amber Phosphor CRT Mode (triggered by theme button) */
+    :root[data-theme="amber"] {
+      --crt-ground: #050300;
+      --crt-surface: #0d0801;
+      --crt-surface-elevated: #170e02;
+      --crt-hover-band: #261804;
+      --crt-active-fill: #ffcc66;
+      --crt-dim: #9e6b1e;
+      --crt-norm: #f2aa3c;
+      --crt-bright: #ffe19c;
+      --crt-glow: rgba(255, 176, 46, 0.42);
+      --crt-glow-strong: rgba(255, 214, 112, 0.65);
+      --crt-ripple: rgba(255, 190, 80, 0.032);
+      --crt-border: rgba(242, 170, 60, 0.34);
+      --crt-border-bright: #ffe19c;
+      --crt-scrim: rgba(5, 3, 0, 0.88);
+      --goose-accent-color: #ffe19c;
+    }
+
+    html {
+      font-family: var(--font-crt-display);
+      background-color: var(--crt-ground);
+      color: var(--crt-norm);
+      font-kerning: none;
+      font-variant-ligatures: none;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 62px;
+      background-color: var(--crt-ground);
+      color: var(--crt-norm);
+      overflow-x: hidden;
+      position: relative;
+      animation: crt-supply 4.3s linear infinite;
+    }
+
+    /* CRT Raster Scanlines & Edge Vignette Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.56) 100%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0.32) 1px,
+          rgba(0, 0, 0, 0.32) 2px
+        );
+      pointer-events: none;
+    }
+
+    /* Travelling Vertical Refresh Bar (5.6s cycle) */
+    body::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 200vh;
+      z-index: 89;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--crt-ripple) 14%,
+        transparent 28%,
+        transparent 50%,
+        var(--crt-ripple) 64%,
+        transparent 78%
+      );
+      pointer-events: none;
+      animation: crt-ripple 5.6s linear infinite;
+    }
+
+    @keyframes crt-supply {
+      0%, 100% { opacity: 1; }
+      9% { opacity: 0.978; }
+      21% { opacity: 0.994; }
+      34% { opacity: 0.972; }
+      47% { opacity: 1; }
+      58% { opacity: 0.985; }
+      63% { opacity: 0.968; }
+      76% { opacity: 0.996; }
+      88% { opacity: 0.98; }
+    }
+
+    @keyframes crt-ripple {
+      from { transform: translateY(0); }
+      to { transform: translateY(-50%); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body,
+      body::after,
+      .crt-card-reveal {
+        animation: none !important;
+      }
+    }
+
+    /* Phosphor Ink Hierarchy */
+    .crt-ink-dim {
+      color: var(--crt-dim);
+      text-shadow: 0 0 4px var(--crt-glow);
+    }
+
+    .crt-ink-norm {
+      color: var(--crt-norm);
+      text-shadow: 0 0 6px var(--crt-glow);
+    }
+
+    .crt-ink-bright {
+      color: var(--crt-bright);
+      text-shadow: 0 0 8px var(--crt-glow-strong);
+    }
+
+    .crt-ruled {
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+
+    /* Top App Bar (Terminal Header) */
+    .md3-top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: rgba(1, 4, 2, 0.92);
+      border-bottom: 2px solid var(--crt-border);
+      backdrop-filter: blur(4px);
+    }
+
+    :root[data-theme="amber"] .md3-top-app-bar {
+      background-color: rgba(5, 3, 0, 0.92);
+    }
+
+    .md3-top-app-bar.scrolled {
+      border-bottom-color: var(--crt-norm);
+      box-shadow: 0 2px 14px var(--crt-glow);
+    }
+
+    /* Spots Counter Badge */
+    #header-total-badge {
+      background-color: var(--crt-hover-band);
+      color: var(--crt-bright);
+      border: 1px solid var(--crt-norm);
+      border-radius: 2px;
+      font-family: var(--font-crt-display);
+      font-size: 1.05rem;
+      line-height: 1;
+      text-shadow: 0 0 6px var(--crt-glow);
+    }
+
+    /* Search Bar (Phosphor Command Input) */
+    .md3-search-bar {
+      background-color: var(--crt-surface);
+      color: var(--crt-bright);
+      border-radius: 2px;
+      border: 1px solid var(--crt-border);
+      transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .md3-search-bar:focus-within {
+      background-color: var(--crt-hover-band);
+      border-color: var(--crt-bright);
+      box-shadow: 0 0 12px var(--crt-glow);
+    }
+
+    #search-input {
+      font-family: var(--font-crt-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+      color: var(--crt-bright);
+    }
+
+    #search-input::placeholder {
+      color: var(--crt-dim);
+      opacity: 0.9;
+    }
+
+    /* Autocomplete Dropdown Menu (CRT Selection List) */
+    .md3-autocomplete-menu {
+      background-color: var(--crt-ground);
+      color: var(--crt-norm);
+      border-radius: 2px;
+      border: 2px solid var(--crt-norm);
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9), 0 0 14px var(--crt-glow);
+      overflow: hidden;
+      animation: crtMenuSweep var(--crt-sweep-duration) var(--crt-ease-smooth);
+    }
+
+    @keyframes crtMenuSweep {
+      from { opacity: 0; clip-path: inset(0 100% 0 0); }
+      to { opacity: 1; clip-path: inset(0 0 0 0); }
+    }
+
+    .md3-autocomplete-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      min-height: 44px;
+      cursor: pointer;
+      font-family: var(--font-crt-display);
+      font-size: 1.3rem;
+      line-height: 1.1;
+      color: var(--crt-norm);
+      text-shadow: 0 0 5px var(--crt-glow);
+      transition: background-color 90ms linear, color 90ms linear;
+    }
+
+    .md3-autocomplete-item + .md3-autocomplete-item {
+      border-top: 1px dashed var(--crt-border);
+    }
+
+    /* Inverse Phosphor Highlight on Hover / Keyboard Focus */
+    .md3-autocomplete-item:hover,
+    .md3-autocomplete-item.active {
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    .md3-autocomplete-item:hover .ac-icon,
+    .md3-autocomplete-item.active .ac-icon,
+    .md3-autocomplete-item:hover .ac-count,
+    .md3-autocomplete-item.active .ac-count {
+      color: var(--crt-ground) !important;
+      text-shadow: none;
+    }
+
+    .md3-autocomplete-item:hover .ac-badge,
+    .md3-autocomplete-item.active .ac-badge {
+      background-color: var(--crt-ground) !important;
+      color: var(--crt-bright) !important;
+      border-color: var(--crt-ground) !important;
+    }
+
+    /* Category Filter Chips (Terminal Tabs with 2px Active Underline) */
+    .md3-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 2px;
+      font-family: var(--font-crt-display);
+      font-size: 1.25rem;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      border: 1px solid transparent;
+      background-color: transparent;
+      color: var(--crt-norm);
+      text-shadow: 0 0 5px var(--crt-glow);
+      transition: background-color 110ms linear, color 110ms linear, border-color 110ms linear;
+    }
+
+    .md3-filter-chip:hover {
+      background-color: var(--crt-hover-band);
+      border-color: var(--crt-border);
+      color: var(--crt-bright);
+    }
+
+    .md3-filter-chip:focus-visible {
+      outline: none;
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    .md3-filter-chip[aria-pressed="true"] {
+      background-color: var(--crt-hover-band);
+      border-color: var(--crt-norm);
+      color: var(--crt-bright);
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+      text-shadow: 0 0 8px var(--crt-glow-strong);
+    }
+
+    .md3-filter-chip .chip-count {
+      font-size: 1.05rem;
+      padding: 1px 5px;
+      border-radius: 1px;
+      background-color: rgba(47, 154, 86, 0.2);
+      color: var(--crt-dim);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .md3-filter-chip[aria-pressed="true"] .chip-count {
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    /* Modal Category Tags */
+    .md3-modal-cat-tag {
+      padding: 3px 10px;
+      border-radius: 2px;
+      font-family: var(--font-crt-display);
+      font-size: 1.2rem;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid var(--crt-border);
+      background-color: var(--crt-surface);
+      color: var(--crt-norm);
+      text-shadow: 0 0 5px var(--crt-glow);
+      transition: background-color 100ms linear, color 100ms linear;
+    }
+
+    .md3-modal-cat-tag:hover,
+    .md3-modal-cat-tag:focus-visible {
+      outline: none;
+      background-color: var(--crt-active-fill);
+      border-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    /* Horizontal chip scroll container */
+    .chip-scroll-strip {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Place Card (Phosphor Monitor Frame with Scan Sweep Reveal) */
+    .md3-place-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 2px;
+      background-color: var(--crt-surface);
+      border: 1px solid var(--crt-border);
+      overflow: hidden;
+      cursor: pointer;
+      animation: crtCardSweep var(--crt-sweep-duration) var(--crt-ease-smooth) backwards;
+      transition: border-color 120ms linear, box-shadow 120ms linear, transform 120ms linear;
+    }
+
+    @keyframes crtCardSweep {
+      from {
+        opacity: 0.2;
+        clip-path: inset(0 100% 0 0);
+      }
+      to {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .md3-place-card:hover {
+      border-color: var(--crt-bright);
+      box-shadow: 0 0 16px var(--crt-glow);
+    }
+
+    .md3-place-card:focus-visible {
+      outline: 2px solid var(--crt-active-fill);
+      outline-offset: 2px;
+      box-shadow: 0 0 18px var(--crt-glow-strong);
+    }
+
+    .md3-place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.06) saturate(0.92);
+      transition: transform 320ms var(--crt-ease-smooth), filter 220ms ease;
+    }
+
+    .md3-place-card:hover img {
+      transform: scale(1.03);
+      filter: contrast(1.12) saturate(1.04);
+    }
+
+    /* Subtle CRT scanline tint over card photo */
+    .md3-place-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(1, 4, 2, 0.22) 2px,
+        rgba(1, 4, 2, 0.22) 4px
+      );
+      pointer-events: none;
+    }
+
+    .md3-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(1, 4, 2, 0.94) 0%,
+        rgba(1, 4, 2, 0.62) 28%,
+        rgba(1, 4, 2, 0) 48%
+      );
+      pointer-events: none;
+    }
+
+    /* Terminal Buttons (Filled, Tonal, Outlined, Icon) */
+    .md3-btn-filled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 20px;
+      border-radius: 2px;
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      font-family: var(--font-crt-display);
+      font-size: 1.35rem;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--crt-bright);
+      box-shadow: 0 0 10px var(--crt-glow);
+      transition: background-color 100ms linear, box-shadow 100ms linear;
+    }
+
+    .md3-btn-filled:hover {
+      background-color: var(--crt-bright);
+      box-shadow: 0 0 16px var(--crt-glow-strong);
+    }
+
+    .md3-btn-filled:focus-visible {
+      outline: 2px solid var(--crt-bright);
+      outline-offset: 2px;
+    }
+
+    .md3-btn-tonal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 2px;
+      background-color: var(--crt-hover-band);
+      color: var(--crt-bright);
+      border: 1px solid var(--crt-norm);
+      font-family: var(--font-crt-display);
+      font-size: 1.25rem;
+      line-height: 1;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 6px var(--crt-glow);
+      cursor: pointer;
+      transition: background-color 100ms linear, color 100ms linear;
+    }
+
+    .md3-btn-tonal:hover,
+    .md3-btn-tonal:focus-visible {
+      outline: none;
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    .md3-btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 2px;
+      background-color: transparent;
+      color: var(--crt-norm);
+      border: 1px solid var(--crt-norm);
+      font-family: var(--font-crt-display);
+      font-size: 1.3rem;
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: 0 0 5px var(--crt-glow);
+      cursor: pointer;
+      transition: background-color 100ms linear, color 100ms linear;
+    }
+
+    .md3-btn-outlined:hover,
+    .md3-btn-outlined:focus-visible {
+      outline: none;
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      text-shadow: none;
+    }
+
+    .md3-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 2px;
+      background-color: var(--crt-surface);
+      color: var(--crt-norm);
+      border: 1px solid var(--crt-border);
+      cursor: pointer;
+      transition: background-color 100ms linear, color 100ms linear, border-color 100ms linear;
+    }
+
+    .md3-icon-btn:hover,
+    .md3-icon-btn:focus-visible {
+      outline: none;
+      background-color: var(--crt-active-fill);
+      border-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+    }
+
+    .md3-icon-btn:disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
+    }
+
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* CRT Detail Modal (Spot Inspector) */
+    .md3-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: var(--crt-scrim);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 16px 16px 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms linear;
+    }
+
+    @media (min-width: 768px) {
+      .md3-modal-backdrop {
+        padding-top: 24px;
+        padding-bottom: 48px;
+      }
+    }
+
+    .md3-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .md3-modal-dialog {
+      width: 100%;
+      max-width: 735px;
+      background-color: var(--crt-ground);
+      color: var(--crt-norm);
+      border-radius: 2px;
+      border: 2px solid var(--crt-norm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transform: translateY(8px);
+      transition: transform var(--crt-sweep-duration) var(--crt-ease-smooth);
+      box-shadow: 0 0 36px rgba(0, 0, 0, 0.92), 0 0 20px var(--crt-glow);
+    }
+
+    @media (min-width: 1024px) {
+      .md3-modal-dialog {
+        max-width: 958px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .md3-modal-dialog {
+        max-width: 1060px;
+      }
+    }
+
+    .md3-modal-backdrop.open .md3-modal-dialog {
+      transform: translateY(0);
+    }
+
+    /* CRT Status Snackbar */
+    .md3-snackbar {
+      position: fixed;
+      bottom: 64px;
+      left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      z-index: 80;
+      background-color: var(--crt-active-fill);
+      color: var(--crt-ground);
+      border: 2px solid var(--crt-bright);
+      padding: 8px 18px;
+      border-radius: 2px;
+      font-family: var(--font-crt-display);
+      font-size: 1.3rem;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 18px var(--crt-glow-strong);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 160ms var(--crt-ease-smooth), opacity 140ms linear;
+    }
+
+    .md3-snackbar.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Phosphor Scan Skeleton Shimmer */
+    .skeleton-pulse {
+      background: linear-gradient(
+        90deg,
+        var(--crt-surface) 25%,
+        var(--crt-hover-band) 50%,
+        var(--crt-surface) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Fast Pixel Goose Walk Animation on Header Hover */
+    @keyframes gooseLegLeft {
+      0%, 49.9% { transform: translateY(-15px); }
+      50%, 100% { transform: translateY(0); }
+    }
+
+    @keyframes gooseLegRight {
+      0%, 49.9% { transform: translateY(0); }
+      50%, 100% { transform: translateY(-15px); }
+    }
+
+    @keyframes gooseBodyBob {
+      0%, 49.9% { transform: translateY(0); }
+      50%, 100% { transform: translateY(-6px); }
+    }
+
+    #brand-reset-btn:hover .goose-body,
+    #brand-reset-btn:hover .goose-beak {
+      animation: gooseBodyBob 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-left {
+      animation: gooseLegLeft 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-right {
+      animation: gooseLegRight 0.16s steps(1, end) infinite;
+    }
+
+    /* Hot Pot Goose Runner Canvas (CRT Monitor Style) */
+    #dino-canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 2px;
+      background-color: var(--crt-ground);
+      border: 2px solid var(--crt-norm);
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.85), 0 0 14px var(--crt-glow);
+      outline: none;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #dino-canvas:focus,
+    #dino-canvas:focus-visible {
+      outline: none;
+      border-color: var(--crt-bright);
+      box-shadow: 0 0 18px var(--crt-glow-strong);
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- ========================================================================
+       CRT TOP TERMINAL BAR & COMMAND SEARCH HEADER
+       ======================================================================== -->
+  <header id="top-app-bar" class="md3-top-app-bar">
+    <div class="w-full px-4 sm:px-[10%] pt-2.5 pb-2.5">
+      <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 lg:grid lg:grid-cols-[1fr_minmax(252px,420px)_1fr] lg:items-center lg:gap-4">
+        <!-- Brand Logo & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 justify-self-start min-w-0 shrink-0">
+          <button
+            id="brand-reset-btn"
+            type="button"
+            class="flex items-center gap-2.5 sm:gap-3 text-left group focus:outline-none min-w-0"
+            title="Reset all filters and return to top"
+          >
+            <div
+              class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 flex items-center justify-center shrink-0 p-1 border"
+              style="background-color: var(--crt-surface); border-color: var(--crt-border); box-shadow: 0 0 10px var(--crt-glow);"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block overflow-visible" aria-hidden="true">
+                <path class="goose-body" style="fill: var(--crt-norm);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
+                <path class="goose-beak" style="fill: var(--goose-accent-color);" d="M165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
+                <path class="goose-leg-left" style="fill: var(--goose-accent-color);" d="M75 240L45 240L45 195L60 195L60 225L75 225L75 240Z"/>
+                <path class="goose-leg-right" style="fill: var(--goose-accent-color);" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240Z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-nowrap">
+                <h1 class="text-2xl sm:text-[28px] lg:text-[32px] font-normal tracking-wide leading-none whitespace-nowrap crt-ink-bright">
+                  TAIWAN TOP
+                </h1>
+                <span
+                  id="header-total-badge"
+                  class="px-2 py-0.5 whitespace-nowrap shrink-0"
+                >
+                  LOADING…
+                </span>
+              </div>
+              <p class="text-base sm:text-lg leading-none mt-1 truncate crt-ink-dim">
+                Curated by
+                <a
+                  href="https://www.instagram.com/alby.food/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="underline decoration-dotted underline-offset-4 hover:opacity-85 crt-ink-norm"
+                  onclick="event.stopPropagation()"
+                >@alby.food</a>
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Command Search Input & Autocomplete Container -->
+        <div class="relative w-[92%] mx-auto sm:w-full sm:flex-1 sm:max-w-[240px] md:max-w-[310px] lg:max-w-none order-3 sm:order-2 lg:justify-self-center min-w-0">
+          <div class="md3-search-bar flex items-center px-3 h-10">
+            <span class="mr-2 text-lg crt-ink-dim select-none shrink-0">&gt;</span>
+            <input
+              id="search-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="QUERY PLACES, FOOD, CITIES..."
+              aria-label="Search curated Taiwan places"
+              aria-autocomplete="list"
+              aria-controls="autocomplete-list"
+              aria-expanded="false"
+              class="w-full min-w-0 bg-transparent border-none outline-none"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              aria-label="Clear search query"
+              class="hidden ml-1 w-7 h-7 flex items-center justify-center shrink-0 transition-colors crt-ink-norm hover:bg-[#7dffa5] hover:text-[#010402]"
+            >
+              <span class="material-symbols-outlined text-base sm:text-lg">close</span>
+            </button>
+          </div>
+
+          <!-- Autocomplete Suggestions Dropdown -->
+          <div
+            id="autocomplete-dropdown"
+            class="md3-autocomplete-menu hidden absolute left-0 right-0 w-full mt-1.5 z-50"
+            role="listbox"
+            aria-label="Search suggestions"
+          >
+            <ul id="autocomplete-list" class="max-h-80 overflow-y-auto"></ul>
+          </div>
+        </div>
+
+        <!-- Right Utility Actions: Phosphor Toggle & Instagram Link -->
+        <div class="flex items-center gap-2 order-2 sm:order-3 justify-self-end shrink-0">
+          <a
+            href="https://www.instagram.com/alby.food/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md3-btn-tonal !w-10 !px-0 lg:!w-auto lg:!px-3.5 !min-h-[40px] !h-10"
+            title="Follow @alby.food on Instagram"
+            aria-label="Follow @alby.food on Instagram"
+          >
+            <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span class="hidden lg:inline">@alby.food</span>
+          </a>
+          <button
+            id="theme-toggle-btn"
+            type="button"
+            class="md3-icon-btn !w-10 !h-10"
+            aria-label="Switch CRT phosphor color (P31 Green / P3 Amber)"
+            title="Switch CRT phosphor color (P31 Green / P3 Amber)"
+          >
+            <span id="theme-icon" class="material-symbols-outlined text-xl">light_mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN CONTENT AREA: TELEMETRY STATUS BAR, PLACES GRID, PAGINATION & MINI-GAME
+       ======================================================================== -->
+  <main class="w-full px-4 sm:px-[10%] pt-5 pb-4">
+    <!-- Active Filter Status & Result Counter (Ruled CRT Telemetry Header) -->
+    <div
+      id="results-toolbar"
+      class="flex flex-wrap items-center justify-between gap-2 mb-5 pb-2 border-b-2"
+      style="border-color: var(--crt-border);"
+    >
+      <div class="flex items-center gap-3 flex-wrap">
+        <p id="results-summary" class="text-xl sm:text-[22px] leading-none crt-ink-norm">
+          FETCHING CURATED SPOTS FROM GOOGLE SHEETS…
+        </p>
+        <button
+          id="reset-filters-inline-btn"
+          type="button"
+          class="hidden text-lg leading-none px-2.5 py-1 border transition-colors"
+          style="background-color: var(--crt-hover-band); color: var(--crt-bright); border-color: var(--crt-norm);"
+        >
+          [CLEAR FILTERS]
+        </button>
+      </div>
+      <button
+        id="sort-toggle-btn"
+        type="button"
+        class="inline-flex items-center gap-1.5 text-lg sm:text-xl leading-none bg-transparent border-0 p-0 cursor-pointer transition-opacity hover:opacity-80 crt-ink-dim"
+        title="Switch sort order"
+      >
+        <span id="sort-toggle-icon" class="material-symbols-outlined text-base">sort</span>
+        <span id="sort-toggle-label" class="underline underline-offset-4 decoration-dotted">SORTED NEWEST FIRST</span>
+      </button>
+    </div>
+
+    <!-- Loading Skeleton Grid -->
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"></div>
+
+    <!-- Curated Places Square Card Grid -->
+    <section
+      id="places-grid"
+      aria-label="Curated places in Taiwan"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
+    ></section>
+
+    <!-- Pagination Load More Container -->
+    <div id="load-more-container" class="hidden mt-6 mb-0 flex flex-col items-center">
+      <button id="load-more-btn" type="button" class="md3-btn-filled">
+        <span class="material-symbols-outlined text-xl">expand_more</span>
+        <span id="load-more-label">LOAD MORE</span>
+      </button>
+    </div>
+
+    <!-- Empty State & Interactive HTML5 Runner Game Fallback -->
+    <section
+      id="empty-state"
+      class="hidden my-6 p-5 sm:p-6 border-2 max-w-2xl mx-auto text-center"
+      style="background-color: var(--crt-surface); border-color: var(--crt-norm); box-shadow: 0 0 24px var(--crt-glow);"
+      aria-live="polite"
+    >
+      <h2 id="empty-state-title" class="text-2xl sm:text-3xl font-normal mb-4 crt-ink-bright">
+        NO SIGNAL MATCHING QUERY...
+      </h2>
+      <p id="empty-state-subtitle" class="hidden text-lg sm:text-xl mb-5 max-w-md mx-auto crt-ink-norm"></p>
+
+      <!-- Interactive Canvas Runner Game -->
+      <div class="mb-5 text-left">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-base sm:text-lg mb-1.5 px-1 crt-ink-dim">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base">sports_esports</span>
+            <span>HOT POT GOOSE RUN — PRESS <kbd class="px-1.5 py-0.5 border text-sm crt-ink-bright" style="border-color: var(--crt-norm);">SPACE</kbd> OR TAP TO JUMP</span>
+          </span>
+          <span id="game-score-readout" class="crt-ink-norm">SCORE: 0000 · BEST: 0000</span>
+        </div>
+        <canvas id="dino-canvas" tabindex="0" aria-label="Hot Pot Goose Runner mini-game"></canvas>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="empty-reset-btn" type="button" class="md3-btn-filled">
+          <span class="material-symbols-outlined text-xl">restart_alt</span>
+          <span>SHOW ALL PLACES</span>
+        </button>
+        <button id="retry-fetch-btn" type="button" class="md3-btn-outlined hidden">
+          <span class="material-symbols-outlined text-xl">refresh</span>
+          <span>RETRY LOADING CSV</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       FIXED FULL-WIDTH CATEGORY FILTER FOOTER BAR
+       ======================================================================== -->
+  <footer
+    aria-label="Category filters"
+    class="fixed bottom-0 left-0 right-0 z-40 w-full border-t-2 backdrop-blur-md"
+    style="background-color: rgba(1, 4, 2, 0.94); border-color: var(--crt-border);"
+  >
+    <div
+      id="category-filters"
+      class="chip-scroll-strip flex items-center gap-1.5 overflow-x-auto w-full py-2 px-4 sm:px-[10%]"
+      role="toolbar"
+      aria-label="Filter places by category"
+    >
+      <!-- Populated dynamically by populateCategoryFilters() -->
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       CRT DETAIL MODAL (SPOT INSPECTOR)
+       ======================================================================== -->
+  <div
+    id="place-modal"
+    class="md3-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-hidden="true"
+  >
+    <div id="modal-dialog-card" class="md3-modal-dialog">
+      <!-- Top Modal Bar -->
+      <div
+        class="flex items-center justify-between px-4 sm:px-6 py-2.5 border-b-2 shrink-0"
+        style="background-color: var(--crt-surface); border-color: var(--crt-border);"
+      >
+        <div class="flex items-center gap-2">
+          <button id="modal-prev-btn" type="button" class="md3-icon-btn !w-9 !h-9" aria-label="Previous place" title="Previous spot (Left Arrow)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button id="modal-next-btn" type="button" class="md3-icon-btn !w-9 !h-9" aria-label="Next place" title="Next spot (Right Arrow)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          <span id="modal-counter" class="text-xl ml-1 crt-ink-dim">
+            1 / 1
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="modal-share-btn" type="button" class="md3-btn-tonal !min-h-[36px] !h-9 !px-3.5" title="Copy direct link to this spot">
+            <span id="modal-share-icon" class="material-symbols-outlined text-lg">share</span>
+            <span id="modal-share-label">SHARE</span>
+          </button>
+          <button id="modal-close-btn" type="button" class="md3-icon-btn !w-9 !h-9" aria-label="Close modal" title="Close (Escape)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Content (60% Photo Showcase / 40% Info Panel on Desktop) -->
+      <div id="modal-scroll-body" class="block md:grid md:grid-cols-[3fr_2fr] md:items-stretch">
+        <!-- Photo Showcase (1:1 square) -->
+        <div
+          class="relative w-full aspect-square flex items-center justify-center overflow-hidden shrink-0 border-b-2 md:border-b-0 md:border-r-2"
+          style="background-color: var(--crt-surface); border-color: var(--crt-border);"
+        >
+          <img
+            id="modal-image"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Metadata, Categories, Description & Google Maps Action -->
+        <div class="p-4 sm:p-6 lg:p-7 flex flex-col justify-between gap-5 min-w-0">
+          <div>
+            <!-- City Badge (Clickable filter) -->
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <button
+                id="modal-city-btn"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-lg leading-tight uppercase border transition-colors hover:bg-[#7dffa5] hover:text-[#010402]"
+                style="background-color: var(--crt-hover-band); color: var(--crt-bright); border-color: var(--crt-norm);"
+                title="Filter by this city"
+              >
+                <span class="material-symbols-outlined filled text-sm leading-none">location_on</span>
+                <span id="modal-city-text">TAIWAN</span>
+              </button>
+            </div>
+
+            <!-- Place Title -->
+            <h2 id="modal-title" class="text-2xl sm:text-3xl lg:text-[34px] font-normal tracking-wide leading-none mb-3 crt-ink-bright">
+              Place Title
+            </h2>
+
+            <!-- Category Tags (Clickable filters) -->
+            <div id="modal-categories" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+            <!-- Description (Roboto Mono for high-legibility multi-line reading) -->
+            <p
+              id="modal-description"
+              class="text-xs sm:text-sm leading-relaxed whitespace-pre-line"
+              style="font-family: var(--font-crt-body); color: var(--crt-norm);"
+            ></p>
+          </div>
+
+          <!-- Bottom Primary Action: Google Maps -->
+          <div class="pt-4 border-t-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3" style="border-color: var(--crt-border);">
+            <a
+              id="modal-maps-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="md3-btn-filled flex-1 text-center"
+            >
+              <span class="material-symbols-outlined text-xl">map</span>
+              <span>OPEN IN GOOGLE MAPS</span>
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CRT STATUS SNACKBAR FEEDBACK TOAST
+       ======================================================================== -->
+  <div id="snackbar" class="md3-snackbar" role="status" aria-live="polite">
+    <span class="material-symbols-outlined text-lg">check_circle</span>
+    <span id="snackbar-text">LINK COPIED TO CLIPBOARD</span>
+  </div>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC
+       ======================================================================== -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* ----------------------------------------------------------------------
+         CONSTANTS & CONFIGURATION
+         ---------------------------------------------------------------------- */
+      const CSV_URL =
+        'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+      const CACHE_STORAGE_KEY = 'taiwanTopCsvCache_v1';
+      const FALLBACK_PHOTO =
+        'https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg';
+      const PAGE_SIZE = 24;
+
+      const STOP_WORDS = new Set([
+        'the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was',
+        'were', 'have', 'has', 'had', 'not', 'but', 'what', 'all', 'when',
+        'can', 'there', 'use', 'each', 'which', 'their', 'if', 'will', 'way',
+        'about', 'many', 'then', 'them', 'would', 'like', 'into', 'has', 'more',
+        'two', 'see', 'out', 'very', 'just', 'one', 'also', 'its', 'you', 'your',
+        'taiwan', 'place', 'spot', 'great', 'good', 'best', 'really'
+      ]);
+
+      /* ----------------------------------------------------------------------
+         APPLICATION STATE
+         ---------------------------------------------------------------------- */
+      let allPlaces = [];
+      let visiblePlaces = [];
+      let displayedCount = PAGE_SIZE;
+
+      let activeCategory = 'ALL';
+      let searchQuery = '';
+      let sortOrder = 'newest'; // 'newest' | 'alpha'
+      let activeModalIndex = -1;
+      let pendingSpotSlug = null;
+
+      // Autocomplete state
+      let autocompleteIndex = [];
+      let currentSuggestions = [];
+      let highlightedSuggestionIdx = -1;
+      let searchDebounceTimer = null;
+
+      // Runner game state
+      let dinoAnimFrameId = null;
+      let dinoGameRunning = false;
+      let audioCtx = null;
+
+      /* ----------------------------------------------------------------------
+         DOM ELEMENT REFERENCES
+         ---------------------------------------------------------------------- */
+      const els = {
+        topAppBar: document.getElementById('top-app-bar'),
+        brandResetBtn: document.getElementById('brand-reset-btn'),
+        headerTotalBadge: document.getElementById('header-total-badge'),
+        searchInput: document.getElementById('search-input'),
+        clearSearchBtn: document.getElementById('clear-search-btn'),
+        autocompleteDropdown: document.getElementById('autocomplete-dropdown'),
+        autocompleteList: document.getElementById('autocomplete-list'),
+        themeToggleBtn: document.getElementById('theme-toggle-btn'),
+        themeIcon: document.getElementById('theme-icon'),
+        categoryFilters: document.getElementById('category-filters'),
+        resultsSummary: document.getElementById('results-summary'),
+        resultsToolbar: document.getElementById('results-toolbar'),
+        resetFiltersInlineBtn: document.getElementById('reset-filters-inline-btn'),
+        sortToggleBtn: document.getElementById('sort-toggle-btn'),
+        sortToggleIcon: document.getElementById('sort-toggle-icon'),
+        sortToggleLabel: document.getElementById('sort-toggle-label'),
+        loadingSkeleton: document.getElementById('loading-skeleton'),
+        placesGrid: document.getElementById('places-grid'),
+        loadMoreContainer: document.getElementById('load-more-container'),
+        loadMoreBtn: document.getElementById('load-more-btn'),
+        loadMoreLabel: document.getElementById('load-more-label'),
+        emptyState: document.getElementById('empty-state'),
+        emptyStateTitle: document.getElementById('empty-state-title'),
+        emptyStateSubtitle: document.getElementById('empty-state-subtitle'),
+        emptyResetBtn: document.getElementById('empty-reset-btn'),
+        retryFetchBtn: document.getElementById('retry-fetch-btn'),
+        dinoCanvas: document.getElementById('dino-canvas'),
+        gameScoreReadout: document.getElementById('game-score-readout'),
+        placeModal: document.getElementById('place-modal'),
+        modalDialogCard: document.getElementById('modal-dialog-card'),
+        modalPrevBtn: document.getElementById('modal-prev-btn'),
+        modalNextBtn: document.getElementById('modal-next-btn'),
+        modalCounter: document.getElementById('modal-counter'),
+        modalShareBtn: document.getElementById('modal-share-btn'),
+        modalShareIcon: document.getElementById('modal-share-icon'),
+        modalShareLabel: document.getElementById('modal-share-label'),
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+        modalImage: document.getElementById('modal-image'),
+        modalCityBtn: document.getElementById('modal-city-btn'),
+        modalCityText: document.getElementById('modal-city-text'),
+        modalTitle: document.getElementById('modal-title'),
+        modalCategories: document.getElementById('modal-categories'),
+        modalDescription: document.getElementById('modal-description'),
+        modalMapsLink: document.getElementById('modal-maps-link'),
+        snackbar: document.getElementById('snackbar'),
+        snackbarText: document.getElementById('snackbar-text')
+      };
+
+      /* ----------------------------------------------------------------------
+         NORMALIZATION & UTILITY HELPERS
+         ---------------------------------------------------------------------- */
+
+      function slugify(str) {
+        return String(str || '')
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'spot';
+      }
+
+      function formatCityName(raw) {
+        const clean = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (!clean) return '';
+        return clean
+          .split(' ')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ');
+      }
+
+      function extractFlickrPhotoId(photoUrl) {
+        const url = String(photoUrl || '');
+        const match = url.match(/\/(\d{8,})_[a-z0-9]+/i) || url.match(/(\d{9,})/);
+        if (!match) return 0n;
+        try {
+          return BigInt(match[1]);
+        } catch {
+          return 0n;
+        }
+      }
+
+      function normalizePhotoUrl(rawUrl) {
+        let raw = String(rawUrl || '').trim();
+        if (!raw) return '';
+
+        const urlMatch = raw.match(/https?:\/\/[^\s"'<>,]+/i);
+        let url = urlMatch ? urlMatch[0] : raw.split(/[\s,]+/)[0];
+
+        if (url.startsWith('http://')) {
+          url = 'https://' + url.slice(7);
+        }
+
+        const gdriveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/i);
+        if (gdriveMatch) {
+          return `https://lh3.googleusercontent.com/d/${gdriveMatch[1]}=s1200`;
+        }
+
+        return url;
+      }
+
+      function getFlickrVariantUrl(photoUrl, sizeSuffix) {
+        const url = normalizePhotoUrl(photoUrl);
+        if (!/staticflickr\.com\//i.test(url)) return url;
+        const standardSuffixRegex = /_(s|q|t|m|n|w|z|c|b|h|k)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (standardSuffixRegex.test(url)) {
+          return url.replace(standardSuffixRegex, `_${sizeSuffix}$2`);
+        }
+        const unsuffixedRegex = /(\/\d+_[a-f0-9]+)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (unsuffixedRegex.test(url)) {
+          return url.replace(unsuffixedRegex, `$1_${sizeSuffix}$2`);
+        }
+        return url;
+      }
+
+      function buildPhotoCandidates(rawPhoto, preferLarge = false) {
+        const original = normalizePhotoUrl(rawPhoto);
+        if (!original) return [FALLBACK_PHOTO];
+
+        const candidates = [];
+        const add = (u) => {
+          if (u && !candidates.includes(u)) candidates.push(u);
+        };
+
+        if (/staticflickr\.com\//i.test(original)) {
+          const isOriginalSecret = /_o\.(?:jpe?g|png|webp|gif)(?=$|\?)/i.test(original);
+          if (isOriginalSecret) {
+            add(original);
+          }
+
+          if (preferLarge) {
+            add(getFlickrVariantUrl(original, 'b'));
+            add(getFlickrVariantUrl(original, 'h'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'z'));
+            add(original);
+          } else {
+            add(getFlickrVariantUrl(original, 'z'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'b'));
+            add(original);
+          }
+          const unsuffixed = original.replace(
+            /_(s|q|t|m|n|w|z|c|b|h|k|o)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i,
+            '$2'
+          );
+          add(unsuffixed);
+        } else {
+          add(original);
+        }
+
+        add(FALLBACK_PHOTO);
+        return candidates;
+      }
+
+      async function resolveFlickrPagePhoto(pageUrl, imgEl, preferLarge) {
+        try {
+          const oembedUrl = `https://www.flickr.com/services/oembed/?format=json&url=${encodeURIComponent(pageUrl)}`;
+          const res = await fetch(oembedUrl);
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (data && data.url) {
+            const resolved = preferLarge
+              ? getFlickrVariantUrl(data.url, 'b')
+              : getFlickrVariantUrl(data.url, 'z');
+            imgEl.src = resolved || data.url;
+            return true;
+          }
+        } catch {
+          // Ignore oEmbed failure
+        }
+        return false;
+      }
+
+      function attachImageFallbackChain(imgEl, candidates) {
+        let attemptIndex = 0;
+
+        const applySrc = (url) => {
+          imgEl.referrerPolicy = /staticflickr\.com/i.test(url)
+            ? 'no-referrer'
+            : 'strict-origin-when-cross-origin';
+          imgEl.src = url;
+        };
+
+        const firstUrl = candidates[0] || FALLBACK_PHOTO;
+
+        if (/flickr\.com\/photos\//i.test(firstUrl) || /flic\.kr\/p\//i.test(firstUrl)) {
+          imgEl.onerror = () => {
+            imgEl.onerror = null;
+            imgEl.src = FALLBACK_PHOTO;
+          };
+          resolveFlickrPagePhoto(firstUrl, imgEl, candidates.length > 2).then((ok) => {
+            if (!ok) imgEl.src = FALLBACK_PHOTO;
+          });
+          return;
+        }
+
+        imgEl.onerror = function () {
+          attemptIndex += 1;
+          if (attemptIndex < candidates.length) {
+            applySrc(candidates[attemptIndex]);
+          } else {
+            this.onerror = null;
+          }
+        };
+        applySrc(firstUrl);
+      }
+
+      function parseCategories(rawCat) {
+        if (!rawCat) return [];
+        const seen = new Set();
+        const result = [];
+        String(rawCat)
+          .split(/[,;|]/)
+          .forEach((token) => {
+            const clean = token.trim().replace(/\s+/g, ' ');
+            if (!clean) return;
+            const key = clean.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              result.push(clean);
+            }
+          });
+        return result;
+      }
+
+      function normalizePlaceRow(row, index) {
+        if (!row || typeof row !== 'object') return null;
+
+        const title = String(
+          row.Title ?? row.title ?? row.Name ?? row.name ?? ''
+        )
+          .trim()
+          .replace(/\s+/g, ' ');
+        if (!title) return null;
+
+        const city = formatCityName(
+          row.City ?? row.city ?? row.Location ?? row.location ?? ''
+        );
+
+        const rawCategories =
+          row.Category ??
+          row.category ??
+          row.Categories ??
+          row.categories ??
+          row.Tags ??
+          row.tags ??
+          '';
+        const categories = parseCategories(rawCategories);
+
+        const description = String(
+          row.Description ?? row.description ?? row.Notes ?? row.notes ?? ''
+        ).trim();
+
+        const rawPhoto = String(
+          row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
+        ).trim();
+        const basePhoto = normalizePhotoUrl(rawPhoto) || FALLBACK_PHOTO;
+        const thumbCandidates = buildPhotoCandidates(basePhoto, false);
+        const largeCandidates = buildPhotoCandidates(basePhoto, true);
+        const photo = thumbCandidates[0];
+        const photoLarge = largeCandidates[0];
+        const flickrId = extractFlickrPhotoId(basePhoto);
+
+        const link = String(
+          row.Link ?? row.link ?? row.Maps ?? row.maps ?? row['Google Maps'] ?? ''
+        ).trim();
+
+        return {
+          id: index,
+          title,
+          slug: slugify(title),
+          city,
+          categories,
+          description,
+          photo,
+          photoLarge,
+          photoOriginal: basePhoto,
+          thumbCandidates,
+          largeCandidates,
+          flickrId,
+          link
+        };
+      }
+
+      /* ----------------------------------------------------------------------
+         1. STATE MANAGEMENT & URL SYNCHRONIZATION
+         ---------------------------------------------------------------------- */
+
+      function parseUrlState() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const catParam = params.get('cat');
+          const cityParam = params.get('city');
+          const qParam = params.get('q');
+          const spotParam = params.get('spot');
+
+          if (catParam) {
+            activeCategory = catParam.trim().toLowerCase();
+          }
+
+          if (qParam) {
+            searchQuery = qParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          } else if (cityParam) {
+            searchQuery = cityParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          }
+
+          if (spotParam) {
+            pendingSpotSlug = spotParam.trim();
+          }
+        } catch {
+          // Ignore URL parsing issues
+        }
+      }
+
+      function updateUrlState(targetSpotSlug) {
+        try {
+          const origin = window.location.origin;
+          if (!origin || origin === 'null' || window.location.protocol === 'blob:') {
+            return;
+          }
+
+          const url = new URL(window.location.href);
+          if (activeCategory && activeCategory !== 'ALL') {
+            url.searchParams.set('cat', activeCategory);
+          } else {
+            url.searchParams.delete('cat');
+          }
+
+          if (searchQuery && searchQuery.trim()) {
+            url.searchParams.set('q', searchQuery.trim());
+          } else {
+            url.searchParams.delete('q');
+          }
+          url.searchParams.delete('city');
+
+          if (targetSpotSlug) {
+            url.searchParams.set('spot', targetSpotSlug);
+          } else {
+            url.searchParams.delete('spot');
+          }
+
+          window.history.replaceState({}, '', url.toString());
+        } catch {
+          // Skip history updates in sandboxed origins
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         2. FILTERING, SEARCH & AUTOCOMPLETE ENGINE
+         ---------------------------------------------------------------------- */
+
+      function populateCategoryFilters() {
+        const counts = new Map();
+        const labels = new Map();
+
+        allPlaces.forEach((place) => {
+          place.categories.forEach((cat) => {
+            const key = cat.toLowerCase();
+            counts.set(key, (counts.get(key) || 0) + 1);
+            if (!labels.has(key)) labels.set(key, cat);
+          });
+        });
+
+        const sortedKeys = Array.from(counts.keys()).sort((a, b) => a.localeCompare(b));
+        const frag = document.createDocumentFragment();
+
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'md3-filter-chip';
+        allBtn.setAttribute('aria-pressed', activeCategory === 'ALL' ? 'true' : 'false');
+        allBtn.innerHTML = `<span>ALL</span><span class="chip-count">${allPlaces.length}</span>`;
+        allBtn.addEventListener('click', () => setCategory('ALL'));
+        frag.appendChild(allBtn);
+
+        sortedKeys.forEach((key) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'md3-filter-chip';
+          btn.setAttribute('aria-pressed', activeCategory === key ? 'true' : 'false');
+          btn.innerHTML = `<span>${escapeHtml(labels.get(key))}</span><span class="chip-count">${counts.get(key)}</span>`;
+          btn.addEventListener('click', () => setCategory(key));
+          frag.appendChild(btn);
+        });
+
+        els.categoryFilters.innerHTML = '';
+        els.categoryFilters.appendChild(frag);
+      }
+
+      function setCategory(cat) {
+        const normalized = cat === 'ALL' ? 'ALL' : String(cat).toLowerCase();
+        if (normalized !== 'ALL' && activeCategory === normalized) {
+          activeCategory = 'ALL';
+        } else {
+          activeCategory = normalized;
+        }
+        populateCategoryFilters();
+        filterPlaces();
+      }
+
+      function updateResultsSummary() {
+        const total = visiblePlaces.length;
+        const hasFilters = activeCategory !== 'ALL' || Boolean(searchQuery.trim());
+        els.resetFiltersInlineBtn.classList.toggle('hidden', !hasFilters);
+
+        if (total === 0) {
+          els.resultsSummary.textContent = '0 PLACES FOUND';
+        } else if (hasFilters) {
+          els.resultsSummary.textContent = `${total} MATCHING ${total === 1 ? 'PLACE' : 'PLACES'}`;
+        } else {
+          els.resultsSummary.textContent = `${total} CURATED PLACES ACROSS TAIWAN`;
+        }
+      }
+
+      function filterPlaces() {
+        const rawTokens = searchQuery
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        visiblePlaces = allPlaces.filter((place) => {
+          if (activeCategory !== 'ALL') {
+            const matchesCat = place.categories.some(
+              (c) => c.toLowerCase() === activeCategory
+            );
+            if (!matchesCat) return false;
+          }
+
+          if (rawTokens.length > 0) {
+            const searchable = [
+              place.title,
+              place.description,
+              place.categories.join(' '),
+              place.city
+            ]
+              .join(' ')
+              .toLowerCase();
+
+            if (!rawTokens.every((tok) => searchable.includes(tok))) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        if (sortOrder === 'alpha') {
+          visiblePlaces.sort((a, b) =>
+            a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
+          );
+        }
+
+        displayedCount = PAGE_SIZE;
+        updateResultsSummary();
+        updateUrlState(activeModalIndex !== -1 && visiblePlaces[activeModalIndex] ? visiblePlaces[activeModalIndex].slug : null);
+        renderCards();
+      }
+
+      function toggleSortOrder() {
+        sortOrder = sortOrder === 'newest' ? 'alpha' : 'newest';
+        if (sortOrder === 'alpha') {
+          els.sortToggleIcon.textContent = 'sort_by_alpha';
+          els.sortToggleLabel.textContent = 'SORTED A–Z';
+        } else {
+          els.sortToggleIcon.textContent = 'sort';
+          els.sortToggleLabel.textContent = 'SORTED NEWEST FIRST';
+        }
+        filterPlaces();
+      }
+
+      function buildAutocompleteIndex() {
+        const seen = new Set();
+        const entries = [];
+        const cityCounts = new Map();
+
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            const key = p.city.toLowerCase();
+            cityCounts.set(key, (cityCounts.get(key) || 0) + 1);
+          }
+        });
+
+        const addTerm = (term, type, priority, count) => {
+          const clean = String(term || '').trim().replace(/\s+/g, ' ');
+          const lower = clean.toLowerCase();
+          if (!clean || seen.has(lower)) return;
+          seen.add(lower);
+          entries.push({ term: clean, lower, type, priority, count });
+        };
+
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            addTerm(p.city, 'city', 1, cityCounts.get(p.city.toLowerCase()) || 0);
+          }
+        });
+
+        allPlaces.forEach((p) => {
+          p.categories.forEach((cat) => addTerm(cat, 'food', 2));
+        });
+
+        allPlaces.forEach((p) => {
+          addTerm(p.title, 'place', 3);
+        });
+
+        allPlaces.forEach((p) => {
+          const blob = `${p.title} ${p.description}`;
+          const words = blob.match(/[a-zA-Z0-9\u4e00-\u9fff]{3,}/g) || [];
+          words.forEach((w) => {
+            if (!STOP_WORDS.has(w.toLowerCase())) {
+              addTerm(w, 'word', 4);
+            }
+          });
+        });
+
+        entries.sort((a, b) => a.priority - b.priority || a.term.localeCompare(b.term));
+        autocompleteIndex = entries;
+      }
+
+      function triggerFeelingLucky() {
+        els.searchInput.blur();
+        hideAutocomplete();
+        if (!allPlaces.length) return;
+        const randomPlace = allPlaces[Math.floor(Math.random() * allPlaces.length)];
+        activeCategory = 'ALL';
+        populateCategoryFilters();
+        searchQuery = randomPlace.title;
+        els.searchInput.value = randomPlace.title;
+        els.clearSearchBtn.classList.remove('hidden');
+        filterPlaces();
+        const idx = visiblePlaces.findIndex((p) => p.slug === randomPlace.slug);
+        if (idx !== -1) {
+          openModal(idx);
+          launchPhosphorBurst();
+        }
+      }
+
+      /**
+       * Launches a phosphor pixel burst across the CRT screen when a spot is chosen via "I Feel Lucky".
+       */
+      function launchPhosphorBurst() {
+        const existing = document.getElementById('lucky-confetti-canvas');
+        if (existing) existing.remove();
+
+        const canvas = document.createElement('canvas');
+        canvas.id = 'lucky-confetti-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        canvas.style.cssText =
+          'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:85;';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        const styles = getComputedStyle(document.documentElement);
+        const colors = [
+          styles.getPropertyValue('--crt-dim').trim() || '#2f9a56',
+          styles.getPropertyValue('--crt-norm').trim() || '#63e58c',
+          styles.getPropertyValue('--crt-bright').trim() || '#b4ffcb',
+          styles.getPropertyValue('--crt-active-fill').trim() || '#7dffa5'
+        ];
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const particles = [];
+        const origins = [
+          { x: width * 0.25, y: height * 0.55 },
+          { x: width * 0.5, y: height * 0.45 },
+          { x: width * 0.75, y: height * 0.55 }
+        ];
+
+        origins.forEach((origin) => {
+          for (let i = 0; i < 36; i++) {
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.45;
+            const speed = 6 + Math.random() * 10;
+            particles.push({
+              x: origin.x + (Math.random() - 0.5) * 32,
+              y: origin.y + (Math.random() - 0.5) * 16,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 2,
+              size: 4 + Math.floor(Math.random() * 4) * 2,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              alpha: 1
+            });
+          }
+        });
+
+        let startTime = null;
+        const duration = 2000;
+
+        function frame(now) {
+          if (!startTime) startTime = now;
+          const elapsed = now - startTime;
+          ctx.clearRect(0, 0, width, height);
+
+          let aliveCount = 0;
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.vy += 0.35;
+            p.vx *= 0.985;
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (elapsed > duration - 550) {
+              p.alpha = Math.max(0, (duration - elapsed) / 550);
+            }
+
+            if (p.y < height + 24 && p.alpha > 0.01) {
+              aliveCount++;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.fillStyle = p.color;
+              ctx.shadowColor = p.color;
+              ctx.shadowBlur = 8;
+              ctx.fillRect(Math.round(p.x / 2) * 2, Math.round(p.y / 2) * 2, p.size, p.size);
+              ctx.restore();
+            }
+          }
+
+          if (elapsed < duration && aliveCount > 0) {
+            requestAnimationFrame(frame);
+          } else {
+            canvas.remove();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      function updateAutocompleteSuggestions(rawInput) {
+        const query = String(rawInput || '').trim().toLowerCase();
+        highlightedSuggestionIdx = -1;
+
+        let matches = [];
+        if (!query) {
+          matches = autocompleteIndex
+            .filter((item) => item.type === 'city')
+            .sort((a, b) => b.term.localeCompare(a.term));
+        } else {
+          matches = autocompleteIndex
+            .filter((item) => item.lower.includes(query))
+            .slice(0, 8);
+        }
+
+        const luckyItem = {
+          term: 'I Feel Lucky',
+          lower: 'i feel lucky',
+          type: 'lucky',
+          priority: 99
+        };
+        currentSuggestions = [...matches, luckyItem];
+
+        const iconMap = {
+          city: 'location_on',
+          food: 'restaurant',
+          place: 'storefront',
+          word: 'tag',
+          lucky: 'casino'
+        };
+
+        const badgeMap = {
+          city: 'CITY',
+          food: 'CAT',
+          place: 'SPOT',
+          word: 'KEY',
+          lucky: 'RAND'
+        };
+
+        const frag = document.createDocumentFragment();
+        currentSuggestions.forEach((item) => {
+          const li = document.createElement('li');
+          li.className = 'md3-autocomplete-item';
+          li.setAttribute('role', 'option');
+          const isLucky = item.type === 'lucky';
+          const countHtml =
+            item.type === 'city' && typeof item.count === 'number'
+              ? ` <span class="ac-count crt-ink-bright">(${item.count})</span>`
+              : '';
+
+          li.innerHTML = `
+            <span class="flex items-center gap-2 min-w-0">
+              <span class="ac-icon material-symbols-outlined ${isLucky ? 'filled' : ''} text-base shrink-0 crt-ink-bright">
+                ${iconMap[item.type] || 'search'}
+              </span>
+              <span class="truncate">${escapeHtml(item.term)}${countHtml}</span>
+            </span>
+            <span class="ac-badge text-sm uppercase tracking-wider px-1.5 py-0.5 shrink-0 ml-2 border"
+              style="background-color: var(--crt-surface); color: var(--crt-dim); border-color: var(--crt-border);">
+              ${badgeMap[item.type] || ''}
+            </span>
+          `;
+
+          li.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectAutocompleteSuggestion(item);
+          });
+
+          li.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
+          frag.appendChild(li);
+        });
+
+        els.autocompleteList.innerHTML = '';
+        els.autocompleteList.appendChild(frag);
+        els.autocompleteDropdown.classList.remove('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'true');
+      }
+
+      let suppressCardClickUntil = 0;
+
+      function selectAutocompleteSuggestion(item) {
+        if (!item) return;
+        suppressCardClickUntil = Date.now() + 450;
+        els.searchInput.blur();
+
+        if (item.type === 'lucky') {
+          triggerFeelingLucky();
+          return;
+        }
+        els.searchInput.value = item.term;
+        searchQuery = item.term;
+        els.clearSearchBtn.classList.remove('hidden');
+        hideAutocomplete();
+        filterPlaces();
+
+        if (item.type === 'place') {
+          const idx = visiblePlaces.findIndex(
+            (p) => p.title.toLowerCase() === item.lower
+          );
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      function hideAutocomplete() {
+        els.autocompleteDropdown.classList.add('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'false');
+        highlightedSuggestionIdx = -1;
+      }
+
+      function highlightSuggestion(index) {
+        const items = els.autocompleteList.querySelectorAll('.md3-autocomplete-item');
+        if (!items.length) return;
+        items.forEach((el) => el.classList.remove('active'));
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
+        highlightedSuggestionIdx = index;
+        items[index].classList.add('active');
+        items[index].scrollIntoView({ block: 'nearest' });
+      }
+
+      /* ----------------------------------------------------------------------
+         3. CARD GRID & PAGINATION RENDERING
+         ---------------------------------------------------------------------- */
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderLoadingSkeletons() {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 12; i++) {
+          const skel = document.createElement('div');
+          skel.className = 'aspect-square skeleton-pulse border';
+          skel.style.borderColor = 'var(--crt-border)';
+          frag.appendChild(skel);
+        }
+        els.loadingSkeleton.innerHTML = '';
+        els.loadingSkeleton.appendChild(frag);
+      }
+
+      function createPlaceCardElement(place, index) {
+        const card = document.createElement('article');
+        card.className = 'md3-place-card group';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${place.title}${place.city ? ', ' + place.city : ''}`);
+        // Staggered CRT horizontal sweep reveal (34ms per card up to 12 cards)
+        card.style.animationDelay = `${Math.min(index, 12) * 34}ms`;
+
+        const isAboveFold = index < 6;
+        const loadingAttr = isAboveFold ? 'eager' : 'lazy';
+        const priorityAttr = index === 0 ? 'fetchpriority="high"' : '';
+
+        const cityPill = place.city
+          ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 text-base leading-none border crt-ink-bright"
+              style="background-color: rgba(1, 4, 2, 0.86); border-color: var(--crt-norm);">
+              <span class="material-symbols-outlined filled text-[13px]">location_on</span>
+              ${escapeHtml(place.city)}
+            </span>`
+          : '';
+
+        const catBadges = place.categories
+          .slice(0, 1)
+          .map(
+            (cat) =>
+              `<span class="text-base leading-none uppercase tracking-wider crt-ink-norm">${escapeHtml(cat)}</span>`
+          )
+          .join('');
+
+        card.innerHTML = `
+          <img
+            alt="${escapeHtml(place.title)}"
+            loading="${loadingAttr}"
+            decoding="async"
+            ${priorityAttr}
+          />
+          <div class="md3-card-scrim"></div>
+          <div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none z-10">
+            ${cityPill}
+          </div>
+          <div class="absolute bottom-2.5 left-3 right-3 pointer-events-none z-10">
+            <div class="flex flex-wrap gap-1 mb-0.5">
+              ${catBadges}
+            </div>
+            <h2 class="text-2xl sm:text-[26px] font-normal leading-none line-clamp-2 crt-ink-bright">
+              ${escapeHtml(place.title)}
+            </h2>
+          </div>
+        `;
+
+        const imgEl = card.querySelector('img');
+        attachImageFallbackChain(imgEl, place.thumbCandidates);
+
+        card.addEventListener('click', () => {
+          if (Date.now() < suppressCardClickUntil) return;
+          openModal(index);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(index);
+          }
+        });
+
+        return card;
+      }
+
+      function renderCards() {
+        els.loadingSkeleton.classList.add('hidden');
+
+        if (visiblePlaces.length === 0) {
+          els.placesGrid.innerHTML = '';
+          els.loadMoreContainer.classList.add('hidden');
+          els.resultsToolbar.classList.add('hidden');
+          els.emptyState.classList.remove('hidden');
+          startDinoGame();
+          return;
+        }
+
+        els.resultsToolbar.classList.remove('hidden');
+        els.emptyState.classList.add('hidden');
+        stopDinoGame();
+
+        const slice = visiblePlaces.slice(0, displayedCount);
+        const frag = document.createDocumentFragment();
+        slice.forEach((place, idx) => {
+          frag.appendChild(createPlaceCardElement(place, idx));
+        });
+
+        els.placesGrid.innerHTML = '';
+        els.placesGrid.appendChild(frag);
+
+        const remaining = visiblePlaces.length - slice.length;
+        if (remaining > 0) {
+          els.loadMoreContainer.classList.remove('hidden');
+          els.loadMoreLabel.textContent = `LOAD MORE (${remaining} REMAINING)`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
+      }
+
+      function handleLoadMore() {
+        const prevCount = displayedCount;
+        displayedCount = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+        const newSlice = visiblePlaces.slice(prevCount, displayedCount);
+
+        const frag = document.createDocumentFragment();
+        newSlice.forEach((place, offset) => {
+          frag.appendChild(createPlaceCardElement(place, offset));
+        });
+        els.placesGrid.appendChild(frag);
+
+        const remaining = visiblePlaces.length - displayedCount;
+        if (remaining > 0) {
+          els.loadMoreLabel.textContent = `LOAD MORE (${remaining} REMAINING)`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         4. DETAIL MODAL & SHARE LINK
+         ---------------------------------------------------------------------- */
+
+      function openModal(index) {
+        if (index < 0 || index >= visiblePlaces.length) return;
+        activeModalIndex = index;
+        const place = visiblePlaces[index];
+
+        els.placeModal.scrollTop = 0;
+        els.modalCounter.textContent = `${index + 1} / ${visiblePlaces.length}`;
+        els.modalPrevBtn.disabled = visiblePlaces.length <= 1;
+        els.modalNextBtn.disabled = visiblePlaces.length <= 1;
+
+        els.modalImage.alt = place.title;
+        attachImageFallbackChain(els.modalImage, place.largeCandidates);
+
+        if (place.city) {
+          els.modalCityBtn.classList.remove('hidden');
+          els.modalCityText.textContent = place.city;
+        } else {
+          els.modalCityBtn.classList.add('hidden');
+        }
+
+        els.modalTitle.textContent = place.title;
+
+        els.modalCategories.innerHTML = '';
+        place.categories.forEach((cat) => {
+          const tag = document.createElement('button');
+          tag.type = 'button';
+          tag.className = 'md3-modal-cat-tag';
+          tag.textContent = cat;
+          tag.title = `Filter by ${cat}`;
+          tag.addEventListener('click', () => {
+            closeModal();
+            setCategory(cat);
+          });
+          els.modalCategories.appendChild(tag);
+        });
+
+        els.modalDescription.textContent =
+          place.description || 'A hand-picked spot in Taiwan curated by @alby.food.';
+
+        const mapsHref =
+          place.link ||
+          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${place.title} ${place.city} Taiwan`
+          )}`;
+        els.modalMapsLink.href = mapsHref;
+
+        els.placeModal.classList.add('open');
+        els.placeModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        updateUrlState(place.slug);
+      }
+
+      function closeModal() {
+        activeModalIndex = -1;
+        els.placeModal.classList.remove('open');
+        els.placeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        updateUrlState(null);
+      }
+
+      function navigateModal(delta) {
+        if (activeModalIndex === -1 || visiblePlaces.length <= 1) return;
+        const nextIdx =
+          (activeModalIndex + delta + visiblePlaces.length) % visiblePlaces.length;
+        if (nextIdx >= displayedCount) {
+          displayedCount = nextIdx + 1;
+          renderCards();
+        }
+        openModal(nextIdx);
+      }
+
+      function showSnackbar(message) {
+        els.snackbarText.textContent = message.toUpperCase();
+        els.snackbar.classList.add('show');
+        clearTimeout(showSnackbar._timer);
+        showSnackbar._timer = setTimeout(() => {
+          els.snackbar.classList.remove('show');
+        }, 2800);
+      }
+
+      function copyDirectSpotLink() {
+        if (activeModalIndex === -1 || !visiblePlaces[activeModalIndex]) return;
+        const place = visiblePlaces[activeModalIndex];
+        let shareUrl = window.location.href;
+        try {
+          if (window.location.origin && window.location.origin !== 'null') {
+            const u = new URL(window.location.origin + window.location.pathname);
+            u.searchParams.set('spot', place.slug);
+            shareUrl = u.toString();
+          }
+        } catch {
+          // Fallback to current href
+        }
+
+        const tempInput = document.createElement('textarea');
+        tempInput.value = shareUrl;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand('copy');
+          els.modalShareIcon.textContent = 'done';
+          els.modalShareLabel.textContent = 'COPIED';
+          showSnackbar(`COPIED LINK FOR "${place.title}"`);
+          setTimeout(() => {
+            els.modalShareIcon.textContent = 'share';
+            els.modalShareLabel.textContent = 'SHARE';
+          }, 2000);
+        } catch {
+          showSnackbar('UNABLE TO COPY LINK');
+        }
+        document.body.removeChild(tempInput);
+      }
+
+      /* ----------------------------------------------------------------------
+         5. CRT PHOSPHOR COLOR SWITCHER (P31 GREEN / P3 AMBER)
+         ---------------------------------------------------------------------- */
+
+      function initTheme() {
+        const saved = localStorage.getItem('taiwanTopPhosphor');
+        if (saved === 'amber') {
+          document.documentElement.setAttribute('data-theme', 'amber');
+        }
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const isAmber = document.documentElement.getAttribute('data-theme') === 'amber';
+        els.themeIcon.textContent = isAmber ? 'dark_mode' : 'light_mode';
+      }
+
+      function toggleTheme() {
+        const isAmber = document.documentElement.getAttribute('data-theme') === 'amber';
+        if (isAmber) {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('taiwanTopPhosphor', 'green');
+          showSnackbar('PHOSPHOR: P31 GREEN');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'amber');
+          localStorage.setItem('taiwanTopPhosphor', 'amber');
+          showSnackbar('PHOSPHOR: P3 AMBER');
+        }
+        updateThemeIcon();
+      }
+
+      /* ----------------------------------------------------------------------
+         6. CSV PARSING & STALE-WHILE-REVALIDATE CACHE
+         ---------------------------------------------------------------------- */
+
+      function parseCsvTextToPlaces(csvText) {
+        if (!csvText || typeof Papa === 'undefined') return [];
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true
+        });
+        if (!parsed || !Array.isArray(parsed.data)) return [];
+
+        const normalized = [];
+        parsed.data.forEach((row, idx) => {
+          const item = normalizePlaceRow(row, idx);
+          if (item) normalized.push(item);
+        });
+
+        normalized.sort((a, b) => {
+          if (a.flickrId !== b.flickrId) {
+            return b.flickrId > a.flickrId ? 1 : -1;
+          }
+          return b.id - a.id;
+        });
+
+        return normalized;
+      }
+
+      function applyDataset(places) {
+        allPlaces = places;
+        els.headerTotalBadge.textContent = `${allPlaces.length} SPOTS`;
+        buildAutocompleteIndex();
+        populateCategoryFilters();
+        filterPlaces();
+
+        if (pendingSpotSlug) {
+          const targetSlug = pendingSpotSlug;
+          pendingSpotSlug = null;
+          const idx = visiblePlaces.findIndex((p) => p.slug === targetSlug);
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      async function loadPlacesData() {
+        els.retryFetchBtn.classList.add('hidden');
+        let cachedCsv = null;
+
+        try {
+          cachedCsv = localStorage.getItem(CACHE_STORAGE_KEY);
+          if (cachedCsv) {
+            const cachedPlaces = parseCsvTextToPlaces(cachedCsv);
+            if (cachedPlaces.length > 0) {
+              applyDataset(cachedPlaces);
+            }
+          }
+        } catch {
+          // Ignore storage read errors
+        }
+
+        try {
+          const bustUrl = `${CSV_URL}&_t=${Date.now()}`;
+          const response = await fetch(bustUrl, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const freshCsv = await response.text();
+          const freshPlaces = parseCsvTextToPlaces(freshCsv);
+
+          if (freshPlaces.length > 0) {
+            if (freshCsv !== cachedCsv) {
+              try {
+                localStorage.setItem(CACHE_STORAGE_KEY, freshCsv);
+              } catch {
+                // Ignore storage quota errors
+              }
+              applyDataset(freshPlaces);
+            }
+          } else if (!allPlaces.length) {
+            throw new Error('Empty CSV dataset');
+          }
+        } catch {
+          if (!allPlaces.length) {
+            els.loadingSkeleton.classList.add('hidden');
+            els.headerTotalBadge.textContent = 'OFFLINE';
+            els.resultsSummary.textContent = 'UNABLE TO LOAD CURATED PLACES';
+            els.emptyStateTitle.textContent = 'COULD NOT REACH GOOGLE SHEETS';
+            els.emptyStateSubtitle.textContent =
+              'Play Hot Pot Goose Run while waiting, or retry fetching the sheet.';
+            els.emptyStateSubtitle.classList.remove('hidden');
+            els.retryFetchBtn.classList.remove('hidden');
+            els.emptyState.classList.remove('hidden');
+            startDinoGame();
+          }
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         7. HOT POT GOOSE RUN MINI-GAME (CRT PHOSPHOR RENDERER)
+         ---------------------------------------------------------------------- */
+
+      const dinoState = {
+        y: 0,
+        vy: 0,
+        grounded: true,
+        obstacles: [],
+        clouds: [],
+        score: 0,
+        best: Number(localStorage.getItem('taiwanTopGooseBest') || 0),
+        speed: 4.5,
+        spawnTimer: 0,
+        gameOver: false,
+        frameTick: 0
+      };
+
+      function playJumpTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(620, audioCtx.currentTime + 0.09);
+          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.1);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function playGameOverTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.24);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.24);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function triggerDinoJump() {
+        if (!dinoGameRunning) return;
+        if (dinoState.gameOver) {
+          resetDinoGame();
+          return;
+        }
+        if (dinoState.grounded) {
+          dinoState.vy = -10.5;
+          dinoState.grounded = false;
+          playJumpTone();
+        }
+      }
+
+      function resetDinoGame() {
+        dinoState.y = 0;
+        dinoState.vy = 0;
+        dinoState.grounded = true;
+        dinoState.obstacles = [];
+        dinoState.clouds = [
+          { x: 140, y: 38, s: 1 },
+          { x: 380, y: 26, s: 0.8 },
+          { x: 540, y: 46, s: 1.1 }
+        ];
+        dinoState.score = 0;
+        dinoState.speed = 4.5;
+        dinoState.spawnTimer = 60;
+        dinoState.gameOver = false;
+      }
+
+      function drawPixelGoose(ctx, x, y, scale, strideFrame, isDead, normCol, brightCol) {
+        const u = scale;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.shadowColor = brightCol;
+        ctx.shadowBlur = 8;
+
+        ctx.fillStyle = normCol;
+        ctx.fillRect(8 * u, 0, 3 * u, 3 * u);
+        ctx.fillRect(8 * u, 3 * u, 2 * u, 9 * u);
+        ctx.fillRect(0, 8 * u, 3 * u, 1 * u);
+        ctx.fillRect(1 * u, 9 * u, 8 * u, 3 * u);
+        ctx.fillRect(2 * u, 12 * u, 7 * u, 1 * u);
+
+        if (isDead) {
+          ctx.fillStyle = brightCol;
+          ctx.fillRect(9 * u, 1 * u, 1.2 * u, 1.2 * u);
+        } else {
+          ctx.clearRect(9 * u, 1 * u, 1 * u, 1 * u);
+        }
+
+        ctx.fillStyle = brightCol;
+        ctx.fillRect(11 * u, 1 * u, 3 * u, 1 * u);
+        ctx.fillRect(11 * u, 2 * u, 2 * u, 1 * u);
+
+        const leftLift = !dinoState.grounded ? 1 * u : strideFrame === 0 ? 1 * u : 0;
+        const rightLift = !dinoState.grounded ? 0.5 * u : strideFrame === 1 ? 1 * u : 0;
+
+        ctx.fillRect(3 * u, 13 * u, 1 * u, 3 * u - leftLift);
+        ctx.fillRect(4 * u, 15 * u - leftLift, 1 * u, 1 * u);
+
+        ctx.fillRect(7 * u, 13 * u, 1 * u, 3 * u - rightLift);
+        ctx.fillRect(8 * u, 15 * u - rightLift, 1 * u, 1 * u);
+
+        ctx.restore();
+      }
+
+      function drawHotPotObstacle(ctx, ob, groundY, tick, dimCol, normCol, brightCol) {
+        const x = Math.round(ob.x);
+        const w = Math.round(ob.w);
+        const h = Math.round(ob.h);
+        const topY = Math.round(groundY - h);
+
+        ctx.save();
+        ctx.shadowColor = normCol;
+        ctx.shadowBlur = 6;
+
+        // Chopsticks
+        ctx.strokeStyle = brightCol;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.35, topY + 6);
+        ctx.lineTo(x + w * 0.1, topY - 8);
+        ctx.moveTo(x + w * 0.65, topY + 6);
+        ctx.lineTo(x + w * 0.9, topY - 7);
+        ctx.stroke();
+
+        // Pot side handles
+        ctx.fillStyle = brightCol;
+        ctx.fillRect(x - 3, topY + 9, 3, 4);
+        ctx.fillRect(x + w, topY + 9, 3, 4);
+
+        // Pot body
+        ctx.fillStyle = normCol;
+        ctx.fillRect(x, topY + 6, w, h - 8);
+        // Base foot
+        ctx.fillStyle = dimCol;
+        ctx.fillRect(x + 3, groundY - 2, w - 6, 2);
+
+        // Simmering broth & toppings rim
+        ctx.fillStyle = brightCol;
+        ctx.fillRect(x + 2, topY + 3, w - 4, 4);
+        ctx.fillStyle = dimCol;
+        ctx.fillRect(x + 5, topY + 2, 4, 3);
+        ctx.fillRect(x + w - 9, topY + 2, 4, 3);
+
+        // Rising pixel steam wisps
+        const phase = Math.floor((tick + x) / 10) % 2;
+        ctx.fillStyle = normCol;
+        ctx.globalAlpha = 0.6;
+        ctx.fillRect(x + Math.floor(w * 0.3), topY - 5 - phase * 3, 2, 4);
+        ctx.fillRect(x + Math.floor(w * 0.68), topY - 7 + phase * 3, 2, 4);
+        ctx.restore();
+      }
+
+      function startDinoGame() {
+        if (dinoGameRunning) return;
+        dinoGameRunning = true;
+        resetDinoGame();
+        if (document.activeElement === els.searchInput) {
+          els.searchInput.blur();
+        }
+        els.dinoCanvas.focus({ preventScroll: true });
+
+        const canvas = els.dinoCanvas;
+        const ctx = canvas.getContext('2d');
+
+        function step() {
+          if (!dinoGameRunning) return;
+
+          const rect = canvas.getBoundingClientRect();
+          const w = Math.max(300, Math.floor(rect.width || 600));
+          const h = Math.max(160, Math.floor(rect.height || 337));
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+          }
+
+          const styles = getComputedStyle(document.documentElement);
+          const groundCol = styles.getPropertyValue('--crt-ground').trim() || '#010402';
+          const dimCol = styles.getPropertyValue('--crt-dim').trim() || '#2f9a56';
+          const normCol = styles.getPropertyValue('--crt-norm').trim() || '#63e58c';
+          const brightCol = styles.getPropertyValue('--crt-bright').trim() || '#b4ffcb';
+
+          const groundY = h - 34;
+
+          if (!dinoState.gameOver) {
+            dinoState.frameTick++;
+            dinoState.score += 0.2;
+            dinoState.speed = Math.min(10.5, 4.5 + dinoState.score / 220);
+
+            dinoState.vy += 0.55;
+            dinoState.y += dinoState.vy;
+            if (dinoState.y >= 0) {
+              dinoState.y = 0;
+              dinoState.vy = 0;
+              dinoState.grounded = true;
+            }
+
+            dinoState.clouds.forEach((c) => {
+              c.x -= dinoState.speed * 0.25;
+              if (c.x < -50) {
+                c.x = w + 30 + Math.random() * 60;
+                c.y = 20 + Math.random() * 40;
+              }
+            });
+
+            dinoState.spawnTimer--;
+            if (dinoState.spawnTimer <= 0) {
+              const isDouble = dinoState.score > 60 && Math.random() < 0.35;
+              dinoState.obstacles.push({
+                x: w + 20,
+                w: isDouble ? 36 : 22 + Math.random() * 8,
+                h: 22 + Math.random() * 8
+              });
+              dinoState.spawnTimer = Math.floor(65 + Math.random() * 55);
+            }
+
+            const gooseBox = { x: 46, y: groundY - 36 + dinoState.y, w: 28, h: 34 };
+
+            for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
+              const ob = dinoState.obstacles[i];
+              ob.x -= dinoState.speed;
+              if (ob.x + ob.w < -15) {
+                dinoState.obstacles.splice(i, 1);
+                continue;
+              }
+              const obBox = { x: ob.x + 3, y: groundY - ob.h + 4, w: ob.w - 6, h: ob.h - 4 };
+              if (
+                gooseBox.x < obBox.x + obBox.w &&
+                gooseBox.x + gooseBox.w > obBox.x &&
+                gooseBox.y < obBox.y + obBox.h &&
+                gooseBox.y + gooseBox.h > obBox.y
+              ) {
+                dinoState.gameOver = true;
+                playGameOverTone();
+                const finalInt = Math.floor(dinoState.score);
+                if (finalInt > dinoState.best) {
+                  dinoState.best = finalInt;
+                  localStorage.setItem('taiwanTopGooseBest', String(finalInt));
+                }
+              }
+            }
+          }
+
+          ctx.fillStyle = groundCol;
+          ctx.fillRect(0, 0, w, h);
+
+          // Dotted CRT vertical grid guides
+          ctx.fillStyle = dimCol;
+          ctx.globalAlpha = 0.25;
+          for (let gx = 80; gx < w; gx += 120) {
+            for (let gy = 16; gy < groundY; gy += 6) {
+              ctx.fillRect(gx, gy, 2, 2);
+            }
+          }
+          ctx.globalAlpha = 1;
+
+          // Pixel Clouds
+          ctx.fillStyle = dimCol;
+          ctx.globalAlpha = 0.65;
+          dinoState.clouds.forEach((c) => {
+            const cx = Math.round(c.x);
+            const cy = Math.round(c.y);
+            ctx.fillRect(cx + 6, cy, 20, 4);
+            ctx.fillRect(cx, cy + 4, 32, 4);
+          });
+          ctx.globalAlpha = 1;
+
+          // Ground line & scrolling pebbles
+          ctx.fillStyle = normCol;
+          ctx.fillRect(16, groundY, w - 32, 2);
+
+          ctx.fillStyle = dimCol;
+          for (let px = 24; px < w - 24; px += 48) {
+            const offset = Math.floor((dinoState.frameTick * dinoState.speed) % 48);
+            const drawX = px - offset;
+            if (drawX > 18 && drawX < w - 22) {
+              ctx.fillRect(drawX, groundY + 6, 6, 2);
+              ctx.fillRect(drawX + 18, groundY + 11, 4, 2);
+            }
+          }
+
+          // Pixel Goose
+          const strideFrame = Math.floor(dinoState.frameTick / 5) % 2;
+          drawPixelGoose(
+            ctx,
+            42,
+            groundY - 38 + dinoState.y,
+            2.4,
+            strideFrame,
+            dinoState.gameOver,
+            normCol,
+            brightCol
+          );
+
+          // Steaming Hot Pot Obstacles
+          dinoState.obstacles.forEach((ob) => {
+            drawHotPotObstacle(ctx, ob, groundY, dinoState.frameTick, dimCol, normCol, brightCol);
+          });
+
+          if (dinoState.gameOver) {
+            ctx.save();
+            ctx.fillStyle = brightCol;
+            ctx.shadowColor = brightCol;
+            ctx.shadowBlur = 10;
+            ctx.font = '24px "VT323", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('BONK! TAP OR PRESS SPACE TO RUN AGAIN', w / 2, h / 2 - 6);
+            ctx.restore();
+          }
+
+          const sStr = String(Math.floor(dinoState.score)).padStart(4, '0');
+          const bStr = String(dinoState.best).padStart(4, '0');
+          els.gameScoreReadout.textContent = `SCORE: ${sStr} · BEST: ${bStr}`;
+
+          dinoAnimFrameId = requestAnimationFrame(step);
+        }
+
+        dinoAnimFrameId = requestAnimationFrame(step);
+      }
+
+      function stopDinoGame() {
+        dinoGameRunning = false;
+        if (dinoAnimFrameId) {
+          cancelAnimationFrame(dinoAnimFrameId);
+          dinoAnimFrameId = null;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         8. EVENT LISTENERS & INITIALIZATION
+         ---------------------------------------------------------------------- */
+
+      function resetAllFilters() {
+        activeCategory = 'ALL';
+        searchQuery = '';
+        els.searchInput.value = '';
+        els.clearSearchBtn.classList.add('hidden');
+        hideAutocomplete();
+        populateCategoryFilters();
+        filterPlaces();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function initEventListeners() {
+        window.addEventListener(
+          'scroll',
+          () => {
+            els.topAppBar.classList.toggle('scrolled', window.scrollY > 12);
+          },
+          { passive: true }
+        );
+
+        els.brandResetBtn.addEventListener('click', resetAllFilters);
+        els.resetFiltersInlineBtn.addEventListener('click', resetAllFilters);
+        els.emptyResetBtn.addEventListener('click', resetAllFilters);
+        els.retryFetchBtn.addEventListener('click', loadPlacesData);
+        els.sortToggleBtn.addEventListener('click', toggleSortOrder);
+        els.themeToggleBtn.addEventListener('click', toggleTheme);
+        els.loadMoreBtn.addEventListener('click', handleLoadMore);
+
+        // Search input & autocomplete
+        els.searchInput.addEventListener('focus', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('click', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('input', () => {
+          const val = els.searchInput.value;
+          els.clearSearchBtn.classList.toggle('hidden', !val.length);
+          updateAutocompleteSuggestions(val);
+
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+            searchQuery = val;
+            filterPlaces();
+          }, 120);
+        });
+
+        els.searchInput.addEventListener('keydown', (e) => {
+          const dropdownOpen = !els.autocompleteDropdown.classList.contains('hidden');
+          if (e.key === 'ArrowDown' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx + 1);
+          } else if (e.key === 'ArrowUp' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx - 1);
+          } else if (e.key === 'Enter') {
+            if (dropdownOpen && highlightedSuggestionIdx >= 0 && currentSuggestions[highlightedSuggestionIdx]) {
+              e.preventDefault();
+              selectAutocompleteSuggestion(currentSuggestions[highlightedSuggestionIdx]);
+            } else {
+              els.searchInput.blur();
+              hideAutocomplete();
+              searchQuery = els.searchInput.value;
+              filterPlaces();
+            }
+          } else if (e.key === 'Escape') {
+            hideAutocomplete();
+          }
+        });
+
+        els.clearSearchBtn.addEventListener('click', () => {
+          els.searchInput.value = '';
+          searchQuery = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+          filterPlaces();
+          els.searchInput.focus();
+        });
+
+        document.addEventListener('pointerdown', (e) => {
+          if (
+            !els.autocompleteDropdown.contains(e.target) &&
+            e.target !== els.searchInput
+          ) {
+            hideAutocomplete();
+          }
+        });
+
+        // Modal controls
+        els.modalCloseBtn.addEventListener('click', closeModal);
+        els.modalPrevBtn.addEventListener('click', () => navigateModal(-1));
+        els.modalNextBtn.addEventListener('click', () => navigateModal(1));
+        els.modalShareBtn.addEventListener('click', copyDirectSpotLink);
+
+        els.modalCityBtn.addEventListener('click', () => {
+          const city = els.modalCityText.textContent;
+          closeModal();
+          els.searchInput.value = city;
+          searchQuery = city;
+          els.clearSearchBtn.classList.remove('hidden');
+          filterPlaces();
+        });
+
+        els.placeModal.addEventListener('click', (e) => {
+          if (e.target === els.placeModal) {
+            closeModal();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (activeModalIndex !== -1) {
+            if (e.key === 'Escape') closeModal();
+            else if (e.key === 'ArrowLeft') navigateModal(-1);
+            else if (e.key === 'ArrowRight') navigateModal(1);
+          } else if (
+            dinoGameRunning &&
+            (e.code === 'Space' || e.code === 'ArrowUp')
+          ) {
+            if (document.activeElement === els.searchInput) {
+              els.searchInput.blur();
+            }
+            e.preventDefault();
+            triggerDinoJump();
+          }
+        });
+
+        els.dinoCanvas.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          triggerDinoJump();
+        });
+      }
+
+      // Boot sequence
+      initTheme();
+      renderLoadingSkeletons();
+      parseUrlState();
+      initEventListeners();
+      loadPlacesData();
+    })();
+  </script>
+</body>
+</html>
