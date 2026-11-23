@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣 TAIWAN top</title>
+  <meta name="description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+
+  <!-- Favicon: Square divided into 5 horizontal rows matching the 5 city accordion colors -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='100' height='20' fill='%23F7D249'/%3E%3Crect x='0' y='20' width='100' height='20' fill='%23C6BEB8'/%3E%3Crect x='0' y='40' width='100' height='20' fill='%23F6BBF5'/%3E%3Crect x='0' y='60' width='100' height='20' fill='%238FA3D9'/%3E%3Crect x='0' y='80' width='100' height='20' fill='%2365754A'/%3E%3C/svg%3E">
+
+  <!-- OpenGraph / Social Media Sharing Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://albyantoniazzi.github.io/taiwantop/">
+  <meta property="og:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta property="og:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta property="og:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta name="twitter:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta name="twitter:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Barlow Semi Condensed (600) + Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,500;0,600;0,700;1,600&family=Noto+Sans+TC:wght@500;700&display=swap" rel="stylesheet">
+  <!-- PapaParse for robust CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Barlow Semi Condensed"', '"Noto Sans TC"', 'sans-serif'],
+            mono: ['"Barlow Semi Condensed"', '"Noto Sans TC"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --outer-gap: clamp(10px, 2vmin, 22px);
+      --seg: #0e1803;
+      --on: 0.94;
+      --ghost: 0.085;
+      --lcd-shadow: drop-shadow(1.3px 1.7px 0.5px rgb(44 66 0 / 0.34));
+    }
+
+    * {
+      font-family: "Barlow Semi Condensed", "Noto Sans TC", sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(#17180f, #0b0c07);
+      color: var(--seg);
+      padding: var(--outer-gap);
+      font-weight: 600;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* Recessed Backlit LCD Glass Surface (.kc-glass) */
+    #pageWrapper {
+      position: relative;
+      border-radius: 5px;
+      overflow-x: clip;
+      background: radial-gradient(130% 100% at 50% 34%, #c3ea1f 0%, #add813 46%, #8fbd04 82%, #7ba600 100%);
+      box-shadow:
+        0 0 0 1px #000,
+        0 1px 0 1.5px rgb(255 255 255 / 0.09);
+      transition: background 0.3s steps(2, end);
+    }
+
+    /* Specular glass glare & deep inner bezel shadow (.kc-glass::after) */
+    #pageWrapper::after {
+      content: "";
+      position: fixed;
+      inset: var(--outer-gap);
+      border-radius: 5px;
+      background: linear-gradient(118deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.04) 28%, transparent 46%);
+      box-shadow:
+        inset 0 7px 9px -3px rgb(20 30 0 / 0.5),
+        inset 5px 0 8px -4px rgb(20 30 0 / 0.36),
+        inset -3px 0 6px -4px rgb(20 30 0 / 0.26),
+        inset 0 -2px 5px -3px rgb(20 30 0 / 0.26);
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    /* Night-mode backlight shift (Warm Amber Industrial LCD) */
+    body.dark-mode {
+      --seg: #1c0c02;
+      --lcd-shadow: drop-shadow(1.3px 1.7px 0.5px rgb(75 30 0 / 0.32));
+    }
+
+    body.dark-mode #pageWrapper {
+      background: radial-gradient(130% 100% at 50% 34%, #f7a824 0%, #e69112 46%, #cc7806 82%, #b56502 100%);
+    }
+
+    .lcd-ink {
+      filter: var(--lcd-shadow);
+    }
+
+    /* 7-Segment SVG Glyph styling */
+    .kc-figures {
+      display: inline-flex;
+      align-items: flex-end;
+      flex: none;
+      gap: 4px;
+      transform: skewX(-4deg);
+      transform-origin: 0 100%;
+    }
+
+    .kc-glyph {
+      display: block;
+      flex: none;
+      overflow: visible;
+    }
+
+    .kc-bar {
+      fill: var(--seg);
+      opacity: var(--ghost);
+      transition: opacity 150ms steps(2, end);
+    }
+
+    .kc-bar[data-on] {
+      opacity: var(--on);
+    }
+
+    /* Micro LCD Legend Labels */
+    .kc-legend {
+      color: var(--seg);
+      font-size: 11px;
+      line-height: 11px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      opacity: 0.72;
+    }
+
+    /* Header bottom 1.5px solid LCD rule */
+    .lcd-header-rule {
+      border-bottom: 1.5px solid rgb(14 24 3 / 0.88);
+    }
+
+    /* Accordion Row Styling (LCD Segment Matrix) */
+    .accordion-item {
+      position: relative;
+      border-bottom: 1px solid rgb(14 24 3 / 0.22);
+    }
+
+    .accordion-item:last-child {
+      border-bottom: 1.5px solid rgb(14 24 3 / 0.88);
+    }
+
+    .accordion-header-btn {
+      position: relative;
+      transition:
+        height 0.28s steps(4, end),
+        min-height 0.28s steps(4, end),
+        background-color 150ms steps(2, end);
+    }
+
+    .accordion-header-btn:hover {
+      background-color: rgb(14 24 3 / 0.06);
+    }
+
+    .accordion-item.is-open .accordion-header-btn {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: calc((100dvh - (2 * var(--outer-gap))) / 13);
+      min-height: 2.75rem;
+      background: linear-gradient(180deg, #b8e019 0%, #a5ce10 100%);
+      border-bottom: 1.5px solid rgb(14 24 3 / 0.85);
+    }
+
+    body.dark-mode .accordion-item.is-open .accordion-header-btn {
+      background: linear-gradient(180deg, #ee9c1c 0%, #dc860e 100%);
+    }
+
+    /* Square LCD Status Marker (.kc-marker) + 4-bar Segment Link (.kc-link) */
+    .kc-marker {
+      position: relative;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--seg);
+      outline: 2px solid rgb(14 24 3 / 0.12);
+      outline-offset: 1.5px;
+      flex-shrink: 0;
+    }
+
+    .accordion-item.is-open .kc-marker {
+      outline-color: var(--seg);
+    }
+
+    .kc-marker::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--seg);
+      opacity: 0.1;
+    }
+
+    .kc-marker::before {
+      content: "";
+      position: absolute;
+      left: -13px;
+      top: 0;
+      width: 6px;
+      height: 10px;
+      background: var(--seg);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      opacity: 0.12;
+      transition: opacity 150ms steps(2, end);
+    }
+
+    .accordion-header-btn:hover .kc-marker::before,
+    .accordion-item.is-open .kc-marker::before {
+      opacity: 1;
+    }
+
+    .accordion-item.is-open .kc-marker::after {
+      opacity: 1;
+      animation: kc-beat 1000ms steps(1) infinite;
+    }
+
+    @keyframes kc-beat {
+      50% {
+        opacity: 0.12;
+      }
+    }
+
+    /* 4-block vertical LCD connector beneath marker */
+    .kc-link {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 6px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .kc-link i {
+      display: block;
+      height: 3px;
+      background: var(--seg);
+      opacity: 0.14;
+      transition: opacity 150ms steps(2, end);
+    }
+
+    .accordion-item.is-open .kc-link i {
+      opacity: var(--on);
+    }
+
+    .accordion-item.is-open .kc-link i:last-child {
+      animation: kc-now 1000ms steps(1) infinite;
+    }
+
+    @keyframes kc-now {
+      50% {
+        opacity: 0.14;
+      }
+    }
+
+    /* Crisp LCD Accordion Drawer Transition */
+    .accordion-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows 0.28s cubic-bezier(0.2, 0, 0, 1),
+        opacity 0.18s steps(3, end);
+    }
+
+    .accordion-item.is-open .accordion-content {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .accordion-inner {
+      overflow: hidden;
+    }
+
+    /* Fixed-width Chinese label column so English titles align cleanly */
+    .city-zh-col {
+      width: 3.1rem;
+    }
+
+    @media (min-width: 640px) {
+      .city-zh-col {
+        width: 4.5rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .city-zh-col {
+        width: 5.25rem;
+      }
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-zh {
+      font-size: 0.95rem;
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-en {
+      font-size: 1.45rem;
+    }
+
+    @media (min-width: 640px) {
+      .accordion-item.is-open .accordion-header-btn .city-zh {
+        font-size: 1.15rem;
+      }
+      .accordion-item.is-open .accordion-header-btn .city-en {
+        font-size: 1.85rem;
+      }
+    }
+
+    /* Bracketed LCD Selection Cursors on Place Rows (.kc-row::before / ::after) */
+    .lcd-place-row {
+      position: relative;
+      border-bottom: 1px solid rgb(14 24 3 / 0.24);
+      transition: background-color 120ms steps(2, end);
+    }
+
+    .lcd-place-row:last-child {
+      border-bottom: none;
+    }
+
+    .lcd-place-row::before,
+    .lcd-place-row::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      width: 6px;
+      border: 2px solid var(--seg);
+      opacity: var(--ghost);
+      pointer-events: none;
+      transition: opacity 150ms steps(2, end);
+    }
+
+    .lcd-place-row::before {
+      left: 0;
+      border-right: 0;
+    }
+
+    .lcd-place-row::after {
+      right: 0;
+      border-left: 0;
+    }
+
+    .lcd-place-row:hover::before,
+    .lcd-place-row:hover::after,
+    .lcd-place-row:focus-within::before,
+    .lcd-place-row:focus-within::after {
+      opacity: var(--on);
+    }
+
+    .lcd-place-row:hover {
+      background-color: rgb(14 24 3 / 0.05);
+    }
+
+    /* Yin-Yang Hardware Switch */
+    .yin-yang-icon {
+      transition: transform 0.25s steps(3, end);
+    }
+
+    body.dark-mode .yin-yang-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Place Detail Modal styled as a Recessed LCD Cartridge */
+    #placeModal {
+      opacity: 0;
+      pointer-events: none;
+      background: rgb(11 12 7 / 0.78);
+      transition: opacity 0.18s steps(3, end);
+    }
+
+    #placeModal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #placeModalCard {
+      background: radial-gradient(130% 100% at 50% 34%, #c3ea1f 0%, #add813 55%, #8fbd04 100%);
+      color: var(--seg);
+      border: 2px solid #000000;
+      border-radius: 5px;
+      box-shadow:
+        0 0 0 2px #17180f,
+        inset 0 4px 8px -2px rgb(20 30 0 / 0.42),
+        0 24px 48px rgb(0 0 0 / 0.65);
+      transform: translateY(6px);
+      transition: transform 0.2s steps(3, end);
+    }
+
+    body.dark-mode #placeModalCard {
+      background: radial-gradient(130% 100% at 50% 34%, #f7a824 0%, #e69112 55%, #cc7806 100%);
+    }
+
+    #placeModal.is-visible #placeModalCard {
+      transform: translateY(0);
+    }
+
+    /* Proportional desktop scaling for modal right-side details panel */
+    @media (min-width: 768px) {
+      #modalDetailsPane {
+        padding: clamp(1rem, 2.8dvh, 1.75rem);
+        gap: clamp(0.65rem, 2dvh, 1.25rem);
+      }
+
+      #modalTextGroup {
+        gap: clamp(0.35rem, 1.2dvh, 0.75rem);
+      }
+
+      #modalTitle {
+        font-size: clamp(1.1rem, 2.6dvh, 1.6rem);
+      }
+
+      #modalDescription {
+        font-size: clamp(0.8rem, 1.75dvh, 1rem);
+        line-height: 1.45;
+      }
+
+      #modalFooterGroup {
+        gap: clamp(0.45rem, 1.4dvh, 0.85rem);
+      }
+
+      #modalActionsDivider {
+        padding-top: clamp(0.45rem, 1.4dvh, 0.85rem);
+      }
+
+      #modalMapsLink {
+        padding-top: clamp(0.4rem, 1.1dvh, 0.65rem);
+        padding-bottom: clamp(0.4rem, 1.1dvh, 0.65rem);
+        font-size: clamp(0.75rem, 1.6dvh, 0.875rem);
+      }
+    }
+
+    /* Custom LCD scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgb(14 24 3 / 0.32);
+    }
+
+    /* Vertically responsive row height: 1/7 of browser viewport height minus outer padding */
+    .viewport-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 7);
+      min-height: 3.75rem;
+    }
+
+    /* Half-height footer row: 1/14 of browser viewport height */
+    .footer-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
+      min-height: 2.35rem;
+    }
+
+    /* Reduced-motion accessibility fallback */
+    @media (prefers-reduced-motion: reduce) {
+      .kc-bar,
+      .accordion-content,
+      .accordion-header-btn,
+      .lcd-place-row::before,
+      .lcd-place-row::after,
+      .kc-marker::before,
+      .kc-link i,
+      .yin-yang-icon,
+      #placeModal,
+      #placeModalCard {
+        transition: none !important;
+      }
+      .accordion-item.is-open .kc-marker::after,
+      .accordion-item.is-open .kc-link i:last-child {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-[#0e1803] selection:text-[#c3ea1f]">
+
+  <!-- Recessed Backlit LCD Panel Container -->
+  <div id="pageWrapper" class="w-full max-w-full mx-auto">
+
+    <!-- Header Section matching 1/7 of the browser window height -->
+    <header class="w-full flex items-center justify-between px-4 sm:px-6 viewport-row lcd-header-rule lcd-ink">
+      <button
+        id="homeResetBtn"
+        type="button"
+        aria-label="Reset and refresh TAIWANtop"
+        class="flex items-center min-w-0 text-left cursor-pointer focus:outline-none group"
+      >
+        <!-- Traditional Chinese Taiwan label -->
+        <span class="city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-bold leading-normal tracking-normal [font-kerning:normal] [text-rendering:optimizeLegibility] shrink-0">
+          台灣
+        </span>
+
+        <!-- Condensed Industrial Display Title -->
+        <div class="flex flex-col">
+          <span class="kc-legend mb-0.5 hidden sm:inline-block">GUIDE // SECTOR 01–05</span>
+          <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-[1.05] tracking-[-0.02em] [font-kerning:normal] [text-rendering:optimizeLegibility] font-bold uppercase select-none">
+            TAIWAN<span class="italic font-semibold tracking-[-0.02em]">top</span>
+          </h1>
+        </div>
+      </button>
+
+      <!-- Right Status Telemetry + Backlight Toggle -->
+      <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+        <div class="hidden md:flex flex-col items-end">
+          <span class="kc-legend">BACKLIGHT</span>
+          <span id="backlightModeLabel" class="text-xs font-bold tracking-wider uppercase">LIME // DAY</span>
+        </div>
+
+        <button
+          id="themeToggle"
+          type="button"
+          aria-label="Toggle LCD Backlight Mode"
+          title="Toggle LCD Backlight"
+          class="p-1.5 -mr-1.5 rounded border border-transparent hover:border-current focus:outline-none shrink-0 cursor-pointer"
+        >
+          <svg class="yin-yang-icon w-6 h-6 sm:w-7 sm:h-7" xmlns="http://www.w3.org/2000/svg" viewBox="-42 -42 84 84">
+            <circle r="39" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+            <path fill="#c3ea1f" d="M0,38a38,38 0 0 1 0,-76a19,19 0 0 1 0,38a19,19 0 0 0 0,38"/>
+            <circle r="5" cy="19" fill="#c3ea1f"/>
+            <circle r="5" cy="-19" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Status / Filter Bar -->
+    <div id="statusBanner" class="hidden px-4 sm:px-6 py-2 text-xs uppercase tracking-wider flex items-center justify-between lcd-ink border-b border-current/20">
+      <span id="statusText">SYNCING TELEMETRY FROM GOOGLE SHEETS...</span>
+      <button id="retryBtn" class="hidden underline hover:opacity-100 cursor-pointer font-bold">RETRY</button>
+    </div>
+
+    <!-- Full-width City Segments Container -->
+    <main id="citiesContainer" class="w-full flex flex-col lcd-ink"></main>
+
+    <!-- Minimalist LCD Footer matching half the standard row height (1/14 of viewport) -->
+    <footer class="w-full px-4 sm:px-6 footer-row flex items-center justify-between text-xs sm:text-sm lcd-ink">
+      <span class="kc-legend">SYS // READY</span>
+      <span class="uppercase tracking-wider font-semibold">Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a></span>
+    </footer>
+
+  </div>
+
+  <!-- Place Detail Modal (Recessed LCD Cartridge) -->
+  <div
+    id="placeModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 backdrop-blur-[1px]"
+  >
+    <div class="relative w-full max-w-4xl flex items-center justify-center">
+      <!-- Previous Place Button (bare < over backdrop on desktop) -->
+      <button
+        id="prevPlaceBtn"
+        type="button"
+        aria-label="Previous place"
+        title="Previous place"
+        class="hidden sm:flex items-center justify-center -ml-12 mr-3 p-2 shrink-0 text-[#c3ea1f]/85 hover:text-[#c3ea1f] hover:scale-110 transition-all cursor-pointer select-none"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div
+        id="placeModalCard"
+        class="relative w-full h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden"
+      >
+        <!-- Floating Close Button directly on the top-right corner -->
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded border border-current/40 bg-[#c3ea1f]/90 md:bg-transparent hover:bg-black/15 transition-colors cursor-pointer text-sm sm:text-base leading-none font-bold"
+        >
+          ✕
+        </button>
+
+        <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop -->
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+          <!-- 1:1 Square Picture Container -->
+          <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black/10 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-current mx-auto md:mx-0">
+            <img
+              id="modalImage"
+              src=""
+              alt=""
+              decoding="async"
+              fetchpriority="high"
+              class="w-full h-full object-cover transition-opacity duration-200"
+            />
+          </div>
+
+          <!-- Details Body -->
+          <div id="modalDetailsPane" class="flex-1 min-w-0 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden lcd-ink">
+            <div id="modalTextGroup" class="min-h-0 flex-1 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
+              <span class="kc-legend">ENTRY RECORD</span>
+              <h2 id="modalTitle" class="text-xl sm:text-2xl lg:text-3xl font-bold uppercase leading-tight tracking-tight [font-kerning:normal] [text-rendering:optimizeLegibility] line-clamp-2 shrink-0">
+                Place Title
+              </h2>
+
+              <!-- Description -->
+              <p id="modalDescription" class="text-sm sm:text-base lg:text-lg font-medium leading-relaxed opacity-90 line-clamp-4 md:line-clamp-none overflow-hidden">
+                Description
+              </p>
+            </div>
+
+            <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
+            <div id="modalFooterGroup" class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
+              <!-- City Badge & Categories as Badges (Above Separation Line) -->
+              <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
+
+              <!-- Action Footer Below Separation Line -->
+              <div id="modalActionsDivider" class="pt-2.5 sm:pt-3.5 border-t border-current/40">
+                <a
+                  id="modalMapsLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2 sm:py-2.5 rounded-[4px] border-2 border-current font-bold uppercase tracking-wider text-xs sm:text-sm hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-colors"
+                >
+                  <span>Open on Google Maps</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Place Button (bare > over backdrop on desktop) -->
+      <button
+        id="nextPlaceBtn"
+        type="button"
+        aria-label="Next place"
+        title="Next place"
+        class="hidden sm:flex items-center justify-center -mr-12 ml-3 p-2 shrink-0 text-[#c3ea1f]/85 hover:text-[#c3ea1f] hover:scale-110 transition-all cursor-pointer select-none"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+    const CACHE_KEY = 'taiwantop_csv_cache_v1';
+
+    // City configuration preserving canonical order & Chinese/English names
+    const CITY_META = {
+      'taipei': { en: 'Taipei', zh: '台北', order: 1 },
+      'taichung': { en: 'Taichung', zh: '台中', order: 2 },
+      'tainan': { en: 'Tainan', zh: '台南', order: 3 },
+      'kaohsiung': { en: 'Kaohsiung', zh: '高雄', order: 4 },
+      'hengchun': { en: 'Hengchun', zh: '墾丁', order: 5 },
+      'kenting': { en: 'Hengchun', zh: '墾丁', order: 5 }
+    };
+
+    // Fallback data in case CORS/network blocks live CSV in an offline sandbox
+    const FALLBACK_ROWS = [
+      { City: 'Taipei', Title: '真珠 JIN ZHU', Description: 'Nice Taiwanese cuisine chain', Category: 'taiwanese, restaurant' },
+      { City: 'Taipei', Title: '阿石北平烤鴨店', Description: 'Beiping style roasted duck', Category: 'roast duck, takeaway' },
+      { City: 'Taipei', Title: '口福黑輪', Description: 'Taiwanese-style oden', Category: 'oden, street food' },
+      { City: 'Taichung', Title: '第二市場 Second Market', Description: 'Historic market famous for braised pork rice and radish cake', Category: 'market, local food' },
+      { City: 'Tainan', Title: '文章牛肉湯', Description: 'Classic Tainan fresh beef soup served with rice', Category: 'beef soup, breakfast' },
+      { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
+      { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
+    ];
+
+    // 7-Segment SVG Glyph generator matching the kiln controller specification
+    const SEVEN_SEG_MAP = {
+      '0': 'abcdef',
+      '1': 'bc',
+      '2': 'abged',
+      '3': 'abgcd',
+      '4': 'fgbc',
+      '5': 'afgcd',
+      '6': 'afgedc',
+      '7': 'abc',
+      '8': 'abcdefg',
+      '9': 'abcdfg',
+      ' ': ''
+    };
+
+    function buildSevenSegShapes({ w, h, t, q }) {
+      const g = q / Math.SQRT2;
+      const m = h / 2;
+      const p = (pts) => pts.map(([x, y]) => `${+x.toFixed(2)},${+y.toFixed(2)}`).join(' ');
+      return {
+        a: p([[g, 0], [w - g, 0], [w - g - t, t], [g + t, t]]),
+        b: p([[w, g], [w, m - t / 2 - g], [w - t / 2, m - g], [w - t, m - t / 2 - g], [w - t, g + t]]),
+        c: p([[w, h - g], [w, m + t / 2 + g], [w - t / 2, m + g], [w - t, m + t / 2 + g], [w - t, h - g - t]]),
+        d: p([[g, h], [w - g, h], [w - g - t, h - t], [g + t, h - t]]),
+        e: p([[0, h - g], [0, m + t / 2 + g], [t / 2, m + g], [t, m + t / 2 + g], [t, h - g - t]]),
+        f: p([[0, g], [0, m - t / 2 - g], [t / 2, m - g], [t, m - t / 2 - g], [t, g + t]]),
+        g: p([[t / 2 + g, m], [t + g, m - t / 2], [w - t - g, m - t / 2], [w - t / 2 - g, m], [w - t - g, m + t / 2], [t + g, m + t / 2]])
+      };
+    }
+
+    const ROW_BOX = { w: 13, h: 24, t: 3, q: 0.9 };
+    const ROW_SHAPES = buildSevenSegShapes(ROW_BOX);
+
+    /**
+     * Renders 7-segment SVG digits with inactive ghost segments
+     */
+    function renderSegmentFigures(text) {
+      const chars = String(text).split('');
+      const glyphs = chars.map((ch) => {
+        const driven = SEVEN_SEG_MAP[ch] || '';
+        const polygons = Object.entries(ROW_SHAPES).map(([seg, pts]) => {
+          const isOn = driven.includes(seg) ? ' data-on=""' : '';
+          return `<polygon class="kc-bar" points="${pts}"${isOn}/>`;
+        }).join('');
+        return `<svg class="kc-glyph" width="${ROW_BOX.w}" height="${ROW_BOX.h}" viewBox="0 0 ${ROW_BOX.w} ${ROW_BOX.h}" aria-hidden="true">${polygons}</svg>`;
+      }).join('');
+      return `<span class="kc-figures" aria-hidden="true">${glyphs}</span>`;
+    }
+
+    // Active modal navigation state (loops inside the current city)
+    let activeModalCityGroup = null;
+    let activeModalPlaceIndex = 0;
+
+    // Track preloaded image URLs so each photo is fetched at most once
+    const preloadedImageUrls = new Set();
+
+    /**
+     * Escapes HTML special characters to prevent XSS
+     */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * Generates a clean square LCD fallback SVG data URL when no photo or broken link is present
+     */
+    function getFallbackSquareImage(title) {
+      const safeTitle = escapeHtml((title || 'TAIWANtop').slice(0, 22));
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+        <rect width="600" height="600" fill="#a8d310"/>
+        <rect x="24" y="24" width="552" height="552" fill="none" stroke="#0e1803" stroke-width="4" opacity="0.35"/>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="#0e1803" opacity="0.8">${safeTitle}</text>
+      </svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    /**
+     * Preloads a single image URL silently into browser cache
+     */
+    function preloadImageUrl(url) {
+      if (!url || preloadedImageUrls.has(url)) return;
+      preloadedImageUrls.add(url);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+    }
+
+    /**
+     * Preloads all photos for an opened city accordion in the background
+     */
+    function preloadCityImages(cityGroup) {
+      if (!cityGroup || !cityGroup.places) return;
+      cityGroup.places.forEach((place) => {
+        if (place.image) {
+          preloadImageUrl(place.image);
+        }
+      });
+    }
+
+    /**
+     * Extracts a sortable numeric timestamp from a Flickr static photo URL or optional CSV date column.
+     */
+    function extractPhotoTimestamp(row, imageUrl) {
+      const rawDate = (row.Timestamp || row.timestamp || row.Date || row.date || row['時間'] || row['日期'] || '').trim();
+      if (rawDate) {
+        const parsed = Date.parse(rawDate);
+        if (!Number.isNaN(parsed)) {
+          return parsed;
+        }
+        const numericDate = Number(rawDate);
+        if (!Number.isNaN(numericDate) && numericDate > 0) {
+          return numericDate;
+        }
+      }
+
+      if (imageUrl) {
+        const staticMatch = imageUrl.match(/staticflickr\.com\/\d+\/(\d+)_/i);
+        if (staticMatch && staticMatch[1]) {
+          return Number(staticMatch[1]);
+        }
+        const pageMatch = imageUrl.match(/flickr\.com\/photos\/[^/]+\/(\d+)/i);
+        if (pageMatch && pageMatch[1]) {
+          return Number(pageMatch[1]);
+        }
+      }
+
+      return 0;
+    }
+
+    /**
+     * Groups parsed CSV rows by city, sorts each city's places by Flickr timestamp (newest first),
+     * and sorts cities in the canonical order
+     */
+    function groupPlacesByCity(rows) {
+      const groupsMap = new Map();
+      let extraIndex = 0;
+
+      rows.forEach((row, rowIndex) => {
+        const rawCity = (row.City || row.city || row['城市'] || '').trim();
+        const title = (row.Title || row.title || row.Name || row.name || row['店名'] || '').trim();
+        if (!rawCity || !title) return;
+
+        const key = rawCity.toLowerCase();
+        const meta = CITY_META[key];
+        const canonicalKey = meta ? meta.en.toLowerCase() : key;
+
+        if (!groupsMap.has(canonicalKey)) {
+          if (meta) {
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: meta.en,
+              zh: meta.zh,
+              order: meta.order,
+              places: []
+            });
+          } else {
+            extraIndex++;
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: rawCity,
+              zh: '台灣',
+              order: 100 + extraIndex,
+              places: []
+            });
+          }
+        }
+
+        const description = (row.Description || row.description || row.Notes || row.notes || row['簡介'] || '').trim();
+        const rawCategory = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || row['分類'] || '').trim();
+        const categories = rawCategory
+          ? rawCategory.split(/[,;/]+/).map((c) => c.trim()).filter(Boolean)
+          : [];
+        const image = (row.Image || row.image || row.Photo || row.photo || row.Thumbnail || row.thumbnail || '').trim();
+        const mapsUrl = (row['Google Maps'] || row.Maps || row.maps || row.Map || row.map || row.URL || row.url || row.Link || row.link || '').trim();
+        const photoTimestamp = extractPhotoTimestamp(row, image);
+
+        groupsMap.get(canonicalKey).places.push({
+          title,
+          description,
+          categories,
+          image,
+          mapsUrl,
+          photoTimestamp,
+          rowIndex
+        });
+      });
+
+      groupsMap.forEach((group) => {
+        group.places.sort((a, b) => {
+          if (b.photoTimestamp !== a.photoTimestamp) {
+            return b.photoTimestamp - a.photoTimestamp;
+          }
+          return b.rowIndex - a.rowIndex;
+        });
+      });
+
+      Object.values(CITY_META).forEach((meta) => {
+        const canonicalKey = meta.en.toLowerCase();
+        if (!groupsMap.has(canonicalKey)) {
+          groupsMap.set(canonicalKey, {
+            key: canonicalKey,
+            en: meta.en,
+            zh: meta.zh,
+            order: meta.order,
+            places: []
+          });
+        }
+      });
+
+      return Array.from(groupsMap.values()).sort((a, b) => a.order - b.order);
+    }
+
+    /**
+     * Opens the place detail modal with 1:1 image, city + uppercase category badges, and Google Maps link
+     */
+    function openPlaceModal(place, cityGroup, placeIndex = 0) {
+      activeModalCityGroup = cityGroup;
+      activeModalPlaceIndex = placeIndex;
+
+      const modal = document.getElementById('placeModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDescription');
+      const modalCats = document.getElementById('modalCategories');
+      const modalMaps = document.getElementById('modalMapsLink');
+
+      const hasMultiple = cityGroup.places && cityGroup.places.length > 1;
+      ['prevPlaceBtn', 'nextPlaceBtn'].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.visibility = hasMultiple ? 'visible' : 'hidden';
+      });
+
+      modalTitle.textContent = place.title;
+      modalDesc.textContent = place.description || 'No description provided.';
+
+      const fallbackSrc = getFallbackSquareImage(place.title);
+      const targetSrc = place.image || fallbackSrc;
+
+      if (place.image && !preloadedImageUrls.has(place.image)) {
+        modalImg.style.opacity = '0.35';
+        modalImg.onload = () => {
+          modalImg.style.opacity = '1';
+          preloadedImageUrls.add(place.image);
+        };
+      } else {
+        modalImg.style.opacity = '1';
+        modalImg.onload = null;
+      }
+
+      modalImg.onerror = () => {
+        modalImg.onerror = null;
+        modalImg.onload = null;
+        modalImg.style.opacity = '1';
+        modalImg.src = fallbackSrc;
+      };
+      modalImg.src = targetSrc;
+      modalImg.alt = place.title;
+
+      if (cityGroup.places && cityGroup.places.length > 1) {
+        const total = cityGroup.places.length;
+        const nextPlace = cityGroup.places[(placeIndex + 1) % total];
+        const prevPlace = cityGroup.places[(placeIndex - 1 + total) % total];
+        if (nextPlace && nextPlace.image) preloadImageUrl(nextPlace.image);
+        if (prevPlace && prevPlace.image) preloadImageUrl(prevPlace.image);
+      }
+
+      // Render solid LCD ink city badge + outlined category badges
+      modalCats.innerHTML = '';
+
+      const cityBadge = document.createElement('span');
+      cityBadge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-[#0e1803] text-[#c3ea1f] rounded-[3px]';
+      cityBadge.textContent = `${cityGroup.zh} ${cityGroup.en}`;
+      modalCats.appendChild(cityBadge);
+
+      if (place.categories && place.categories.length > 0) {
+        place.categories.forEach((cat) => {
+          const badge = document.createElement('span');
+          badge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-current rounded-[3px]';
+          badge.textContent = cat;
+          modalCats.appendChild(badge);
+        });
+      }
+
+      if (place.mapsUrl && /^https?:\/\//i.test(place.mapsUrl)) {
+        modalMaps.href = place.mapsUrl;
+      } else {
+        const query = encodeURIComponent(`${place.title} ${cityGroup.en} Taiwan`);
+        modalMaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      }
+
+      modal.classList.add('is-visible');
+    }
+
+    /**
+     * Navigates to previous (-1) or next (+1) place in a loop inside the current city
+     */
+    function navigatePlaceModal(delta) {
+      if (!activeModalCityGroup || !activeModalCityGroup.places || activeModalCityGroup.places.length <= 1) {
+        return;
+      }
+      const total = activeModalCityGroup.places.length;
+      const nextIndex = (activeModalPlaceIndex + delta + total) % total;
+      openPlaceModal(activeModalCityGroup.places[nextIndex], activeModalCityGroup, nextIndex);
+    }
+
+    /**
+     * Closes the place detail modal
+     */
+    function closePlaceModal() {
+      const modal = document.getElementById('placeModal');
+      if (modal) {
+        modal.classList.remove('is-visible');
+      }
+    }
+
+    /**
+     * Renders full-width LCD segment city accordions with 7-segment indices, markers, and bracketed place rows
+     */
+    function renderAccordions(cityGroups) {
+      const container = document.getElementById('citiesContainer');
+      container.innerHTML = '';
+
+      cityGroups.forEach((group, groupIndex) => {
+        const item = document.createElement('section');
+        item.className = 'accordion-item w-full';
+
+        const segIndexStr = String(groupIndex + 1).padStart(2, '0');
+        const countStr = String(group.places.length).padStart(2, '0');
+
+        // Accordion Header Bar (1/7 viewport height closed, sticky compact open)
+        const headerBtn = document.createElement('button');
+        headerBtn.type = 'button';
+        headerBtn.setAttribute('aria-expanded', 'false');
+        headerBtn.className = 'accordion-header-btn w-full viewport-row px-4 sm:px-6 flex items-center justify-between text-left cursor-pointer focus:outline-none select-none';
+
+        headerBtn.innerHTML = `
+          <div class="flex items-center gap-3 sm:gap-5 min-w-0 overflow-visible">
+            <!-- 7-Segment Sector Index + Square LCD Marker + 4-Bar Link -->
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+              <div class="hidden sm:flex flex-col items-start">
+                <span class="kc-legend mb-0.5">SEC</span>
+                ${renderSegmentFigures(segIndexStr)}
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <span class="kc-marker" aria-hidden="true"></span>
+                <span class="kc-link hidden sm:flex" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              </div>
+            </div>
+
+            <!-- Chinese + Condensed English City Title -->
+            <div class="flex items-baseline min-w-0 overflow-visible">
+              <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-bold leading-normal tracking-[-0.01em] [font-kerning:normal] [text-rendering:optimizeLegibility] shrink-0">
+                ${escapeHtml(group.zh)}
+              </span>
+              <span class="city-en text-3xl sm:text-5xl md:text-[52px] font-bold uppercase leading-[1.1] tracking-[-0.02em] [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap">
+                ${escapeHtml(group.en)}
+              </span>
+            </div>
+          </div>
+
+          <!-- Right 7-Segment Counter -->
+          <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-3">
+            <span class="kc-legend hidden sm:inline">ITEMS</span>
+            <span class="sr-only">(${group.places.length})</span>
+            ${renderSegmentFigures(countStr)}
+          </div>
+        `;
+
+        // Accordion Drawer Wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'accordion-content w-full';
+
+        const inner = document.createElement('div');
+        inner.className = 'accordion-inner w-full';
+
+        const listContainer = document.createElement('div');
+        listContainer.className = 'w-full px-4 sm:px-6 py-3 sm:py-5';
+
+        if (group.places.length === 0) {
+          const emptyMsg = document.createElement('p');
+          emptyMsg.className = 'text-sm uppercase tracking-wider opacity-75 py-2';
+          emptyMsg.textContent = 'NO ENTRIES RECORDED IN SECTOR.';
+          listContainer.appendChild(emptyMsg);
+        } else {
+          const ul = document.createElement('ul');
+          ul.className = 'w-full flex flex-col';
+
+          group.places.forEach((place, idx) => {
+            const li = document.createElement('li');
+            li.className = 'lcd-place-row w-full px-3.5 sm:px-5 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 lg:gap-12';
+
+            // Left Column: Place Title (single line, expands right if needed)
+            const titleCol = document.createElement('div');
+            titleCol.className = 'w-full md:w-auto md:min-w-[36%] lg:min-w-[34%] shrink-0 overflow-x-auto flex items-baseline gap-2.5';
+
+            const indexTag = document.createElement('span');
+            indexTag.className = 'text-xs font-bold tracking-wider opacity-60 shrink-0';
+            indexTag.textContent = String(idx + 1).padStart(2, '0');
+
+            const titleBtn = document.createElement('button');
+            titleBtn.type = 'button';
+            titleBtn.className = 'text-left text-lg sm:text-[21px] font-bold uppercase leading-snug tracking-tight [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap hover:underline underline-offset-4 cursor-pointer';
+            titleBtn.textContent = place.title;
+            titleBtn.addEventListener('click', () => openPlaceModal(place, group, idx));
+
+            titleCol.appendChild(indexTag);
+            titleCol.appendChild(titleBtn);
+
+            // Right Column: Description shifted horizontally to the right (clickable without hover effect)
+            const descCol = document.createElement('div');
+            descCol.className = 'flex-1 min-w-0 text-sm sm:text-[16px] font-medium leading-relaxed opacity-90 cursor-pointer';
+            descCol.textContent = place.description;
+            descCol.addEventListener('click', () => openPlaceModal(place, group, idx));
+
+            li.appendChild(titleCol);
+            li.appendChild(descCol);
+            ul.appendChild(li);
+          });
+
+          listContainer.appendChild(ul);
+        }
+
+        inner.appendChild(listContainer);
+        contentWrapper.appendChild(inner);
+
+        // Single-city accordion toggle with snap-to-top scroll
+        headerBtn.addEventListener('click', () => {
+          const wasOpen = item.classList.contains('is-open');
+
+          document.querySelectorAll('.accordion-item').forEach((el) => {
+            el.classList.remove('is-open');
+            const btn = el.querySelector('.accordion-header-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+          });
+
+          if (!wasOpen) {
+            item.classList.add('is-open');
+            headerBtn.setAttribute('aria-expanded', 'true');
+
+            preloadCityImages(group);
+
+            requestAnimationFrame(() => {
+              item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+        });
+
+        item.appendChild(headerBtn);
+        item.appendChild(contentWrapper);
+        container.appendChild(item);
+      });
+    }
+
+    /**
+     * Parses CSV string and renders accordions immediately
+     */
+    function parseAndRenderCsv(csvText) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              const grouped = groupPlacesByCity(results.data);
+              renderAccordions(grouped);
+              resolve(true);
+            } else {
+              reject(new Error('CSV returned zero rows'));
+            }
+          },
+          error: (err) => reject(err)
+        });
+      });
+    }
+
+    /**
+     * Instant-first boot: renders cached CSV or fallback immediately, then refreshes live in background
+     */
+    async function initDirectory() {
+      const statusBanner = document.getElementById('statusBanner');
+      const statusText = document.getElementById('statusText');
+      const retryBtn = document.getElementById('retryBtn');
+
+      let cachedCsv = null;
+      try {
+        cachedCsv = localStorage.getItem(CACHE_KEY);
+      } catch (e) {}
+
+      if (cachedCsv) {
+        try {
+          await parseAndRenderCsv(cachedCsv);
+        } catch (e) {
+          renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+        }
+      } else {
+        renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      try {
+        const response = await fetch(CSV_URL, {
+          cache: 'default',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        const freshCsv = await response.text();
+
+        if (freshCsv && freshCsv !== cachedCsv) {
+          await parseAndRenderCsv(freshCsv);
+          try {
+            localStorage.setItem(CACHE_KEY, freshCsv);
+          } catch (e) {}
+        }
+        statusBanner.classList.add('hidden');
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.warn('Background CSV sync skipped/failed:', err);
+        if (!cachedCsv) {
+          statusBanner.classList.remove('hidden');
+          statusText.textContent = 'OFFLINE TELEMETRY MODE.';
+          retryBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Backlight toggle handler (Lime Day / Amber Night LCD backlight)
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark-mode');
+      const label = document.getElementById('backlightModeLabel');
+      if (label) {
+        label.textContent = isDark ? 'AMBER // NIGHT' : 'LIME // DAY';
+      }
+    });
+
+    // Header title click: close modal, collapse all accordions, scroll to top, and refresh data
+    document.getElementById('homeResetBtn').addEventListener('click', () => {
+      closePlaceModal();
+      document.querySelectorAll('.accordion-item').forEach((el) => {
+        el.classList.remove('is-open');
+        const btn = el.querySelector('.accordion-header-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      initDirectory();
+    });
+
+    // Retry button handler
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      document.getElementById('statusText').textContent = 'RETRYING CSV FETCH...';
+      initDirectory();
+    });
+
+    // Modal close & navigation interactions
+    document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
+    document.getElementById('prevPlaceBtn').addEventListener('click', () => navigatePlaceModal(-1));
+    document.getElementById('nextPlaceBtn').addEventListener('click', () => navigatePlaceModal(1));
+
+    // Touch swipe navigation on mobile inside the modal
+    let modalTouchStartX = 0;
+    let modalTouchStartY = 0;
+    const modalCardEl = document.getElementById('placeModalCard');
+
+    modalCardEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        modalTouchStartX = e.touches[0].clientX;
+        modalTouchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    modalCardEl.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length !== 1) return;
+      const deltaX = e.changedTouches[0].clientX - modalTouchStartX;
+      const deltaY = e.changedTouches[0].clientY - modalTouchStartY;
+
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0) {
+          navigatePlaceModal(1);
+        } else {
+          navigatePlaceModal(-1);
+        }
+      }
+    }, { passive: true });
+
+    document.getElementById('placeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'placeModal' || e.target === e.currentTarget.firstElementChild) {
+        closePlaceModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const isModalOpen = document.getElementById('placeModal').classList.contains('is-visible');
+      if (!isModalOpen) return;
+
+      if (e.key === 'Escape') {
+        closePlaceModal();
+      } else if (e.key === 'ArrowLeft') {
+        navigatePlaceModal(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigatePlaceModal(1);
+      }
+    });
+
+    // Boot application
+    window.addEventListener('DOMContentLoaded', initDirectory);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣 TAIWAN top</title>
+  <meta name="description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+
+  <!-- Favicon: Square divided into 5 horizontal rows matching the 5 city accordion colors -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='100' height='20' fill='%23F7D249'/%3E%3Crect x='0' y='20' width='100' height='20' fill='%23C6BEB8'/%3E%3Crect x='0' y='40' width='100' height='20' fill='%23F6BBF5'/%3E%3Crect x='0' y='60' width='100' height='20' fill='%238FA3D9'/%3E%3Crect x='0' y='80' width='100' height='20' fill='%2365754A'/%3E%3C/svg%3E">
+
+  <!-- OpenGraph / Social Media Sharing Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://albyantoniazzi.github.io/taiwantop/">
+  <meta property="og:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta property="og:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta property="og:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta name="twitter:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta name="twitter:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Silkscreen & Press Start 2P for crisp VCR OSD bitmap typography + Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <!-- PapaParse for robust CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Silkscreen"', '"Noto Sans TC"', 'monospace'],
+            osd: ['"Press Start 2P"', '"Silkscreen"', '"Noto Sans TC"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --outer-gap: clamp(10px, 2vmin, 28px);
+      --osd-blue: #1422d4;
+      --osd-blue-deep: #0c158a;
+      --osd-white: #ffffff;
+      --osd-black: #000000;
+      --osd-cyan: #66f0ff;
+      --osd-yellow: #ffe64d;
+    }
+
+    * {
+      font-family: 'Silkscreen', 'Noto Sans TC', monospace;
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Authentic 1px black pixel outline around white OSD glyphs (matching osd.ts 8-neighbor outline) */
+    .osd-ink {
+      color: var(--osd-white);
+      text-shadow:
+        -1.5px -1.5px 0 #000,
+         0px   -1.5px 0 #000,
+         1.5px -1.5px 0 #000,
+        -1.5px  0px   0 #000,
+         1.5px  0px   0 #000,
+        -1.5px  1.5px 0 #000,
+         0px    1.5px 0 #000,
+         1.5px  1.5px 0 #000,
+         2px    2px   3px rgba(0, 0, 0, 0.55);
+    }
+
+    body {
+      background-color: #050507;
+      color: var(--osd-white);
+      padding: var(--outer-gap);
+      transition: background-color 0.25s steps(2, end);
+    }
+
+    /* Curved CRT Television Cabinet & Phosphor Glass */
+    #pageWrapper {
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(125% 115% at 50% 48%, #182ae6 0%, #1422d4 58%, #0d1694 88%, #080d5e 100%);
+      border-radius: clamp(18px, 3.2vmin, 34px);
+      border: 3px solid #1c1d24;
+      box-shadow:
+        0 0 0 2px #000000,
+        0 24px 60px rgba(0, 0, 0, 0.85),
+        inset 0 0 48px rgba(0, 0, 0, 0.52),
+        inset 0 2px 1px rgba(255, 255, 255, 0.14);
+      overflow-x: clip;
+      transition: background 0.25s steps(2, end);
+    }
+
+    /* Aperture grille, horizontal scanlines, and soft window sheen over the glass */
+    #pageWrapper::before {
+      content: "";
+      position: fixed;
+      inset: var(--outer-gap);
+      border-radius: clamp(18px, 3.2vmin, 34px);
+      pointer-events: none;
+      z-index: 40;
+      background:
+        /* Soft diagonal window reflection on glass (from crt.ts) */
+        radial-gradient(65% 45% at 24% 18%, rgba(255, 255, 255, 0.055) 0%, transparent 70%),
+        /* Horizontal CRT scanlines */
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0px,
+          rgba(0, 0, 0, 0) 2px,
+          rgba(0, 0, 0, 0.22) 3px,
+          rgba(0, 0, 0, 0.22) 4px
+        ),
+        /* RGB aperture grille micro-triad */
+        repeating-linear-gradient(
+          to right,
+          rgba(255, 80, 80, 0.03) 0px,
+          rgba(80, 255, 120, 0.03) 1px,
+          rgba(90, 150, 255, 0.03) 2px
+        );
+      box-shadow:
+        inset 0 0 36px 8px rgba(0, 0, 0, 0.58),
+        inset 0 10px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Night / Alternate Nocturnal CRT Phosphor Mode (Night Channel 00) */
+    body.dark-mode {
+      --osd-blue: #070b3b;
+      --osd-white: #8ffcff;
+    }
+
+    body.dark-mode #pageWrapper {
+      background:
+        radial-gradient(125% 115% at 50% 48%, #0c1359 0%, #070b3b 62%, #030521 100%);
+    }
+
+    .place-divider {
+      border-color: rgba(255, 255, 255, 0.28);
+      border-style: dashed;
+    }
+
+    /* Crisp stepped OSD accordion transitions */
+    .accordion-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows 0.28s steps(6, end),
+        opacity 0.18s steps(3, end);
+    }
+
+    .accordion-item.is-open .accordion-content {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .accordion-inner {
+      overflow: hidden;
+    }
+
+    .accordion-inner > div {
+      transform: translateY(-4px);
+      transition: transform 0.24s steps(4, end);
+    }
+
+    .accordion-item.is-open .accordion-inner > div {
+      transform: translateY(0);
+    }
+
+    /* City OSD Channel Bars */
+    .accordion-header-btn {
+      border-top: 2px solid rgba(255, 255, 255, 0.35);
+      transition:
+        height 0.25s steps(4, end),
+        min-height 0.25s steps(4, end),
+        background-color 0.12s steps(2, end),
+        color 0.12s steps(2, end);
+    }
+
+    .accordion-header-btn .city-zh,
+    .accordion-header-btn .city-en {
+      transition: font-size 0.22s steps(3, end);
+    }
+
+    /* Fixed-width Chinese label column so English titles align cleanly */
+    .city-zh-col {
+      width: 3.4rem;
+    }
+
+    @media (min-width: 640px) {
+      .city-zh-col {
+        width: 4.8rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .city-zh-col {
+        width: 5.6rem;
+      }
+    }
+
+    /* Inverted White-Block / Blue-Ink OSD Selection on Hover, Focus, or Active Open State */
+    .accordion-header-btn:hover,
+    .accordion-header-btn:focus-visible,
+    .accordion-item.is-open .accordion-header-btn {
+      background-color: var(--osd-white) !important;
+      color: var(--osd-blue) !important;
+    }
+
+    .accordion-header-btn:hover .osd-ink,
+    .accordion-header-btn:focus-visible .osd-ink,
+    .accordion-item.is-open .accordion-header-btn .osd-ink {
+      color: var(--osd-blue) !important;
+      text-shadow: none !important;
+    }
+
+    /* VCR OSD 600ms cursor blink (450ms ON / 150ms OFF from index.tsx) on focused header */
+    @keyframes osd-cursor-blink {
+      0%, 74.9% {
+        background-color: var(--osd-white);
+        color: var(--osd-blue);
+      }
+      75%, 100% {
+        background-color: rgba(255, 255, 255, 0.86);
+        color: var(--osd-blue);
+      }
+    }
+
+    .accordion-header-btn:focus-visible {
+      outline: 2px solid var(--osd-white);
+      outline-offset: -4px;
+      animation: osd-cursor-blink 600ms steps(1) infinite;
+    }
+
+    .accordion-item.is-open .accordion-header-btn {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
+      min-height: 2.45rem;
+      border-bottom: 2px solid #000000;
+    }
+
+    @media (min-width: 640px) {
+      .accordion-item.is-open .accordion-header-btn {
+        min-height: 2.75rem;
+      }
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-zh {
+      font-size: 0.95rem;
+    }
+
+    .accordion-item.is-open .accordion-header-btn .city-en {
+      font-size: 1.35rem;
+    }
+
+    @media (min-width: 640px) {
+      .accordion-item.is-open .accordion-header-btn .city-zh {
+        font-size: 1.15rem;
+      }
+      .accordion-item.is-open .accordion-header-btn .city-en {
+        font-size: 1.65rem;
+      }
+    }
+
+    /* Place list row inverted OSD highlight on hover/focus */
+    .osd-place-row {
+      transition: background-color 0.08s steps(1), color 0.08s steps(1);
+    }
+
+    .osd-place-row:hover,
+    .osd-place-row:focus-within {
+      background-color: var(--osd-white);
+      color: var(--osd-blue);
+    }
+
+    .osd-place-row:hover .osd-ink,
+    .osd-place-row:focus-within .osd-ink {
+      color: var(--osd-blue);
+      text-shadow: none;
+    }
+
+    body.dark-mode .yin-yang-icon {
+      transform: rotate(180deg);
+    }
+
+    .yin-yang-icon {
+      transition: transform 0.25s steps(3, end);
+    }
+
+    #themeToggle:hover .yin-yang-icon {
+      transform: scale(1.12);
+    }
+
+    body.dark-mode #themeToggle:hover .yin-yang-icon {
+      transform: rotate(180deg) scale(1.12);
+    }
+
+    /* Place Detail Modal styled as a VCR OSD Overlay Window */
+    #placeModal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s steps(3, end);
+    }
+
+    #placeModal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #placeModalCard {
+      background:
+        radial-gradient(125% 115% at 50% 48%, #182ae6 0%, #1422d4 62%, #0c158a 100%);
+      color: var(--osd-white);
+      border: 3px solid var(--osd-white);
+      border-radius: 6px;
+      box-shadow:
+        0 0 0 3px #000000,
+        0 24px 50px rgba(0, 0, 0, 0.85),
+        inset 0 0 28px rgba(0, 0, 0, 0.45);
+      transform: scale(0.98);
+      transition: transform 0.16s steps(3, end), background 0.2s steps(2, end);
+    }
+
+    #placeModal.is-visible #placeModalCard {
+      transform: scale(1);
+    }
+
+    body.dark-mode #placeModalCard {
+      background:
+        radial-gradient(125% 115% at 50% 48%, #0c1359 0%, #070b3b 65%, #030521 100%);
+      color: var(--osd-white);
+      border-color: var(--osd-white);
+    }
+
+    /* Proportional desktop scaling for modal right-side details panel when card height resizes */
+    @media (min-width: 768px) {
+      #modalDetailsPane {
+        padding: clamp(1rem, 2.8dvh, 1.75rem);
+        gap: clamp(0.65rem, 2dvh, 1.25rem);
+      }
+
+      #modalTextGroup {
+        gap: clamp(0.35rem, 1.2dvh, 0.75rem);
+      }
+
+      #modalTitle {
+        font-size: clamp(1rem, 2.3dvh, 1.35rem);
+      }
+
+      #modalDescription {
+        font-size: clamp(0.72rem, 1.6dvh, 0.9rem);
+        line-height: 1.5;
+      }
+
+      #modalFooterGroup {
+        gap: clamp(0.45rem, 1.4dvh, 0.85rem);
+      }
+
+      #modalActionsDivider {
+        padding-top: clamp(0.45rem, 1.4dvh, 0.85rem);
+      }
+
+      #modalMapsLink {
+        padding-top: clamp(0.4rem, 1.1dvh, 0.65rem);
+        padding-bottom: clamp(0.4rem, 1.1dvh, 0.65rem);
+        font-size: clamp(0.72rem, 1.5dvh, 0.85rem);
+      }
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a1066;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Vertically responsive row height: 1/7 of browser viewport height minus symmetrical top & bottom outer padding */
+    .viewport-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 7);
+      min-height: 3.75rem;
+    }
+
+    /* Half-height footer row: 1/14 of browser viewport height */
+    .footer-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
+      min-height: 2.25rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-white selection:text-[#1422d4]">
+
+  <!-- Main Curved CRT Container -->
+  <div id="pageWrapper" class="w-full max-w-full mx-auto">
+
+    <!-- Top VCR OSD Telemetry Strip -->
+    <div class="w-full px-3 sm:px-6 pt-2.5 flex items-center justify-between text-[10px] sm:text-xs tracking-[0.14em] uppercase osd-ink select-none">
+      <span class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 bg-[#ff3b30] border border-black"></span>
+        <span>GUIDE REC</span>
+      </span>
+      <span class="hidden sm:inline">PROG 05</span>
+      <span id="osdClockDisplay">TW // SP</span>
+    </div>
+
+    <!-- Header Section matching 1/7 of the browser window height -->
+    <header class="w-full flex items-center justify-between px-3 sm:px-6 viewport-row">
+      <button
+        id="homeResetBtn"
+        type="button"
+        aria-label="Reset and refresh TAIWANtop"
+        class="flex items-center min-w-0 text-left cursor-pointer focus:outline-none focus-visible:bg-white focus-visible:text-[#1422d4] px-1 -ml-1"
+      >
+        <!-- Traditional Chinese Taiwan label -->
+        <span class="city-zh-col text-left text-lg sm:text-2xl md:text-[24px] font-bold leading-normal tracking-normal osd-ink shrink-0">
+          台灣
+        </span>
+
+        <!-- Crisp Bitmap OSD TAIWANtop Title -->
+        <h1 class="font-osd text-xl sm:text-3xl md:text-[38px] leading-[1.35] pb-1 tracking-[-0.02em] font-normal osd-ink select-none">
+          TAIWAN<span class="text-[#ffe64d]">top</span>
+        </h1>
+      </button>
+
+      <!-- Interactive Yin-Yang CRT Phosphor Mode Toggle -->
+      <button
+        id="themeToggle"
+        type="button"
+        aria-label="Toggle Standard Blue / Night Phosphor CRT Mode"
+        title="Toggle CRT phosphor mode"
+        class="p-2 -mr-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0 cursor-pointer"
+      >
+        <svg class="yin-yang-icon w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[2px_2px_0_#000]" xmlns="http://www.w3.org/2000/svg" viewBox="-42 -42 84 84">
+          <circle r="39" fill="#000" stroke="#fff" stroke-width="4"/>
+          <path fill="#fff" d="M0,38a38,38 0 0 1 0,-76a19,19 0 0 1 0,38a19,19 0 0 0 0,38"/>
+          <circle r="5" cy="19" fill="#fff"/>
+          <circle r="5" cy="-19" fill="#000"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Status / Filter Bar (subtle, minimalist) -->
+    <div id="statusBanner" class="hidden px-3 sm:px-6 pb-3 text-xs osd-ink flex items-center justify-between">
+      <span id="statusText">LOADING TAPE DATA...</span>
+      <button id="retryBtn" class="hidden underline hover:opacity-100 cursor-pointer">RETRY</button>
+    </div>
+
+    <!-- Full-width VCR OSD City Channels Container -->
+    <main id="citiesContainer" class="w-full flex flex-col border-b-2 border-white/35"></main>
+
+    <!-- Minimalist VCR OSD Footer matching half the standard row height (1/14 of viewport) -->
+    <footer class="w-full px-3 sm:px-6 footer-row flex items-center justify-between text-[11px] sm:text-xs tracking-[0.08em] uppercase osd-ink">
+      <span>CH 03 &nbsp; SPEED SP</span>
+      <span>CURATED BY <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:bg-white hover:text-[#1422d4] hover:[text-shadow:none] px-1">@ALBY.FOOD</a></span>
+    </footer>
+
+  </div>
+
+  <!-- Place Detail Modal -->
+  <div
+    id="placeModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-black/75 backdrop-blur-[2px]"
+  >
+    <div class="relative w-full max-w-4xl flex items-center justify-center">
+      <!-- Previous Place Button (bare < over backdrop on desktop) -->
+      <button
+        id="prevPlaceBtn"
+        type="button"
+        aria-label="Previous place"
+        title="Previous place"
+        class="hidden sm:flex items-center justify-center -ml-12 mr-3 p-2 shrink-0 text-white hover:bg-white hover:text-[#1422d4] transition-colors cursor-pointer select-none"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div
+        id="placeModalCard"
+        class="relative w-full h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden"
+      >
+        <!-- Floating Close Button directly on the top-right corner -->
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center bg-black/50 md:bg-transparent text-white hover:bg-white hover:text-[#1422d4] transition-colors cursor-pointer text-sm sm:text-base leading-none font-bold border border-white/60 md:border-transparent"
+        >
+          ✕
+        </button>
+
+        <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop so modal never scrolls -->
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+          <!-- 1:1 Square Picture Container -->
+          <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-white/40 mx-auto md:mx-0">
+            <img
+              id="modalImage"
+              src=""
+              alt=""
+              decoding="async"
+              fetchpriority="high"
+              class="w-full h-full object-cover transition-opacity duration-150"
+            />
+          </div>
+
+          <!-- Details Body -->
+          <div id="modalDetailsPane" class="flex-1 min-w-0 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
+            <div id="modalTextGroup" class="min-h-0 flex-1 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-8">
+              <h2 id="modalTitle" class="text-base sm:text-lg lg:text-xl font-bold leading-snug tracking-normal osd-ink line-clamp-2 shrink-0">
+                Place Title
+              </h2>
+
+              <!-- Description -->
+              <p id="modalDescription" class="text-xs sm:text-sm font-normal leading-relaxed osd-ink opacity-95 line-clamp-4 md:line-clamp-none overflow-hidden">
+                Description
+              </p>
+            </div>
+
+            <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
+            <div id="modalFooterGroup" class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
+              <!-- City Badge & Categories as Inverted OSD Badges (Above Separation Line) -->
+              <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
+
+              <!-- Action Footer Below Separation Line -->
+              <div id="modalActionsDivider" class="pt-2.5 sm:pt-3.5 border-t-2 border-dashed border-white/35">
+                <a
+                  id="modalMapsLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2 sm:py-2.5 border-2 border-white bg-white text-[#1422d4] font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#ffe64d] hover:text-black hover:border-[#ffe64d] transition-colors shadow-[3px_3px_0_#000]"
+                >
+                  <span>OPEN ON GOOGLE MAPS</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Place Button (bare > over backdrop on desktop) -->
+      <button
+        id="nextPlaceBtn"
+        type="button"
+        aria-label="Next place"
+        title="Next place"
+        class="hidden sm:flex items-center justify-center -mr-12 ml-3 p-2 shrink-0 text-white hover:bg-white hover:text-[#1422d4] transition-colors cursor-pointer select-none"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+    const CACHE_KEY = 'taiwantop_csv_cache_v1';
+
+    // City configuration matching screenshot light colors + creative dark mode palette with white text
+    const CITY_META = {
+      'taipei': {
+        en: 'Taipei',
+        zh: '台北',
+        bg: '#F7D249',
+        text: '#0A0A0A',
+        darkBg: '#8A5A19', // Deep warm amber/ochre
+        darkText: '#FFFFFF',
+        order: 1
+      },
+      'taichung': {
+        en: 'Taichung',
+        zh: '台中',
+        bg: '#C6BEB8',
+        text: '#0A0A0A',
+        darkBg: '#4E4946', // Warm charcoal taupe
+        darkText: '#FFFFFF',
+        order: 2
+      },
+      'tainan': {
+        en: 'Tainan',
+        zh: '台南',
+        bg: '#F6BBF5',
+        text: '#0A0A0A',
+        darkBg: '#7A3B6E', // Deep plum magenta
+        darkText: '#FFFFFF',
+        order: 3
+      },
+      'kaohsiung': {
+        en: 'Kaohsiung',
+        zh: '高雄',
+        bg: '#8FA3D9',
+        text: '#0A0A0A',
+        darkBg: '#2E436E', // Deep indigo harbor blue
+        darkText: '#FFFFFF',
+        order: 4
+      },
+      'hengchun': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#65754A',
+        text: '#0A0A0A',
+        darkBg: '#37472C', // Deep coastal forest moss
+        darkText: '#FFFFFF',
+        order: 5
+      },
+      'kenting': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#65754A',
+        text: '#0A0A0A',
+        darkBg: '#37472C',
+        darkText: '#FFFFFF',
+        order: 5
+      }
+    };
+
+    // Fallback curated palettes if additional cities exist in the CSV
+    const EXTRA_PALETTE = [
+      { bg: '#E59866', darkBg: '#7E4627', zh: '台灣' },
+      { bg: '#82B3A6', darkBg: '#2D594E', zh: '台灣' },
+      { bg: '#D4A373', darkBg: '#6B4C2E', zh: '台灣' },
+      { bg: '#A3B18A', darkBg: '#424F32', zh: '台灣' }
+    ];
+
+    // Fallback data (without image URLs) in case CORS/network blocks live CSV in an offline sandbox
+    const FALLBACK_ROWS = [
+      { City: 'Taipei', Title: '真珠 JIN ZHU', Description: 'Nice Taiwanese cuisine chain', Category: 'taiwanese, restaurant' },
+      { City: 'Taipei', Title: '阿石北平烤鴨店', Description: 'Beiping style roasted duck', Category: 'roast duck, takeaway' },
+      { City: 'Taipei', Title: '口福黑輪', Description: 'Taiwanese-style oden', Category: 'oden, street food' },
+      { City: 'Taichung', Title: '第二市場 Second Market', Description: 'Historic market famous for braised pork rice and radish cake', Category: 'market, local food' },
+      { City: 'Tainan', Title: '文章牛肉湯', Description: 'Classic Tainan fresh beef soup served with rice', Category: 'beef soup, breakfast' },
+      { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
+      { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
+    ];
+
+    // Active modal navigation state (loops inside the current city)
+    let activeModalCityGroup = null;
+    let activeModalPlaceIndex = 0;
+
+    // Track preloaded image URLs so each photo is fetched at most once
+    const preloadedImageUrls = new Set();
+
+    /**
+     * Preloads a single image URL silently into browser memory/HTTP cache
+     */
+    function preloadImageUrl(url) {
+      if (!url || !/^https?:\/\//i.test(url) || preloadedImageUrls.has(url)) return;
+      preloadedImageUrls.add(url);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+    }
+
+    /**
+     * Preloads all photos in a city group when its accordion opens
+     */
+    function preloadCityImages(cityGroup) {
+      if (!cityGroup || !Array.isArray(cityGroup.places)) return;
+      cityGroup.places.forEach((place) => {
+        if (place.image) {
+          preloadImageUrl(place.image);
+        }
+      });
+    }
+
+    /**
+     * Extracts a numeric timestamp from Flickr photo URLs or row date fields so each city sorts newest first
+     */
+    function extractPhotoTimestamp(imageUrl, row = {}) {
+      const explicitDate = row['Timestamp'] || row['timestamp'] || row['Date'] || row['date'] || '';
+      if (explicitDate) {
+        const parsed = Date.parse(explicitDate);
+        if (!Number.isNaN(parsed)) return parsed;
+      }
+
+      if (imageUrl) {
+        // Flickr static URLs embed the numeric photo ID: /server/photoId_secret_size.jpg
+        const flickrMatch = String(imageUrl).match(/\/(\d{8,14})_[a-zA-Z0-9]+/);
+        if (flickrMatch && flickrMatch[1]) {
+          return Number(flickrMatch[1]);
+        }
+      }
+
+      return 0;
+    }
+
+    /**
+     * Groups flat CSV rows into ordered city buckets sorted by Flickr photo timestamp (newest first)
+     */
+    function groupPlacesByCity(rows) {
+      const groupsMap = new Map();
+      let extraIndex = 0;
+
+      // Seed the 5 core cities first so their canonical order is always preserved
+      Object.entries(CITY_META).forEach(([key, meta]) => {
+        if (key === 'kenting') return;
+        groupsMap.set(meta.en.toLowerCase(), {
+          en: meta.en,
+          zh: meta.zh,
+          bg: meta.bg,
+          text: meta.text,
+          darkBg: meta.darkBg,
+          darkText: meta.darkText,
+          order: meta.order,
+          places: []
+        });
+      });
+
+      rows.forEach((row, rowIndex) => {
+        const rawCity = (row['City'] || row['city'] || '').trim();
+        const title = (row['Title'] || row['title'] || row['Name'] || row['name'] || '').trim();
+        const description = (row['Description'] || row['description'] || '').trim();
+        const image = (row['Image'] || row['image'] || row['Photo'] || row['photo'] || '').trim();
+        const mapsUrl = (row['Maps'] || row['maps'] || row['Google Maps'] || row['URL'] || row['url'] || row['Link'] || row['link'] || '').trim();
+        const rawCategory = (row['Category'] || row['category'] || row['Categories'] || row['Tags'] || '').trim();
+
+        if (!title) return;
+
+        const cityKey = rawCity.toLowerCase();
+        const meta = CITY_META[cityKey];
+        const bucketKey = meta ? meta.en.toLowerCase() : (cityKey || 'other');
+
+        if (!groupsMap.has(bucketKey)) {
+          const palette = EXTRA_PALETTE[extraIndex % EXTRA_PALETTE.length];
+          extraIndex += 1;
+          groupsMap.set(bucketKey, {
+            en: rawCity || 'Taiwan',
+            zh: palette.zh,
+            bg: palette.bg,
+            text: '#0A0A0A',
+            darkBg: palette.darkBg,
+            darkText: '#FFFFFF',
+            order: 100 + extraIndex,
+            places: []
+          });
+        }
+
+        const categories = rawCategory
+          ? rawCategory.split(',').map((c) => c.trim()).filter(Boolean)
+          : [];
+
+        groupsMap.get(bucketKey).places.push({
+          title,
+          description,
+          image,
+          mapsUrl,
+          categories,
+          timestamp: extractPhotoTimestamp(image, row),
+          rowIndex
+        });
+      });
+
+      // Sort cities canonically and sort each city's places newest first by Flickr photo timestamp
+      return Array.from(groupsMap.values())
+        .sort((a, b) => a.order - b.order)
+        .map((group) => {
+          group.places.sort((a, b) => {
+            if (b.timestamp !== a.timestamp) {
+              return b.timestamp - a.timestamp;
+            }
+            return b.rowIndex - a.rowIndex;
+          });
+          return group;
+        });
+    }
+
+    /**
+     * Escapes HTML special characters to prevent XSS
+     */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * Generates a clean square fallback SVG data URL when no photo or broken link is present
+     */
+    function getFallbackSquareImage(title, bgColor) {
+      const safeTitle = escapeHtml((title || 'TAIWANtop').slice(0, 22));
+      const fill = '#1422d4';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+        <rect width="600" height="600" fill="${fill}"/>
+        <rect x="24" y="24" width="552" height="552" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="12 8"/>
+        <text x="50%" y="46%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#ffe64d">NO SIGNAL</text>
+        <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="20" font-weight="bold" fill="#ffffff">${safeTitle}</text>
+      </svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    /**
+     * Updates accordion header colors when toggling light/dark CRT mode
+     */
+    function applyAccordionThemeColors() {
+      document.querySelectorAll('.accordion-header-btn').forEach((btn) => {
+        btn.style.backgroundColor = 'transparent';
+        btn.style.color = 'var(--osd-white)';
+      });
+    }
+
+    /**
+     * Opens the place detail modal with 1:1 image, city + uppercase category badges, and Google Maps link
+     */
+    function openPlaceModal(place, cityGroup, placeIndex = 0) {
+      activeModalCityGroup = cityGroup;
+      activeModalPlaceIndex = placeIndex;
+
+      const modal = document.getElementById('placeModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDescription');
+      const modalCats = document.getElementById('modalCategories');
+      const modalMaps = document.getElementById('modalMapsLink');
+
+      // Show/hide navigation arrows if the city has more than 1 place
+      const hasMultiple = cityGroup.places && cityGroup.places.length > 1;
+      ['prevPlaceBtn', 'nextPlaceBtn'].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.visibility = hasMultiple ? 'visible' : 'hidden';
+      });
+
+      modalTitle.textContent = place.title;
+      modalDesc.textContent = place.description || 'NO DESCRIPTION RECORDED.';
+
+      const fallbackSrc = getFallbackSquareImage(place.title, cityGroup.bg);
+      const targetSrc = place.image || fallbackSrc;
+
+      if (place.image && !preloadedImageUrls.has(place.image)) {
+        // Show subtle fade-in if image wasn't already cached
+        modalImg.style.opacity = '0.35';
+        modalImg.onload = () => {
+          modalImg.style.opacity = '1';
+          preloadedImageUrls.add(place.image);
+        };
+      } else {
+        modalImg.style.opacity = '1';
+        modalImg.onload = null;
+      }
+
+      modalImg.onerror = () => {
+        modalImg.onerror = null;
+        modalImg.onload = null;
+        modalImg.style.opacity = '1';
+        modalImg.src = fallbackSrc;
+      };
+      modalImg.src = targetSrc;
+      modalImg.alt = place.title;
+
+      // Prefetch immediate previous and next places in the same city for instant arrow/swipe transitions
+      if (cityGroup.places && cityGroup.places.length > 1) {
+        const total = cityGroup.places.length;
+        const nextPlace = cityGroup.places[(placeIndex + 1) % total];
+        const prevPlace = cityGroup.places[(placeIndex - 1 + total) % total];
+        if (nextPlace && nextPlace.image) preloadImageUrl(nextPlace.image);
+        if (prevPlace && prevPlace.image) preloadImageUrl(prevPlace.image);
+      }
+
+      // Render city badge first (inverted white OSD block with blue ink), followed by outlined OSD category tags
+      modalCats.innerHTML = '';
+
+      const cityBadge = document.createElement('span');
+      cityBadge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-white text-[#1422d4] border border-white shadow-[2px_2px_0_#000]';
+      cityBadge.textContent = `${cityGroup.zh} ${cityGroup.en}`;
+      modalCats.appendChild(cityBadge);
+
+      if (place.categories && place.categories.length > 0) {
+        place.categories.forEach((cat) => {
+          const badge = document.createElement('span');
+          badge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white text-white osd-ink';
+          badge.textContent = cat;
+          modalCats.appendChild(badge);
+        });
+      }
+
+      // Set direct Google Maps URL or fallback search query
+      if (place.mapsUrl && /^https?:\/\//i.test(place.mapsUrl)) {
+        modalMaps.href = place.mapsUrl;
+      } else {
+        const query = encodeURIComponent(`${place.title} ${cityGroup.en} Taiwan`);
+        modalMaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      }
+
+      modal.classList.add('is-visible');
+    }
+
+    /**
+     * Navigates to previous (-1) or next (+1) place in a loop inside the current city
+     */
+    function navigatePlaceModal(delta) {
+      if (!activeModalCityGroup || !activeModalCityGroup.places || activeModalCityGroup.places.length <= 1) {
+        return;
+      }
+      const total = activeModalCityGroup.places.length;
+      const nextIndex = (activeModalPlaceIndex + delta + total) % total;
+      openPlaceModal(activeModalCityGroup.places[nextIndex], activeModalCityGroup, nextIndex);
+    }
+
+    /**
+     * Closes the place detail modal
+     */
+    function closePlaceModal() {
+      const modal = document.getElementById('placeModal');
+      if (modal) {
+        modal.classList.remove('is-visible');
+      }
+    }
+
+    /**
+     * Renders full-width city accordions styled as VCR OSD channels with inverted active selection bars
+     */
+    function renderAccordions(cityGroups) {
+      const container = document.getElementById('citiesContainer');
+      container.innerHTML = '';
+
+      cityGroups.forEach((group, groupIdx) => {
+        const item = document.createElement('section');
+        item.className = 'accordion-item w-full';
+
+        // Accordion Header Bar (1/7 viewport height closed, 1/14 sticky open)
+        const headerBtn = document.createElement('button');
+        headerBtn.type = 'button';
+        headerBtn.setAttribute('aria-expanded', 'false');
+        headerBtn.className = 'accordion-header-btn w-full viewport-row px-3 sm:px-6 flex items-center justify-between text-left cursor-pointer focus:outline-none select-none bg-transparent text-white';
+
+        const chNum = String(groupIdx + 1).padStart(2, '0');
+
+        headerBtn.innerHTML = `
+          <div class="flex items-center min-w-0 overflow-visible">
+            <span class="city-zh city-zh-col osd-ink text-left text-lg sm:text-2xl md:text-[24px] font-bold leading-normal tracking-normal shrink-0">
+              ${escapeHtml(group.zh)}
+            </span>
+            <span class="city-en osd-ink text-2xl sm:text-4xl md:text-[42px] font-bold uppercase leading-[1.2] tracking-[0.02em] whitespace-nowrap">
+              ${escapeHtml(group.en)}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-3 osd-ink">
+            <span class="hidden md:inline-block w-3 h-3 border border-black" style="background-color: ${escapeHtml(group.bg)};"></span>
+            <span class="text-xs sm:text-sm font-bold tracking-wider">
+              CH${chNum} [${String(group.places.length).padStart(2, '0')}]
+            </span>
+          </div>
+        `;
+
+        // Accordion Drawer Wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'accordion-content w-full';
+
+        const inner = document.createElement('div');
+        inner.className = 'accordion-inner w-full';
+
+        const listContainer = document.createElement('div');
+        listContainer.className = 'w-full px-3 sm:px-6 py-3 sm:py-5 bg-black/15';
+
+        if (group.places.length === 0) {
+          const emptyMsg = document.createElement('p');
+          emptyMsg.className = 'text-xs sm:text-sm osd-ink py-2 uppercase tracking-wider';
+          emptyMsg.textContent = '-- NO ENTRIES ON TAPE --';
+          listContainer.appendChild(emptyMsg);
+        } else {
+          const ul = document.createElement('ul');
+          ul.className = 'w-full flex flex-col';
+
+          group.places.forEach((place, idx) => {
+            const li = document.createElement('li');
+            li.className = 'osd-place-row w-full py-3 sm:py-3.5 px-2 -mx-2 border-b-2 place-divider flex flex-col md:flex-row md:items-baseline gap-1.5 md:gap-8 lg:gap-12 cursor-pointer';
+
+            // Left Column: Place Title (never wraps onto a second line; expands to push description right if needed)
+            const titleCol = document.createElement('div');
+            titleCol.className = 'w-full md:w-auto md:min-w-[36%] lg:min-w-[34%] shrink-0 overflow-x-auto flex items-baseline gap-2.5';
+
+            const idxTag = document.createElement('span');
+            idxTag.className = 'text-xs font-bold osd-ink opacity-85 shrink-0';
+            idxTag.textContent = String(idx + 1).padStart(2, '0');
+
+            const titleBtn = document.createElement('button');
+            titleBtn.type = 'button';
+            titleBtn.className = 'osd-ink text-left text-base sm:text-[18px] font-bold leading-snug tracking-normal whitespace-nowrap focus:outline-none cursor-pointer';
+            titleBtn.textContent = place.title;
+            titleBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openPlaceModal(place, group, idx);
+            });
+
+            titleCol.appendChild(idxTag);
+            titleCol.appendChild(titleBtn);
+
+            // Right Column: Description shifted horizontally to the right (clickable without hover effect)
+            const descCol = document.createElement('div');
+            descCol.className = 'osd-ink flex-1 min-w-0 text-xs sm:text-[14px] font-normal leading-relaxed cursor-pointer';
+            descCol.textContent = place.description;
+            descCol.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openPlaceModal(place, group, idx);
+            });
+
+            li.addEventListener('click', () => openPlaceModal(place, group, idx));
+
+            li.appendChild(titleCol);
+            li.appendChild(descCol);
+            ul.appendChild(li);
+          });
+
+          listContainer.appendChild(ul);
+        }
+
+        inner.appendChild(listContainer);
+        contentWrapper.appendChild(inner);
+
+        // Single-city accordion toggle with snap-to-top scroll
+        headerBtn.addEventListener('click', () => {
+          const wasOpen = item.classList.contains('is-open');
+
+          // Close all accordions
+          document.querySelectorAll('.accordion-item').forEach((el) => {
+            el.classList.remove('is-open');
+            const btn = el.querySelector('.accordion-header-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+          });
+
+          if (!wasOpen) {
+            item.classList.add('is-open');
+            headerBtn.setAttribute('aria-expanded', 'true');
+
+            // Preload all photos for this city immediately while user scans the list
+            preloadCityImages(group);
+
+            // Smoothly snap clicked city header to the sticky top position
+            requestAnimationFrame(() => {
+              item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+        });
+
+        item.appendChild(headerBtn);
+        item.appendChild(contentWrapper);
+        container.appendChild(item);
+      });
+    }
+
+    /**
+     * Parses CSV string and renders accordions immediately
+     */
+    function parseAndRenderCsv(csvText) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              const grouped = groupPlacesByCity(results.data);
+              renderAccordions(grouped);
+              resolve(true);
+            } else {
+              reject(new Error('CSV returned zero rows'));
+            }
+          },
+          error: (err) => reject(err)
+        });
+      });
+    }
+
+    /**
+     * Instant-first boot: renders cached CSV or fallback immediately, then refreshes live in background
+     */
+    async function initDirectory() {
+      const statusBanner = document.getElementById('statusBanner');
+      const statusText = document.getElementById('statusText');
+      const retryBtn = document.getElementById('retryBtn');
+
+      // 1. Render instantly from localStorage cache or built-in fallback (zero waiting)
+      let cachedCsv = null;
+      try {
+        cachedCsv = localStorage.getItem(CACHE_KEY);
+      } catch (e) {}
+
+      if (cachedCsv) {
+        try {
+          await parseAndRenderCsv(cachedCsv);
+        } catch (e) {
+          renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+        }
+      } else {
+        renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+      }
+
+      // 2. Fetch fresh CSV in background with a fast 4s timeout so slow Google endpoints never stall UI
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      try {
+        const response = await fetch(CSV_URL, {
+          cache: 'default',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        const freshCsv = await response.text();
+
+        // Only re-render if data actually changed or nothing was cached yet
+        if (freshCsv && freshCsv !== cachedCsv) {
+          await parseAndRenderCsv(freshCsv);
+          try {
+            localStorage.setItem(CACHE_KEY, freshCsv);
+          } catch (e) {}
+        }
+        statusBanner.classList.add('hidden');
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.warn('Background CSV sync skipped/failed:', err);
+        if (!cachedCsv) {
+          statusBanner.classList.remove('hidden');
+          statusText.textContent = 'Offline preview mode.';
+          retryBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Theme toggle handler
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      applyAccordionThemeColors();
+    });
+
+    // Header title click: close modal, collapse all accordions, scroll to top, and refresh data
+    document.getElementById('homeResetBtn').addEventListener('click', () => {
+      closePlaceModal();
+      document.querySelectorAll('.accordion-item').forEach((el) => {
+        el.classList.remove('is-open');
+        const btn = el.querySelector('.accordion-header-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      initDirectory();
+    });
+
+    // Retry button handler
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      document.getElementById('statusText').textContent = 'Retrying CSV fetch...';
+      initDirectory();
+    });
+
+    // Modal close interactions (close button, backdrop click, Escape key)
+    document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
+    document.getElementById('prevPlaceBtn').addEventListener('click', () => navigatePlaceModal(-1));
+    document.getElementById('nextPlaceBtn').addEventListener('click', () => navigatePlaceModal(1));
+
+    // Touch swipe navigation on mobile inside the modal
+    let modalTouchStartX = 0;
+    let modalTouchStartY = 0;
+    const modalCardEl = document.getElementById('placeModalCard');
+
+    modalCardEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        modalTouchStartX = e.touches[0].clientX;
+        modalTouchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    modalCardEl.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length !== 1) return;
+      const deltaX = e.changedTouches[0].clientX - modalTouchStartX;
+      const deltaY = e.changedTouches[0].clientY - modalTouchStartY;
+
+      // Trigger previous/next only for deliberate horizontal swipes
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0) {
+          navigatePlaceModal(1); // Swipe left -> Next
+        } else {
+          navigatePlaceModal(-1); // Swipe right -> Previous
+        }
+      }
+    }, { passive: true });
+
+    document.getElementById('placeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'placeModal' || e.target === e.currentTarget.firstElementChild) {
+        closePlaceModal();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      const isModalOpen = document.getElementById('placeModal').classList.contains('is-visible');
+      if (!isModalOpen) return;
+
+      if (e.key === 'Escape') {
+        closePlaceModal();
+      } else if (e.key === 'ArrowLeft') {
+        navigatePlaceModal(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigatePlaceModal(1);
+      }
+    });
+
+    // Boot application
+    window.addEventListener('DOMContentLoaded', initDirectory);
+  </script>
+</body>
+</html>
