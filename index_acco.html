@@ -240,14 +240,14 @@
 
     <!-- Header Section matching 1/7 of the browser window height -->
     <header class="w-full flex items-center justify-between px-3 sm:px-6 viewport-row">
-      <div class="flex items-center overflow-hidden">
+      <div class="flex items-center min-w-0">
         <!-- Traditional Chinese Taiwan label -->
-        <span class="city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
+        <span class="city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal leading-normal tracking-normal [font-kerning:none] shrink-0">
           台灣
         </span>
 
         <!-- Thin geometric TAIWAN + italic top aligned with city names -->
-        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-none tracking-normal [font-kerning:none] font-extralight select-none truncate">
+        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-[1.35] pb-1.5 tracking-normal [font-kerning:none] font-extralight select-none">
           TAIWAN<span class="italic font-extralight tracking-normal [font-kerning:none]">top</span>
         </h1>
       </div>
@@ -293,65 +293,117 @@
     aria-labelledby="modalTitle"
     class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-black/60 backdrop-blur-[2px]"
   >
-    <div
-      id="placeModalCard"
-      class="relative w-full max-w-4xl h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden border-2 rounded-xl shadow-2xl"
-    >
-      <!-- Floating Close Button directly on the top-right corner -->
+    <div class="relative w-full max-w-4xl flex items-center justify-center">
+      <!-- Previous Place Button (outside left edge of modal) -->
       <button
-        id="closeModalBtn"
+        id="prevPlaceBtn"
         type="button"
-        aria-label="Close modal"
-        class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-lg bg-[#F4F3EF]/90 dark:bg-[#1A1A19]/90 md:bg-transparent md:dark:bg-transparent hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-base sm:text-lg leading-none font-bold"
+        aria-label="Previous place"
+        title="Previous place"
+        class="hidden sm:flex items-center justify-center w-10 h-10 -ml-14 mr-3 shrink-0 rounded-full bg-[#F4F3EF] text-black border-2 border-black hover:bg-black hover:text-white transition-colors cursor-pointer shadow-lg"
       >
-        ✕
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
       </button>
 
-      <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop so modal never scrolls -->
-      <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
-        <!-- 1:1 Square Picture Container -->
-        <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black/5 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-current/20 mx-auto md:mx-0">
-          <img
-            id="modalImage"
-            src=""
-            alt=""
-            class="w-full h-full object-cover"
-          />
-        </div>
+      <div
+        id="placeModalCard"
+        class="relative w-full h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden border-2 rounded-xl shadow-2xl"
+      >
+        <!-- Floating Close Button directly on the top-right corner -->
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-lg bg-[#F4F3EF]/90 dark:bg-[#1A1A19]/90 md:bg-transparent md:dark:bg-transparent hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-base sm:text-lg leading-none font-bold"
+        >
+          ✕
+        </button>
 
-        <!-- Details Body -->
-        <div class="flex-1 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
-          <div class="min-h-0 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
-            <h2 id="modalTitle" class="text-lg sm:text-xl lg:text-2xl font-bold leading-tight tracking-normal [font-kerning:none] line-clamp-2 shrink-0">
-              Place Title
-            </h2>
-
-            <!-- Description -->
-            <p id="modalDescription" class="text-xs sm:text-sm lg:text-base font-normal leading-relaxed opacity-90 line-clamp-4 sm:line-clamp-none overflow-hidden">
-              Description
-            </p>
+        <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop so modal never scrolls -->
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+          <!-- 1:1 Square Picture Container -->
+          <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black/5 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-current/20 mx-auto md:mx-0">
+            <img
+              id="modalImage"
+              src=""
+              alt=""
+              class="w-full h-full object-cover"
+            />
           </div>
 
-          <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
-          <div class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
-            <!-- City Badge & Categories as Badges (Above Separation Line) -->
-            <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
+          <!-- Details Body -->
+          <div class="flex-1 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
+            <div class="min-h-0 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
+              <h2 id="modalTitle" class="text-lg sm:text-xl lg:text-2xl font-bold leading-tight tracking-normal [font-kerning:none] line-clamp-2 shrink-0">
+                Place Title
+              </h2>
 
-            <!-- Action Footer Below Separation Line -->
-            <div class="pt-2.5 sm:pt-3.5 border-t border-current/20 flex items-center justify-end">
-              <a
-                id="modalMapsLink"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors shrink-0"
-              >
-                <span>Open in Google Maps</span>
-                <span aria-hidden="true">↗</span>
-              </a>
+              <!-- Description -->
+              <p id="modalDescription" class="text-xs sm:text-sm lg:text-base font-normal leading-relaxed opacity-90 line-clamp-4 sm:line-clamp-none overflow-hidden">
+                Description
+              </p>
+            </div>
+
+            <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
+            <div class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
+              <!-- City Badge & Categories as Badges (Above Separation Line) -->
+              <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
+
+              <!-- Action Footer Below Separation Line -->
+              <div class="pt-2.5 sm:pt-3.5 border-t border-current/20">
+                <a
+                  id="modalMapsLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2 sm:py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-colors"
+                >
+                  <span>Open on Google Maps</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Next Place Button (outside right edge of modal) -->
+      <button
+        id="nextPlaceBtn"
+        type="button"
+        aria-label="Next place"
+        title="Next place"
+        class="hidden sm:flex items-center justify-center w-10 h-10 -mr-14 ml-3 shrink-0 rounded-full bg-[#F4F3EF] text-black border-2 border-black hover:bg-black hover:text-white transition-colors cursor-pointer shadow-lg"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Mobile Previous / Next Floating Controls just below the modal card -->
+      <div class="sm:hidden absolute -bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4">
+        <button
+          id="prevPlaceBtnMobile"
+          type="button"
+          aria-label="Previous place"
+          class="flex items-center justify-center w-9 h-9 rounded-full bg-[#F4F3EF] text-black border-2 border-black active:bg-black active:text-white transition-colors cursor-pointer shadow-md"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button
+          id="nextPlaceBtnMobile"
+          type="button"
+          aria-label="Next place"
+          class="flex items-center justify-center w-9 h-9 rounded-full bg-[#F4F3EF] text-black border-2 border-black active:bg-black active:text-white transition-colors cursor-pointer shadow-md"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -436,6 +488,10 @@
       { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
       { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
     ];
+
+    // Active modal navigation state (loops inside the current city)
+    let activeModalCityGroup = null;
+    let activeModalPlaceIndex = 0;
 
     function escapeHtml(str) {
       if (!str) return '';
@@ -559,7 +615,10 @@
     /**
      * Opens the place detail modal with 1:1 image, city + uppercase category badges, and Google Maps link
      */
-    function openPlaceModal(place, cityGroup) {
+    function openPlaceModal(place, cityGroup, placeIndex = 0) {
+      activeModalCityGroup = cityGroup;
+      activeModalPlaceIndex = placeIndex;
+
       const modal = document.getElementById('placeModal');
       const modalImg = document.getElementById('modalImage');
       const modalTitle = document.getElementById('modalTitle');
@@ -568,6 +627,13 @@
       const modalMaps = document.getElementById('modalMapsLink');
 
       const isDark = document.body.classList.contains('dark-mode');
+
+      // Show/hide navigation arrows if the city has more than 1 place
+      const hasMultiple = cityGroup.places && cityGroup.places.length > 1;
+      ['prevPlaceBtn', 'nextPlaceBtn', 'prevPlaceBtnMobile', 'nextPlaceBtnMobile'].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.visibility = hasMultiple ? 'visible' : 'hidden';
+      });
 
       modalTitle.textContent = place.title;
       modalDesc.textContent = place.description || 'No description provided.';
@@ -611,6 +677,18 @@
     }
 
     /**
+     * Navigates to previous (-1) or next (+1) place in a loop inside the current city
+     */
+    function navigatePlaceModal(delta) {
+      if (!activeModalCityGroup || !activeModalCityGroup.places || activeModalCityGroup.places.length <= 1) {
+        return;
+      }
+      const total = activeModalCityGroup.places.length;
+      const nextIndex = (activeModalPlaceIndex + delta + total) % total;
+      openPlaceModal(activeModalCityGroup.places[nextIndex], activeModalCityGroup, nextIndex);
+    }
+
+    /**
      * Closes the place detail modal
      */
     function closePlaceModal() {
@@ -645,11 +723,11 @@
         headerBtn.style.color = isDark ? group.darkText : group.text;
 
         headerBtn.innerHTML = `
-          <div class="flex items-center overflow-hidden">
-            <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
+          <div class="flex items-center min-w-0 overflow-visible">
+            <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal leading-normal tracking-normal [font-kerning:none] shrink-0">
               ${escapeHtml(group.zh)}
             </span>
-            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none] truncate">
+            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-[1.35] pb-1.5 tracking-normal [font-kerning:none] whitespace-nowrap">
               ${escapeHtml(group.en)}
             </span>
           </div>
@@ -677,7 +755,7 @@
           const ul = document.createElement('ul');
           ul.className = 'w-full flex flex-col';
 
-          group.places.forEach((place) => {
+          group.places.forEach((place, idx) => {
             const li = document.createElement('li');
             li.className = 'w-full py-3.5 sm:py-4 border-b-2 place-divider flex flex-col md:flex-row md:items-baseline gap-1.5 md:gap-12';
 
@@ -689,14 +767,14 @@
             titleBtn.type = 'button';
             titleBtn.className = 'text-left text-lg sm:text-[20px] font-bold leading-snug tracking-normal [font-kerning:none] hover:underline underline-offset-4 cursor-pointer';
             titleBtn.textContent = place.title;
-            titleBtn.addEventListener('click', () => openPlaceModal(place, group));
+            titleBtn.addEventListener('click', () => openPlaceModal(place, group, idx));
 
             titleCol.appendChild(titleBtn);
-
-            // Right Column: Description shifted horizontally to the right
+            // Right Column: Description shifted horizontally to the right (clickable without hover effect)
             const descCol = document.createElement('div');
-            descCol.className = 'flex-1 text-sm sm:text-[16px] font-normal leading-relaxed';
+            descCol.className = 'flex-1 text-sm sm:text-[16px] font-normal leading-relaxed cursor-pointer';
             descCol.textContent = place.description;
+            descCol.addEventListener('click', () => openPlaceModal(place, group, idx));
 
             li.appendChild(titleCol);
             li.appendChild(descCol);
@@ -832,14 +910,26 @@
 
     // Modal close interactions (close button, backdrop click, Escape key)
     document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
+    document.getElementById('prevPlaceBtn').addEventListener('click', () => navigatePlaceModal(-1));
+    document.getElementById('nextPlaceBtn').addEventListener('click', () => navigatePlaceModal(1));
+    document.getElementById('prevPlaceBtnMobile').addEventListener('click', () => navigatePlaceModal(-1));
+    document.getElementById('nextPlaceBtnMobile').addEventListener('click', () => navigatePlaceModal(1));
+
     document.getElementById('placeModal').addEventListener('click', (e) => {
-      if (e.target.id === 'placeModal') {
+      if (e.target.id === 'placeModal' || e.target === e.currentTarget.firstElementChild) {
         closePlaceModal();
       }
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.getElementById('placeModal').classList.contains('is-visible')) {
+      const isModalOpen = document.getElementById('placeModal').classList.contains('is-visible');
+      if (!isModalOpen) return;
+
+      if (e.key === 'Escape') {
         closePlaceModal();
+      } else if (e.key === 'ArrowLeft') {
+        navigatePlaceModal(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigatePlaceModal(1);
       }
     });
 
