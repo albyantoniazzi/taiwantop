@@ -276,18 +276,7 @@
     </div>
 
     <!-- Full-width Colorful City Accordions Container -->
-    <main id="citiesContainer" class="w-full flex flex-col">
-      <!-- Skeleton / Loading State -->
-      <div id="loadingSkeleton" class="w-full space-y-0">
-        <div class="w-full viewport-row bg-[#F7D249]/70 animate-pulse flex items-center px-4 sm:px-6">
-          <span class="text-sm text-black/60">Fetching Taiwan places...</span>
-        </div>
-        <div class="w-full viewport-row bg-[#C6BEB8]/70 animate-pulse"></div>
-        <div class="w-full viewport-row bg-[#F6BBF5]/70 animate-pulse"></div>
-        <div class="w-full viewport-row bg-[#8FA3D9]/70 animate-pulse"></div>
-        <div class="w-full viewport-row bg-[#65754A]/70 animate-pulse"></div>
-      </div>
-    </main>
+    <main id="citiesContainer" class="w-full flex flex-col"></main>
 
     <!-- Minimalist Footer matching 1/7 of the browser window height -->
     <footer class="w-full px-3 sm:px-6 viewport-row flex items-center justify-end text-xs sm:text-sm">
@@ -302,63 +291,66 @@
     role="dialog"
     aria-modal="true"
     aria-labelledby="modalTitle"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-[2px]"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-black/60 backdrop-blur-[2px]"
   >
     <div
       id="placeModalCard"
-      class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto border-2 rounded-xl shadow-2xl"
+      class="relative w-full max-w-4xl h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden border-2 rounded-xl shadow-2xl"
     >
-      <!-- Top Bar with City Tag & Close Button -->
-      <div class="flex items-center justify-between px-5 py-3.5 border-b-2 border-current/20">
-        <span id="modalCityBadge" class="text-xs sm:text-sm font-bold uppercase tracking-wider px-2.5 py-1 rounded">
-          City
-        </span>
-        <button
-          id="closeModalBtn"
-          type="button"
-          aria-label="Close modal"
-          class="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-lg leading-none font-bold"
-        >
-          ✕
-        </button>
-      </div>
+      <!-- Floating Close Button directly on the top-right corner -->
+      <button
+        id="closeModalBtn"
+        type="button"
+        aria-label="Close modal"
+        class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-lg bg-[#F4F3EF]/90 dark:bg-[#1A1A19]/90 md:bg-transparent md:dark:bg-transparent hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-base sm:text-lg leading-none font-bold"
+      >
+        ✕
+      </button>
 
-      <!-- Full Picture Container -->
-      <div id="modalImageWrapper" class="w-full aspect-video bg-black/5 overflow-hidden border-b-2 border-current/20">
-        <img
-          id="modalImage"
-          src=""
-          alt=""
-          class="w-full h-full object-cover"
-        />
-      </div>
+      <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop so modal never scrolls -->
+      <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+        <!-- 1:1 Square Picture Container -->
+        <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black/5 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-current/20 mx-auto md:mx-0">
+          <img
+            id="modalImage"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
 
-      <!-- Details Body -->
-      <div class="p-5 sm:p-7 flex flex-col gap-4">
-        <h2 id="modalTitle" class="text-2xl sm:text-3xl font-bold leading-tight tracking-normal [font-kerning:none]">
-          Place Title
-        </h2>
+        <!-- Details Body -->
+        <div class="flex-1 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
+          <div class="min-h-0 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
+            <h2 id="modalTitle" class="text-lg sm:text-xl lg:text-2xl font-bold leading-tight tracking-normal [font-kerning:none] line-clamp-2 shrink-0">
+              Place Title
+            </h2>
 
-        <!-- Full Description -->
-        <p id="modalDescription" class="text-sm sm:text-base font-normal leading-relaxed opacity-90">
-          Description
-        </p>
+            <!-- Description -->
+            <p id="modalDescription" class="text-xs sm:text-sm lg:text-base font-normal leading-relaxed opacity-90 line-clamp-4 sm:line-clamp-none overflow-hidden">
+              Description
+            </p>
+          </div>
 
-        <!-- Action Footer: Category Badges on Left + Google Maps Link Aligned Right -->
-        <div class="pt-4 mt-1 border-t border-current/20 flex flex-wrap items-center justify-between gap-4">
-          <!-- Categories as Badges -->
-          <div id="modalCategories" class="flex flex-wrap items-center gap-2"></div>
+          <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
+          <div class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
+            <!-- City Badge & Categories as Badges (Above Separation Line) -->
+            <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
 
-          <a
-            id="modalMapsLink"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="ml-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors shrink-0"
-          >
-            <span>Open in Google Maps</span>
-            <span aria-hidden="true">↗</span>
-          </a>
+            <!-- Action Footer Below Separation Line -->
+            <div class="pt-2.5 sm:pt-3.5 border-t border-current/20 flex items-center justify-end">
+              <a
+                id="modalMapsLink"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors shrink-0"
+              >
+                <span>Open in Google Maps</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -366,6 +358,7 @@
 
   <script>
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+    const CACHE_KEY = 'taiwantop_csv_cache_v1';
 
     // City configuration matching screenshot light colors + creative dark mode palette with white text
     const CITY_META = {
@@ -455,222 +448,217 @@
     }
 
     /**
-     * Parses raw category string into an array of clean category labels
+     * Generates a clean SVG fallback image for places without a photo URL
      */
-    function parseCategoryList(rawCategory) {
-      if (!rawCategory) return [];
-      return rawCategory
-        .replace(/^[\(\[\{]+|[\)\]\}]+$/g, '')
-        .split(/[,;|\/]+/)
-        .map(s => s.trim())
-        .filter(Boolean);
+    function getFallbackSquareImage(title, bgHex) {
+      const safeTitle = (title || 'TAIWANtop').slice(0, 18);
+      const fill = bgHex || '#C6BEB8';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+        <rect width="600" height="600" fill="${fill}"/>
+        <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="28" font-weight="bold" fill="#0A0A0A">${safeTitle}</text>
+        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="16" fill="#0A0A0A" opacity="0.65">TAIWAN top</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     }
 
     /**
-     * Opens the place detail modal with full picture, category badges, and Google Maps link
-     */
-    function openPlaceModal(place, group) {
-      const modal = document.getElementById('placeModal');
-      const isDark = document.body.classList.contains('dark-mode');
-
-      const cityBadge = document.getElementById('modalCityBadge');
-      cityBadge.textContent = `${group.zh} ${group.en}`;
-      cityBadge.style.backgroundColor = isDark ? group.darkBg : group.bg;
-      cityBadge.style.color = isDark ? group.darkText : group.text;
-
-      document.getElementById('modalTitle').textContent = place.title || 'Untitled Place';
-      document.getElementById('modalDescription').textContent = place.description || 'No description provided.';
-
-      // Handle full picture with graceful fallback
-      const imgEl = document.getElementById('modalImage');
-      const fallbackBg = (isDark ? group.darkBg : group.bg).replace('#', '');
-      const fallbackFg = (isDark ? group.darkText : group.text).replace('#', '');
-      const fallbackUrl = `https://placehold.co/1200x675/${fallbackBg}/${fallbackFg}?text=${encodeURIComponent(place.title || group.en)}`;
-
-      imgEl.onerror = () => {
-        imgEl.onerror = null;
-        imgEl.src = fallbackUrl;
-      };
-      imgEl.src = place.image || fallbackUrl;
-      imgEl.alt = place.title || 'Place photo';
-
-      // Render categories as badges
-      const categoriesContainer = document.getElementById('modalCategories');
-      categoriesContainer.innerHTML = '';
-      const cats = parseCategoryList(place.category);
-      if (cats.length > 0) {
-        categoriesContainer.classList.remove('hidden');
-        cats.forEach(cat => {
-          const badge = document.createElement('span');
-          badge.className = 'text-xs sm:text-sm font-medium px-3 py-1 rounded-full border border-current/40';
-          badge.textContent = cat;
-          categoriesContainer.appendChild(badge);
-        });
-      } else {
-        categoriesContainer.classList.add('hidden');
-      }
-
-      // Resolve Google Maps URL (use explicit link from CSV if available, otherwise search by title + city)
-      const mapsLink = document.getElementById('modalMapsLink');
-      const isMapsOrUrl = place.link && /^https?:\/\//i.test(place.link);
-      mapsLink.href = isMapsOrUrl
-        ? place.link
-        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.title} ${group.en} Taiwan`)}`;
-
-      modal.classList.add('is-visible');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closePlaceModal() {
-      const modal = document.getElementById('placeModal');
-      modal.classList.remove('is-visible');
-      document.body.style.overflow = '';
-    }
-
-    /**
-     * Flexibly resolves column values regardless of exact header naming in Google Sheets
-     */
-    function extractRowFields(row) {
-      const keys = Object.keys(row);
-      const findVal = (patterns) => {
-        for (const p of patterns) {
-          const foundKey = keys.find(k => k.trim().toLowerCase() === p || k.trim().toLowerCase().includes(p));
-          if (foundKey && row[foundKey] && String(row[foundKey]).trim() !== '') {
-            return String(row[foundKey]).trim();
-          }
-        }
-        return '';
-      };
-
-      const cityRaw = findVal(['city', '城市', 'location', 'region', 'area']) || (keys[0] ? String(row[keys[0]] || '').trim() : '');
-      const title = findVal(['title', 'name', 'place', 'spot', '店名', '名稱']) || (keys[1] ? String(row[keys[1]] || '').trim() : '');
-      const description = findVal(['description', 'desc', 'notes', 'note', 'comment', 'review', '簡介', '描述']) || (keys[2] ? String(row[keys[2]] || '').trim() : '');
-      const category = findVal(['category', 'categories', 'tags', 'tag', 'type', '分類', '類別']);
-      const image = findVal(['image', 'img', 'photo', 'thumbnail', 'thumb', 'pic', '圖片', '照片']);
-      const link = findVal(['link', 'url', 'map', 'maps', 'google maps', 'website', '連結']);
-
-      return { cityRaw, title, description, category, image, link };
-    }
-
-    /**
-     * Groups rows by city and sorts them according to the reference screenshot order
+     * Groups parsed CSV rows by city and sorts them in the canonical order
      */
     function groupPlacesByCity(rows) {
-      const groups = new Map();
-      let extraIdx = 0;
+      const groupsMap = new Map();
+      let extraIndex = 0;
 
-      // Ensure the 5 core cities from the screenshot always appear in order even if empty,
-      // or get populated seamlessly from CSV
-      Object.entries(CITY_META).forEach(([key, meta]) => {
-        if (key === 'kenting') return; // alias for hengchun
-        groups.set(meta.en.toLowerCase(), {
-          key: meta.en.toLowerCase(),
-          en: meta.en,
-          zh: meta.zh,
-          bg: meta.bg,
-          text: meta.text,
-          darkBg: meta.darkBg,
-          darkText: meta.darkText,
-          order: meta.order,
-          places: []
+      rows.forEach((row) => {
+        const rawCity = (row.City || row.city || row['城市'] || '').trim();
+        const title = (row.Title || row.title || row.Name || row.name || row['店名'] || '').trim();
+        if (!rawCity || !title) return;
+
+        const key = rawCity.toLowerCase();
+        const meta = CITY_META[key];
+        const canonicalKey = meta ? meta.en.toLowerCase() : key;
+
+        if (!groupsMap.has(canonicalKey)) {
+          if (meta) {
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: meta.en,
+              zh: meta.zh,
+              bg: meta.bg,
+              text: meta.text,
+              darkBg: meta.darkBg,
+              darkText: meta.darkText,
+              order: meta.order,
+              places: []
+            });
+          } else {
+            const extra = EXTRA_PALETTE[extraIndex % EXTRA_PALETTE.length];
+            extraIndex++;
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: rawCity,
+              zh: extra.zh,
+              bg: extra.bg,
+              text: '#0A0A0A',
+              darkBg: extra.darkBg,
+              darkText: '#FFFFFF',
+              order: 100 + extraIndex,
+              places: []
+            });
+          }
+        }
+
+        const description = (row.Description || row.description || row.Notes || row.notes || row['簡介'] || '').trim();
+        const rawCategory = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || row['分類'] || '').trim();
+        const categories = rawCategory
+          ? rawCategory.split(/[,;/]+/).map((c) => c.trim()).filter(Boolean)
+          : [];
+        const image = (row.Image || row.image || row.Photo || row.photo || row.Thumbnail || row.thumbnail || '').trim();
+        const mapsUrl = (row['Google Maps'] || row.Maps || row.maps || row.Map || row.map || row.URL || row.url || row.Link || row.link || '').trim();
+
+        groupsMap.get(canonicalKey).places.push({
+          title,
+          description,
+          categories,
+          image,
+          mapsUrl
         });
       });
 
-      rows.forEach(rawRow => {
-        const item = extractRowFields(rawRow);
-        if (!item.title && !item.description) return;
-
-        const cityNorm = (item.cityRaw || 'Taipei').trim();
-        const lookupKey = cityNorm.toLowerCase();
-
-        // Match known cities (supports English or Chinese in CSV)
-        let matchedMeta = CITY_META[lookupKey];
-        if (!matchedMeta) {
-          if (cityNorm.includes('台北') || cityNorm.includes('臺北') || lookupKey.includes('taipei')) matchedMeta = CITY_META['taipei'];
-          else if (cityNorm.includes('台中') || cityNorm.includes('臺中') || lookupKey.includes('taichung')) matchedMeta = CITY_META['taichung'];
-          else if (cityNorm.includes('台南') || cityNorm.includes('臺南') || lookupKey.includes('tainan')) matchedMeta = CITY_META['tainan'];
-          else if (cityNorm.includes('高雄') || lookupKey.includes('kaohsiung')) matchedMeta = CITY_META['kaohsiung'];
-          else if (cityNorm.includes('墾丁') || cityNorm.includes('恆春') || lookupKey.includes('hengchun') || lookupKey.includes('kenting')) matchedMeta = CITY_META['hengchun'];
-        }
-
-        const groupKey = matchedMeta ? matchedMeta.en.toLowerCase() : lookupKey;
-
-        if (!groups.has(groupKey)) {
-          const fallbackPalette = EXTRA_PALETTE[extraIdx % EXTRA_PALETTE.length];
-          extraIdx++;
-          groups.set(groupKey, {
-            key: groupKey,
-            en: matchedMeta ? matchedMeta.en : cityNorm,
-            zh: matchedMeta ? matchedMeta.zh : fallbackPalette.zh,
-            bg: matchedMeta ? matchedMeta.bg : fallbackPalette.bg,
-            text: '#0A0A0A',
-            darkBg: matchedMeta ? matchedMeta.darkBg : fallbackPalette.darkBg,
-            darkText: '#FFFFFF',
-            order: matchedMeta ? matchedMeta.order : 50 + extraIdx,
+      // Ensure all 5 default cities appear even if empty in a custom CSV
+      Object.values(CITY_META).forEach((meta) => {
+        const canonicalKey = meta.en.toLowerCase();
+        if (!groupsMap.has(canonicalKey)) {
+          groupsMap.set(canonicalKey, {
+            key: canonicalKey,
+            en: meta.en,
+            zh: meta.zh,
+            bg: meta.bg,
+            text: meta.text,
+            darkBg: meta.darkBg,
+            darkText: meta.darkText,
+            order: meta.order,
             places: []
           });
         }
-
-        groups.get(groupKey).places.push(item);
       });
 
-      // Filter out empty default cities only if CSV had completely different cities, otherwise keep the 5 iconic rows
-      const allGroups = Array.from(groups.values()).sort((a, b) => a.order - b.order);
-      return allGroups;
+      return Array.from(groupsMap.values()).sort((a, b) => a.order - b.order);
     }
 
     /**
-     * Applies light or dark mode colors to all city accordion header bars
+     * Updates accordion header colors when toggling light/dark theme
      */
     function applyAccordionThemeColors() {
       const isDark = document.body.classList.contains('dark-mode');
-      document.querySelectorAll('.accordion-header-btn').forEach(btn => {
+      document.querySelectorAll('.accordion-header-btn').forEach((btn) => {
         btn.style.backgroundColor = isDark ? btn.dataset.darkBg : btn.dataset.lightBg;
         btn.style.color = isDark ? btn.dataset.darkText : btn.dataset.lightText;
       });
     }
 
     /**
-     * Renders the accordion rows and places list
+     * Opens the place detail modal with 1:1 image, city + uppercase category badges, and Google Maps link
+     */
+    function openPlaceModal(place, cityGroup) {
+      const modal = document.getElementById('placeModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDescription');
+      const modalCats = document.getElementById('modalCategories');
+      const modalMaps = document.getElementById('modalMapsLink');
+
+      const isDark = document.body.classList.contains('dark-mode');
+
+      modalTitle.textContent = place.title;
+      modalDesc.textContent = place.description || 'No description provided.';
+
+      const fallbackSrc = getFallbackSquareImage(place.title, cityGroup.bg);
+      modalImg.onerror = () => {
+        modalImg.onerror = null;
+        modalImg.src = fallbackSrc;
+      };
+      modalImg.src = place.image || fallbackSrc;
+      modalImg.alt = place.title;
+
+      // Render city badge first (with city-specific color), followed by uppercase category badges of identical height & text size
+      modalCats.innerHTML = '';
+
+      const cityBadge = document.createElement('span');
+      cityBadge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-transparent rounded-full';
+      cityBadge.textContent = `${cityGroup.zh} ${cityGroup.en}`;
+      cityBadge.style.backgroundColor = isDark ? cityGroup.darkBg : cityGroup.bg;
+      cityBadge.style.color = isDark ? cityGroup.darkText : cityGroup.text;
+      modalCats.appendChild(cityBadge);
+
+      if (place.categories && place.categories.length > 0) {
+        place.categories.forEach((cat) => {
+          const badge = document.createElement('span');
+          badge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-current rounded-full';
+          badge.textContent = cat;
+          modalCats.appendChild(badge);
+        });
+      }
+
+      // Set direct Google Maps URL or fallback search query
+      if (place.mapsUrl && /^https?:\/\//i.test(place.mapsUrl)) {
+        modalMaps.href = place.mapsUrl;
+      } else {
+        const query = encodeURIComponent(`${place.title} ${cityGroup.en} Taiwan`);
+        modalMaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      }
+
+      modal.classList.add('is-visible');
+    }
+
+    /**
+     * Closes the place detail modal
+     */
+    function closePlaceModal() {
+      const modal = document.getElementById('placeModal');
+      if (modal) {
+        modal.classList.remove('is-visible');
+      }
+    }
+
+    /**
+     * Renders full-width city accordions with sticky half-size open headers and snap-to-top scrolling
      */
     function renderAccordions(cityGroups) {
       const container = document.getElementById('citiesContainer');
       container.innerHTML = '';
-
       const isDark = document.body.classList.contains('dark-mode');
 
       cityGroups.forEach((group) => {
-        const isOpen = false;
-        const section = document.createElement('section');
-        section.className = `accordion-item w-full`;
+        const item = document.createElement('section');
+        item.className = 'accordion-item w-full';
 
-        // Full-width colorful city header bar matching screenshot typography
+        // Accordion Header Bar (1/7 viewport height closed, 1/14 sticky open)
         const headerBtn = document.createElement('button');
         headerBtn.type = 'button';
-        headerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        headerBtn.setAttribute('aria-expanded', 'false');
+        headerBtn.className = 'accordion-header-btn w-full viewport-row px-3 sm:px-6 flex items-center justify-between text-left cursor-pointer focus:outline-none select-none';
         headerBtn.dataset.lightBg = group.bg;
         headerBtn.dataset.lightText = group.text;
         headerBtn.dataset.darkBg = group.darkBg;
         headerBtn.dataset.darkText = group.darkText;
         headerBtn.style.backgroundColor = isDark ? group.darkBg : group.bg;
         headerBtn.style.color = isDark ? group.darkText : group.text;
-        headerBtn.className = 'accordion-header-btn w-full text-left px-3 sm:px-6 viewport-row flex items-center justify-between cursor-pointer focus:outline-none';
 
         headerBtn.innerHTML = `
-          <div class="flex items-center">
+          <div class="flex items-center overflow-hidden">
             <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal tracking-normal [font-kerning:none] shrink-0">
               ${escapeHtml(group.zh)}
             </span>
-            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none]">
+            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-none tracking-normal [font-kerning:none] truncate">
               ${escapeHtml(group.en)}
             </span>
           </div>
-          <span class="text-xs sm:text-sm font-normal opacity-75 tracking-tight shrink-0 ml-2">
-            ${group.places.length > 0 ? `[${group.places.length}]` : ''}
+          <span class="text-xs sm:text-sm font-normal opacity-80 shrink-0 ml-3">
+            (${group.places.length})
           </span>
         `;
 
-        // Accordion Drawer Body
+        // Accordion Drawer Wrapper
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'accordion-content w-full';
 
@@ -678,36 +666,37 @@
         inner.className = 'accordion-inner w-full';
 
         const listContainer = document.createElement('div');
-        listContainer.className = 'w-full px-3 sm:px-6 pt-5 pb-10 sm:pt-7 sm:pb-14';
+        listContainer.className = 'w-full px-3 sm:px-6 py-4 sm:py-6';
 
         if (group.places.length === 0) {
-          listContainer.innerHTML = `
-            <p class="text-xs sm:text-sm opacity-60 py-2">No places listed yet for ${escapeHtml(group.en)}.</p>
-          `;
+          const emptyMsg = document.createElement('p');
+          emptyMsg.className = 'text-sm opacity-70 py-2';
+          emptyMsg.textContent = 'No places listed yet.';
+          listContainer.appendChild(emptyMsg);
         } else {
           const ul = document.createElement('ul');
-          ul.className = 'w-full flex flex-col gap-4 sm:gap-5';
+          ul.className = 'w-full flex flex-col';
 
-          group.places.forEach(place => {
+          group.places.forEach((place) => {
             const li = document.createElement('li');
-            li.className = 'w-full flex flex-col md:flex-row md:items-baseline gap-2 md:gap-12 lg:gap-16 pb-4 sm:pb-5 border-b-2 place-divider';
+            li.className = 'w-full py-3.5 sm:py-4 border-b-2 place-divider flex flex-col md:flex-row md:items-baseline gap-1.5 md:gap-12';
 
-            // Title block (Clickable button to open detail modal, larger font size, normal spacing & no kerning)
+            // Left Column: Place Title (clickable to open modal)
             const titleCol = document.createElement('div');
-            titleCol.className = 'w-full md:w-[38%] lg:w-[36%] shrink-0';
+            titleCol.className = 'w-full md:w-[36%] lg:w-[34%] shrink-0';
 
             const titleBtn = document.createElement('button');
             titleBtn.type = 'button';
-            titleBtn.className = 'text-left font-bold text-lg sm:text-[20px] leading-snug tracking-normal [font-kerning:none] hover:underline decoration-2 underline-offset-4 cursor-pointer focus:outline-none';
+            titleBtn.className = 'text-left text-lg sm:text-[20px] font-bold leading-snug tracking-normal [font-kerning:none] hover:underline underline-offset-4 cursor-pointer';
             titleBtn.textContent = place.title;
             titleBtn.addEventListener('click', () => openPlaceModal(place, group));
 
             titleCol.appendChild(titleBtn);
 
-            // Regular Description (shifted further right horizontally)
+            // Right Column: Description shifted horizontally to the right
             const descCol = document.createElement('div');
-            descCol.className = 'w-full md:w-[62%] lg:w-[64%]';
-            descCol.innerHTML = `<p class="text-sm sm:text-[16px] font-normal leading-relaxed">${escapeHtml(place.description)}</p>`;
+            descCol.className = 'flex-1 text-sm sm:text-[16px] font-normal leading-relaxed';
+            descCol.textContent = place.description;
 
             li.appendChild(titleCol);
             li.appendChild(descCol);
@@ -720,86 +709,112 @@
         inner.appendChild(listContainer);
         contentWrapper.appendChild(inner);
 
-        // Toggle click interaction: single-open mode & snap active city smoothly to top
+        // Single-city accordion toggle with snap-to-top scroll
         headerBtn.addEventListener('click', () => {
-          const currentlyOpen = section.classList.contains('is-open');
-          let hadOtherOpen = false;
+          const wasOpen = item.classList.contains('is-open');
 
-          // Close all other open accordions
-          document.querySelectorAll('.accordion-item.is-open').forEach(item => {
-            if (item !== section) {
-              hadOtherOpen = true;
-              item.classList.remove('is-open');
-              const btn = item.querySelector('.accordion-header-btn');
-              if (btn) btn.setAttribute('aria-expanded', 'false');
-            }
+          // Close all accordions
+          document.querySelectorAll('.accordion-item').forEach((el) => {
+            el.classList.remove('is-open');
+            const btn = el.querySelector('.accordion-header-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
           });
 
-          section.classList.toggle('is-open', !currentlyOpen);
-          headerBtn.setAttribute('aria-expanded', !currentlyOpen ? 'true' : 'false');
+          if (!wasOpen) {
+            item.classList.add('is-open');
+            headerBtn.setAttribute('aria-expanded', 'true');
 
-          // Smoothly snap the opened city header to the top of the viewport
-          if (!currentlyOpen) {
-            const snapToTop = () => {
-              const targetY = window.scrollY + section.getBoundingClientRect().top;
-              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-            };
-
+            // Smoothly snap clicked city header to the sticky top position
             requestAnimationFrame(() => {
-              snapToTop();
-              // Re-verify snap target as collapsing sibling accordions finish shrinking
-              if (hadOtherOpen) {
-                setTimeout(snapToTop, 180);
-                setTimeout(snapToTop, 420);
-              }
+              item.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
           }
         });
 
-        section.appendChild(headerBtn);
-        section.appendChild(contentWrapper);
-        container.appendChild(section);
+        item.appendChild(headerBtn);
+        item.appendChild(contentWrapper);
+        container.appendChild(item);
       });
     }
 
     /**
-     * Fetches and parses the Google Sheets CSV
+     * Parses CSV string and renders accordions immediately
+     */
+    function parseAndRenderCsv(csvText) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              const grouped = groupPlacesByCity(results.data);
+              renderAccordions(grouped);
+              resolve(true);
+            } else {
+              reject(new Error('CSV returned zero rows'));
+            }
+          },
+          error: (err) => reject(err)
+        });
+      });
+    }
+
+    /**
+     * Instant-first boot: renders cached CSV or fallback immediately, then refreshes live in background
      */
     async function initDirectory() {
       const statusBanner = document.getElementById('statusBanner');
       const statusText = document.getElementById('statusText');
       const retryBtn = document.getElementById('retryBtn');
 
+      // 1. Render instantly from localStorage cache or built-in fallback (zero waiting)
+      let cachedCsv = null;
       try {
-        const response = await fetch(CSV_URL, { cache: 'no-store' });
+        cachedCsv = localStorage.getItem(CACHE_KEY);
+      } catch (e) {}
+
+      if (cachedCsv) {
+        try {
+          await parseAndRenderCsv(cachedCsv);
+        } catch (e) {
+          renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+        }
+      } else {
+        renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+      }
+
+      // 2. Fetch fresh CSV in background with a fast 4s timeout so slow Google endpoints never stall UI
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      try {
+        const response = await fetch(CSV_URL, {
+          cache: 'default',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
         if (!response.ok) {
           throw new Error(`HTTP error ${response.status}`);
         }
-        const csvText = await response.text();
+        const freshCsv = await response.text();
 
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            if (results.data && results.data.length > 0) {
-              statusBanner.classList.add('hidden');
-              const grouped = groupPlacesByCity(results.data);
-              renderAccordions(grouped);
-            } else {
-              throw new Error('CSV returned zero rows');
-            }
-          },
-          error: (err) => {
-            throw err;
-          }
-        });
+        // Only re-render if data actually changed or nothing was cached yet
+        if (freshCsv && freshCsv !== cachedCsv) {
+          await parseAndRenderCsv(freshCsv);
+          try {
+            localStorage.setItem(CACHE_KEY, freshCsv);
+          } catch (e) {}
+        }
+        statusBanner.classList.add('hidden');
       } catch (err) {
-        console.warn('Live CSV fetch fallback triggered:', err);
-        statusBanner.classList.remove('hidden');
-        statusText.textContent = 'Showing cached preview (could not reach Google Sheets CSV directly).';
-        retryBtn.classList.remove('hidden');
-        const grouped = groupPlacesByCity(FALLBACK_ROWS);
-        renderAccordions(grouped);
+        clearTimeout(timeoutId);
+        console.warn('Background CSV sync skipped/failed:', err);
+        if (!cachedCsv) {
+          statusBanner.classList.remove('hidden');
+          statusText.textContent = 'Offline preview mode.';
+          retryBtn.classList.remove('hidden');
+        }
       }
     }
 
