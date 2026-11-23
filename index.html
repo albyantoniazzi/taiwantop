@@ -1,1124 +1,2749 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>台灣 TAIWAN top</title>
-  <meta name="description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P100 TAIWAN TOP — Curated Places by @albyantoniazzi</title>
+  <meta name="description" content="A curated directory of top places, eats, and hidden gems across Taiwan compiled by @albyantoniazzi (@alby.food)." />
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath fill='%23ffff2a' d='M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z'/%3E%3Cpath fill='%232affff' d='M165 15L210 15L210 30L195 30L195 45L165 45L165 15Z'/%3E%3Cpath fill='%23ff2a2a' d='M75 240L45 240L45 195L60 195L60 225L75 225L75 240Z'/%3E%3Cpath fill='%2322ff22' d='M135 240L105 240L105 195L120 195L120 225L135 225L135 240Z'/%3E%3C/svg%3E"
+  />
 
-  <!-- Favicon: Square divided into 5 horizontal rows matching the 5 city accordion colors -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='100' height='20' fill='%23F7D249'/%3E%3Crect x='0' y='20' width='100' height='20' fill='%23C6BEB8'/%3E%3Crect x='0' y='40' width='100' height='20' fill='%23F6BBF5'/%3E%3Crect x='0' y='60' width='100' height='20' fill='%238FA3D9'/%3E%3Crect x='0' y='80' width='100' height='20' fill='%2365754A'/%3E%3C/svg%3E">
+  <!-- UI SDK Web Components -->
+  <script type="module" src="https://ui-sdk.dev/web.js"></script>
+  <link rel="stylesheet" href="https://ui-sdk.dev/web.css" />
 
-  <!-- OpenGraph / Social Media Sharing Meta Tags -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://albyantoniazzi.github.io/taiwantop/">
-  <meta property="og:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
-  <meta property="og:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
-  <meta property="og:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+  <!-- Fonts: VT323 (Teletext Display), Roboto Mono (Body Copy) & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=VT323&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..500,0..1,0&icon_names=casino,check_circle,chevron_left,chevron_right,close,dark_mode,done,expand_more,light_mode,location_on,map,open_in_new,refresh,restart_alt,restaurant,search,share,sort,sort_by_alpha,sports_esports,storefront,tag&display=swap"
+    rel="stylesheet"
+  />
 
-  <!-- Twitter Card Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
-  <meta name="twitter:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
-  <meta name="twitter:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
-
-  <!-- Load Tailwind CSS -->
+  <!-- Tailwind CSS for responsive layout utilities -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Load Roboto Mono with Thin/Light/Regular/Medium/Bold & Italic weights -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono:ital,wght@0,200;0,300;0,400;0,500;0,700;1,200;1,300;1,400&display=swap" rel="stylesheet">
-  <!-- PapaParse for robust CSV parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            mono: ['"Roboto Mono"', '"Noto Sans TC"', 'monospace'],
+            display: ['"VT323"', 'ui-monospace', 'monospace'],
+            sans: ['"VT323"', '"Roboto Mono"', 'ui-monospace', 'monospace'],
+            mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
           }
         }
       }
+    };
+  </script>
+
+  <!-- PapaParse for client-side CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaTfpa48djpNbZ18legh+9h+9h6Q1A1jYx81Y1b+9h6Q1A1jYx81Y1b+9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    if (typeof Papa === 'undefined') {
+      document.write('<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"><\/script>');
     }
   </script>
 
   <style>
+    /* ==========================================================================
+       TELETEXT / CEEFAX BROADCAST DESIGN TOKENS
+       ========================================================================== */
     :root {
-      --outer-gap: clamp(10px, 2vmin, 28px);
+      /* Authentic 3-Bit RGB Teletext Palette */
+      --tt-r: #ff2a2a;
+      --tt-g: #22ff22;
+      --tt-y: #ffff2a;
+      --tt-b: #2a2aff;
+      --tt-m: #ff2aff;
+      --tt-c: #2affff;
+      --tt-w: #ffffff;
+      --tt-k: #000000;
+
+      /* Surface & Semantic Mappings (Broadcast Dark CRT Default) */
+      --tt-bg: #000000;
+      --tt-surface: #07070d;
+      --tt-surface-elevated: #0c0c18;
+      --tt-fg: #ffffff;
+      --tt-fg-muted: #2affff;
+      --tt-border: #2affff;
+      --tt-border-subtle: rgba(42, 255, 255, 0.36);
+      --tt-prompt-bg: #2a2aff;
+      --tt-prompt-label: #ffff2a;
+      --tt-prompt-text: #ffffff;
+      --tt-highlight-bg: #2affff;
+      --tt-highlight-fg: #000000;
+      --tt-scrim: rgba(0, 0, 0, 0.84);
+      --goose-accent-color: #ffff2a;
+      --scanline-alpha: 0.25;
+
+      /* Typography */
+      --font-teletext: 'VT323', ui-monospace, monospace;
+      --font-body-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Sharp Broadcast Geometry */
+      --tt-radius: 0px;
+    }
+
+    /* High-Contrast Daylight Teletext Print Mode */
+    :root[data-theme="light"] {
+      --tt-r: #c91414;
+      --tt-g: #007a1f;
+      --tt-y: #8a5a00;
+      --tt-b: #1616cc;
+      --tt-m: #9e009e;
+      --tt-c: #006b7a;
+      --tt-w: #0b0b12;
+      --tt-k: #f6f5ee;
+
+      --tt-bg: #f6f5ee;
+      --tt-surface: #eceae0;
+      --tt-surface-elevated: #e3e0d3;
+      --tt-fg: #0b0b12;
+      --tt-fg-muted: #1616cc;
+      --tt-border: #1616cc;
+      --tt-border-subtle: rgba(22, 22, 204, 0.28);
+      --tt-prompt-bg: #1616cc;
+      --tt-prompt-label: #ffff2a;
+      --tt-prompt-text: #ffffff;
+      --tt-highlight-bg: #ffff2a;
+      --tt-highlight-fg: #0b0b12;
+      --tt-scrim: rgba(11, 11, 18, 0.72);
+      --goose-accent-color: #c91414;
+      --scanline-alpha: 0.05;
     }
 
     * {
-      font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: var(--font-teletext);
+      background-color: var(--tt-bg);
+      color: var(--tt-fg);
+      scroll-behavior: smooth;
     }
 
     body {
-      background-color: #e7e7e7;
-      color: #000000;
-      padding: var(--outer-gap);
-      transition: background-color 0.35s ease, color 0.35s ease;
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 62px;
+      background-color: var(--tt-bg);
+      color: var(--tt-fg);
+      font-family: var(--font-teletext);
+      overflow-x: hidden;
+      position: relative;
     }
 
-    #pageWrapper {
-      background-color: #F4F3EF;
-      transition: background-color 0.35s ease;
+    /* Authentic CRT Horizontal Scanlines Overlay */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, var(--scanline-alpha)) 2px,
+        rgba(0, 0, 0, var(--scanline-alpha)) 3px
+      );
+      pointer-events: none;
     }
 
-    body.dark-mode #pageWrapper {
-      background-color: #161615;
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
-    .place-divider {
-      border-color: #000000;
+    .font-teletext {
+      font-family: var(--font-teletext);
+      letter-spacing: 0.02em;
     }
 
-    /* Smooth accordion transition with elastic settle */
-    .accordion-content {
-      display: grid;
-      grid-template-rows: 0fr;
-      opacity: 0;
-      transition:
-        grid-template-rows 0.55s cubic-bezier(0.34, 1.45, 0.64, 1),
-        opacity 0.35s ease;
+    .font-body-mono {
+      font-family: var(--font-body-mono);
     }
 
-    .accordion-item.is-open .accordion-content {
-      grid-template-rows: 1fr;
-      opacity: 1;
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
     }
 
-    .accordion-inner {
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Teletext Top Broadcast Header */
+    .tt-top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--tt-bg);
+      border-bottom: 2px solid var(--tt-border);
+    }
+
+    .tt-status-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 10px;
+      background-color: var(--tt-surface);
+      border-bottom: 1px solid var(--tt-border-subtle);
+      font-family: var(--font-teletext);
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    /* Teletext FIND> Prompt Bar (Blue Block + Yellow Prompt + White Uppercase Input) */
+    .tt-command-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 44px;
+      padding: 0 12px;
+      background-color: var(--tt-prompt-bg);
+      color: var(--tt-prompt-text);
+      border: 2px solid transparent;
+      transition: border-color 120ms steps(2);
+    }
+
+    .tt-command-row:focus-within {
+      border-color: var(--tt-y);
+    }
+
+    .tt-prompt-prefix {
+      color: var(--tt-prompt-label);
+      font-family: var(--font-teletext);
+      font-size: 1.65rem;
+      line-height: 1;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .tt-command-input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      color: var(--tt-prompt-text);
+      font-family: var(--font-teletext);
+      font-size: 1.65rem;
+      line-height: 1;
+      text-transform: uppercase;
+      caret-color: var(--tt-prompt-label);
+      outline: none;
+    }
+
+    .tt-command-input::placeholder {
+      color: rgba(255, 255, 255, 0.62);
+      text-transform: uppercase;
+    }
+
+    /* Teletext Autocomplete Index List */
+    .tt-autocomplete-menu {
+      background-color: #000000;
+      color: #ffffff;
+      border: 2px solid var(--tt-c);
+      box-shadow: 6px 6px 0 var(--tt-b);
       overflow: hidden;
     }
 
-    .accordion-inner > div {
-      transform: translateY(-10px);
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    :root[data-theme="light"] .tt-autocomplete-menu {
+      background-color: #f6f5ee;
+      color: #0b0b12;
+      border-color: var(--tt-b);
+      box-shadow: 6px 6px 0 var(--tt-c);
     }
 
-    .accordion-item.is-open .accordion-inner > div {
-      transform: translateY(0);
+    .tt-autocomplete-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 42px;
+      padding: 6px 14px;
+      font-family: var(--font-teletext);
+      font-size: 1.55rem;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
     }
 
-    .accordion-header-btn {
-      transition:
-        height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        min-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        background-color 0.35s ease,
-        color 0.35s ease,
-        padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-        filter 0.25s ease;
+    .tt-autocomplete-item + .tt-autocomplete-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 14px;
+      right: 14px;
+      height: 1px;
+      background-color: rgba(42, 255, 255, 0.25);
+      pointer-events: none;
     }
 
-    .accordion-header-btn .city-zh,
-    .accordion-header-btn .city-en {
-      transition: font-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    .tt-item-num {
+      color: var(--tt-w);
+      min-width: 2.2em;
+      flex-shrink: 0;
     }
 
-    /* Fixed-width Chinese label column so English titles always align on the exact same vertical line */
-    .city-zh-col {
-      width: 3.1rem;
+    .tt-color-w { color: var(--tt-w); }
+    .tt-color-g { color: var(--tt-g); }
+    .tt-color-c { color: var(--tt-c); }
+    .tt-color-m { color: var(--tt-m); }
+    .tt-color-y { color: var(--tt-y); }
+    .tt-color-r { color: var(--tt-r); }
+
+    /* Teletext Highlight State: Cyan Fill + Pure Black Ink */
+    .tt-autocomplete-item:hover,
+    .tt-autocomplete-item.active {
+      background-color: var(--tt-highlight-bg);
+      color: var(--tt-highlight-fg);
     }
 
-    @media (min-width: 640px) {
-      .city-zh-col {
-        width: 4.5rem;
-      }
+    .tt-autocomplete-item:hover .tt-item-num,
+    .tt-autocomplete-item.active .tt-item-num,
+    .tt-autocomplete-item:hover .tt-item-label,
+    .tt-autocomplete-item.active .tt-item-label,
+    .tt-autocomplete-item:hover .tt-item-badge,
+    .tt-autocomplete-item.active .tt-item-badge {
+      color: var(--tt-highlight-fg) !important;
+      background-color: transparent !important;
+      border-color: var(--tt-highlight-fg) !important;
+    }
+
+    /* Teletext Fastext Category Filter Chips (Red, Green, Yellow, Cyan cycle) */
+    .tt-fast-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 0px;
+      font-family: var(--font-teletext);
+      font-size: 1.45rem;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      border: 2px solid currentColor;
+      background-color: var(--tt-bg);
+      transition: transform 80ms steps(2);
+    }
+
+    .tt-fast-chip[data-fast="r"] { color: var(--tt-r); }
+    .tt-fast-chip[data-fast="g"] { color: var(--tt-g); }
+    .tt-fast-chip[data-fast="y"] { color: var(--tt-y); }
+    .tt-fast-chip[data-fast="c"] { color: var(--tt-c); }
+
+    .tt-fast-chip:hover {
+      background-color: var(--tt-surface-elevated);
+    }
+
+    .tt-fast-chip:active {
+      transform: translateY(1px);
+    }
+
+    .tt-fast-chip[aria-pressed="true"][data-fast="r"] {
+      background-color: var(--tt-r);
+      color: #000000;
+      border-color: var(--tt-r);
+    }
+    .tt-fast-chip[aria-pressed="true"][data-fast="g"] {
+      background-color: var(--tt-g);
+      color: #000000;
+      border-color: var(--tt-g);
+    }
+    .tt-fast-chip[aria-pressed="true"][data-fast="y"] {
+      background-color: var(--tt-y);
+      color: #000000;
+      border-color: var(--tt-y);
+    }
+    .tt-fast-chip[aria-pressed="true"][data-fast="c"] {
+      background-color: var(--tt-c);
+      color: #000000;
+      border-color: var(--tt-c);
+    }
+
+    .tt-fast-chip .chip-count {
+      font-size: 1.2rem;
+      padding: 1px 5px;
+      border: 1px solid currentColor;
+    }
+
+    /* Modal Category Tag (Teletext Key Chip) */
+    .tt-modal-cat-tag {
+      padding: 4px 10px;
+      border-radius: 0px;
+      font-family: var(--font-teletext);
+      font-size: 1.35rem;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      border: 2px solid var(--tt-c);
+      background-color: transparent;
+      color: var(--tt-c);
+    }
+
+    .tt-modal-cat-tag:hover {
+      background-color: var(--tt-c);
+      color: #000000;
+    }
+
+    /* Horizontal chip scroll container */
+    .chip-scroll-strip {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .chip-scroll-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Teletext Place Card (Sharp 0px Broadcast Frame) */
+    .tt-place-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 0px;
+      background-color: var(--tt-surface);
+      border: 2px solid var(--tt-border-subtle);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 100ms steps(2), transform 100ms steps(2);
+    }
+
+    .tt-place-card:hover {
+      border-color: var(--tt-y);
+      box-shadow: 4px 4px 0 var(--tt-b);
+      transform: translate(-2px, -2px);
+    }
+
+    .tt-place-card:focus-visible {
+      outline: 3px solid var(--tt-c);
+      outline-offset: 2px;
+    }
+
+    .tt-place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 240ms steps(4);
+    }
+
+    .tt-place-card:hover img {
+      transform: scale(1.04);
+    }
+
+    .tt-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.94) 0%,
+        rgba(0, 0, 0, 0.62) 32%,
+        rgba(0, 0, 0, 0) 52%
+      );
+      pointer-events: none;
+    }
+
+    /* Teletext Buttons */
+    .tt-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 20px;
+      border-radius: 0px;
+      background-color: var(--tt-y);
+      color: #000000;
+      font-family: var(--font-teletext);
+      font-size: 1.55rem;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 2px solid var(--tt-y);
+      box-shadow: 3px 3px 0 var(--tt-b);
+    }
+
+    .tt-btn-primary:hover {
+      background-color: var(--tt-c);
+      border-color: var(--tt-c);
+      color: #000000;
+    }
+
+    .tt-btn-primary:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--tt-b);
+    }
+
+    .tt-btn-blue {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 0px;
+      background: linear-gradient(135deg, #ff2aff 0%, #ff5e1a 55%, #ff9900 100%);
+      color: #ffffff;
+      font-family: var(--font-teletext);
+      font-size: 1.45rem;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 2px solid #ff2aff;
+    }
+
+    .tt-btn-blue:hover {
+      background: linear-gradient(135deg, #ff66ff 0%, #ff7a33 55%, #ffb833 100%);
+      border-color: var(--tt-y);
+      color: #000000;
+    }
+
+    .tt-btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 0px;
+      background-color: transparent;
+      color: var(--tt-c);
+      border: 2px solid var(--tt-c);
+      font-family: var(--font-teletext);
+      font-size: 1.5rem;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .tt-btn-outlined:hover {
+      background-color: var(--tt-c);
+      color: #000000;
+    }
+
+    .tt-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 0px;
+      background-color: var(--tt-bg);
+      color: var(--tt-y);
+      border: 2px solid var(--tt-y);
+      cursor: pointer;
+    }
+
+    .tt-icon-btn:hover {
+      background-color: var(--tt-y);
+      color: #000000;
+    }
+
+    .tt-icon-btn:disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* Teletext Page Sub-Frame Modal */
+    .tt-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: var(--tt-scrim);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 16px 16px 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 120ms steps(2);
     }
 
     @media (min-width: 768px) {
-      .city-zh-col {
-        width: 5.25rem;
+      .tt-modal-backdrop {
+        padding-top: 24px;
+        padding-bottom: 48px;
       }
     }
 
-    .accordion-item.is-open .accordion-header-btn {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
-      min-height: 2.35rem;
-    }
-
-    @media (min-width: 640px) {
-      .accordion-item.is-open .accordion-header-btn {
-        min-height: 2.65rem;
-      }
-    }
-
-    .accordion-item.is-open .accordion-header-btn .city-zh {
-      font-size: 0.95rem;
-    }
-
-    .accordion-item.is-open .accordion-header-btn .city-en {
-      font-size: 1.45rem;
-    }
-
-    @media (min-width: 640px) {
-      .accordion-item.is-open .accordion-header-btn .city-zh {
-        font-size: 1.15rem;
-      }
-      .accordion-item.is-open .accordion-header-btn .city-en {
-        font-size: 1.85rem;
-      }
-    }
-
-    .accordion-header-btn:hover {
-      filter: brightness(0.97);
-    }
-
-    body.dark-mode .accordion-header-btn:hover {
-      filter: brightness(1.08);
-    }
-
-    /* Dark mode toggle inspired by the Yin-Yang icon in the top right */
-    body.dark-mode {
-      background-color: #121211;
-      color: #F4F3EF;
-    }
-
-    body.dark-mode .place-divider {
-      border-color: rgba(244, 243, 239, 0.45);
-    }
-
-    body.dark-mode .yin-yang-icon {
-      transform: rotate(180deg);
-    }
-
-    .yin-yang-icon {
-      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    #themeToggle:hover .yin-yang-icon {
-      transform: scale(1.12);
-    }
-
-    body.dark-mode #themeToggle:hover .yin-yang-icon {
-      transform: rotate(180deg) scale(1.12);
-    }
-
-    /* Place Detail Modal Transitions */
-    #placeModal {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    #placeModal.is-visible {
+    .tt-modal-backdrop.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    #placeModalCard {
-      background-color: #F4F3EF;
-      color: #000000;
-      border-color: #000000;
-      transform: translateY(10px) scale(0.98);
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    .tt-modal-dialog {
+      width: 100%;
+      max-width: 735px;
+      background-color: var(--tt-bg);
+      color: var(--tt-fg);
+      border-radius: 0px;
+      border: 2px solid var(--tt-c);
+      box-shadow: 8px 8px 0 var(--tt-b);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
     }
 
-    #placeModal.is-visible #placeModalCard {
-      transform: translateY(0) scale(1);
-    }
-
-    body.dark-mode #placeModalCard {
-      background-color: #1A1A19;
-      color: #F4F3EF;
-      border-color: #F4F3EF;
-    }
-
-    /* Proportional desktop scaling for modal right-side details panel when card height resizes */
-    @media (min-width: 768px) {
-      #modalDetailsPane {
-        padding: clamp(1rem, 2.8dvh, 1.75rem);
-        gap: clamp(0.65rem, 2dvh, 1.25rem);
-      }
-
-      #modalTextGroup {
-        gap: clamp(0.35rem, 1.2dvh, 0.75rem);
-      }
-
-      #modalTitle {
-        font-size: clamp(1.05rem, 2.5dvh, 1.5rem);
-      }
-
-      #modalDescription {
-        font-size: clamp(0.75rem, 1.7dvh, 0.95rem);
-        line-height: 1.45;
-      }
-
-      #modalFooterGroup {
-        gap: clamp(0.45rem, 1.4dvh, 0.85rem);
-      }
-
-      #modalActionsDivider {
-        padding-top: clamp(0.45rem, 1.4dvh, 0.85rem);
-      }
-
-      #modalMapsLink {
-        padding-top: clamp(0.4rem, 1.1dvh, 0.65rem);
-        padding-bottom: clamp(0.4rem, 1.1dvh, 0.65rem);
-        font-size: clamp(0.75rem, 1.6dvh, 0.875rem);
+    @media (min-width: 1024px) {
+      .tt-modal-dialog {
+        max-width: 958px;
       }
     }
 
-    /* Custom subtle scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
+    @media (min-width: 1440px) {
+      .tt-modal-dialog {
+        max-width: 1060px;
+      }
     }
 
-    /* Vertically responsive row height: 1/7 of browser viewport height minus outer vertical padding */
-    .viewport-row {
-      height: calc((100dvh - 1rem) / 7);
-      min-height: 3.75rem;
+    /* Teletext Broadcast Ticker Snackbar */
+    .tt-snackbar {
+      position: fixed;
+      bottom: 66px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      z-index: 80;
+      background-color: var(--tt-b);
+      color: #ffffff;
+      border: 2px solid var(--tt-y);
+      padding: 8px 18px;
+      border-radius: 0px;
+      font-family: var(--font-teletext);
+      font-size: 1.45rem;
+      line-height: 1;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 140ms steps(3), opacity 100ms steps(2);
     }
 
-    /* Vertically responsive row height: 1/7 of browser viewport height minus symmetrical top & bottom outer padding */
-    .viewport-row {
-      height: calc((100dvh - (2 * var(--outer-gap))) / 7);
-      min-height: 3.75rem;
+    .tt-snackbar.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
 
-    /* Half-height footer row: 1/14 of browser viewport height */
-    .footer-row {
-      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
-      min-height: 2.25rem;
+    /* Skeleton Shimmer for Loading State */
+    .skeleton-pulse {
+      background: repeating-linear-gradient(
+        90deg,
+        var(--tt-surface) 0px,
+        var(--tt-surface) 16px,
+        var(--tt-surface-elevated) 16px,
+        var(--tt-surface-elevated) 32px
+      );
+      background-size: 64px 100%;
+      animation: teletextScan 0.8s steps(4) infinite;
+    }
+
+    @keyframes teletextScan {
+      0% { background-position: 0 0; }
+      100% { background-position: 64px 0; }
+    }
+
+    /* Fast Pixel Goose Walk Animation on Header Hover */
+    @keyframes gooseLegLeft {
+      0%, 49.9% { transform: translateY(-15px); }
+      50%, 100% { transform: translateY(0); }
+    }
+
+    @keyframes gooseLegRight {
+      0%, 49.9% { transform: translateY(0); }
+      50%, 100% { transform: translateY(-15px); }
+    }
+
+    @keyframes gooseBodyBob {
+      0%, 49.9% { transform: translateY(0); }
+      50%, 100% { transform: translateY(-6px); }
+    }
+
+    #brand-reset-btn:hover .goose-body,
+    #brand-reset-btn:hover .goose-beak {
+      animation: gooseBodyBob 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-left {
+      animation: gooseLegLeft 0.16s steps(1, end) infinite;
+    }
+
+    #brand-reset-btn:hover .goose-leg-right {
+      animation: gooseLegRight 0.16s steps(1, end) infinite;
+    }
+
+    /* Dino / Goose Runner Canvas */
+    #dino-canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 0px;
+      background-color: var(--tt-bg);
+      border: 2px solid var(--tt-c);
+      outline: none;
+      cursor: pointer;
+      touch-action: manipulation;
     }
   </style>
 </head>
-<body class="min-h-screen antialiased selection:bg-black selection:text-white">
+<body class="antialiased">
 
-  <!-- Main Container with subtle padding around the whole page -->
-  <div id="pageWrapper" class="w-full max-w-full mx-auto">
-
-      <!-- Header Section matching 1/7 of the browser window height -->
-    <header class="w-full flex items-center justify-between px-3 sm:px-6 viewport-row">
-      <button
-        id="homeResetBtn"
-        type="button"
-        aria-label="Reset and refresh TAIWANtop"
-        class="flex items-center min-w-0 text-left cursor-pointer focus:outline-none"
-      >
-        <!-- Traditional Chinese Taiwan label -->
-        <span class="city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal leading-normal tracking-normal [font-kerning:normal] [text-rendering:optimizeLegibility] shrink-0">
-          台灣
-        </span>
-
-        <!-- Thin geometric TAIWAN + italic top aligned with city names -->
-        <h1 class="text-3xl sm:text-5xl md:text-[54px] leading-[1.35] pb-1.5 tracking-[-0.03em] [font-kerning:normal] [text-rendering:optimizeLegibility] font-extralight select-none">
-          TAIWAN<span class="italic font-extralight tracking-[-0.03em] [font-kerning:normal] [text-rendering:optimizeLegibility]">top</span>
-        </h1>
-      </button>
-
-      <!-- Interactive Yin-Yang Theme Toggle Button -->
-      <button
-        id="themeToggle"
-        type="button"
-        aria-label="Toggle Light/Dark Theme"
-        title="Toggle theme"
-        class="p-2 -mr-2 rounded-full focus:outline-none shrink-0 cursor-pointer"
-      >
-        <svg class="yin-yang-icon w-7 h-7 sm:w-8 sm:h-8" xmlns="http://www.w3.org/2000/svg" viewBox="-42 -42 84 84">
-          <circle r="39" fill="#000" stroke="#000" stroke-width="4"/>
-          <path fill="#fff" d="M0,38a38,38 0 0 1 0,-76a19,19 0 0 1 0,38a19,19 0 0 0 0,38"/>
-          <circle r="5" cy="19" fill="#fff"/>
-          <circle r="5" cy="-19" fill="#000"/>
-        </svg>
-      </button>
-    </header>
-
-    <!-- Status / Filter Bar (subtle, minimalist) -->
-    <div id="statusBanner" class="hidden px-3 sm:px-6 pb-3 text-xs opacity-70 flex items-center justify-between">
-      <span id="statusText">Loading places from Google Sheets...</span>
-      <button id="retryBtn" class="hidden underline hover:opacity-100 cursor-pointer">Retry</button>
+  <!-- ========================================================================
+       TELETEXT TOP BROADCAST HEADER & FIND> COMMAND BAR
+       ======================================================================== -->
+  <header id="top-app-bar" class="tt-top-bar">
+    <!-- Authentic Teletext Header Line: P100 | INDEX | Live Broadcast Clock -->
+    <div class="tt-status-strip px-4 sm:px-[10%]">
+      <span style="color: var(--tt-fg);">P100</span>
+      <span style="color: var(--tt-y);">TAIWAN INDEX</span>
+      <span class="hidden sm:inline" style="color: var(--tt-g);">CEEFAX-TW</span>
+      <span id="tt-live-clock" class="ml-auto tabular-nums" style="color: var(--tt-y);">Mon 23 Nov 22:31/00</span>
     </div>
 
-    <!-- Full-width Colorful City Accordions Container -->
-    <main id="citiesContainer" class="w-full flex flex-col"></main>
-
-    <!-- Minimalist Footer matching half the standard row height (1/14 of viewport) -->
-    <footer class="w-full px-3 sm:px-6 footer-row flex items-center justify-end text-xs sm:text-sm">
-      <span>Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:no-underline">@alby.food</a></span>
-    </footer>
-
-  </div>
-
-  <!-- Place Detail Modal -->
-  <div
-    id="placeModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modalTitle"
-    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-black/60 backdrop-blur-[2px]"
-  >
-    <div class="relative w-full max-w-4xl flex items-center justify-center">
-      <!-- Previous Place Button (bare < over backdrop on desktop) -->
-      <button
-        id="prevPlaceBtn"
-        type="button"
-        aria-label="Previous place"
-        title="Previous place"
-        class="hidden sm:flex items-center justify-center -ml-12 mr-3 p-2 shrink-0 text-white/85 hover:text-white hover:scale-110 transition-all cursor-pointer select-none"
-      >
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
-
-      <div
-        id="placeModalCard"
-        class="relative w-full h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden border-2 rounded-xl shadow-2xl"
-      >
-        <!-- Floating Close Button directly on the top-right corner -->
-        <button
-          id="closeModalBtn"
-          type="button"
-          aria-label="Close modal"
-          class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-lg bg-[#F4F3EF]/90 dark:bg-[#1A1A19]/90 md:bg-transparent md:dark:bg-transparent hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-base sm:text-lg leading-none font-bold"
-        >
-          ✕
-        </button>
-
-        <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop so modal never scrolls -->
-        <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
-          <!-- 1:1 Square Picture Container -->
-          <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-black/5 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-current/20 mx-auto md:mx-0">
-            <img
-              id="modalImage"
-              src=""
-              alt=""
-              decoding="async"
-              fetchpriority="high"
-              class="w-full h-full object-cover transition-opacity duration-200"
-            />
-          </div>
-
-          <!-- Details Body -->
-          <div id="modalDetailsPane" class="flex-1 min-w-0 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
-            <div id="modalTextGroup" class="min-h-0 flex-1 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
-              <h2 id="modalTitle" class="text-lg sm:text-xl lg:text-2xl font-bold leading-tight tracking-normal [font-kerning:normal] [text-rendering:optimizeLegibility] line-clamp-2 shrink-0">
-                Place Title
-              </h2>
-
-              <!-- Description -->
-              <p id="modalDescription" class="text-xs sm:text-sm lg:text-base font-normal leading-relaxed opacity-90 line-clamp-4 md:line-clamp-none overflow-hidden">
-                Description
-              </p>
+    <div class="w-full px-4 sm:px-[10%] pt-2.5 pb-3">
+      <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 lg:grid lg:grid-cols-[1fr_minmax(260px,420px)_1fr] lg:items-center lg:gap-4">
+        <!-- Brand Logo & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 justify-self-start min-w-0 shrink-0">
+          <button
+            id="brand-reset-btn"
+            type="button"
+            class="flex items-center gap-2.5 sm:gap-3 text-left group focus:outline-none min-w-0"
+            title="Reset all filters and return to P100 index"
+          >
+            <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" class="w-full h-full block overflow-visible" aria-hidden="true">
+                <path class="goose-body" style="fill: var(--tt-fg);" d="M120 0L165 0L165 45L150 45L150 180L135 180L135 195L30 195L30 180L15 180L15 135L0 135L0 120L45 120L45 135L120 135L120 0ZM150 15L135 15L135 30L150 30L150 15Z"/>
+                <path class="goose-beak" style="fill: var(--tt-y);" d="M165 15L210 15L210 30L195 30L195 45L165 45L165 15Z"/>
+                <path class="goose-leg-left" style="fill: var(--tt-r);" d="M75 240L45 240L45 195L60 195L60 225L75 225L75 240Z"/>
+                <path class="goose-leg-right" style="fill: var(--tt-g);" d="M135 240L105 240L105 195L120 195L120 225L135 225L135 240Z"/>
+              </svg>
             </div>
-
-            <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
-            <div id="modalFooterGroup" class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
-              <!-- City Badge & Categories as Badges (Above Separation Line) -->
-              <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
-
-              <!-- Action Footer Below Separation Line -->
-              <div id="modalActionsDivider" class="pt-2.5 sm:pt-3.5 border-t border-current/20">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-nowrap">
+                <h1 class="font-teletext text-2xl sm:text-3xl leading-none tracking-wide uppercase whitespace-nowrap" style="color: var(--tt-y);">
+                  TAIWAN TOP
+                </h1>
+                <span
+                  id="header-total-badge"
+                  class="font-teletext text-base sm:text-lg leading-none px-2 py-0.5 uppercase whitespace-nowrap shrink-0"
+                  style="background-color: var(--tt-r); color: #ffffff;"
+                >
+                  LOAD…
+                </span>
+              </div>
+              <p class="font-teletext text-base sm:text-lg leading-none mt-0.5 truncate" style="color: var(--tt-c);">
+                CURATED BY
                 <a
-                  id="modalMapsLink"
-                  href="#"
+                  href="https://www.instagram.com/alby.food/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="w-full inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2 sm:py-2.5 rounded-lg border-2 border-current font-bold text-xs sm:text-sm hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-colors"
-                >
-                  <span>Open on Google Maps</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </div>
+                  class="underline decoration-dotted underline-offset-2 hover:opacity-80"
+                  style="color: var(--tt-g);"
+                  onclick="event.stopPropagation()"
+                >@ALBY.FOOD</a>
+              </p>
             </div>
+          </button>
+        </div>
+
+        <!-- Teletext FIND> Prompt Input & Autocomplete Container -->
+        <div class="relative w-[92%] mx-auto sm:w-full sm:flex-1 sm:max-w-[235px] md:max-w-[305px] lg:max-w-none order-3 sm:order-2 lg:justify-self-center min-w-0">
+          <div class="tt-command-row">
+            <span class="tt-prompt-prefix" aria-hidden="true">FIND&gt;</span>
+            <input
+              id="search-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="PLACE, FOOD OR CITY"
+              aria-label="Find a curated Taiwan place, food or city"
+              aria-autocomplete="list"
+              aria-controls="autocomplete-list"
+              aria-expanded="false"
+              class="tt-command-input"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              aria-label="Clear search query"
+              class="hidden ml-1 w-7 h-7 flex items-center justify-center shrink-0 hover:opacity-80"
+              style="color: var(--tt-y);"
+            >
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
           </div>
+
+          <!-- Autocomplete Suggestions Dropdown -->
+          <div
+            id="autocomplete-dropdown"
+            class="tt-autocomplete-menu hidden absolute left-0 right-0 w-full mt-1.5 z-50"
+            role="listbox"
+            aria-label="Teletext page index suggestions"
+          >
+            <ul id="autocomplete-list" class="py-1 max-h-80 overflow-y-auto"></ul>
+          </div>
+        </div>
+
+        <!-- Right Utility Actions: Theme Toggle & Instagram Link -->
+        <div class="flex items-center gap-2 order-2 sm:order-3 justify-self-end shrink-0">
+          <a
+            href="https://www.instagram.com/alby.food/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tt-btn-blue !w-10 !px-0 lg:!w-auto lg:!px-3.5"
+            title="Follow @alby.food on Instagram"
+            aria-label="Follow @alby.food on Instagram"
+          >
+            <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span class="hidden lg:inline">@ALBY.FOOD</span>
+          </a>
+          <button
+            id="theme-toggle-btn"
+            type="button"
+            class="tt-icon-btn"
+            aria-label="Toggle dark CRT or light broadcast mode"
+            title="Toggle dark CRT or light print mode"
+          >
+            <span id="theme-icon" class="material-symbols-outlined text-xl">light_mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN CONTENT AREA: STATUS BAR, PLACES GRID, PAGINATION & EMPTY STATE
+       ======================================================================== -->
+  <main class="w-full px-4 sm:px-[10%] pt-5 pb-3">
+    <!-- Active Filter Status & Result Counter -->
+    <div id="results-toolbar" class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-2 border-b" style="border-color: var(--tt-border-subtle);">
+      <div class="flex items-center gap-3 flex-wrap">
+        <p id="results-summary" class="font-teletext text-xl sm:text-2xl leading-none uppercase" style="color: var(--tt-g);">
+          TUNING IN TO GOOGLE SHEETS…
+        </p>
+        <button
+          id="reset-filters-inline-btn"
+          type="button"
+          class="hidden font-teletext text-lg leading-none px-2.5 py-1 uppercase border-2"
+          style="background-color: var(--tt-r); border-color: var(--tt-r); color: #ffffff;"
+        >
+          [CLR FILTERS]
+        </button>
+      </div>
+      <button
+        id="sort-toggle-btn"
+        type="button"
+        class="inline-flex items-center gap-1.5 font-teletext text-xl leading-none uppercase bg-transparent border-0 p-0 cursor-pointer hover:opacity-80"
+        style="color: var(--tt-c);"
+        title="Switch sort order"
+      >
+        <span id="sort-toggle-icon" class="material-symbols-outlined text-lg">sort</span>
+        <span id="sort-toggle-label" class="underline underline-offset-4 decoration-dotted">SORT: NEWEST</span>
+      </button>
+    </div>
+
+    <!-- Loading Skeleton Grid -->
+    <div id="loading-skeleton" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"></div>
+
+    <!-- Curated Places Square Card Grid -->
+    <section
+      id="places-grid"
+      aria-label="Curated places in Taiwan"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
+    ></section>
+
+    <!-- Pagination Load More Container -->
+    <div id="load-more-container" class="hidden mt-6 mb-0 flex flex-col items-center">
+      <button id="load-more-btn" type="button" class="tt-btn-primary">
+        <span class="material-symbols-outlined text-xl">expand_more</span>
+        <span id="load-more-label">NEXT SUBPAGE</span>
+      </button>
+    </div>
+
+    <!-- Empty State & Interactive HTML5 Runner Game Fallback -->
+    <section
+      id="empty-state"
+      class="hidden my-6 p-5 sm:p-6 border-2 max-w-2xl mx-auto text-center"
+      style="background-color: var(--tt-bg); border-color: var(--tt-r); box-shadow: 6px 6px 0 var(--tt-b);"
+      aria-live="polite"
+    >
+      <h2 id="empty-state-title" class="font-teletext text-3xl sm:text-4xl leading-none uppercase mb-4" style="color: var(--tt-r);">
+        NO PAGES FOUND
+      </h2>
+      <p id="empty-state-subtitle" class="hidden font-teletext text-xl mb-5 max-w-md mx-auto" style="color: var(--tt-y);"></p>
+
+      <!-- Interactive Canvas Runner Game -->
+      <div class="mb-5 text-left">
+        <div class="flex items-center justify-between font-teletext text-lg sm:text-xl leading-none mb-1.5 px-1" style="color: var(--tt-c);">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base">sports_esports</span>
+            <span>P404 HOT POT GOOSE — [SPACE] OR TAP TO JUMP</span>
+          </span>
+          <span id="game-score-readout" style="color: var(--tt-y);">SCORE: 0000 · BEST: 0000</span>
+        </div>
+        <canvas id="dino-canvas" tabindex="0" aria-label="Hot Pot Goose Runner mini-game"></canvas>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="empty-reset-btn" type="button" class="tt-btn-primary">
+          <span class="material-symbols-outlined text-xl">restart_alt</span>
+          <span>RETURN TO P100 INDEX</span>
+        </button>
+        <button id="retry-fetch-btn" type="button" class="tt-btn-outlined hidden">
+          <span class="material-symbols-outlined text-xl">refresh</span>
+          <span>RETRY SIGNAL</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       FIXED FULL-WIDTH TELETEXT FASTEXT CATEGORY FOOTER BAR
+       ======================================================================== -->
+  <footer
+    aria-label="Fastext category filters"
+    class="fixed bottom-0 left-0 right-0 z-40 w-full border-t-2"
+    style="background-color: var(--tt-bg); border-color: var(--tt-border);"
+  >
+    <div
+      id="category-filters"
+      class="chip-scroll-strip flex items-center gap-2.5 overflow-x-auto w-full py-2.5 px-4 sm:px-[10%]"
+      role="toolbar"
+      aria-label="Filter places by Fastext category"
+    >
+      <!-- Populated dynamically by populateCategoryFilters() -->
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       TELETEXT SUBPAGE DETAIL MODAL (SPOT INSPECTOR)
+       ======================================================================== -->
+  <div
+    id="place-modal"
+    class="tt-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-hidden="true"
+  >
+    <div id="modal-dialog-card" class="tt-modal-dialog">
+      <!-- Top Modal Broadcast Strip -->
+      <div
+        class="flex items-center justify-between px-4 sm:px-6 py-2.5 border-b-2 shrink-0"
+        style="background-color: var(--tt-b); border-color: var(--tt-c); color: #ffffff;"
+      >
+        <div class="flex items-center gap-2">
+          <button id="modal-prev-btn" type="button" class="tt-icon-btn !w-9 !h-9" aria-label="Previous place" title="Previous page (Left Arrow)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button id="modal-next-btn" type="button" class="tt-icon-btn !w-9 !h-9" aria-label="Next place" title="Next page (Right Arrow)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          <span id="modal-counter" class="font-teletext text-xl leading-none ml-1.5" style="color: var(--tt-y);">
+            P101 1/1
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="modal-share-btn" type="button" class="tt-btn-primary !min-h-[36px] !px-3 !text-lg !shadow-none" title="Copy direct link to this spot">
+            <span id="modal-share-icon" class="material-symbols-outlined text-base">share</span>
+            <span id="modal-share-label">SHARE</span>
+          </button>
+          <button id="modal-close-btn" type="button" class="tt-icon-btn !w-9 !h-9" aria-label="Close modal" title="Close (Escape)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
       </div>
 
-      <!-- Next Place Button (bare > over backdrop on desktop) -->
-      <button
-        id="nextPlaceBtn"
-        type="button"
-        aria-label="Next place"
-        title="Next place"
-        class="hidden sm:flex items-center justify-center -mr-12 ml-3 p-2 shrink-0 text-white/85 hover:text-white hover:scale-110 transition-all cursor-pointer select-none"
-      >
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
+      <!-- Modal Content -->
+      <div id="modal-scroll-body" class="block md:grid md:grid-cols-[3fr_2fr] md:items-stretch">
+        <!-- Photo Showcase (Always 1:1 square) -->
+        <div class="relative w-full aspect-square bg-black flex items-center justify-center overflow-hidden shrink-0 border-b-2 md:border-b-0 md:border-r-2" style="border-color: var(--tt-border-subtle);">
+          <img
+            id="modal-image"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Metadata, Categories, Description & Google Maps Action -->
+        <div class="p-4 sm:p-6 lg:p-7 flex flex-col justify-between gap-5 min-w-0">
+          <div>
+            <!-- City Badge (Clickable filter) -->
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <button
+                id="modal-city-btn"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 font-teletext text-lg leading-none uppercase border-2 transition-transform active:scale-95"
+                style="background-color: var(--tt-g); border-color: var(--tt-g); color: #000000;"
+                title="Filter by this city"
+              >
+                <span class="material-symbols-outlined filled text-sm leading-none">location_on</span>
+                <span id="modal-city-text">TAIWAN</span>
+              </button>
+            </div>
+
+            <!-- Place Title -->
+            <h2 id="modal-title" class="font-teletext text-3xl sm:text-3xl lg:text-4xl leading-none uppercase mb-3" style="color: var(--tt-y);">
+              PLACE TITLE
+            </h2>
+
+            <!-- Category Tags (Clickable filters) -->
+            <div id="modal-categories" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+            <!-- Description (Readable monospace) -->
+            <p
+              id="modal-description"
+              class="font-body-mono text-xs sm:text-sm leading-relaxed whitespace-pre-line"
+              style="color: var(--tt-fg);"
+            ></p>
+          </div>
+
+          <!-- Bottom Primary Action: Google Maps -->
+          <div class="pt-4 border-t-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3" style="border-color: var(--tt-border-subtle);">
+            <a
+              id="modal-maps-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="tt-btn-primary flex-1 text-center"
+            >
+              <span class="material-symbols-outlined text-lg">map</span>
+              <span>OPEN IN GOOGLE MAPS</span>
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ========================================================================
+       TELETEXT TICKER SNACKBAR
+       ======================================================================== -->
+  <div id="snackbar" class="tt-snackbar" role="status" aria-live="polite">
+    <span class="material-symbols-outlined text-lg" style="color: var(--tt-y);">check_circle</span>
+    <span id="snackbar-text">LINK COPIED TO CLIPBOARD</span>
+  </div>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC
+       ======================================================================== -->
   <script>
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
-    const CACHE_KEY = 'taiwantop_csv_cache_v1';
+    (() => {
+      'use strict';
 
-    // City configuration matching screenshot light colors + creative dark mode palette with white text
-    const CITY_META = {
-      'taipei': {
-        en: 'Taipei',
-        zh: '台北',
-        bg: '#F7D249',
-        text: '#0A0A0A',
-        darkBg: '#8A5A19', // Deep warm amber/ochre
-        darkText: '#FFFFFF',
-        order: 1
-      },
-      'taichung': {
-        en: 'Taichung',
-        zh: '台中',
-        bg: '#C6BEB8',
-        text: '#0A0A0A',
-        darkBg: '#4E4946', // Warm charcoal taupe
-        darkText: '#FFFFFF',
-        order: 2
-      },
-      'tainan': {
-        en: 'Tainan',
-        zh: '台南',
-        bg: '#F6BBF5',
-        text: '#0A0A0A',
-        darkBg: '#7A3B6E', // Deep plum magenta
-        darkText: '#FFFFFF',
-        order: 3
-      },
-      'kaohsiung': {
-        en: 'Kaohsiung',
-        zh: '高雄',
-        bg: '#8FA3D9',
-        text: '#0A0A0A',
-        darkBg: '#2E436E', // Deep indigo harbor blue
-        darkText: '#FFFFFF',
-        order: 4
-      },
-      'hengchun': {
-        en: 'Hengchun',
-        zh: '墾丁',
-        bg: '#65754A',
-        text: '#0A0A0A',
-        darkBg: '#37472C', // Deep coastal forest moss
-        darkText: '#FFFFFF',
-        order: 5
-      },
-      'kenting': {
-        en: 'Hengchun',
-        zh: '墾丁',
-        bg: '#65754A',
-        text: '#0A0A0A',
-        darkBg: '#37472C',
-        darkText: '#FFFFFF',
-        order: 5
-      }
-    };
+      /* ----------------------------------------------------------------------
+         CONSTANTS & CONFIGURATION
+         ---------------------------------------------------------------------- */
+      const CSV_URL =
+        'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+      const CACHE_STORAGE_KEY = 'taiwanTopCsvCache_v1';
+      const FALLBACK_PHOTO =
+        'https://live.staticflickr.com/65535/54854428883_2f3d72425e_b.jpg';
+      const PAGE_SIZE = 24;
 
-    // Fallback curated palettes if additional cities exist in the CSV
-    const EXTRA_PALETTE = [
-      { bg: '#E59866', darkBg: '#7E4627', zh: '台灣' },
-      { bg: '#82B3A6', darkBg: '#2D594E', zh: '台灣' },
-      { bg: '#D4A373', darkBg: '#6B4C2E', zh: '台灣' },
-      { bg: '#A3B18A', darkBg: '#424F32', zh: '台灣' }
-    ];
+      const STOP_WORDS = new Set([
+        'the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was',
+        'were', 'have', 'has', 'had', 'not', 'but', 'what', 'all', 'when',
+        'can', 'there', 'use', 'each', 'which', 'their', 'if', 'will', 'way',
+        'about', 'many', 'then', 'them', 'would', 'like', 'into', 'has', 'more',
+        'two', 'see', 'out', 'very', 'just', 'one', 'also', 'its', 'you', 'your',
+        'taiwan', 'place', 'spot', 'great', 'good', 'best', 'really'
+      ]);
 
-    // Fallback data (without image URLs) in case CORS/network blocks live CSV in an offline sandbox
-    const FALLBACK_ROWS = [
-      { City: 'Taipei', Title: '真珠 JIN ZHU', Description: 'Nice Taiwanese cuisine chain', Category: 'taiwanese, restaurant' },
-      { City: 'Taipei', Title: '阿石北平烤鴨店', Description: 'Beiping style roasted duck', Category: 'roast duck, takeaway' },
-      { City: 'Taipei', Title: '口福黑輪', Description: 'Taiwanese-style oden', Category: 'oden, street food' },
-      { City: 'Taichung', Title: '第二市場 Second Market', Description: 'Historic market famous for braised pork rice and radish cake', Category: 'market, local food' },
-      { City: 'Tainan', Title: '文章牛肉湯', Description: 'Classic Tainan fresh beef soup served with rice', Category: 'beef soup, breakfast' },
-      { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
-      { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
-    ];
+      const FASTEXT_CYCLE = ['r', 'g', 'y', 'c'];
 
-    // Active modal navigation state (loops inside the current city)
-    let activeModalCityGroup = null;
-    let activeModalPlaceIndex = 0;
+      /* ----------------------------------------------------------------------
+         APPLICATION STATE
+         ---------------------------------------------------------------------- */
+      let allPlaces = [];
+      let visiblePlaces = [];
+      let displayedCount = PAGE_SIZE;
 
-    // Track preloaded image URLs so each photo is fetched at most once
-    const preloadedImageUrls = new Set();
+      let activeCategory = 'ALL';
+      let searchQuery = '';
+      let sortOrder = 'newest'; // 'newest' | 'alpha'
+      let activeModalIndex = -1;
+      let pendingSpotSlug = null;
 
-    /**
-     * Escapes HTML special characters to prevent XSS
-     */
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
+      // Autocomplete state
+      let autocompleteIndex = [];
+      let currentSuggestions = [];
+      let highlightedSuggestionIdx = -1;
+      let searchDebounceTimer = null;
 
-    /**
-     * Generates a clean square fallback SVG data URL when no photo or broken link is present
-     */
-    function getFallbackSquareImage(title, bgColor) {
-      const safeTitle = escapeHtml((title || 'TAIWANtop').slice(0, 22));
-      const fill = bgColor || '#E5E4DF';
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
-        <rect width="600" height="600" fill="${fill}"/>
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#0A0A0A" opacity="0.7">${safeTitle}</text>
-      </svg>`;
-      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-    }
+      // Runner game state
+      let dinoAnimFrameId = null;
+      let dinoGameRunning = false;
+      let audioCtx = null;
 
-    /**
-     * Preloads a single image URL silently into browser cache
-     */
-    function preloadImageUrl(url) {
-      if (!url || preloadedImageUrls.has(url)) return;
-      preloadedImageUrls.add(url);
-      const img = new Image();
-      img.decoding = 'async';
-      img.src = url;
-    }
-
-    /**
-     * Preloads all photos for an opened city accordion in the background
-     */
-    function preloadCityImages(cityGroup) {
-      if (!cityGroup || !cityGroup.places) return;
-      cityGroup.places.forEach((place) => {
-        if (place.image) {
-          preloadImageUrl(place.image);
-        }
-      });
-    }
-
-    /**
-     * Extracts a sortable numeric timestamp from a Flickr static photo URL or optional CSV date column.
-     * Flickr URLs follow: https://live.staticflickr.com/{server}/{photoId}_{secret}_{size}.{ext}
-     * Higher Flickr photo IDs correspond directly to newer uploads, and explicit date columns are also supported.
-     */
-    function extractPhotoTimestamp(row, imageUrl) {
-      // 1. Check if the sheet explicitly provides a Date / Timestamp column
-      const rawDate = (row.Timestamp || row.timestamp || row.Date || row.date || row['時間'] || row['日期'] || '').trim();
-      if (rawDate) {
-        const parsed = Date.parse(rawDate);
-        if (!Number.isNaN(parsed)) {
-          return parsed;
-        }
-        const numericDate = Number(rawDate);
-        if (!Number.isNaN(numericDate) && numericDate > 0) {
-          return numericDate;
-        }
-      }
-
-      // 2. Extract Flickr snowflake/sequential photo ID from staticflickr.com or flickr.com URLs
-      if (imageUrl) {
-        const staticMatch = imageUrl.match(/staticflickr\.com\/\d+\/(\d+)_/i);
-        if (staticMatch && staticMatch[1]) {
-          return Number(staticMatch[1]);
-        }
-        const pageMatch = imageUrl.match(/flickr\.com\/photos\/[^/]+\/(\d+)/i);
-        if (pageMatch && pageMatch[1]) {
-          return Number(pageMatch[1]);
-        }
-      }
-
-      return 0;
-    }
-
-    /**
-     * Groups parsed CSV rows by city, sorts each city's places by Flickr timestamp (newest first),
-     * and sorts cities in the canonical order
-     */
-    function groupPlacesByCity(rows) {
-      const groupsMap = new Map();
-      let extraIndex = 0;
-
-      rows.forEach((row, rowIndex) => {
-        const rawCity = (row.City || row.city || row['城市'] || '').trim();
-        const title = (row.Title || row.title || row.Name || row.name || row['店名'] || '').trim();
-        if (!rawCity || !title) return;
-
-        const key = rawCity.toLowerCase();
-        const meta = CITY_META[key];
-        const canonicalKey = meta ? meta.en.toLowerCase() : key;
-
-        if (!groupsMap.has(canonicalKey)) {
-          if (meta) {
-            groupsMap.set(canonicalKey, {
-              key: canonicalKey,
-              en: meta.en,
-              zh: meta.zh,
-              bg: meta.bg,
-              text: meta.text,
-              darkBg: meta.darkBg,
-              darkText: meta.darkText,
-              order: meta.order,
-              places: []
-            });
-          } else {
-            const extra = EXTRA_PALETTE[extraIndex % EXTRA_PALETTE.length];
-            extraIndex++;
-            groupsMap.set(canonicalKey, {
-              key: canonicalKey,
-              en: rawCity,
-              zh: extra.zh,
-              bg: extra.bg,
-              text: '#0A0A0A',
-              darkBg: extra.darkBg,
-              darkText: '#FFFFFF',
-              order: 100 + extraIndex,
-              places: []
-            });
-          }
-        }
-
-        const description = (row.Description || row.description || row.Notes || row.notes || row['簡介'] || '').trim();
-        const rawCategory = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || row['分類'] || '').trim();
-        const categories = rawCategory
-          ? rawCategory.split(/[,;/]+/).map((c) => c.trim()).filter(Boolean)
-          : [];
-        const image = (row.Image || row.image || row.Photo || row.photo || row.Thumbnail || row.thumbnail || '').trim();
-        const mapsUrl = (row['Google Maps'] || row.Maps || row.maps || row.Map || row.map || row.URL || row.url || row.Link || row.link || '').trim();
-        const photoTimestamp = extractPhotoTimestamp(row, image);
-
-        groupsMap.get(canonicalKey).places.push({
-          title,
-          description,
-          categories,
-          image,
-          mapsUrl,
-          photoTimestamp,
-          rowIndex
-        });
-      });
-
-      // Sort each city's places by Flickr photo timestamp descending (newest first, oldest at the end)
-      groupsMap.forEach((group) => {
-        group.places.sort((a, b) => {
-          if (b.photoTimestamp !== a.photoTimestamp) {
-            return b.photoTimestamp - a.photoTimestamp;
-          }
-          // Tie-breaker: later rows in the sheet are newer than earlier rows
-          return b.rowIndex - a.rowIndex;
-        });
-      });
-
-      // Ensure all 5 default cities appear even if empty in a custom CSV
-      Object.values(CITY_META).forEach((meta) => {
-        const canonicalKey = meta.en.toLowerCase();
-        if (!groupsMap.has(canonicalKey)) {
-          groupsMap.set(canonicalKey, {
-            key: canonicalKey,
-            en: meta.en,
-            zh: meta.zh,
-            bg: meta.bg,
-            text: meta.text,
-            darkBg: meta.darkBg,
-            darkText: meta.darkText,
-            order: meta.order,
-            places: []
-          });
-        }
-      });
-
-      return Array.from(groupsMap.values()).sort((a, b) => a.order - b.order);
-    }
-
-    /**
-     * Updates accordion header colors when toggling light/dark theme
-     */
-    function applyAccordionThemeColors() {
-      const isDark = document.body.classList.contains('dark-mode');
-      document.querySelectorAll('.accordion-header-btn').forEach((btn) => {
-        btn.style.backgroundColor = isDark ? btn.dataset.darkBg : btn.dataset.lightBg;
-        btn.style.color = isDark ? btn.dataset.darkText : btn.dataset.lightText;
-      });
-    }
-
-    /**
-     * Opens the place detail modal with 1:1 image, city + uppercase category badges, and Google Maps link
-     */
-    function openPlaceModal(place, cityGroup, placeIndex = 0) {
-      activeModalCityGroup = cityGroup;
-      activeModalPlaceIndex = placeIndex;
-
-      const modal = document.getElementById('placeModal');
-      const modalImg = document.getElementById('modalImage');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalDesc = document.getElementById('modalDescription');
-      const modalCats = document.getElementById('modalCategories');
-      const modalMaps = document.getElementById('modalMapsLink');
-
-      const isDark = document.body.classList.contains('dark-mode');
-
-      // Show/hide navigation arrows if the city has more than 1 place
-      const hasMultiple = cityGroup.places && cityGroup.places.length > 1;
-      ['prevPlaceBtn', 'nextPlaceBtn'].forEach((id) => {
-        const btn = document.getElementById(id);
-        if (btn) btn.style.visibility = hasMultiple ? 'visible' : 'hidden';
-      });
-
-      modalTitle.textContent = place.title;
-      modalDesc.textContent = place.description || 'No description provided.';
-
-      const fallbackSrc = getFallbackSquareImage(place.title, cityGroup.bg);
-      const targetSrc = place.image || fallbackSrc;
-
-      if (place.image && !preloadedImageUrls.has(place.image)) {
-        // Show subtle fade-in if image wasn't already cached
-        modalImg.style.opacity = '0.35';
-        modalImg.onload = () => {
-          modalImg.style.opacity = '1';
-          preloadedImageUrls.add(place.image);
-        };
-      } else {
-        modalImg.style.opacity = '1';
-        modalImg.onload = null;
-      }
-
-      modalImg.onerror = () => {
-        modalImg.onerror = null;
-        modalImg.onload = null;
-        modalImg.style.opacity = '1';
-        modalImg.src = fallbackSrc;
+      /* ----------------------------------------------------------------------
+         DOM ELEMENT REFERENCES
+         ---------------------------------------------------------------------- */
+      const els = {
+        topAppBar: document.getElementById('top-app-bar'),
+        ttLiveClock: document.getElementById('tt-live-clock'),
+        brandResetBtn: document.getElementById('brand-reset-btn'),
+        headerTotalBadge: document.getElementById('header-total-badge'),
+        searchInput: document.getElementById('search-input'),
+        clearSearchBtn: document.getElementById('clear-search-btn'),
+        autocompleteDropdown: document.getElementById('autocomplete-dropdown'),
+        autocompleteList: document.getElementById('autocomplete-list'),
+        themeToggleBtn: document.getElementById('theme-toggle-btn'),
+        themeIcon: document.getElementById('theme-icon'),
+        categoryFilters: document.getElementById('category-filters'),
+        resultsSummary: document.getElementById('results-summary'),
+        resultsToolbar: document.getElementById('results-toolbar'),
+        resetFiltersInlineBtn: document.getElementById('reset-filters-inline-btn'),
+        sortToggleBtn: document.getElementById('sort-toggle-btn'),
+        sortToggleIcon: document.getElementById('sort-toggle-icon'),
+        sortToggleLabel: document.getElementById('sort-toggle-label'),
+        loadingSkeleton: document.getElementById('loading-skeleton'),
+        placesGrid: document.getElementById('places-grid'),
+        loadMoreContainer: document.getElementById('load-more-container'),
+        loadMoreBtn: document.getElementById('load-more-btn'),
+        loadMoreLabel: document.getElementById('load-more-label'),
+        emptyState: document.getElementById('empty-state'),
+        emptyStateTitle: document.getElementById('empty-state-title'),
+        emptyStateSubtitle: document.getElementById('empty-state-subtitle'),
+        emptyResetBtn: document.getElementById('empty-reset-btn'),
+        retryFetchBtn: document.getElementById('retry-fetch-btn'),
+        dinoCanvas: document.getElementById('dino-canvas'),
+        gameScoreReadout: document.getElementById('game-score-readout'),
+        placeModal: document.getElementById('place-modal'),
+        modalDialogCard: document.getElementById('modal-dialog-card'),
+        modalPrevBtn: document.getElementById('modal-prev-btn'),
+        modalNextBtn: document.getElementById('modal-next-btn'),
+        modalCounter: document.getElementById('modal-counter'),
+        modalShareBtn: document.getElementById('modal-share-btn'),
+        modalShareIcon: document.getElementById('modal-share-icon'),
+        modalShareLabel: document.getElementById('modal-share-label'),
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+        modalImage: document.getElementById('modal-image'),
+        modalCityBtn: document.getElementById('modal-city-btn'),
+        modalCityText: document.getElementById('modal-city-text'),
+        modalTitle: document.getElementById('modal-title'),
+        modalCategories: document.getElementById('modal-categories'),
+        modalDescription: document.getElementById('modal-description'),
+        modalMapsLink: document.getElementById('modal-maps-link'),
+        snackbar: document.getElementById('snackbar'),
+        snackbarText: document.getElementById('snackbar-text')
       };
-      modalImg.src = targetSrc;
-      modalImg.alt = place.title;
 
-      // Prefetch immediate previous and next places in the same city for instant arrow/swipe transitions
-      if (cityGroup.places && cityGroup.places.length > 1) {
-        const total = cityGroup.places.length;
-        const nextPlace = cityGroup.places[(placeIndex + 1) % total];
-        const prevPlace = cityGroup.places[(placeIndex - 1 + total) % total];
-        if (nextPlace && nextPlace.image) preloadImageUrl(nextPlace.image);
-        if (prevPlace && prevPlace.image) preloadImageUrl(prevPlace.image);
+      /* ----------------------------------------------------------------------
+         LIVE TELETEXT HEADER CLOCK (DDD DD MMM HH:MM/SS)
+         ---------------------------------------------------------------------- */
+      function startTeletextClock() {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const pad = (n) => String(n).padStart(2, '0');
+
+        const tick = () => {
+          const d = new Date();
+          const str = `${days[d.getDay()]} ${pad(d.getDate())} ${months[d.getMonth()]} ${pad(d.getHours())}:${pad(d.getMinutes())}/${pad(d.getSeconds())}`;
+          if (els.ttLiveClock) els.ttLiveClock.textContent = str;
+        };
+        tick();
+        setInterval(tick, 1000);
       }
 
-      // Render city badge first (with city-specific color), followed by uppercase category badges of identical height & text size
-      modalCats.innerHTML = '';
+      /* ----------------------------------------------------------------------
+         NORMALIZATION & UTILITY HELPERS
+         ---------------------------------------------------------------------- */
 
-      const cityBadge = document.createElement('span');
-      cityBadge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-transparent rounded-full';
-      cityBadge.textContent = `${cityGroup.zh} ${cityGroup.en}`;
-      cityBadge.style.backgroundColor = isDark ? cityGroup.darkBg : cityGroup.bg;
-      cityBadge.style.color = isDark ? cityGroup.darkText : cityGroup.text;
-      modalCats.appendChild(cityBadge);
+      function slugify(str) {
+        return String(str || '')
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'spot';
+      }
 
-      if (place.categories && place.categories.length > 0) {
-        place.categories.forEach((cat) => {
-          const badge = document.createElement('span');
-          badge.className = 'inline-flex items-center px-2.5 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-current rounded-full';
-          badge.textContent = cat;
-          modalCats.appendChild(badge);
+      function formatCityName(raw) {
+        const clean = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (!clean) return '';
+        return clean
+          .split(' ')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ');
+      }
+
+      function extractFlickrPhotoId(photoUrl) {
+        const url = String(photoUrl || '');
+        const match = url.match(/\/(\d{8,})_[a-z0-9]+/i) || url.match(/(\d{9,})/);
+        if (!match) return 0n;
+        try {
+          return BigInt(match[1]);
+        } catch {
+          return 0n;
+        }
+      }
+
+      function normalizePhotoUrl(rawUrl) {
+        let raw = String(rawUrl || '').trim();
+        if (!raw) return '';
+
+        const urlMatch = raw.match(/https?:\/\/[^\s"'<>,]+/i);
+        let url = urlMatch ? urlMatch[0] : raw.split(/[\s,]+/)[0];
+
+        if (url.startsWith('http://')) {
+          url = 'https://' + url.slice(7);
+        }
+
+        const gdriveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/i);
+        if (gdriveMatch) {
+          return `https://lh3.googleusercontent.com/d/${gdriveMatch[1]}=s1200`;
+        }
+
+        return url;
+      }
+
+      function getFlickrVariantUrl(photoUrl, sizeSuffix) {
+        const url = normalizePhotoUrl(photoUrl);
+        if (!/staticflickr\.com\//i.test(url)) return url;
+        const standardSuffixRegex = /_(s|q|t|m|n|w|z|c|b|h|k)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (standardSuffixRegex.test(url)) {
+          return url.replace(standardSuffixRegex, `_${sizeSuffix}$2`);
+        }
+        const unsuffixedRegex = /(\/\d+_[a-f0-9]+)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i;
+        if (unsuffixedRegex.test(url)) {
+          return url.replace(unsuffixedRegex, `$1_${sizeSuffix}$2`);
+        }
+        return url;
+      }
+
+      function buildPhotoCandidates(rawPhoto, preferLarge = false) {
+        const original = normalizePhotoUrl(rawPhoto);
+        if (!original) return [FALLBACK_PHOTO];
+
+        const candidates = [];
+        const add = (u) => {
+          if (u && !candidates.includes(u)) candidates.push(u);
+        };
+
+        if (/staticflickr\.com\//i.test(original)) {
+          const isOriginalSecret = /_o\.(?:jpe?g|png|webp|gif)(?=$|\?)/i.test(original);
+          if (isOriginalSecret) {
+            add(original);
+          }
+
+          if (preferLarge) {
+            add(getFlickrVariantUrl(original, 'b'));
+            add(getFlickrVariantUrl(original, 'h'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'z'));
+            add(original);
+          } else {
+            add(getFlickrVariantUrl(original, 'z'));
+            add(getFlickrVariantUrl(original, 'c'));
+            add(getFlickrVariantUrl(original, 'b'));
+            add(original);
+          }
+          const unsuffixed = original.replace(
+            /_(s|q|t|m|n|w|z|c|b|h|k|o)(\.(?:jpe?g|png|webp|gif))(?=$|\?)/i,
+            '$2'
+          );
+          add(unsuffixed);
+        } else {
+          add(original);
+        }
+
+        add(FALLBACK_PHOTO);
+        return candidates;
+      }
+
+      async function resolveFlickrPagePhoto(pageUrl, imgEl, preferLarge) {
+        try {
+          const oembedUrl = `https://www.flickr.com/services/oembed/?format=json&url=${encodeURIComponent(pageUrl)}`;
+          const res = await fetch(oembedUrl);
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (data && data.url) {
+            const resolved = preferLarge
+              ? getFlickrVariantUrl(data.url, 'b')
+              : getFlickrVariantUrl(data.url, 'z');
+            imgEl.src = resolved || data.url;
+            return true;
+          }
+        } catch {
+          // Ignore oEmbed failure
+        }
+        return false;
+      }
+
+      function attachImageFallbackChain(imgEl, candidates) {
+        let attemptIndex = 0;
+
+        const applySrc = (url) => {
+          imgEl.referrerPolicy = /staticflickr\.com/i.test(url)
+            ? 'no-referrer'
+            : 'strict-origin-when-cross-origin';
+          imgEl.src = url;
+        };
+
+        const firstUrl = candidates[0] || FALLBACK_PHOTO;
+
+        if (/flickr\.com\/photos\//i.test(firstUrl) || /flic\.kr\/p\//i.test(firstUrl)) {
+          imgEl.onerror = () => {
+            imgEl.onerror = null;
+            imgEl.src = FALLBACK_PHOTO;
+          };
+          resolveFlickrPagePhoto(firstUrl, imgEl, candidates.length > 2).then((ok) => {
+            if (!ok) imgEl.src = FALLBACK_PHOTO;
+          });
+          return;
+        }
+
+        imgEl.onerror = function () {
+          attemptIndex += 1;
+          if (attemptIndex < candidates.length) {
+            applySrc(candidates[attemptIndex]);
+          } else {
+            this.onerror = null;
+          }
+        };
+        applySrc(firstUrl);
+      }
+
+      function parseCategories(rawCat) {
+        if (!rawCat) return [];
+        const seen = new Set();
+        const result = [];
+        String(rawCat)
+          .split(/[,;|]/)
+          .forEach((token) => {
+            const clean = token.trim().replace(/\s+/g, ' ');
+            if (!clean) return;
+            const key = clean.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              result.push(clean);
+            }
+          });
+        return result;
+      }
+
+      function normalizePlaceRow(row, index) {
+        if (!row || typeof row !== 'object') return null;
+
+        const title = String(
+          row.Title ?? row.title ?? row.Name ?? row.name ?? ''
+        )
+          .trim()
+          .replace(/\s+/g, ' ');
+        if (!title) return null;
+
+        const city = formatCityName(
+          row.City ?? row.city ?? row.Location ?? row.location ?? ''
+        );
+
+        const rawCategories =
+          row.Category ??
+          row.category ??
+          row.Categories ??
+          row.categories ??
+          row.Tags ??
+          row.tags ??
+          '';
+        const categories = parseCategories(rawCategories);
+
+        const description = String(
+          row.Description ?? row.description ?? row.Notes ?? row.notes ?? ''
+        ).trim();
+
+        const rawPhoto = String(
+          row.Photo ?? row.photo ?? row.Image ?? row.image ?? row.URL ?? ''
+        ).trim();
+        const basePhoto = normalizePhotoUrl(rawPhoto) || FALLBACK_PHOTO;
+        const thumbCandidates = buildPhotoCandidates(basePhoto, false);
+        const largeCandidates = buildPhotoCandidates(basePhoto, true);
+        const photo = thumbCandidates[0];
+        const photoLarge = largeCandidates[0];
+        const flickrId = extractFlickrPhotoId(basePhoto);
+
+        const link = String(
+          row.Link ?? row.link ?? row.Maps ?? row.maps ?? row['Google Maps'] ?? ''
+        ).trim();
+
+        return {
+          id: index,
+          title,
+          slug: slugify(title),
+          city,
+          categories,
+          description,
+          photo,
+          photoLarge,
+          photoOriginal: basePhoto,
+          thumbCandidates,
+          largeCandidates,
+          flickrId,
+          link
+        };
+      }
+
+      /* ----------------------------------------------------------------------
+         1. STATE MANAGEMENT & URL SYNCHRONIZATION
+         ---------------------------------------------------------------------- */
+
+      function parseUrlState() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const catParam = params.get('cat');
+          const cityParam = params.get('city');
+          const qParam = params.get('q');
+          const spotParam = params.get('spot');
+
+          if (catParam) {
+            activeCategory = catParam.trim().toLowerCase();
+          }
+
+          if (qParam) {
+            searchQuery = qParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          } else if (cityParam) {
+            searchQuery = cityParam.trim();
+            els.searchInput.value = searchQuery;
+            els.clearSearchBtn.classList.remove('hidden');
+          }
+
+          if (spotParam) {
+            pendingSpotSlug = spotParam.trim();
+          }
+        } catch {
+          // Ignore URL parsing issues
+        }
+      }
+
+      function updateUrlState(targetSpotSlug) {
+        try {
+          const origin = window.location.origin;
+          if (!origin || origin === 'null' || window.location.protocol === 'blob:') {
+            return;
+          }
+
+          const url = new URL(window.location.href);
+          if (activeCategory && activeCategory !== 'ALL') {
+            url.searchParams.set('cat', activeCategory);
+          } else {
+            url.searchParams.delete('cat');
+          }
+
+          if (searchQuery && searchQuery.trim()) {
+            url.searchParams.set('q', searchQuery.trim());
+          } else {
+            url.searchParams.delete('q');
+          }
+          url.searchParams.delete('city');
+
+          if (targetSpotSlug) {
+            url.searchParams.set('spot', targetSpotSlug);
+          } else {
+            url.searchParams.delete('spot');
+          }
+
+          window.history.replaceState({}, '', url.toString());
+        } catch {
+          // Skip history updates in sandboxed origins
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         2. FILTERING, SEARCH & AUTOCOMPLETE ENGINE
+         ---------------------------------------------------------------------- */
+
+      function populateCategoryFilters() {
+        const counts = new Map();
+        const labels = new Map();
+
+        allPlaces.forEach((place) => {
+          place.categories.forEach((cat) => {
+            const key = cat.toLowerCase();
+            counts.set(key, (counts.get(key) || 0) + 1);
+            if (!labels.has(key)) labels.set(key, cat);
+          });
         });
+
+        const sortedKeys = Array.from(counts.keys()).sort((a, b) => a.localeCompare(b));
+        const frag = document.createDocumentFragment();
+
+        // ALL button (Red Fastext key)
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'tt-fast-chip';
+        allBtn.dataset.fast = 'r';
+        allBtn.setAttribute('aria-pressed', activeCategory === 'ALL' ? 'true' : 'false');
+        allBtn.innerHTML = `<span>ALL</span><span class="chip-count">${allPlaces.length}</span>`;
+        allBtn.addEventListener('click', () => setCategory('ALL'));
+        frag.appendChild(allBtn);
+
+        sortedKeys.forEach((key, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'tt-fast-chip';
+          btn.dataset.fast = FASTEXT_CYCLE[(idx + 1) % FASTEXT_CYCLE.length];
+          btn.setAttribute('aria-pressed', activeCategory === key ? 'true' : 'false');
+          btn.innerHTML = `<span>${escapeHtml(labels.get(key))}</span><span class="chip-count">${counts.get(key)}</span>`;
+          btn.addEventListener('click', () => setCategory(key));
+          frag.appendChild(btn);
+        });
+
+        els.categoryFilters.innerHTML = '';
+        els.categoryFilters.appendChild(frag);
       }
 
-      // Set direct Google Maps URL or fallback search query
-      if (place.mapsUrl && /^https?:\/\//i.test(place.mapsUrl)) {
-        modalMaps.href = place.mapsUrl;
-      } else {
-        const query = encodeURIComponent(`${place.title} ${cityGroup.en} Taiwan`);
-        modalMaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      function setCategory(cat) {
+        const normalized = cat === 'ALL' ? 'ALL' : String(cat).toLowerCase();
+        if (normalized !== 'ALL' && activeCategory === normalized) {
+          activeCategory = 'ALL';
+        } else {
+          activeCategory = normalized;
+        }
+        populateCategoryFilters();
+        filterPlaces();
       }
 
-      modal.classList.add('is-visible');
-    }
+      function updateResultsSummary() {
+        const total = visiblePlaces.length;
+        const hasFilters = activeCategory !== 'ALL' || Boolean(searchQuery.trim());
+        els.resetFiltersInlineBtn.classList.toggle('hidden', !hasFilters);
 
-    /**
-     * Navigates to previous (-1) or next (+1) place in a loop inside the current city
-     */
-    function navigatePlaceModal(delta) {
-      if (!activeModalCityGroup || !activeModalCityGroup.places || activeModalCityGroup.places.length <= 1) {
-        return;
+        if (total === 0) {
+          els.resultsSummary.textContent = 'P404 — 0 PAGES FOUND';
+        } else if (hasFilters) {
+          els.resultsSummary.textContent = `P101 — ${total} MATCHING ${total === 1 ? 'SPOT' : 'SPOTS'}`;
+        } else {
+          els.resultsSummary.textContent = `P101 — ${total} CURATED SPOTS ACROSS TAIWAN`;
+        }
       }
-      const total = activeModalCityGroup.places.length;
-      const nextIndex = (activeModalPlaceIndex + delta + total) % total;
-      openPlaceModal(activeModalCityGroup.places[nextIndex], activeModalCityGroup, nextIndex);
-    }
 
-    /**
-     * Closes the place detail modal
-     */
-    function closePlaceModal() {
-      const modal = document.getElementById('placeModal');
-      if (modal) {
-        modal.classList.remove('is-visible');
+      function filterPlaces() {
+        const rawTokens = searchQuery
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        visiblePlaces = allPlaces.filter((place) => {
+          if (activeCategory !== 'ALL') {
+            const matchesCat = place.categories.some(
+              (c) => c.toLowerCase() === activeCategory
+            );
+            if (!matchesCat) return false;
+          }
+
+          if (rawTokens.length > 0) {
+            const searchable = [
+              place.title,
+              place.description,
+              place.categories.join(' '),
+              place.city
+            ]
+              .join(' ')
+              .toLowerCase();
+
+            if (!rawTokens.every((tok) => searchable.includes(tok))) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        if (sortOrder === 'alpha') {
+          visiblePlaces.sort((a, b) =>
+            a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
+          );
+        }
+
+        displayedCount = PAGE_SIZE;
+        updateResultsSummary();
+        updateUrlState(activeModalIndex !== -1 && visiblePlaces[activeModalIndex] ? visiblePlaces[activeModalIndex].slug : null);
+        renderCards();
       }
-    }
 
-    /**
-     * Renders full-width city accordions with sticky half-size open headers and snap-to-top scrolling
-     */
-    function renderAccordions(cityGroups) {
-      const container = document.getElementById('citiesContainer');
-      container.innerHTML = '';
-      const isDark = document.body.classList.contains('dark-mode');
+      function toggleSortOrder() {
+        sortOrder = sortOrder === 'newest' ? 'alpha' : 'newest';
+        if (sortOrder === 'alpha') {
+          els.sortToggleIcon.textContent = 'sort_by_alpha';
+          els.sortToggleLabel.textContent = 'SORT: A–Z';
+        } else {
+          els.sortToggleIcon.textContent = 'sort';
+          els.sortToggleLabel.textContent = 'SORT: NEWEST';
+        }
+        filterPlaces();
+      }
 
-      cityGroups.forEach((group) => {
-        const item = document.createElement('section');
-        item.className = 'accordion-item w-full';
+      function buildAutocompleteIndex() {
+        const seen = new Set();
+        const entries = [];
+        const cityCounts = new Map();
 
-        // Accordion Header Bar (1/7 viewport height closed, 1/14 sticky open)
-        const headerBtn = document.createElement('button');
-        headerBtn.type = 'button';
-        headerBtn.setAttribute('aria-expanded', 'false');
-        headerBtn.className = 'accordion-header-btn w-full viewport-row px-3 sm:px-6 flex items-center justify-between text-left cursor-pointer focus:outline-none select-none';
-        headerBtn.dataset.lightBg = group.bg;
-        headerBtn.dataset.lightText = group.text;
-        headerBtn.dataset.darkBg = group.darkBg;
-        headerBtn.dataset.darkText = group.darkText;
-        headerBtn.style.backgroundColor = isDark ? group.darkBg : group.bg;
-        headerBtn.style.color = isDark ? group.darkText : group.text;
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            const key = p.city.toLowerCase();
+            cityCounts.set(key, (cityCounts.get(key) || 0) + 1);
+          }
+        });
 
-        headerBtn.innerHTML = `
-          <div class="flex items-center min-w-0 overflow-visible">
-            <span class="city-zh city-zh-col text-left text-xl sm:text-2xl md:text-[26px] font-normal leading-normal tracking-[-0.02em] [font-kerning:normal] [text-rendering:optimizeLegibility] shrink-0">
-              ${escapeHtml(group.zh)}
+        const addTerm = (term, type, priority, count) => {
+          const clean = String(term || '').trim().replace(/\s+/g, ' ');
+          const lower = clean.toLowerCase();
+          if (!clean || seen.has(lower)) return;
+          seen.add(lower);
+          entries.push({ term: clean, lower, type, priority, count });
+        };
+
+        allPlaces.forEach((p) => {
+          if (p.city) {
+            addTerm(p.city, 'city', 1, cityCounts.get(p.city.toLowerCase()) || 0);
+          }
+        });
+
+        allPlaces.forEach((p) => {
+          p.categories.forEach((cat) => addTerm(cat, 'food', 2));
+        });
+
+        allPlaces.forEach((p) => {
+          addTerm(p.title, 'place', 3);
+        });
+
+        allPlaces.forEach((p) => {
+          const blob = `${p.title} ${p.description}`;
+          const words = blob.match(/[a-zA-Z0-9\u4e00-\u9fff]{3,}/g) || [];
+          words.forEach((w) => {
+            if (!STOP_WORDS.has(w.toLowerCase())) {
+              addTerm(w, 'word', 4);
+            }
+          });
+        });
+
+        entries.sort((a, b) => a.priority - b.priority || a.term.localeCompare(b.term));
+        autocompleteIndex = entries;
+      }
+
+      function triggerFeelingLucky() {
+        els.searchInput.blur();
+        hideAutocomplete();
+        if (!allPlaces.length) return;
+        const randomPlace = allPlaces[Math.floor(Math.random() * allPlaces.length)];
+        activeCategory = 'ALL';
+        populateCategoryFilters();
+        searchQuery = randomPlace.title;
+        els.searchInput.value = randomPlace.title;
+        els.clearSearchBtn.classList.remove('hidden');
+        filterPlaces();
+        const idx = visiblePlaces.findIndex((p) => p.slug === randomPlace.slug);
+        if (idx !== -1) {
+          openModal(idx);
+          launchConfettiBurst();
+        }
+      }
+
+      function launchConfettiBurst() {
+        const existing = document.getElementById('lucky-confetti-canvas');
+        if (existing) existing.remove();
+
+        const canvas = document.createElement('canvas');
+        canvas.id = 'lucky-confetti-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        canvas.style.cssText =
+          'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:75;';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const colors = ['#ff2a2a', '#22ff22', '#ffff2a', '#2a2aff', '#ff2aff', '#2affff', '#ffffff'];
+
+        const particles = [];
+        const origins = [
+          { x: width * 0.25, y: height * 0.55 },
+          { x: width * 0.5, y: height * 0.45 },
+          { x: width * 0.75, y: height * 0.55 }
+        ];
+
+        origins.forEach((origin) => {
+          for (let i = 0; i < 42; i++) {
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.45;
+            const speed = 7 + Math.random() * 11;
+            particles.push({
+              x: origin.x + (Math.random() - 0.5) * 40,
+              y: origin.y + (Math.random() - 0.5) * 20,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 2,
+              w: 8,
+              h: 8,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              rotation: Math.random() * Math.PI * 2,
+              vr: (Math.random() - 0.5) * 0.28,
+              wobble: Math.random() * Math.PI * 2,
+              wobbleSpeed: 0.08 + Math.random() * 0.08,
+              alpha: 1
+            });
+          }
+        });
+
+        let startTime = null;
+        const duration = 2400;
+
+        function frame(now) {
+          if (!startTime) startTime = now;
+          const elapsed = now - startTime;
+
+          ctx.clearRect(0, 0, width, height);
+
+          let aliveCount = 0;
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.vy += 0.34;
+            p.vx *= 0.985;
+            p.wobble += p.wobbleSpeed;
+            p.x += p.vx + Math.sin(p.wobble) * 1.1;
+            p.y += p.vy;
+            p.rotation += p.vr;
+
+            if (elapsed > duration - 700) {
+              p.alpha = Math.max(0, (duration - elapsed) / 700);
+            }
+
+            if (p.y < height + 30 && p.alpha > 0.01) {
+              aliveCount++;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.translate(p.x, p.y);
+              ctx.rotate(p.rotation);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+              ctx.restore();
+            }
+          }
+
+          if (elapsed < duration && aliveCount > 0) {
+            requestAnimationFrame(frame);
+          } else {
+            canvas.remove();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      function updateAutocompleteSuggestions(rawInput) {
+        const query = String(rawInput || '').trim().toLowerCase();
+        highlightedSuggestionIdx = -1;
+
+        let matches = [];
+        if (!query) {
+          matches = autocompleteIndex
+            .filter((item) => item.type === 'city')
+            .sort((a, b) => b.term.localeCompare(a.term));
+        } else {
+          matches = autocompleteIndex
+            .filter((item) => item.lower.includes(query))
+            .slice(0, 8);
+        }
+
+        const luckyItem = {
+          term: 'I Feel Lucky',
+          lower: 'i feel lucky',
+          type: 'lucky',
+          priority: 99
+        };
+        currentSuggestions = [...matches, luckyItem];
+
+        const colorClassMap = {
+          city: 'tt-color-c',
+          food: 'tt-color-g',
+          place: 'tt-color-w',
+          word: 'tt-color-m',
+          lucky: 'tt-color-y'
+        };
+
+        const badgeMap = {
+          city: 'CITY',
+          food: 'CAT',
+          place: 'SPOT',
+          word: 'TAG',
+          lucky: 'RND'
+        };
+
+        const frag = document.createDocumentFragment();
+        currentSuggestions.forEach((item, idx) => {
+          const li = document.createElement('li');
+          li.className = 'tt-autocomplete-item';
+          li.setAttribute('role', 'option');
+          const pageCode = item.type === 'lucky' ? '888' : String(101 + idx).padStart(3, '0');
+          const countHtml =
+            item.type === 'city' && typeof item.count === 'number'
+              ? ` <span class="tt-item-badge" style="color: var(--tt-y);">(${item.count})</span>`
+              : '';
+
+          li.innerHTML = `
+            <span class="flex items-center gap-3 min-w-0">
+              <span class="tt-item-num">${pageCode}</span>
+              <span class="tt-item-label uppercase truncate ${colorClassMap[item.type] || 'tt-color-w'}">${escapeHtml(item.term)}${countHtml}</span>
             </span>
-            <span class="city-en text-3xl sm:text-5xl md:text-[54px] font-bold leading-[1.35] pb-1.5 tracking-[-0.03em] [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap">
-              ${escapeHtml(group.en)}
+            <span class="tt-item-badge text-sm uppercase px-1.5 py-0.5 border shrink-0 ml-2 ${colorClassMap[item.type] || 'tt-color-c'}" style="border-color: currentColor;">
+              ${badgeMap[item.type] || ''}
             </span>
+          `;
+
+          li.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectAutocompleteSuggestion(item);
+          });
+
+          li.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
+          frag.appendChild(li);
+        });
+
+        els.autocompleteList.innerHTML = '';
+        els.autocompleteList.appendChild(frag);
+        els.autocompleteDropdown.classList.remove('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'true');
+      }
+
+      let suppressCardClickUntil = 0;
+
+      function selectAutocompleteSuggestion(item) {
+        if (!item) return;
+        suppressCardClickUntil = Date.now() + 450;
+        els.searchInput.blur();
+
+        if (item.type === 'lucky') {
+          triggerFeelingLucky();
+          return;
+        }
+        els.searchInput.value = item.term;
+        searchQuery = item.term;
+        els.clearSearchBtn.classList.remove('hidden');
+        hideAutocomplete();
+        filterPlaces();
+
+        if (item.type === 'place') {
+          const idx = visiblePlaces.findIndex(
+            (p) => p.title.toLowerCase() === item.lower
+          );
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      function hideAutocomplete() {
+        els.autocompleteDropdown.classList.add('hidden');
+        els.searchInput.setAttribute('aria-expanded', 'false');
+        highlightedSuggestionIdx = -1;
+      }
+
+      function highlightSuggestion(index) {
+        const items = els.autocompleteList.querySelectorAll('.tt-autocomplete-item');
+        if (!items.length) return;
+        items.forEach((el) => el.classList.remove('active'));
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
+        highlightedSuggestionIdx = index;
+        items[index].classList.add('active');
+        items[index].scrollIntoView({ block: 'nearest' });
+      }
+
+      /* ----------------------------------------------------------------------
+         3. CARD GRID & PAGINATION RENDERING
+         ---------------------------------------------------------------------- */
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderLoadingSkeletons() {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 12; i++) {
+          const skel = document.createElement('div');
+          skel.className = 'aspect-square skeleton-pulse border-2';
+          skel.style.borderColor = 'var(--tt-border-subtle)';
+          frag.appendChild(skel);
+        }
+        els.loadingSkeleton.innerHTML = '';
+        els.loadingSkeleton.appendChild(frag);
+      }
+
+      function createPlaceCardElement(place, index) {
+        const card = document.createElement('article');
+        card.className = 'tt-place-card group';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${place.title}${place.city ? ', ' + place.city : ''}`);
+
+        const isAboveFold = index < 6;
+        const loadingAttr = isAboveFold ? 'eager' : 'lazy';
+        const priorityAttr = index === 0 ? 'fetchpriority="high"' : '';
+        const pageTag = `P${String(101 + index).padStart(3, '0')}`;
+
+        const cityPill = place.city
+          ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 font-teletext text-lg leading-none uppercase bg-black/90 text-[#ffff2a] border border-[#ffff2a]">
+              ${escapeHtml(place.city)}
+            </span>`
+          : '';
+
+        const catBadges = place.categories
+          .slice(0, 1)
+          .map(
+            (cat) =>
+              `<span class="font-teletext text-lg leading-none uppercase tracking-wider text-[#22ff22]">${escapeHtml(cat)}</span>`
+          )
+          .join('');
+
+        card.innerHTML = `
+          <img
+            alt="${escapeHtml(place.title)}"
+            loading="${loadingAttr}"
+            decoding="async"
+            ${priorityAttr}
+          />
+          <div class="tt-card-scrim"></div>
+          <div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
+            <span class="px-1.5 py-0.5 font-teletext text-lg leading-none bg-[#2a2aff] text-white">${pageTag}</span>
+            ${cityPill}
           </div>
-          <span class="text-xs sm:text-sm font-normal opacity-80 shrink-0 ml-3">
-            (${group.places.length})
-          </span>
+          <div class="absolute bottom-2.5 left-3 right-3 text-white pointer-events-none">
+            <div class="flex flex-wrap gap-1 mb-1">
+              ${catBadges}
+            </div>
+            <h2 class="font-teletext text-2xl sm:text-[26px] leading-none uppercase line-clamp-2 text-white">
+              ${escapeHtml(place.title)}
+            </h2>
+          </div>
         `;
 
-        // Accordion Drawer Wrapper
-        const contentWrapper = document.createElement('div');
-        contentWrapper.className = 'accordion-content w-full';
+        const imgEl = card.querySelector('img');
+        attachImageFallbackChain(imgEl, place.thumbCandidates);
 
-        const inner = document.createElement('div');
-        inner.className = 'accordion-inner w-full';
-
-        const listContainer = document.createElement('div');
-        listContainer.className = 'w-full px-3 sm:px-6 py-4 sm:py-6';
-
-        if (group.places.length === 0) {
-          const emptyMsg = document.createElement('p');
-          emptyMsg.className = 'text-sm opacity-70 py-2';
-          emptyMsg.textContent = 'No places listed yet.';
-          listContainer.appendChild(emptyMsg);
-        } else {
-          const ul = document.createElement('ul');
-          ul.className = 'w-full flex flex-col';
-
-          group.places.forEach((place, idx) => {
-            const li = document.createElement('li');
-            li.className = 'w-full py-3.5 sm:py-4 border-b-2 place-divider flex flex-col md:flex-row md:items-baseline gap-1.5 md:gap-8 lg:gap-12';
-
-            // Left Column: Place Title (never wraps onto a second line; expands to push description right if needed)
-            const titleCol = document.createElement('div');
-            titleCol.className = 'w-full md:w-auto md:min-w-[36%] lg:min-w-[34%] shrink-0 overflow-x-auto';
-
-            const titleBtn = document.createElement('button');
-            titleBtn.type = 'button';
-            titleBtn.className = 'text-left text-lg sm:text-[20px] font-bold leading-snug tracking-normal [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap hover:underline underline-offset-4 cursor-pointer';
-            titleBtn.textContent = place.title;
-            titleBtn.addEventListener('click', () => openPlaceModal(place, group, idx));
-
-            titleCol.appendChild(titleBtn);
-            // Right Column: Description shifted horizontally to the right (clickable without hover effect)
-            const descCol = document.createElement('div');
-            descCol.className = 'flex-1 min-w-0 text-sm sm:text-[16px] font-normal leading-relaxed cursor-pointer';
-            descCol.textContent = place.description;
-            descCol.addEventListener('click', () => openPlaceModal(place, group, idx));
-
-            li.appendChild(titleCol);
-            li.appendChild(descCol);
-            ul.appendChild(li);
-          });
-
-          listContainer.appendChild(ul);
-        }
-
-        inner.appendChild(listContainer);
-        contentWrapper.appendChild(inner);
-
-        // Single-city accordion toggle with snap-to-top scroll
-        headerBtn.addEventListener('click', () => {
-          const wasOpen = item.classList.contains('is-open');
-
-          // Close all accordions
-          document.querySelectorAll('.accordion-item').forEach((el) => {
-            el.classList.remove('is-open');
-            const btn = el.querySelector('.accordion-header-btn');
-            if (btn) btn.setAttribute('aria-expanded', 'false');
-          });
-
-          if (!wasOpen) {
-            item.classList.add('is-open');
-            headerBtn.setAttribute('aria-expanded', 'true');
-
-            // Preload all photos for this city immediately while user scans the list
-            preloadCityImages(group);
-
-            // Smoothly snap clicked city header to the sticky top position
-            requestAnimationFrame(() => {
-              item.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
+        card.addEventListener('click', () => {
+          if (Date.now() < suppressCardClickUntil) return;
+          openModal(index);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(index);
           }
         });
 
-        item.appendChild(headerBtn);
-        item.appendChild(contentWrapper);
-        container.appendChild(item);
-      });
-    }
+        return card;
+      }
 
-    /**
-     * Parses CSV string and renders accordions immediately
-     */
-    function parseAndRenderCsv(csvText) {
-      return new Promise((resolve, reject) => {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            if (results.data && results.data.length > 0) {
-              const grouped = groupPlacesByCity(results.data);
-              renderAccordions(grouped);
-              resolve(true);
-            } else {
-              reject(new Error('CSV returned zero rows'));
-            }
-          },
-          error: (err) => reject(err)
+      function renderCards() {
+        els.loadingSkeleton.classList.add('hidden');
+
+        if (visiblePlaces.length === 0) {
+          els.placesGrid.innerHTML = '';
+          els.loadMoreContainer.classList.add('hidden');
+          els.resultsToolbar.classList.add('hidden');
+          els.emptyState.classList.remove('hidden');
+          startDinoGame();
+          return;
+        }
+
+        els.resultsToolbar.classList.remove('hidden');
+        els.emptyState.classList.add('hidden');
+        stopDinoGame();
+
+        const slice = visiblePlaces.slice(0, displayedCount);
+        const frag = document.createDocumentFragment();
+        slice.forEach((place, idx) => {
+          frag.appendChild(createPlaceCardElement(place, idx));
         });
-      });
-    }
 
-    /**
-     * Instant-first boot: renders cached CSV or fallback immediately, then refreshes live in background
-     */
-    async function initDirectory() {
-      const statusBanner = document.getElementById('statusBanner');
-      const statusText = document.getElementById('statusText');
-      const retryBtn = document.getElementById('retryBtn');
+        els.placesGrid.innerHTML = '';
+        els.placesGrid.appendChild(frag);
 
-      // 1. Render instantly from localStorage cache or built-in fallback (zero waiting)
-      let cachedCsv = null;
-      try {
-        cachedCsv = localStorage.getItem(CACHE_KEY);
-      } catch (e) {}
-
-      if (cachedCsv) {
-        try {
-          await parseAndRenderCsv(cachedCsv);
-        } catch (e) {
-          renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
-        }
-      } else {
-        renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
-      }
-
-      // 2. Fetch fresh CSV in background with a fast 4s timeout so slow Google endpoints never stall UI
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-      try {
-        const response = await fetch(CSV_URL, {
-          cache: 'default',
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error ${response.status}`);
-        }
-        const freshCsv = await response.text();
-
-        // Only re-render if data actually changed or nothing was cached yet
-        if (freshCsv && freshCsv !== cachedCsv) {
-          await parseAndRenderCsv(freshCsv);
-          try {
-            localStorage.setItem(CACHE_KEY, freshCsv);
-          } catch (e) {}
-        }
-        statusBanner.classList.add('hidden');
-      } catch (err) {
-        clearTimeout(timeoutId);
-        console.warn('Background CSV sync skipped/failed:', err);
-        if (!cachedCsv) {
-          statusBanner.classList.remove('hidden');
-          statusText.textContent = 'Offline preview mode.';
-          retryBtn.classList.remove('hidden');
-        }
-      }
-    }
-
-    // Theme toggle handler
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      applyAccordionThemeColors();
-    });
-
-    // Header title click: close modal, collapse all accordions, scroll to top, and refresh data
-    document.getElementById('homeResetBtn').addEventListener('click', () => {
-      closePlaceModal();
-      document.querySelectorAll('.accordion-item').forEach((el) => {
-        el.classList.remove('is-open');
-        const btn = el.querySelector('.accordion-header-btn');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-      });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      initDirectory();
-    });
-
-    // Retry button handler
-    document.getElementById('retryBtn').addEventListener('click', () => {
-      document.getElementById('statusText').textContent = 'Retrying CSV fetch...';
-      initDirectory();
-    });
-
-    // Modal close interactions (close button, backdrop click, Escape key)
-    document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
-    document.getElementById('prevPlaceBtn').addEventListener('click', () => navigatePlaceModal(-1));
-    document.getElementById('nextPlaceBtn').addEventListener('click', () => navigatePlaceModal(1));
-
-    // Touch swipe navigation on mobile inside the modal
-    let modalTouchStartX = 0;
-    let modalTouchStartY = 0;
-    const modalCardEl = document.getElementById('placeModalCard');
-
-    modalCardEl.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        modalTouchStartX = e.touches[0].clientX;
-        modalTouchStartY = e.touches[0].clientY;
-      }
-    }, { passive: true });
-
-    modalCardEl.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length !== 1) return;
-      const deltaX = e.changedTouches[0].clientX - modalTouchStartX;
-      const deltaY = e.changedTouches[0].clientY - modalTouchStartY;
-
-      // Trigger previous/next only for deliberate horizontal swipes
-      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-        if (deltaX < 0) {
-          navigatePlaceModal(1); // Swipe left -> Next
+        const remaining = visiblePlaces.length - slice.length;
+        if (remaining > 0) {
+          els.loadMoreContainer.classList.remove('hidden');
+          els.loadMoreLabel.textContent = `NEXT SUBPAGE (+${remaining})`;
         } else {
-          navigatePlaceModal(-1); // Swipe right -> Previous
+          els.loadMoreContainer.classList.add('hidden');
         }
       }
-    }, { passive: true });
 
-    document.getElementById('placeModal').addEventListener('click', (e) => {
-      if (e.target.id === 'placeModal' || e.target === e.currentTarget.firstElementChild) {
-        closePlaceModal();
+      function handleLoadMore() {
+        const prevCount = displayedCount;
+        displayedCount = Math.min(displayedCount + PAGE_SIZE, visiblePlaces.length);
+        const newSlice = visiblePlaces.slice(prevCount, displayedCount);
+
+        const frag = document.createDocumentFragment();
+        newSlice.forEach((place, offset) => {
+          frag.appendChild(createPlaceCardElement(place, prevCount + offset));
+        });
+        els.placesGrid.appendChild(frag);
+
+        const remaining = visiblePlaces.length - displayedCount;
+        if (remaining > 0) {
+          els.loadMoreLabel.textContent = `NEXT SUBPAGE (+${remaining})`;
+        } else {
+          els.loadMoreContainer.classList.add('hidden');
+        }
       }
-    });
-    document.addEventListener('keydown', (e) => {
-      const isModalOpen = document.getElementById('placeModal').classList.contains('is-visible');
-      if (!isModalOpen) return;
 
-      if (e.key === 'Escape') {
-        closePlaceModal();
-      } else if (e.key === 'ArrowLeft') {
-        navigatePlaceModal(-1);
-      } else if (e.key === 'ArrowRight') {
-        navigatePlaceModal(1);
+      /* ----------------------------------------------------------------------
+         4. DETAIL MODAL & SHARE LINK
+         ---------------------------------------------------------------------- */
+
+      function openModal(index) {
+        if (index < 0 || index >= visiblePlaces.length) return;
+        activeModalIndex = index;
+        const place = visiblePlaces[index];
+
+        els.placeModal.scrollTop = 0;
+        const pageCode = `P${String(101 + index).padStart(3, '0')}`;
+        els.modalCounter.textContent = `${pageCode} · ${index + 1}/${visiblePlaces.length}`;
+        els.modalPrevBtn.disabled = visiblePlaces.length <= 1;
+        els.modalNextBtn.disabled = visiblePlaces.length <= 1;
+
+        els.modalImage.alt = place.title;
+        attachImageFallbackChain(els.modalImage, place.largeCandidates);
+
+        if (place.city) {
+          els.modalCityBtn.classList.remove('hidden');
+          els.modalCityText.textContent = place.city;
+        } else {
+          els.modalCityBtn.classList.add('hidden');
+        }
+
+        els.modalTitle.textContent = place.title;
+
+        els.modalCategories.innerHTML = '';
+        place.categories.forEach((cat) => {
+          const tag = document.createElement('button');
+          tag.type = 'button';
+          tag.className = 'tt-modal-cat-tag';
+          tag.textContent = cat;
+          tag.title = `Filter by ${cat}`;
+          tag.addEventListener('click', () => {
+            closeModal();
+            setCategory(cat);
+          });
+          els.modalCategories.appendChild(tag);
+        });
+
+        els.modalDescription.textContent =
+          place.description || 'A hand-picked spot in Taiwan curated by @alby.food.';
+
+        const mapsHref =
+          place.link ||
+          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${place.title} ${place.city} Taiwan`
+          )}`;
+        els.modalMapsLink.href = mapsHref;
+
+        els.placeModal.classList.add('open');
+        els.placeModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        updateUrlState(place.slug);
       }
-    });
 
-    // Boot application
-    window.addEventListener('DOMContentLoaded', initDirectory);
+      function closeModal() {
+        activeModalIndex = -1;
+        els.placeModal.classList.remove('open');
+        els.placeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        updateUrlState(null);
+      }
+
+      function navigateModal(delta) {
+        if (activeModalIndex === -1 || visiblePlaces.length <= 1) return;
+        const nextIdx =
+          (activeModalIndex + delta + visiblePlaces.length) % visiblePlaces.length;
+        if (nextIdx >= displayedCount) {
+          displayedCount = nextIdx + 1;
+          renderCards();
+        }
+        openModal(nextIdx);
+      }
+
+      function showSnackbar(message) {
+        els.snackbarText.textContent = message;
+        els.snackbar.classList.add('show');
+        clearTimeout(showSnackbar._timer);
+        showSnackbar._timer = setTimeout(() => {
+          els.snackbar.classList.remove('show');
+        }, 2800);
+      }
+
+      function copyDirectSpotLink() {
+        if (activeModalIndex === -1 || !visiblePlaces[activeModalIndex]) return;
+        const place = visiblePlaces[activeModalIndex];
+        let shareUrl = window.location.href;
+        try {
+          if (window.location.origin && window.location.origin !== 'null') {
+            const u = new URL(window.location.origin + window.location.pathname);
+            u.searchParams.set('spot', place.slug);
+            shareUrl = u.toString();
+          }
+        } catch {
+          // Fallback to current href
+        }
+
+        const tempInput = document.createElement('textarea');
+        tempInput.value = shareUrl;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand('copy');
+          els.modalShareIcon.textContent = 'done';
+          els.modalShareLabel.textContent = 'COPIED';
+          showSnackbar(`COPIED LINK: ${place.title.toUpperCase()}`);
+          setTimeout(() => {
+            els.modalShareIcon.textContent = 'share';
+            els.modalShareLabel.textContent = 'SHARE';
+          }, 2000);
+        } catch {
+          showSnackbar('UNABLE TO COPY LINK');
+        }
+        document.body.removeChild(tempInput);
+      }
+
+      /* ----------------------------------------------------------------------
+         5. THEME TOGGLE (BROADCAST CRT DARK DEFAULT / DAYLIGHT PAPER)
+         ---------------------------------------------------------------------- */
+
+      function initTheme() {
+        const saved = localStorage.getItem('taiwanTopTeletextTheme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const explicit = document.documentElement.getAttribute('data-theme');
+        const isLight = explicit === 'light';
+        els.themeIcon.textContent = isLight ? 'dark_mode' : 'light_mode';
+      }
+
+      function toggleTheme() {
+        const explicit = document.documentElement.getAttribute('data-theme');
+        const isLight = explicit === 'light';
+        const next = isLight ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('taiwanTopTeletextTheme', next);
+        updateThemeIcon();
+      }
+
+      /* ----------------------------------------------------------------------
+         6. CSV PARSING & STALE-WHILE-REVALIDATE CACHE
+         ---------------------------------------------------------------------- */
+
+      function parseCsvTextToPlaces(csvText) {
+        if (!csvText || typeof Papa === 'undefined') return [];
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true
+        });
+        if (!parsed || !Array.isArray(parsed.data)) return [];
+
+        const normalized = [];
+        parsed.data.forEach((row, idx) => {
+          const item = normalizePlaceRow(row, idx);
+          if (item) normalized.push(item);
+        });
+
+        normalized.sort((a, b) => {
+          if (a.flickrId !== b.flickrId) {
+            return b.flickrId > a.flickrId ? 1 : -1;
+          }
+          return b.id - a.id;
+        });
+
+        return normalized;
+      }
+
+      function applyDataset(places) {
+        allPlaces = places;
+        els.headerTotalBadge.textContent = `${allPlaces.length} SPOTS`;
+        buildAutocompleteIndex();
+        populateCategoryFilters();
+        filterPlaces();
+
+        if (pendingSpotSlug) {
+          const targetSlug = pendingSpotSlug;
+          pendingSpotSlug = null;
+          const idx = visiblePlaces.findIndex((p) => p.slug === targetSlug);
+          if (idx !== -1) {
+            openModal(idx);
+          }
+        }
+      }
+
+      async function loadPlacesData() {
+        els.retryFetchBtn.classList.add('hidden');
+        let cachedCsv = null;
+
+        try {
+          cachedCsv = localStorage.getItem(CACHE_STORAGE_KEY);
+          if (cachedCsv) {
+            const cachedPlaces = parseCsvTextToPlaces(cachedCsv);
+            if (cachedPlaces.length > 0) {
+              applyDataset(cachedPlaces);
+            }
+          }
+        } catch {
+          // Ignore storage read errors
+        }
+
+        try {
+          const bustUrl = `${CSV_URL}&_t=${Date.now()}`;
+          const response = await fetch(bustUrl, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const freshCsv = await response.text();
+          const freshPlaces = parseCsvTextToPlaces(freshCsv);
+
+          if (freshPlaces.length > 0) {
+            if (freshCsv !== cachedCsv) {
+              try {
+                localStorage.setItem(CACHE_STORAGE_KEY, freshCsv);
+              } catch {
+                // Ignore storage quota errors
+              }
+              applyDataset(freshPlaces);
+            }
+          } else if (!allPlaces.length) {
+            throw new Error('Empty CSV dataset');
+          }
+        } catch {
+          if (!allPlaces.length) {
+            els.loadingSkeleton.classList.add('hidden');
+            els.headerTotalBadge.textContent = 'NO SIG';
+            els.resultsSummary.textContent = 'P404 — SIGNAL LOST';
+            els.emptyStateTitle.textContent = 'NO SIGNAL FROM GOOGLE SHEETS';
+            els.emptyStateSubtitle.textContent =
+              'PLAY P404 HOT POT GOOSE WHILE WAITING, OR RETRY BROADCAST SIGNAL.';
+            els.emptyStateSubtitle.classList.remove('hidden');
+            els.retryFetchBtn.classList.remove('hidden');
+            els.emptyState.classList.remove('hidden');
+            startDinoGame();
+          }
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         7. HOT POT GOOSE RUN MINI-GAME (TELETEXT EDITION)
+         ---------------------------------------------------------------------- */
+
+      const dinoState = {
+        y: 0,
+        vy: 0,
+        grounded: true,
+        obstacles: [],
+        clouds: [],
+        score: 0,
+        best: Number(localStorage.getItem('taiwanTopGooseBest') || 0),
+        speed: 4.5,
+        spawnTimer: 0,
+        gameOver: false,
+        frameTick: 0
+      };
+
+      function playJumpTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(620, audioCtx.currentTime + 0.09);
+          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.1);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function playGameOverTone() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) audioCtx = new Ctx();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.24);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.24);
+        } catch {
+          // Audio optional
+        }
+      }
+
+      function triggerDinoJump() {
+        if (!dinoGameRunning) return;
+        if (dinoState.gameOver) {
+          resetDinoGame();
+          return;
+        }
+        if (dinoState.grounded) {
+          dinoState.vy = -10.5;
+          dinoState.grounded = false;
+          playJumpTone();
+        }
+      }
+
+      function resetDinoGame() {
+        dinoState.y = 0;
+        dinoState.vy = 0;
+        dinoState.grounded = true;
+        dinoState.obstacles = [];
+        dinoState.clouds = [
+          { x: 140, y: 38, s: 1 },
+          { x: 380, y: 26, s: 0.8 },
+          { x: 540, y: 46, s: 1.1 }
+        ];
+        dinoState.score = 0;
+        dinoState.speed = 4.5;
+        dinoState.spawnTimer = 60;
+        dinoState.gameOver = false;
+      }
+
+      function drawPixelGoose(ctx, x, y, scale, strideFrame, isDead, fg, beakCol, legCol) {
+        const u = scale;
+        ctx.save();
+        ctx.translate(x, y);
+
+        ctx.fillStyle = fg;
+        ctx.fillRect(8 * u, 0, 3 * u, 3 * u);
+        ctx.fillRect(8 * u, 3 * u, 2 * u, 9 * u);
+        ctx.fillRect(0, 8 * u, 3 * u, 1 * u);
+        ctx.fillRect(1 * u, 9 * u, 8 * u, 3 * u);
+        ctx.fillRect(2 * u, 12 * u, 7 * u, 1 * u);
+
+        if (isDead) {
+          ctx.fillStyle = legCol;
+          ctx.fillRect(9 * u, 1 * u, 1.2 * u, 1.2 * u);
+        } else {
+          ctx.clearRect(9 * u, 1 * u, 1 * u, 1 * u);
+        }
+
+        ctx.fillStyle = beakCol;
+        ctx.fillRect(11 * u, 1 * u, 3 * u, 1 * u);
+        ctx.fillRect(11 * u, 2 * u, 2 * u, 1 * u);
+
+        const leftLift = !dinoState.grounded ? 1 * u : strideFrame === 0 ? 1 * u : 0;
+        const rightLift = !dinoState.grounded ? 0.5 * u : strideFrame === 1 ? 1 * u : 0;
+
+        ctx.fillStyle = legCol;
+        ctx.fillRect(3 * u, 13 * u, 1 * u, 3 * u - leftLift);
+        ctx.fillRect(4 * u, 15 * u - leftLift, 1 * u, 1 * u);
+
+        ctx.fillRect(7 * u, 13 * u, 1 * u, 3 * u - rightLift);
+        ctx.fillRect(8 * u, 15 * u - rightLift, 1 * u, 1 * u);
+
+        ctx.restore();
+      }
+
+      function drawHotPotObstacle(ctx, ob, groundY, tick, fg, redCol, greenCol, yellowCol) {
+        const x = Math.round(ob.x);
+        const w = Math.round(ob.w);
+        const h = Math.round(ob.h);
+        const topY = Math.round(groundY - h);
+
+        ctx.strokeStyle = fg;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.35, topY + 6);
+        ctx.lineTo(x + w * 0.1, topY - 8);
+        ctx.moveTo(x + w * 0.65, topY + 6);
+        ctx.lineTo(x + w * 0.9, topY - 7);
+        ctx.stroke();
+
+        ctx.fillStyle = fg;
+        ctx.fillRect(x - 3, topY + 9, 3, 4);
+        ctx.fillRect(x + w, topY + 9, 3, 4);
+
+        ctx.fillStyle = redCol;
+        ctx.fillRect(x, topY + 6, w, h - 8);
+
+        ctx.fillStyle = fg;
+        ctx.fillRect(x + 3, groundY - 2, w - 6, 2);
+
+        ctx.fillStyle = greenCol;
+        ctx.fillRect(x + 2, topY + 3, w - 4, 4);
+        ctx.fillStyle = yellowCol;
+        ctx.fillRect(x + 5, topY + 2, 4, 3);
+        ctx.fillRect(x + w - 9, topY + 2, 4, 3);
+
+        const phase = Math.floor((tick + x) / 10) % 2;
+        ctx.fillStyle = fg;
+        ctx.globalAlpha = 0.65;
+        ctx.fillRect(x + Math.floor(w * 0.3), topY - 5 - phase * 3, 2, 4);
+        ctx.fillRect(x + Math.floor(w * 0.68), topY - 7 + phase * 3, 2, 4);
+        ctx.globalAlpha = 1;
+      }
+
+      function startDinoGame() {
+        if (dinoGameRunning) return;
+        dinoGameRunning = true;
+        resetDinoGame();
+        if (document.activeElement === els.searchInput) {
+          els.searchInput.blur();
+        }
+        els.dinoCanvas.focus({ preventScroll: true });
+
+        const canvas = els.dinoCanvas;
+        const ctx = canvas.getContext('2d');
+
+        function step() {
+          if (!dinoGameRunning) return;
+
+          const rect = canvas.getBoundingClientRect();
+          const w = Math.max(300, Math.floor(rect.width || 600));
+          const h = Math.max(160, Math.floor(rect.height || 337));
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+          }
+
+          const styles = getComputedStyle(document.documentElement);
+          const fg = styles.getPropertyValue('--tt-fg').trim() || '#ffffff';
+          const redCol = styles.getPropertyValue('--tt-r').trim() || '#ff2a2a';
+          const greenCol = styles.getPropertyValue('--tt-g').trim() || '#22ff22';
+          const yellowCol = styles.getPropertyValue('--tt-y').trim() || '#ffff2a';
+          const cyanCol = styles.getPropertyValue('--tt-c').trim() || '#2affff';
+
+          const groundY = h - 34;
+
+          if (!dinoState.gameOver) {
+            dinoState.frameTick++;
+            dinoState.score += 0.2;
+            dinoState.speed = Math.min(10.5, 4.5 + dinoState.score / 220);
+
+            dinoState.vy += 0.55;
+            dinoState.y += dinoState.vy;
+            if (dinoState.y >= 0) {
+              dinoState.y = 0;
+              dinoState.vy = 0;
+              dinoState.grounded = true;
+            }
+
+            dinoState.clouds.forEach((c) => {
+              c.x -= dinoState.speed * 0.25;
+              if (c.x < -50) {
+                c.x = w + 30 + Math.random() * 60;
+                c.y = 20 + Math.random() * 40;
+              }
+            });
+
+            dinoState.spawnTimer--;
+            if (dinoState.spawnTimer <= 0) {
+              const isDouble = dinoState.score > 60 && Math.random() < 0.35;
+              dinoState.obstacles.push({
+                x: w + 20,
+                w: isDouble ? 36 : 22 + Math.random() * 8,
+                h: 22 + Math.random() * 8
+              });
+              dinoState.spawnTimer = Math.floor(65 + Math.random() * 55);
+            }
+
+            const gooseBox = { x: 46, y: groundY - 36 + dinoState.y, w: 28, h: 34 };
+
+            for (let i = dinoState.obstacles.length - 1; i >= 0; i--) {
+              const ob = dinoState.obstacles[i];
+              ob.x -= dinoState.speed;
+              if (ob.x + ob.w < -15) {
+                dinoState.obstacles.splice(i, 1);
+                continue;
+              }
+              const obBox = { x: ob.x + 3, y: groundY - ob.h + 4, w: ob.w - 6, h: ob.h - 4 };
+              if (
+                gooseBox.x < obBox.x + obBox.w &&
+                gooseBox.x + gooseBox.w > obBox.x &&
+                gooseBox.y < obBox.y + obBox.h &&
+                gooseBox.y + gooseBox.h > obBox.y
+              ) {
+                dinoState.gameOver = true;
+                playGameOverTone();
+                const finalInt = Math.floor(dinoState.score);
+                if (finalInt > dinoState.best) {
+                  dinoState.best = finalInt;
+                  localStorage.setItem('taiwanTopGooseBest', String(finalInt));
+                }
+              }
+            }
+          }
+
+          ctx.clearRect(0, 0, w, h);
+
+          // Teletext Block Clouds
+          ctx.fillStyle = cyanCol;
+          ctx.globalAlpha = 0.45;
+          dinoState.clouds.forEach((c) => {
+            const cx = Math.round(c.x);
+            const cy = Math.round(c.y);
+            ctx.fillRect(cx + 6, cy, 20, 5);
+            ctx.fillRect(cx, cy + 4, 32, 6);
+          });
+          ctx.globalAlpha = 1;
+
+          // Ground line & Teletext dashed track
+          ctx.strokeStyle = cyanCol;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(16, groundY);
+          ctx.lineTo(w - 16, groundY);
+          ctx.stroke();
+
+          ctx.fillStyle = greenCol;
+          for (let px = 24; px < w - 24; px += 48) {
+            const offset = Math.floor((dinoState.frameTick * dinoState.speed) % 48);
+            const drawX = px - offset;
+            if (drawX > 18 && drawX < w - 22) {
+              ctx.fillRect(drawX, groundY + 6, 8, 2);
+              ctx.fillRect(drawX + 20, groundY + 11, 4, 2);
+            }
+          }
+
+          const strideFrame = Math.floor(dinoState.frameTick / 5) % 2;
+          drawPixelGoose(
+            ctx,
+            42,
+            groundY - 38 + dinoState.y,
+            2.4,
+            strideFrame,
+            dinoState.gameOver,
+            fg,
+            yellowCol,
+            redCol
+          );
+
+          dinoState.obstacles.forEach((ob) => {
+            drawHotPotObstacle(ctx, ob, groundY, dinoState.frameTick, fg, redCol, greenCol, yellowCol);
+          });
+
+          if (dinoState.gameOver) {
+            ctx.fillStyle = redCol;
+            ctx.fillRect(w / 2 - 170, h / 2 - 24, 340, 32);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px "VT323", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('BONK! PRESS [SPACE] OR TAP TO RETRY', w / 2, h / 2 - 2);
+          }
+
+          const sStr = String(Math.floor(dinoState.score)).padStart(4, '0');
+          const bStr = String(dinoState.best).padStart(4, '0');
+          els.gameScoreReadout.textContent = `SCORE: ${sStr} · BEST: ${bStr}`;
+
+          dinoAnimFrameId = requestAnimationFrame(step);
+        }
+
+        dinoAnimFrameId = requestAnimationFrame(step);
+      }
+
+      function stopDinoGame() {
+        dinoGameRunning = false;
+        if (dinoAnimFrameId) {
+          cancelAnimationFrame(dinoAnimFrameId);
+          dinoAnimFrameId = null;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         8. EVENT LISTENERS & INITIALIZATION
+         ---------------------------------------------------------------------- */
+
+      function resetAllFilters() {
+        activeCategory = 'ALL';
+        searchQuery = '';
+        els.searchInput.value = '';
+        els.clearSearchBtn.classList.add('hidden');
+        hideAutocomplete();
+        populateCategoryFilters();
+        filterPlaces();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function initEventListeners() {
+        els.brandResetBtn.addEventListener('click', resetAllFilters);
+        els.resetFiltersInlineBtn.addEventListener('click', resetAllFilters);
+        els.emptyResetBtn.addEventListener('click', resetAllFilters);
+        els.retryFetchBtn.addEventListener('click', loadPlacesData);
+        els.sortToggleBtn.addEventListener('click', toggleSortOrder);
+        els.themeToggleBtn.addEventListener('click', toggleTheme);
+        els.loadMoreBtn.addEventListener('click', handleLoadMore);
+
+        els.searchInput.addEventListener('focus', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('click', () => {
+          updateAutocompleteSuggestions(els.searchInput.value);
+        });
+
+        els.searchInput.addEventListener('input', () => {
+          const val = els.searchInput.value;
+          els.clearSearchBtn.classList.toggle('hidden', !val.length);
+          updateAutocompleteSuggestions(val);
+
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+            searchQuery = val;
+            filterPlaces();
+          }, 120);
+        });
+
+        els.searchInput.addEventListener('keydown', (e) => {
+          const dropdownOpen = !els.autocompleteDropdown.classList.contains('hidden');
+          if (e.key === 'ArrowDown' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx + 1);
+          } else if (e.key === 'ArrowUp' && dropdownOpen) {
+            e.preventDefault();
+            highlightSuggestion(highlightedSuggestionIdx - 1);
+          } else if (e.key === 'Enter') {
+            if (dropdownOpen && highlightedSuggestionIdx >= 0 && currentSuggestions[highlightedSuggestionIdx]) {
+              e.preventDefault();
+              selectAutocompleteSuggestion(currentSuggestions[highlightedSuggestionIdx]);
+            } else {
+              els.searchInput.blur();
+              hideAutocomplete();
+              searchQuery = els.searchInput.value;
+              filterPlaces();
+            }
+          } else if (e.key === 'Escape') {
+            hideAutocomplete();
+          }
+        });
+
+        els.clearSearchBtn.addEventListener('click', () => {
+          els.searchInput.value = '';
+          searchQuery = '';
+          els.clearSearchBtn.classList.add('hidden');
+          hideAutocomplete();
+          filterPlaces();
+          els.searchInput.focus();
+        });
+
+        document.addEventListener('pointerdown', (e) => {
+          if (
+            !els.autocompleteDropdown.contains(e.target) &&
+            e.target !== els.searchInput
+          ) {
+            hideAutocomplete();
+          }
+        });
+
+        // Modal controls
+        els.modalCloseBtn.addEventListener('click', closeModal);
+        els.modalPrevBtn.addEventListener('click', () => navigateModal(-1));
+        els.modalNextBtn.addEventListener('click', () => navigateModal(1));
+        els.modalShareBtn.addEventListener('click', copyDirectSpotLink);
+
+        els.modalCityBtn.addEventListener('click', () => {
+          const city = els.modalCityText.textContent;
+          closeModal();
+          els.searchInput.value = city;
+          searchQuery = city;
+          els.clearSearchBtn.classList.remove('hidden');
+          filterPlaces();
+        });
+
+        els.placeModal.addEventListener('click', (e) => {
+          if (e.target === els.placeModal) {
+            closeModal();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (activeModalIndex !== -1) {
+            if (e.key === 'Escape') closeModal();
+            else if (e.key === 'ArrowLeft') navigateModal(-1);
+            else if (e.key === 'ArrowRight') navigateModal(1);
+          } else if (
+            dinoGameRunning &&
+            (e.code === 'Space' || e.code === 'ArrowUp')
+          ) {
+            if (document.activeElement === els.searchInput) {
+              els.searchInput.blur();
+            }
+            e.preventDefault();
+            triggerDinoJump();
+          }
+        });
+
+        els.dinoCanvas.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          triggerDinoJump();
+        });
+      }
+
+      // Boot sequence
+      startTeletextClock();
+      initTheme();
+      renderLoadingSkeletons();
+      parseUrlState();
+      initEventListeners();
+      loadPlacesData();
+    })();
   </script>
 </body>
 </html>
