@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣 TAIWAN top</title>
+  <meta name="description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+
+  <!-- Favicon: Square divided into 5 horizontal rows matching the 5 city accordion colors -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='100' height='20' fill='%23F7D249'/%3E%3Crect x='0' y='20' width='100' height='20' fill='%23C6BEB8'/%3E%3Crect x='0' y='40' width='100' height='20' fill='%23F6BBF5'/%3E%3Crect x='0' y='60' width='100' height='20' fill='%238FA3D9'/%3E%3Crect x='0' y='80' width='100' height='20' fill='%2365754A'/%3E%3C/svg%3E">
+
+  <!-- OpenGraph / Social Media Sharing Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://albyantoniazzi.github.io/taiwantop/">
+  <meta property="og:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta property="og:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta property="og:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Curated guide to the top places in Taiwan by Alberto Antoniazzi">
+  <meta name="twitter:description" content="Curated guide to the top places in Taiwan across Taipei, Taichung, Tainan, Kaohsiung, and Hengchun.">
+  <meta name="twitter:image" content="https://albyantoniazzi.github.io/taiwantop/og_image.png">
+
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Load Noto Serif Display (Variable Regular & Italic) + Noto Serif TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wdth,wght@0,62.5..100,400..700;1,62.5..100,400..700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PapaParse for robust CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Noto Serif Display"', '"Noto Serif TC"', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --outer-gap: clamp(10px, 2vmin, 28px);
+      /* Design Specification Tokens: Deep Emerald & Warm Cream Editorial Palette */
+      --ds-ground: #0d5a31;
+      --ds-frame: #094224;
+      --ds-ink: #fbf3e4;
+      --ds-quiet: #fbf3e4b8;
+      --ds-pink: #ffb3ad;
+      --ds-green: #0a3d27;
+      --ds-rule: #fbf3e470;
+      --ds-t: 340ms;
+      --ds-ease: cubic-bezier(0.3, 0, 0.1, 1);
+      --ds-col-left: clamp(5.75rem, 15vw, 9.5rem);
+    }
+
+    /* Alternate Warm Cream & Forest Ink Daylight Palette via Yin-Yang Toggle */
+    body.light-mode {
+      --ds-ground: #fbf3e4;
+      --ds-frame: #efe5d3;
+      --ds-ink: #0a3d27;
+      --ds-quiet: rgba(10, 61, 39, 0.68);
+      --ds-pink: #ffb3ad;
+      --ds-green: #0a3d27;
+      --ds-rule: rgba(10, 61, 39, 0.28);
+    }
+
+    * {
+      font-family: "Noto Serif Display", "Noto Serif TC", Georgia, serif;
+      font-variant-numeric: lining-nums;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--ds-frame);
+      color: var(--ds-ink);
+      padding: var(--outer-gap);
+      transition: background-color var(--ds-t) var(--ds-ease), color var(--ds-t) var(--ds-ease);
+    }
+
+    #pageWrapper {
+      position: relative;
+      background-color: var(--ds-ground);
+      background-image:
+        radial-gradient(120% 90% at 15% 10%, rgba(255, 179, 173, 0.08) 0%, transparent 55%),
+        radial-gradient(100% 80% at 85% 90%, rgba(10, 61, 39, 0.55) 0%, transparent 65%);
+      border: 1px solid var(--ds-rule);
+      transition: background-color var(--ds-t) var(--ds-ease), border-color var(--ds-t) var(--ds-ease);
+    }
+
+    body.light-mode #pageWrapper {
+      background-image:
+        radial-gradient(120% 90% at 15% 10%, rgba(255, 179, 173, 0.22) 0%, transparent 55%),
+        radial-gradient(100% 80% at 85% 90%, rgba(13, 90, 49, 0.05) 0%, transparent 65%);
+    }
+
+    /* Editorial hairline rules */
+    .ds-rule-top {
+      border-top: 1px solid var(--ds-rule);
+    }
+
+    .ds-rule-bottom {
+      border-bottom: 1px solid var(--ds-rule);
+    }
+
+    /* Floor / City Accordion Rows */
+    .accordion-item {
+      position: relative;
+      border-top: 1px solid var(--ds-rule);
+    }
+
+    .accordion-item:last-child {
+      border-bottom: 1px solid var(--ds-rule);
+    }
+
+    .accordion-header-btn {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      padding-left: var(--ds-col-left);
+      padding-right: clamp(16px, 2.5vw, 28px);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+      color: var(--ds-ink);
+      background: transparent;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        height var(--ds-t) var(--ds-ease),
+        min-height var(--ds-t) var(--ds-ease),
+        background-color var(--ds-t) var(--ds-ease),
+        color var(--ds-t) var(--ds-ease);
+    }
+
+    /* Blush-pink highlight bar behind active/expanded floor title */
+    .accordion-header-btn::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: calc(var(--ds-col-left) - 10px);
+      right: clamp(10px, 1.8vw, 20px);
+      top: 14%;
+      bottom: 14%;
+      background: transparent;
+      transition: background-color 220ms var(--ds-ease);
+    }
+
+    .accordion-item.is-open .accordion-header-btn {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: calc((100dvh - (2 * var(--outer-gap))) / 12);
+      min-height: 3.1rem;
+      background-color: var(--ds-ground);
+      border-bottom: 1px solid var(--ds-rule);
+      color: var(--ds-green);
+    }
+
+    .accordion-item.is-open .accordion-header-btn::before {
+      background: var(--ds-pink);
+    }
+
+    @media (hover: hover) {
+      .accordion-item:not(.is-open) .accordion-header-btn:hover .city-en {
+        color: var(--ds-pink);
+      }
+      body.light-mode .accordion-item:not(.is-open) .accordion-header-btn:hover .city-en {
+        color: #b43e38;
+      }
+    }
+
+    .accordion-header-btn:focus-visible::before {
+      outline: 1.5px solid var(--ds-ink);
+      outline-offset: 2px;
+    }
+
+    /* Oversized Left-Aligned Italic City Mark (analogous to floor mark 5, 4, 3, 2, 1, LL) */
+    .city-zh-mark {
+      position: absolute;
+      left: clamp(16px, 2.5vw, 28px);
+      top: 50%;
+      transform: translateY(-52%);
+      color: var(--ds-pink);
+      font-style: italic;
+      font-weight: 400;
+      font-stretch: 75%;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      pointer-events: none;
+      transition:
+        font-size var(--ds-t) var(--ds-ease),
+        transform var(--ds-t) var(--ds-ease),
+        color var(--ds-t) var(--ds-ease);
+    }
+
+    body.light-mode .city-zh-mark {
+      color: #c24b44;
+    }
+
+    .accordion-item.is-open .city-zh-mark {
+      transform: translateY(-50%) scale(1.06);
+    }
+
+    /* Triangular Disclosure Indicator (▸ rotates 90deg to ▾) */
+    .ds-mark {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      margin-right: 4px;
+      align-self: center;
+    }
+
+    .ds-mark svg {
+      display: block;
+      width: 10px;
+      height: 10px;
+      fill: currentColor;
+      transition: rotate 220ms var(--ease, cubic-bezier(0.3, 0, 0.1, 1));
+    }
+
+    .accordion-item.is-open .ds-mark svg {
+      rotate: 90deg;
+    }
+
+    .city-en {
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      transition: font-size var(--ds-t) var(--ds-ease), color 220ms var(--ds-ease);
+    }
+
+    .accordion-item.is-open .city-en {
+      font-size: clamp(1.35rem, 2.8vw, 2rem) !important;
+    }
+
+    .ds-where {
+      font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+      font-style: italic;
+      letter-spacing: 0.01em;
+      color: var(--ds-quiet);
+      transition: color 220ms var(--ds-ease);
+    }
+
+    .accordion-item.is-open .ds-where {
+      color: var(--ds-green);
+    }
+
+    /* Smooth Accordion Drawer */
+    .accordion-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-rows var(--ds-t) var(--ds-ease),
+        opacity 260ms var(--ds-ease);
+    }
+
+    .accordion-item.is-open .accordion-content {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .accordion-inner {
+      overflow: hidden;
+    }
+
+    /* Staggered Department / Place Row Entrance */
+    @keyframes ds-in {
+      from {
+        opacity: 0;
+        translate: 0 -5px;
+      }
+      to {
+        opacity: 1;
+        translate: 0 0;
+      }
+    }
+
+    .accordion-item.is-open .place-row {
+      animation: ds-in 360ms var(--ds-ease) both;
+      animation-delay: calc(var(--i, 0) * 34ms + 70ms);
+    }
+
+    .place-row {
+      position: relative;
+      isolation: isolate;
+      padding-left: calc(var(--ds-col-left) + 26px);
+      padding-right: clamp(16px, 2.5vw, 28px);
+      border-bottom: 1px solid var(--ds-rule);
+      transition: color 180ms var(--ds-ease);
+    }
+
+    .place-row:last-child {
+      border-bottom: none;
+    }
+
+    .place-row::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: calc(var(--ds-col-left) + 14px);
+      right: clamp(10px, 1.8vw, 20px);
+      top: 4px;
+      bottom: 4px;
+      background: transparent;
+      transition: background-color 180ms var(--ds-ease);
+    }
+
+    @media (hover: hover) {
+      .place-row:hover {
+        color: var(--ds-green);
+      }
+      .place-row:hover::before {
+        background: var(--ds-pink);
+      }
+      .place-row:hover .place-desc {
+        color: var(--ds-green);
+      }
+    }
+
+    .place-row:focus-within::before {
+      outline: 1.5px solid var(--ds-ink);
+      outline-offset: 2px;
+    }
+
+    .place-title {
+      font-style: italic;
+      font-weight: 500;
+      letter-spacing: -0.005em;
+    }
+
+    .place-desc {
+      font-style: italic;
+      color: var(--ds-quiet);
+      letter-spacing: 0.01em;
+      transition: color 180ms var(--ds-ease);
+    }
+
+    /* Yin-Yang Theme Toggle */
+    .yin-yang-icon {
+      transition: transform 420ms var(--ds-ease);
+    }
+
+    body.light-mode .yin-yang-icon {
+      transform: rotate(180deg);
+    }
+
+    #themeToggle:hover .yin-yang-icon {
+      transform: scale(1.1);
+    }
+
+    body.light-mode #themeToggle:hover .yin-yang-icon {
+      transform: rotate(180deg) scale(1.1);
+    }
+
+    /* Place Detail Modal */
+    #placeModal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 240ms var(--ds-ease);
+    }
+
+    #placeModal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #placeModalCard {
+      background-color: var(--ds-ground);
+      color: var(--ds-ink);
+      border: 1px solid var(--ds-rule);
+      box-shadow: 0 24px 60px -12px rgba(4, 24, 14, 0.72);
+      transform: translateY(8px) scale(0.985);
+      transition:
+        transform 300ms var(--ds-ease),
+        background-color var(--ds-t) var(--ds-ease),
+        color var(--ds-t) var(--ds-ease);
+    }
+
+    #placeModal.is-visible #placeModalCard {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Proportional desktop scaling for modal right-side details panel */
+    @media (min-width: 768px) {
+      #modalDetailsPane {
+        padding: clamp(1.1rem, 3dvh, 2rem);
+        gap: clamp(0.75rem, 2.2dvh, 1.4rem);
+      }
+
+      #modalTextGroup {
+        gap: clamp(0.4rem, 1.3dvh, 0.85rem);
+      }
+
+      #modalTitle {
+        font-size: clamp(1.2rem, 2.9dvh, 1.85rem);
+      }
+
+      #modalDescription {
+        font-size: clamp(0.82rem, 1.8dvh, 1.02rem);
+        line-height: 1.5;
+      }
+
+      #modalFooterGroup {
+        gap: clamp(0.5rem, 1.5dvh, 0.9rem);
+      }
+
+      #modalActionsDivider {
+        padding-top: clamp(0.5rem, 1.5dvh, 0.9rem);
+      }
+
+      #modalMapsLink {
+        padding-top: clamp(0.45rem, 1.2dvh, 0.7rem);
+        padding-bottom: clamp(0.45rem, 1.2dvh, 0.7rem);
+        font-size: clamp(0.8rem, 1.7dvh, 0.95rem);
+      }
+    }
+
+    /* Vertically responsive row height: 1/7 of browser viewport height */
+    .viewport-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 7);
+      min-height: 3.85rem;
+    }
+
+    /* Half-height footer row: 1/14 of browser viewport height */
+    .footer-row {
+      height: calc((100dvh - (2 * var(--outer-gap))) / 14);
+      min-height: 2.35rem;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(251, 243, 228, 0.25);
+    }
+
+    /* Accessibility: Reduced-Motion Fallback */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-[#ffb3ad] selection:text-[#0a3d27]">
+
+  <!-- Main Editorial Directory Frame -->
+  <div id="pageWrapper" class="w-full max-w-full mx-auto">
+
+    <!-- Header Section matching 1/7 of the browser window height -->
+    <header class="relative w-full flex items-center justify-between viewport-row pr-4 sm:pr-7" style="padding-left: var(--ds-col-left);">
+      <button
+        id="homeResetBtn"
+        type="button"
+        aria-label="Reset and refresh TAIWANtop"
+        class="flex items-baseline min-w-0 text-left cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+      >
+        <!-- Oversized Left-Aligned Italic Mark matching the floor column -->
+        <span class="city-zh-mark text-2xl sm:text-3xl md:text-[36px] [font-kerning:normal] [text-rendering:optimizeLegibility]">
+          台灣
+        </span>
+
+        <!-- Display Serif Title -->
+        <h1 class="text-3xl sm:text-5xl md:text-[52px] leading-none tracking-[-0.015em] [font-kerning:normal] [text-rendering:optimizeLegibility] font-medium select-none">
+          TAIWAN<span class="italic font-normal text-[#ffb3ad] tracking-[-0.01em]">top</span>
+        </h1>
+      </button>
+
+      <!-- Interactive Yin-Yang Theme Toggle Button -->
+      <button
+        id="themeToggle"
+        type="button"
+        aria-label="Toggle Deep Emerald / Warm Cream Theme"
+        title="Toggle theme"
+        class="p-2 -mr-2 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current shrink-0 cursor-pointer"
+      >
+        <svg class="yin-yang-icon w-7 h-7 sm:w-8 sm:h-8" xmlns="http://www.w3.org/2000/svg" viewBox="-42 -42 84 84" aria-hidden="true">
+          <circle r="39" fill="#0a3d27" stroke="#fbf3e4" stroke-width="4"/>
+          <path fill="#fbf3e4" d="M0,38a38,38 0 0 1 0,-76a19,19 0 0 1 0,38a19,19 0 0 0 0,38"/>
+          <circle r="5" cy="19" fill="#fbf3e4"/>
+          <circle r="5" cy="-19" fill="#0a3d27"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Status / Filter Bar -->
+    <div id="statusBanner" class="hidden pb-3 text-xs italic opacity-80 flex items-center justify-between pr-4 sm:pr-7" style="padding-left: var(--ds-col-left);">
+      <span id="statusText">Loading places from Google Sheets...</span>
+      <button id="retryBtn" class="hidden underline hover:opacity-100 cursor-pointer">Retry</button>
+    </div>
+
+    <!-- Full-width Editorial City Accordions Container -->
+    <main id="citiesContainer" class="w-full flex flex-col" aria-label="Taiwan city guide"></main>
+
+    <!-- Minimalist Editorial Footer matching 1/14 of viewport -->
+    <footer class="w-full pr-4 sm:pr-7 footer-row flex items-center justify-between text-xs sm:text-sm italic text-[var(--ds-quiet)]" style="padding-left: var(--ds-col-left);">
+      <span>Index · Five Cities</span>
+      <span>Curated by <a href="https://www.instagram.com/alby.food/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[#ffb3ad] transition-colors">@alby.food</a></span>
+    </footer>
+
+  </div>
+
+  <!-- Place Detail Modal -->
+  <div
+    id="placeModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-[#04180e]/75 backdrop-blur-[3px]"
+  >
+    <div class="relative w-full max-w-4xl flex items-center justify-center">
+      <!-- Previous Place Button (bare < over backdrop on desktop) -->
+      <button
+        id="prevPlaceBtn"
+        type="button"
+        aria-label="Previous place"
+        title="Previous place"
+        class="hidden sm:flex items-center justify-center -ml-12 mr-3 p-2 shrink-0 text-[#fbf3e4]/80 hover:text-[#ffb3ad] hover:scale-110 transition-all cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#fbf3e4]"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div
+        id="placeModalCard"
+        class="relative w-full h-auto md:h-[65dvh] max-h-[760px] flex flex-col overflow-hidden"
+      >
+        <!-- Floating Close Button directly on the top-right corner -->
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center bg-[var(--ds-ground)]/90 md:bg-transparent hover:bg-[#ffb3ad] hover:text-[#0a3d27] transition-colors cursor-pointer text-base sm:text-lg leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-current"
+        >
+          ✕
+        </button>
+
+        <!-- Responsive Content Layout: Stacked on mobile, Side-by-side on desktop -->
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+          <!-- 1:1 Square Picture Container -->
+          <div id="modalImageWrapper" class="relative w-full md:w-auto md:h-full aspect-square max-h-[38dvh] md:max-h-none shrink-0 bg-[#0a3d27]/40 overflow-hidden border-b md:border-b-0 md:border-r border-[var(--ds-rule)] mx-auto md:mx-0">
+            <img
+              id="modalImage"
+              src=""
+              alt=""
+              decoding="async"
+              fetchpriority="high"
+              class="w-full h-full object-cover transition-opacity duration-200"
+            />
+          </div>
+
+          <!-- Details Body -->
+          <div id="modalDetailsPane" class="flex-1 min-w-0 min-h-0 p-4 sm:p-6 flex flex-col justify-between gap-2.5 sm:gap-4 overflow-hidden">
+            <div id="modalTextGroup" class="min-h-0 flex-1 flex flex-col gap-2 sm:gap-3 overflow-hidden pr-7">
+              <h2 id="modalTitle" class="text-xl sm:text-2xl lg:text-[30px] italic font-medium leading-tight tracking-[-0.01em] [font-kerning:normal] [text-rendering:optimizeLegibility] line-clamp-2 shrink-0">
+                Place Title
+              </h2>
+
+              <!-- Description -->
+              <p id="modalDescription" class="text-xs sm:text-sm lg:text-base font-normal leading-relaxed text-[var(--ds-quiet)] line-clamp-4 md:line-clamp-none overflow-hidden">
+                Description
+              </p>
+            </div>
+
+            <!-- Bottom Section: City Badge + Category Badges Above Separation Line + Google Maps Button Below -->
+            <div id="modalFooterGroup" class="flex flex-col gap-2.5 sm:gap-3 shrink-0">
+              <!-- City Badge & Categories as Editorial Badges -->
+              <div id="modalCategories" class="flex flex-wrap items-center gap-1.5 sm:gap-2"></div>
+
+              <!-- Action Footer Below Hairline Separation Rule -->
+              <div id="modalActionsDivider" class="pt-2.5 sm:pt-3.5 border-t border-[var(--ds-rule)]">
+                <a
+                  id="modalMapsLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 border border-[var(--ds-rule)] bg-[#ffb3ad] text-[#0a3d27] font-medium italic text-xs sm:text-sm hover:bg-[#fbf3e4] hover:text-[#0a3d27] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                >
+                  <span>Open on Google Maps</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Place Button (bare > over backdrop on desktop) -->
+      <button
+        id="nextPlaceBtn"
+        type="button"
+        aria-label="Next place"
+        title="Next place"
+        class="hidden sm:flex items-center justify-center -mr-12 ml-3 p-2 shrink-0 text-[#fbf3e4]/80 hover:text-[#ffb3ad] hover:scale-110 transition-all cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#fbf3e4]"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjjP1I4FaaHacoyWro_hFtrBLnc9ANaobCo3RBSpvyBQ49Dl0MExGOJOHzLoWY6Pz9YqxTPyRDAfIv/pub?output=csv';
+    const CACHE_KEY = 'taiwantop_csv_cache_v1';
+
+    // City configuration preserving canonical order, Chinese marks, and fallback image tints
+    const CITY_META = {
+      'taipei': {
+        en: 'Taipei',
+        zh: '台北',
+        bg: '#0a3d27',
+        order: 1
+      },
+      'taichung': {
+        en: 'Taichung',
+        zh: '台中',
+        bg: '#0d5a31',
+        order: 2
+      },
+      'tainan': {
+        en: 'Tainan',
+        zh: '台南',
+        bg: '#134e32',
+        order: 3
+      },
+      'kaohsiung': {
+        en: 'Kaohsiung',
+        zh: '高雄',
+        bg: '#0b472a',
+        order: 4
+      },
+      'hengchun': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#155636',
+        order: 5
+      },
+      'kenting': {
+        en: 'Hengchun',
+        zh: '墾丁',
+        bg: '#155636',
+        order: 5
+      }
+    };
+
+    const EXTRA_PALETTE = [
+      { bg: '#0d5a31', zh: '台灣' },
+      { bg: '#0a3d27', zh: '台灣' }
+    ];
+
+    const FALLBACK_ROWS = [
+      { City: 'Taipei', Title: '真珠 JIN ZHU', Description: 'Nice Taiwanese cuisine chain', Category: 'taiwanese, restaurant' },
+      { City: 'Taipei', Title: '阿石北平烤鴨店', Description: 'Beiping style roasted duck', Category: 'roast duck, takeaway' },
+      { City: 'Taipei', Title: '口福黑輪', Description: 'Taiwanese-style oden', Category: 'oden, street food' },
+      { City: 'Taichung', Title: '第二市場 Second Market', Description: 'Historic market famous for braised pork rice and radish cake', Category: 'market, local food' },
+      { City: 'Tainan', Title: '文章牛肉湯', Description: 'Classic Tainan fresh beef soup served with rice', Category: 'beef soup, breakfast' },
+      { City: 'Kaohsiung', Title: '駁二藝術特區 Pier-2', Description: 'Waterfront warehouse district with cafes and exhibitions', Category: 'art, coffee, walk' },
+      { City: 'Hengchun', Title: '樹夏飲事', Description: 'Glasshouse cafe built inside historic ruins', Category: 'coffee, dessert' }
+    ];
+
+    let activeModalCityGroup = null;
+    let activeModalPlaceIndex = 0;
+    const preloadedImageUrls = new Set();
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getFallbackSquareImage(title, bgColor) {
+      const safeTitle = escapeHtml((title || 'TAIWANtop').slice(0, 22));
+      const fill = bgColor || '#0a3d27';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+        <rect width="600" height="600" fill="${fill}"/>
+        <rect x="24" y="24" width="552" height="552" fill="none" stroke="#fbf3e4" stroke-opacity="0.35" stroke-width="1.5"/>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="26" fill="#fbf3e4" opacity="0.85">${safeTitle}</text>
+      </svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function preloadImageUrl(url) {
+      if (!url || preloadedImageUrls.has(url)) return;
+      preloadedImageUrls.add(url);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+    }
+
+    function preloadCityImages(cityGroup) {
+      if (!cityGroup || !cityGroup.places) return;
+      cityGroup.places.forEach((place) => {
+        if (place.image) {
+          preloadImageUrl(place.image);
+        }
+      });
+    }
+
+    function extractPhotoTimestamp(row, imageUrl) {
+      const rawDate = (row.Timestamp || row.timestamp || row.Date || row.date || row['時間'] || row['日期'] || '').trim();
+      if (rawDate) {
+        const parsed = Date.parse(rawDate);
+        if (!Number.isNaN(parsed)) {
+          return parsed;
+        }
+        const numericDate = Number(rawDate);
+        if (!Number.isNaN(numericDate) && numericDate > 0) {
+          return numericDate;
+        }
+      }
+
+      if (imageUrl) {
+        const staticMatch = imageUrl.match(/staticflickr\.com\/\d+\/(\d+)_/i);
+        if (staticMatch && staticMatch[1]) {
+          return Number(staticMatch[1]);
+        }
+        const pageMatch = imageUrl.match(/flickr\.com\/photos\/[^/]+\/(\d+)/i);
+        if (pageMatch && pageMatch[1]) {
+          return Number(pageMatch[1]);
+        }
+      }
+
+      return 0;
+    }
+
+    function groupPlacesByCity(rows) {
+      const groupsMap = new Map();
+      let extraIndex = 0;
+
+      rows.forEach((row, rowIndex) => {
+        const rawCity = (row.City || row.city || row['城市'] || '').trim();
+        const title = (row.Title || row.title || row.Name || row.name || row['店名'] || '').trim();
+        if (!rawCity || !title) return;
+
+        const key = rawCity.toLowerCase();
+        const meta = CITY_META[key];
+        const canonicalKey = meta ? meta.en.toLowerCase() : key;
+
+        if (!groupsMap.has(canonicalKey)) {
+          if (meta) {
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: meta.en,
+              zh: meta.zh,
+              bg: meta.bg,
+              order: meta.order,
+              places: []
+            });
+          } else {
+            const extra = EXTRA_PALETTE[extraIndex % EXTRA_PALETTE.length];
+            extraIndex++;
+            groupsMap.set(canonicalKey, {
+              key: canonicalKey,
+              en: rawCity,
+              zh: extra.zh,
+              bg: extra.bg,
+              order: 100 + extraIndex,
+              places: []
+            });
+          }
+        }
+
+        const description = (row.Description || row.description || row.Notes || row.notes || row['簡介'] || '').trim();
+        const rawCategory = (row.Category || row.category || row.Categories || row.categories || row.Tags || row.tags || row['分類'] || '').trim();
+        const categories = rawCategory
+          ? rawCategory.split(/[,;/]+/).map((c) => c.trim()).filter(Boolean)
+          : [];
+        const image = (row.Image || row.image || row.Photo || row.photo || row.Thumbnail || row.thumbnail || '').trim();
+        const mapsUrl = (row['Google Maps'] || row.Maps || row.maps || row.Map || row.map || row.URL || row.url || row.Link || row.link || '').trim();
+        const photoTimestamp = extractPhotoTimestamp(row, image);
+
+        groupsMap.get(canonicalKey).places.push({
+          title,
+          description,
+          categories,
+          image,
+          mapsUrl,
+          photoTimestamp,
+          rowIndex
+        });
+      });
+
+      groupsMap.forEach((group) => {
+        group.places.sort((a, b) => {
+          if (b.photoTimestamp !== a.photoTimestamp) {
+            return b.photoTimestamp - a.photoTimestamp;
+          }
+          return b.rowIndex - a.rowIndex;
+        });
+      });
+
+      Object.values(CITY_META).forEach((meta) => {
+        const canonicalKey = meta.en.toLowerCase();
+        if (!groupsMap.has(canonicalKey)) {
+          groupsMap.set(canonicalKey, {
+            key: canonicalKey,
+            en: meta.en,
+            zh: meta.zh,
+            bg: meta.bg,
+            order: meta.order,
+            places: []
+          });
+        }
+      });
+
+      return Array.from(groupsMap.values()).sort((a, b) => a.order - b.order);
+    }
+
+    function openPlaceModal(place, cityGroup, placeIndex = 0) {
+      activeModalCityGroup = cityGroup;
+      activeModalPlaceIndex = placeIndex;
+
+      const modal = document.getElementById('placeModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDescription');
+      const modalCats = document.getElementById('modalCategories');
+      const modalMaps = document.getElementById('modalMapsLink');
+
+      const hasMultiple = cityGroup.places && cityGroup.places.length > 1;
+      ['prevPlaceBtn', 'nextPlaceBtn'].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.visibility = hasMultiple ? 'visible' : 'hidden';
+      });
+
+      modalTitle.textContent = place.title;
+      modalDesc.textContent = place.description || 'No description provided.';
+
+      const fallbackSrc = getFallbackSquareImage(place.title, cityGroup.bg);
+      const targetSrc = place.image || fallbackSrc;
+
+      if (place.image && !preloadedImageUrls.has(place.image)) {
+        modalImg.style.opacity = '0.35';
+        modalImg.onload = () => {
+          modalImg.style.opacity = '1';
+          preloadedImageUrls.add(place.image);
+        };
+      } else {
+        modalImg.style.opacity = '1';
+        modalImg.onload = null;
+      }
+
+      modalImg.onerror = () => {
+        modalImg.onerror = null;
+        modalImg.onload = null;
+        modalImg.style.opacity = '1';
+        modalImg.src = fallbackSrc;
+      };
+      modalImg.src = targetSrc;
+      modalImg.alt = place.title;
+
+      if (cityGroup.places && cityGroup.places.length > 1) {
+        const total = cityGroup.places.length;
+        const nextPlace = cityGroup.places[(placeIndex + 1) % total];
+        const prevPlace = cityGroup.places[(placeIndex - 1 + total) % total];
+        if (nextPlace && nextPlace.image) preloadImageUrl(nextPlace.image);
+        if (prevPlace && prevPlace.image) preloadImageUrl(prevPlace.image);
+      }
+
+      modalCats.innerHTML = '';
+
+      const cityBadge = document.createElement('span');
+      cityBadge.className = 'inline-flex items-center px-3 py-0.5 text-[11px] sm:text-xs italic font-medium tracking-wide bg-[#ffb3ad] text-[#0a3d27] border border-[#ffb3ad]';
+      cityBadge.textContent = `${cityGroup.zh} ${cityGroup.en}`;
+      modalCats.appendChild(cityBadge);
+
+      if (place.categories && place.categories.length > 0) {
+        place.categories.forEach((cat) => {
+          const badge = document.createElement('span');
+          badge.className = 'inline-flex items-center px-3 py-0.5 text-[11px] sm:text-xs italic tracking-wide border border-[var(--ds-rule)] text-[var(--ds-ink)]';
+          badge.textContent = cat;
+          modalCats.appendChild(badge);
+        });
+      }
+
+      if (place.mapsUrl && /^https?:\/\//i.test(place.mapsUrl)) {
+        modalMaps.href = place.mapsUrl;
+      } else {
+        const query = encodeURIComponent(`${place.title} ${cityGroup.en} Taiwan`);
+        modalMaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      }
+
+      modal.classList.add('is-visible');
+    }
+
+    function navigatePlaceModal(delta) {
+      if (!activeModalCityGroup || !activeModalCityGroup.places || activeModalCityGroup.places.length <= 1) {
+        return;
+      }
+      const total = activeModalCityGroup.places.length;
+      const nextIndex = (activeModalPlaceIndex + delta + total) % total;
+      openPlaceModal(activeModalCityGroup.places[nextIndex], activeModalCityGroup, nextIndex);
+    }
+
+    function closePlaceModal() {
+      const modal = document.getElementById('placeModal');
+      if (modal) {
+        modal.classList.remove('is-visible');
+      }
+    }
+
+    function renderAccordions(cityGroups) {
+      const container = document.getElementById('citiesContainer');
+      container.innerHTML = '';
+
+      cityGroups.forEach((group) => {
+        const item = document.createElement('section');
+        item.className = 'accordion-item w-full';
+
+        // Floor-style Accordion Header Bar
+        const headerBtn = document.createElement('button');
+        headerBtn.type = 'button';
+        headerBtn.setAttribute('aria-expanded', 'false');
+        headerBtn.className = 'accordion-header-btn viewport-row';
+
+        headerBtn.innerHTML = `
+          <span class="city-zh-mark text-2xl sm:text-3xl md:text-[36px] [font-kerning:normal] [text-rendering:optimizeLegibility]" aria-hidden="true">
+            ${escapeHtml(group.zh)}
+          </span>
+          <div class="flex items-center min-w-0 overflow-visible">
+            <span class="ds-mark" aria-hidden="true">
+              <svg viewBox="0 0 10 10">
+                <path d="M2.2 0.6 8.6 5 2.2 9.4Z"/>
+              </svg>
+            </span>
+            <span class="city-en text-2xl sm:text-4xl md:text-[42px] leading-none [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap">
+              ${escapeHtml(group.en)}
+            </span>
+          </div>
+          <span class="ds-where shrink-0 ml-3">
+            ${group.places.length} ${group.places.length === 1 ? 'place' : 'places'}
+          </span>
+        `;
+
+        // Accordion Drawer Wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'accordion-content w-full';
+
+        const inner = document.createElement('div');
+        inner.className = 'accordion-inner w-full';
+
+        const listContainer = document.createElement('div');
+        listContainer.className = 'w-full py-2 sm:py-3';
+
+        if (group.places.length === 0) {
+          const emptyMsg = document.createElement('p');
+          emptyMsg.className = 'text-sm italic text-[var(--ds-quiet)] py-3';
+          emptyMsg.style.paddingLeft = 'calc(var(--ds-col-left) + 26px)';
+          emptyMsg.textContent = 'No places listed yet.';
+          listContainer.appendChild(emptyMsg);
+        } else {
+          const ul = document.createElement('ul');
+          ul.className = 'w-full flex flex-col';
+
+          group.places.forEach((place, idx) => {
+            const li = document.createElement('li');
+            li.className = 'place-row w-full py-2.5 sm:py-3 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 lg:gap-12 cursor-pointer';
+            li.style.setProperty('--i', idx);
+
+            // Left Column: Italic Department-Style Place Title (single line)
+            const titleCol = document.createElement('div');
+            titleCol.className = 'w-full md:w-auto md:min-w-[36%] lg:min-w-[34%] shrink-0 overflow-x-auto';
+
+            const titleBtn = document.createElement('button');
+            titleBtn.type = 'button';
+            titleBtn.className = 'place-title text-left text-lg sm:text-[21px] leading-snug [font-kerning:normal] [text-rendering:optimizeLegibility] whitespace-nowrap cursor-pointer focus:outline-none';
+            titleBtn.textContent = place.title;
+            titleBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openPlaceModal(place, group, idx);
+            });
+
+            titleCol.appendChild(titleBtn);
+
+            // Right Column: Italic Quiet Counter-Style Description
+            const descCol = document.createElement('div');
+            descCol.className = 'place-desc flex-1 min-w-0 text-sm sm:text-[15px] leading-relaxed md:text-right';
+            descCol.textContent = place.description;
+
+            li.addEventListener('click', () => openPlaceModal(place, group, idx));
+
+            li.appendChild(titleCol);
+            li.appendChild(descCol);
+            ul.appendChild(li);
+          });
+
+          listContainer.appendChild(ul);
+        }
+
+        inner.appendChild(listContainer);
+        contentWrapper.appendChild(inner);
+
+        // Single-city accordion toggle with snap-to-top scroll
+        headerBtn.addEventListener('click', () => {
+          const wasOpen = item.classList.contains('is-open');
+
+          document.querySelectorAll('.accordion-item').forEach((el) => {
+            el.classList.remove('is-open');
+            const btn = el.querySelector('.accordion-header-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+          });
+
+          if (!wasOpen) {
+            item.classList.add('is-open');
+            headerBtn.setAttribute('aria-expanded', 'true');
+            preloadCityImages(group);
+
+            requestAnimationFrame(() => {
+              item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+        });
+
+        item.appendChild(headerBtn);
+        item.appendChild(contentWrapper);
+        container.appendChild(item);
+      });
+    }
+
+    function parseAndRenderCsv(csvText) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              const grouped = groupPlacesByCity(results.data);
+              renderAccordions(grouped);
+              resolve(true);
+            } else {
+              reject(new Error('CSV returned zero rows'));
+            }
+          },
+          error: (err) => reject(err)
+        });
+      });
+    }
+
+    async function initDirectory() {
+      const statusBanner = document.getElementById('statusBanner');
+      const statusText = document.getElementById('statusText');
+      const retryBtn = document.getElementById('retryBtn');
+
+      let cachedCsv = null;
+      try {
+        cachedCsv = localStorage.getItem(CACHE_KEY);
+      } catch (e) {}
+
+      if (cachedCsv) {
+        try {
+          await parseAndRenderCsv(cachedCsv);
+        } catch (e) {
+          renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+        }
+      } else {
+        renderAccordions(groupPlacesByCity(FALLBACK_ROWS));
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      try {
+        const response = await fetch(CSV_URL, {
+          cache: 'default',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        const freshCsv = await response.text();
+
+        if (freshCsv && freshCsv !== cachedCsv) {
+          await parseAndRenderCsv(freshCsv);
+          try {
+            localStorage.setItem(CACHE_KEY, freshCsv);
+          } catch (e) {}
+        }
+        statusBanner.classList.add('hidden');
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.warn('Background CSV sync skipped/failed:', err);
+        if (!cachedCsv) {
+          statusBanner.classList.remove('hidden');
+          statusText.textContent = 'Offline preview mode.';
+          retryBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Theme toggle handler (Deep Emerald vs. Warm Cream)
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+    });
+
+    // Header title click: close modal, collapse all accordions, scroll to top, and refresh data
+    document.getElementById('homeResetBtn').addEventListener('click', () => {
+      closePlaceModal();
+      document.querySelectorAll('.accordion-item').forEach((el) => {
+        el.classList.remove('is-open');
+        const btn = el.querySelector('.accordion-header-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      initDirectory();
+    });
+
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      document.getElementById('statusText').textContent = 'Retrying CSV fetch...';
+      initDirectory();
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', closePlaceModal);
+    document.getElementById('prevPlaceBtn').addEventListener('click', () => navigatePlaceModal(-1));
+    document.getElementById('nextPlaceBtn').addEventListener('click', () => navigatePlaceModal(1));
+
+    // Touch swipe navigation on mobile inside the modal
+    let modalTouchStartX = 0;
+    let modalTouchStartY = 0;
+    const modalCardEl = document.getElementById('placeModalCard');
+
+    modalCardEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        modalTouchStartX = e.touches[0].clientX;
+        modalTouchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    modalCardEl.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length !== 1) return;
+      const deltaX = e.changedTouches[0].clientX - modalTouchStartX;
+      const deltaY = e.changedTouches[0].clientY - modalTouchStartY;
+
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0) {
+          navigatePlaceModal(1);
+        } else {
+          navigatePlaceModal(-1);
+        }
+      }
+    }, { passive: true });
+
+    document.getElementById('placeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'placeModal' || e.target === e.currentTarget.firstElementChild) {
+        closePlaceModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const isModalOpen = document.getElementById('placeModal').classList.contains('is-visible');
+      if (!isModalOpen) return;
+
+      if (e.key === 'Escape') {
+        closePlaceModal();
+      } else if (e.key === 'ArrowLeft') {
+        navigatePlaceModal(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigatePlaceModal(1);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', initDirectory);
+  </script>
+</body>
+</html>
